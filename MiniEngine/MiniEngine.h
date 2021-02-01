@@ -29,8 +29,8 @@
 #include "DirectXTK/Inc/SpriteFont.h"
 
 #include "d3dx12.h"
-//#include "debug/MyAssert.h"
-#define MY_ASSERT
+#include "debug/MyAssert.h"
+
 
 #include "math/Math.h"
 #include "math/Vector.h"

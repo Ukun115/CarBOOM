@@ -433,8 +433,8 @@ public:
 	};
 	static const Vector4 White;
 	static const Vector4 Black;
-	static const Vector4 Gray;
 	static const Vector4 Yellow;
+	static const Vector4 Gray;
 public:
 	/// <summary>
 	/// XMVECTORへの暗黙の型変換。
@@ -652,6 +652,10 @@ const Vector3 g_vec3AxisY = { 0.0f,  1.0f,  0.0f };
 const Vector3 g_vec3AxisZ = { 0.0f,  0.0f,  1.0f };
 const Vector3 g_vec3One = { 1.0f, 1.0f, 1.0f };
 
+const Vector4 g_vec4White = { 1.0f, 1.0f, 1.0f, 1.0f };
+const Vector4 g_vec4Black = { 0.0f, 0.0f, 0.0f, 1.0f };
+const Vector4 g_vec4Gray = { 0.5f, 0.5f, 0.5f, 1.0f };
+const Vector4 g_vec4Yellow = { 1.0f, 1.0f, 0.0f, 1.0f };
 
 /// <summary>
 /// クォータニオンクラス。

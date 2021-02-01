@@ -9,24 +9,18 @@
 /// </summary>
 class Font{
 public:
-	Font();
-	~Font();
-	/*!
-	* @brief	フォントを設定。
-	* @details	デフォルトフォントから変更したい場合は
-	*  DirectX::SpriteFontを使用して、フォントをロードして差し替えを行ってください。
-	*/
-	void SetFont(DirectX::SpriteFont* font)
-	{
-		m_spriteFont = font;
-	}
-	/*!
-		* @brief	描画開始。
-		*/
+	/// <summary>
+	/// 描画開始
+	/// </summary>
+	/// <param name="rc">レンダリングコンテキスト。</param>
 	void Begin(RenderContext& rc);
 	/*!
 		* @brief	描画終了。
 		*/
+	/// <summary>
+	/// 描画終了
+	/// </summary>
+	/// <param name="rc">レンダリングコンテキスト</param>
 	void End(RenderContext& rc);
 	/*!
 		* @brief	描画。

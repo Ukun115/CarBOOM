@@ -44,7 +44,5 @@ public:
 private:
 	std::unique_ptr<DirectX::SpriteBatch> m_spriteBatch;	//スプライトバッチ。
 	std::unique_ptr<DirectX::SpriteFont>	m_spriteFont;	//スプライトフォント。
-	std::unique_ptr< DirectX::ResourceUploadBatch> m_spriteResourceUploadBatch;
-	std::unique_ptr< DirectX::SpriteBatchPipelineStateDescription> m_spriteBatchPipelineStateDescription;
-	ID3D12DescriptorHeap* m_textureDescriptorHeap = nullptr;	//ディスクリプタヒープ。
+	ID3D12DescriptorHeap* m_srvDescriptorHeap = nullptr;	//SRVのディスクリプタヒープ。
 };
