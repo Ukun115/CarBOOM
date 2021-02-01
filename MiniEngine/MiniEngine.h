@@ -29,7 +29,7 @@
 #include "DirectXTK/Inc/SpriteFont.h"
 
 #include "d3dx12.h"
-#include "debug/MyAssert.h"
+#include "dbg/MyAssert.h"
 
 
 #include "math/Math.h"

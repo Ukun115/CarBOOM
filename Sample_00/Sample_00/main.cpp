@@ -2,8 +2,8 @@
 #include "system/system.h"
 #include "Player.h"
 #include "Background.h"
-
-
+#include "HelloFont.h"
+#include "Hello2D.h"
 ///////////////////////////////////////////////////////////////////
 // ウィンドウプログラムのメイン関数。
 ///////////////////////////////////////////////////////////////////
@@ -24,7 +24,10 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	NewGO<Player>(0);
 	//背景を生成。
 	NewGO<Background>(0);
-
+	//フォント表示のサンプルを生成
+	NewGO<HelloFont>(0);
+	//2D表示のサンプルを生成。
+	NewGO<Hello2D>(0);
 	//////////////////////////////////////
 	// 初期化を行うコードを書くのはここまで！！！
 	//////////////////////////////////////

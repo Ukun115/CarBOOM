@@ -5,7 +5,15 @@
 /// </summary>
 /// <remarks>
 /// DirectXTKのフォント表示処理の初期化～解放を行うクラス。
+/// BeginDrawでフォントの描画開始、Drawで描画リクエスト、Endでリクエストを一括処理。
+/// フォントの描画はまとめて行うほど高速になります。
 /// </remarks>
+/// <example>
+/// Font font;
+/// font.BeginDraw( renderContext );
+/// font.Draw("Hello world", pos, color, rot, scale, pivot);
+/// font.EndDraw( renderContext );
+/// </example>
 class FontEngine {
 	
 public:
