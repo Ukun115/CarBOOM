@@ -20,6 +20,13 @@
 #include <array>
 #include <dxcapi.h>
 #include <atlbase.h>
+#include <dxgi.h>
+#include <dxgitype.h>
+#include <dxgiformat.h>
+
+#include "DirectXTK/Inc/CommonStates.h"
+#include "DirectXTK/Inc/SpriteBatch.h"
+#include "DirectXTK/Inc/SpriteFont.h"
 
 #include "d3dx12.h"
 //#include "debug/MyAssert.h"
@@ -47,6 +54,7 @@
 #include "DescriptorHeap.h"
 #include "RenderTarget.h"
 #include "Animation.h"
+#include "font/Font.h"
 
 #include "RenderContext_inline.h"
 #include "DescriptorHeap_inline.h"

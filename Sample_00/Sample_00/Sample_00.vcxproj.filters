@@ -42,6 +42,9 @@
     <Filter Include="ExEngine\physics">
       <UniqueIdentifier>{28d50a61-e332-409d-aaf8-cee4a2b444bb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="MiniEngine\font">
+      <UniqueIdentifier>{8bb7f2c3-443e-4fb0-8791-dd6ab98e68a5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -193,6 +196,12 @@
     </ClCompile>
     <ClCompile Include="..\..\ExEngine\physics\PhysicsStaticObject.cpp">
       <Filter>ExEngine\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\MiniEngine\font\FontEngine.cpp">
+      <Filter>MiniEngine\font</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\MiniEngine\font\Font.cpp">
+      <Filter>MiniEngine\font</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -369,6 +378,12 @@
     </ClInclude>
     <ClInclude Include="..\..\ExEngine\physics\PhysicsStaticObject.h">
       <Filter>ExEngine\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\MiniEngine\font\FontEngine.h">
+      <Filter>MiniEngine\font</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\MiniEngine\font\Font.h">
+      <Filter>MiniEngine\font</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

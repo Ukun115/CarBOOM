@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "Model.h"
-
+#include "Material.h"
 
 void Model::Init(const ModelInitData& initData)
 {
@@ -56,6 +56,20 @@ void Model::UpdateWorldMatrix(Vector3 pos, Quaternion rot, Vector3 scale)
 	mRot.MakeRotationFromQuaternion(rot);
 	mScale.MakeScaling(scale);
 	m_world = mBias * mScale * mRot * mTrans;
+}
+
+void Model::ChangeAlbedoMap(const char* materialName, Texture& albedoMap)
+{
+	m_meshParts.QueryMeshs([&](const SMesh& mesh) {
+		//todo マテリアル名をtkmファイルに出力したなかった・・・。
+		//todo 今は全マテリアル差し替えます
+		for (Material* material : mesh.m_materials) {
+			material->GetAlbedoMap().InitFromD3DResource(albedoMap.Get());
+		}
+	});
+	//ディスクリプタヒープの再作成。
+	m_meshParts.CreateDescriptorHeaps();
+	
 }
 void Model::Draw(RenderContext& rc)
 {

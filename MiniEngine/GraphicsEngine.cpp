@@ -65,6 +65,12 @@ void GraphicsEngine::WaitDraw()
 }
 bool GraphicsEngine::Init(HWND hwnd, UINT frameBufferWidth, UINT frameBufferHeight)
 {
+	//
+	g_graphicsEngine = this;
+
+	
+
+
 	m_frameBufferWidth = frameBufferWidth;
 	m_frameBufferHeight = frameBufferHeight;
 
@@ -170,11 +176,15 @@ bool GraphicsEngine::Init(HWND hwnd, UINT frameBufferWidth, UINT frameBufferHeig
 
 	g_camera2D = &m_camera2D;
 	g_camera3D = &m_camera3D;
-	//
-	g_graphicsEngine = this;
 
+	//DirectXTK用のグラフィックメモリ管理クラスのインスタンスを作成する。
+	m_directXTKGfxMemroy = std::make_unique<DirectX::GraphicsMemory>(m_d3dDevice);
+	//フォント描画エンジンを初期化。
+	m_fontEngine.Init();
+	
 	return true;
 }
+
 IDXGIFactory4* GraphicsEngine::CreateDXGIFactory()
 {
 	UINT dxgiFactoryFlags = 0;
@@ -445,6 +455,9 @@ void GraphicsEngine::BeginRender()
 	m_renderContext.ClearRenderTargetView(m_currentFrameBufferRTVHandle, clearColor);
 	m_renderContext.ClearDepthStencilView(m_currentFrameBufferDSVHandle, 1.0f);
 
+	//todo フォントのテスト。
+	m_fontEngine.BeginDraw(m_renderContext);
+	m_fontEngine.EndDraw(m_renderContext);
 }
 void GraphicsEngine::ChangeRenderTargetToFrameBuffer(RenderContext& rc)
 {

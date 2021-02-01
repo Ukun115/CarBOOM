@@ -12,6 +12,7 @@
 #include "rayTracing/RaytracingEngine.h"
 #include "Camera.h"
 #include "NullTextureMaps.h"
+#include "font/FontEngine.h"
 
 /// <summary>
 /// DirectX12に依存するグラフィックスエンジン
@@ -71,7 +72,14 @@ public:
 	{
 		return m_commandQueue;
 	}
-
+	/// <summary>
+	/// コマンドリストを取得。
+	/// </summary>
+	/// <returns></returns>
+	ID3D12GraphicsCommandList4* GetCommandList() const
+	{
+		return m_commandList;
+	}
 	/// <summary>
 	/// CBR_SRVのディスクリプタのサイズを取得。
 	/// </summary>
@@ -126,6 +134,14 @@ public:
 		return m_currentFrameBufferRTVHandle;
 	}
 	/// <summary>
+	/// フレームバッファへの描画時に使用されているデプスステンシルビューを取得。
+	/// </summary>
+	/// <returns></returns>
+	D3D12_CPU_DESCRIPTOR_HANDLE GetCurrentFrameBuffuerDSV() const
+	{
+		return m_currentFrameBufferDSVHandle;
+	}
+	/// <summary>
 	/// 3DModelをレイトレワールドに登録。
 	/// </summary>
 	/// <param name="model"></param>
@@ -174,6 +190,14 @@ public:
 	const NullTextureMaps& GetNullTextureMaps() const
 	{
 		return m_nullTextureMaps;
+	}
+	/// <summary>
+	/// フォントエンジンを取得。
+	/// </summary>
+	/// <returns></returns>
+	FontEngine& GetFontEngine()
+	{
+		return m_fontEngine;
 	}
 private:
 	/// <summary>
@@ -277,12 +301,14 @@ private:
 	HANDLE m_fenceEvent = nullptr;
 	ID3D12Fence* m_fence = nullptr;
 	UINT64 m_fenceValue = 0;
-	UINT m_frameBufferWidth = 0;			//フレームバッファの幅。
-	UINT m_frameBufferHeight = 0;			//フレームバッファの高さ。
-	Camera m_camera2D;						//2Dカメラ。
-	Camera m_camera3D;						//3Dカメラ。
-	raytracing::Engine m_raytracingEngine;	//レイトレエンジン。
-	NullTextureMaps m_nullTextureMaps;		//ヌルテクスチャマップ。
+	UINT m_frameBufferWidth = 0;				//フレームバッファの幅。
+	UINT m_frameBufferHeight = 0;				//フレームバッファの高さ。
+	Camera m_camera2D;							//2Dカメラ。
+	Camera m_camera3D;							//3Dカメラ。
+	raytracing::Engine m_raytracingEngine;		//レイトレエンジン。
+	NullTextureMaps m_nullTextureMaps;			//ヌルテクスチャマップ。
+	FontEngine m_fontEngine;					//フォントエンジン。
+	std::unique_ptr<DirectX::GraphicsMemory> m_directXTKGfxMemroy;	//DirectXTKのグラフィックメモリシステム。
 };
 extern GraphicsEngine* g_graphicsEngine;	//グラフィックスエンジン
 extern Camera* g_camera2D;					//2Dカメラ。

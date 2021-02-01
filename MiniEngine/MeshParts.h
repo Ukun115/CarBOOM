@@ -80,6 +80,10 @@ public:
 			queryFunc(*m_meshs[i], m_descriptorHeap[i]);
 		}
 	}
+	/// <summary>
+	/// ディスクリプタヒープを作成。
+	/// </summary>
+	void CreateDescriptorHeaps();
 private:
 	/// <summary>
 	/// tkmメッシュからメッシュを作成。
@@ -98,10 +102,7 @@ private:
 		const char* vsSkinEntryPointFunc,
 		const char* psEntryPointFunc );
 
-	/// <summary>
-	/// ディスクリプタヒープを作成。
-	/// </summary>
-	void CreateDescriptorHeaps();
+	
 private:
 	//拡張SRVが設定されるレジスタの開始番号。
 	const int EXPAND_SRV_REG__START_NO = 10;

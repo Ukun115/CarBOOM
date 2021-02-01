@@ -13,9 +13,13 @@ const int EXPAND_SRV_REG__START_NO = 10;
 
 class IShaderResource;
 
-template< class TExpandData > struct SpriteExpandDataInfo {
-	TExpandData* m_expandData = nullptr;
-	int m_expandDataSize = 0;
+/// <summary>
+/// アルファブレンディングモード
+/// </summary>
+enum AlphaBlendMode {
+	AlphaBlendMode_None,	//アルファブレンディングなし(上書き)。
+	AlphaBlendMode_Trans,	//半透明合成
+	AlphaBlendMode_Add,		//加算合成
 };
 /// <summary>
 /// スプライトの初期化データ。
@@ -31,6 +35,7 @@ struct SpriteInitData {
 	void* m_expandConstantBuffer = nullptr;					//ユーザー拡張の定数バッファ
 	int m_expandConstantBufferSize = 0;						//ユーザー拡張の定数バッファのサイズ。
 	IShaderResource* m_expandShaderResoruceView = nullptr;	//ユーザー拡張のシェーダーリソース。
+	AlphaBlendMode m_alphaBlendMode = AlphaBlendMode_None;	//アルファブレンディングモード。
 };
 /// <summary>
 /// スプライトクラス。
@@ -87,7 +92,7 @@ private:
 	/// <summary>
 	/// パイプラインステートを初期化する。
 	/// </summary>
-	void InitPipelineState();
+	void InitPipelineState(const SpriteInitData& initData);
 	/// <summary>
 	/// 定数バッファを初期化。
 	/// </summary>

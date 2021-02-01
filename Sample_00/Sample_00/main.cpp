@@ -36,15 +36,12 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 		//レンダリング開始。
 		g_engine->BeginFrame();
 		
-
-		//////////////////////////////////////
-		//ここから絵を描くコードを記述する。
-		//////////////////////////////////////
+		//登録されているゲームオブジェクトの更新関数を呼び出す。
 		GameObjectManager::GetInstance()->ExecuteUpdate();
+		//登録されているゲームオブジェクトの描画関数を呼び出す。
 		GameObjectManager::GetInstance()->ExecuteRender(renderContext);
-		//////////////////////////////////////
-		//絵を描くコードを書くのはここまで！！！
-		//////////////////////////////////////
+
+
 		g_engine->EndFrame();
 	}
 	//ゲームオブジェクトマネージャーを削除。

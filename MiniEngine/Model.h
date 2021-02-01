@@ -73,6 +73,16 @@ public:
 		m_meshParts.QueryMeshAndDescriptorHeap(queryFunc);
 	}
 	/// <summary>
+	/// アルベドマップを変更。
+	/// </summary>
+	/// <remarks>
+	/// この関数を呼び出すとディスクリプタヒープの再構築が行われるため、処理負荷がかかります。
+	/// 毎フレーム呼び出す必要がない場合は呼び出さないようにしてください。
+	/// </remarks>
+	/// <param name="materialName">変更しいたマテリアルの名前</param>
+	/// <param name="albedoMap">アルベドマップ</param>
+	void ChangeAlbedoMap(const char* materialName, Texture& albedoMap);
+	/// <summary>
 	/// TKMファイルを取得。
 	/// </summary>
 	/// <returns></returns>
