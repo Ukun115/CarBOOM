@@ -151,6 +151,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -206,6 +207,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -225,6 +227,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -249,6 +252,8 @@
     <ClCompile Include="..\..\MiniEngine\Camera.cpp" />
     <ClCompile Include="..\..\MiniEngine\ConstantBuffer.cpp" />
     <ClCompile Include="..\..\MiniEngine\DescriptorHeap.cpp" />
+    <ClCompile Include="..\..\MiniEngine\font\Font.cpp" />
+    <ClCompile Include="..\..\MiniEngine\font\FontEngine.cpp" />
     <ClCompile Include="..\..\MiniEngine\GPUBuffer.cpp" />
     <ClCompile Include="..\..\MiniEngine\GraphicsEngine.cpp" />
     <ClCompile Include="..\..\MiniEngine\HID\GamePad.cpp" />
@@ -310,6 +315,8 @@
     <ClInclude Include="..\..\MiniEngine\debug\MyAssert.h" />
     <ClInclude Include="..\..\MiniEngine\DescriptorHeap.h" />
     <ClInclude Include="..\..\MiniEngine\DescriptorHeap_inline.h" />
+    <ClInclude Include="..\..\MiniEngine\font\Font.h" />
+    <ClInclude Include="..\..\MiniEngine\font\FontEngine.h" />
     <ClInclude Include="..\..\MiniEngine\GPUBuffer.h" />
     <ClInclude Include="..\..\MiniEngine\GraphicsEngine.h" />
     <ClInclude Include="..\..\MiniEngine\HID\GamePad.h" />

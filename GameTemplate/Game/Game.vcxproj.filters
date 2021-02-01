@@ -36,11 +36,14 @@
     <Filter Include="ExEngine\gameObject">
       <UniqueIdentifier>{103836a8-41fc-4624-a457-cbf2a093308b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="MiniEngine\debug">
-      <UniqueIdentifier>{a4afebf9-da6c-48cf-86ed-ad66371d7516}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ExEngine\physics">
       <UniqueIdentifier>{28d50a61-e332-409d-aaf8-cee4a2b444bb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MiniEngine\dbg">
+      <UniqueIdentifier>{a4afebf9-da6c-48cf-86ed-ad66371d7516}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MiniEngine\font">
+      <UniqueIdentifier>{3ac32d04-0484-4271-9fae-9b44b0baa05e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -188,6 +191,12 @@
     <ClCompile Include="..\..\ExEngine\physics\PhysicsStaticObject.cpp">
       <Filter>ExEngine\physics</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\MiniEngine\font\FontEngine.cpp">
+      <Filter>MiniEngine\font</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\MiniEngine\font\Font.cpp">
+      <Filter>MiniEngine\font</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="system\system.h">
@@ -332,7 +341,7 @@
       <Filter>MiniEngine</Filter>
     </ClInclude>
     <ClInclude Include="..\..\MiniEngine\debug\MyAssert.h">
-      <Filter>MiniEngine\debug</Filter>
+      <Filter>MiniEngine\dbg</Filter>
     </ClInclude>
     <ClInclude Include="..\..\ExEngine\physics\Physics.h">
       <Filter>ExEngine\physics</Filter>
@@ -357,6 +366,12 @@
     </ClInclude>
     <ClInclude Include="..\..\ExEngine\physics\PhysicsStaticObject.h">
       <Filter>ExEngine\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\MiniEngine\font\Font.h">
+      <Filter>MiniEngine\font</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\MiniEngine\font\FontEngine.h">
+      <Filter>MiniEngine\font</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
