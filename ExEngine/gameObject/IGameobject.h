@@ -5,7 +5,7 @@
 #pragma once
 
 #include <list>
-
+#include <string>
 class RenderContext;
 
 /*!
@@ -88,6 +88,28 @@ public:
 	bool IsDead() const
 	{
 		return m_isDead;
+	}
+	/// <summary>
+	/// ゲームオブジェクトの名前を設定。
+	/// </summary>
+	/// <param name="name">名前</param>
+	void SetName(const char* name)
+	{
+		if (name != nullptr) {
+			m_name = name;
+		}
+	}
+	/// <summary>
+	/// 引数で渡された名前が、このゲームオブジェクトの名前とマッチするか判定。
+	/// </summary>
+	/// <param name="name"></param>
+	/// <returns></returns>
+	bool IsMatchName(const char* name) const
+	{
+		if (strcmp(m_name.c_str(), name) == 0) {
+			return true;
+		}
+		return false;
 	}
 public:
 
