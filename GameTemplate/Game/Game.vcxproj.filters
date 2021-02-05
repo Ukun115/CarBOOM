@@ -209,7 +209,7 @@
     <ClCompile Include="..\..\ExEngine\level2D\Level2D.cpp">
       <Filter>ExEngine\level2D</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\ExEngine\level2D\MapChipRender2D.cpp">
+    <ClCompile Include="..\..\ExEngine\level2D\MapChip2D.cpp">
       <Filter>ExEngine\level2D</Filter>
     </ClCompile>
   </ItemGroup>
@@ -397,7 +397,7 @@
     <ClInclude Include="..\..\ExEngine\level2D\Level2D.h">
       <Filter>ExEngine\level2D</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\ExEngine\level2D\MapChipRender2D.h">
+    <ClInclude Include="..\..\ExEngine\level2D\MapChip2D.h">
       <Filter>ExEngine\level2D</Filter>
     </ClInclude>
   </ItemGroup>

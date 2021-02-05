@@ -6,23 +6,14 @@
 #include "ExEngine.h"
 #include "Level2D.h"
 #include "CaslFile.h"
-#include "MapChipRender2D.h"
+#include "MapChip2D.h"
 
-
-
-Level2D::~Level2D()
+void Level2D::AddMapChip2D(CaslData* caslData)
 {
-	for (auto render : m_mapChipRender2DList)
-	{
-		DeleteGO(render);
-	}
-}
-
-void Level2D::AddMapChipRender2D(CaslData* caslData)
-{
-	MapChipRender2D* mapChipRender2D = NewGO<MapChipRender2D>(0);
-	mapChipRender2D->Init(caslData);
-	m_mapChipRender2DList.push_back(mapChipRender2D);
+	auto mapChip2DPtr = std::make_unique<MapChip2D>();
+	mapChip2DPtr.get()->Init(caslData);
+	//std::unique_ptr‚ðˆÚ“®‚³‚¹‚éŽž‚Ístd::move()‚ðŽg‚¤B
+	m_mapChip2DPtrList.push_back(std::move(mapChip2DPtr));
 }
 
 void Level2D::Init(
@@ -52,13 +43,29 @@ void Level2D::Init(
 			isHook = hookFunc(objData);
 			if (!isHook)
 			{
-				AddMapChipRender2D(caslData);
+				AddMapChip2D(caslData);
 			}
 		}
 		else
 		{
-			AddMapChipRender2D(caslData);
+			AddMapChip2D(caslData);
 		}
 	}
 
+}
+
+void Level2D::Update() const
+{
+	for (auto& mapChip : m_mapChip2DPtrList)
+	{
+		mapChip.get()->Update();
+	}
+}
+
+void Level2D::Draw(RenderContext& renderContext) const
+{
+	for (auto& mapChip : m_mapChip2DPtrList)
+	{
+		mapChip.get()->Draw(renderContext);
+	}
 }

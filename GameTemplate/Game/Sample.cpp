@@ -81,6 +81,7 @@ void Sample::Update()
 	m_sprite[0].Update(m_position[0], Quaternion::Identity, m_scale[0]);
 	//m_sprite[1].Update(m_position[1], Quaternion::Identity, m_scale[1]);
 	//m_sprite[2].Update(m_position[2], Quaternion::Identity, m_scale[2]);
+	m_level.Update();
 }
 
 

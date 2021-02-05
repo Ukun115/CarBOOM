@@ -9,6 +9,7 @@ class Sample : public IGameObject
 		m_sprite[0].Draw(renderContext);
 		//m_sprite[1].Draw(renderContext);
 		//m_sprite[2].Draw(renderContext);
+		m_level.Draw(renderContext);
 	} 
 private:
 	Vector3 m_position[3];

@@ -2,11 +2,12 @@
 #include <list>
 #include <vector>
 
-//2Dのレベルオブジェクト。
+/// <summary>
+/// Caslファイルのデータ。
+/// </summary>
 struct CaslData
 {
 public:
-
 	std::unique_ptr<char[]> name;	//名前。
 	std::unique_ptr<char[]> fileName;	//ファイルのパス。
 	std::unique_ptr<char[]> ddsFileName;	//ddsファイルのパス。
@@ -17,7 +18,9 @@ public:
 	Vector2 scale = Vector2::Zero;		//大きさ。
 };
 
-//Caslファイルを読み込む。
+/// <summary>
+/// caslファイルを読み込む。
+/// </summary>
 class CaslFile
 {
 public:
@@ -26,23 +29,43 @@ public:
 	/// </summary>
 	/// <param name="filePath">ファイルパス。</param>
 	void Load(const char* filePath);
-	int GetNumCaslData()
+	/// <summary>
+	/// Caslデータの数を取得。
+	/// </summary>
+	/// <returns>Caslデータの数。</returns>
+	const int GetNumCaslData() const
 	{
 		return m_caslDataList.size();
 	}
-	CaslData* GetCaslData(int number)
+	/// <summary>
+	/// Caslデータを取得。
+	/// </summary>
+	/// <param name="number">ナンバー。</param>
+	/// <returns></returns>
+	CaslData* GetCaslData(int number) const
 	{
 		return m_caslDataList[number].get();
 	}
 private:
 	//1文字だけ読み込む、(,)を読み込むのに使う。
-	void ReadOnlyOneCharacter(FILE* file);
-	//整数を読み込む。
-	int ReadInteger(FILE* file);
-	//float型を読み込む。
-	float ReadDecimal(FILE* file);
+	/// <summary>
+	/// 1文字だけ読み込む。「 , 」や「 \n 」を読み込むのに使う。
+	/// </summary>
+	/// <param name="file">ファイル。</param>
+	void ReadOnlyOneCharacter(FILE* file) const;
+	/// <summary>
+	/// int型を読み込む。
+	/// </summary>
+	/// <param name="file">ファイル。</param>
+	/// <returns>int型の値。</returns>
+	int ReadInteger(FILE* file) const;
+	/// <summary>
+	/// float型を読み込む。
+	/// </summary>
+	/// <param name="file">ファイル。</param>
+	/// <returns>float型の値。</returns>
+	float ReadDecimal(FILE* file) const;
 
-	std::vector<std::unique_ptr<CaslData>> m_caslDataList;
-	int m_numLevel = 0;
+	std::vector<std::unique_ptr<CaslData>> m_caslDataList;		//Caslデータ。
 };
 

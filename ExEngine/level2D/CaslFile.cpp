@@ -12,8 +12,8 @@ void CaslFile::Load(const char* filePath)
 		return;
 	}
 	//‰æ‘œ‚Ì”‚ğæ“¾B
-	m_numLevel = ReadInteger(fp);
-	for (int i = 0; i < m_numLevel; i++)
+	int numLevel = ReadInteger(fp);
+	for (int i = 0; i < numLevel; i++)
 	{
 		auto caslData = std::make_unique<CaslData>();
 		//std::unique_ptr<Level2DObject> levelObject;
@@ -66,15 +66,17 @@ void CaslFile::Load(const char* filePath)
 
 		m_caslDataList.push_back(std::move(caslData));
 	}
+	//fopen‚µ‚½‚çfclose‚Å•Â‚¶‚éB
+	fclose(fp);
 }
 
-void CaslFile::ReadOnlyOneCharacter(FILE* file)
+void CaslFile::ReadOnlyOneCharacter(FILE* file) const
 {
 	char a;
 	fread(&a, 1, 1, file);
 }
 
-int CaslFile::ReadInteger(FILE* file)
+int CaslFile::ReadInteger(FILE* file) const
 {
 	std::string number;
 	while (true)
@@ -93,7 +95,7 @@ int CaslFile::ReadInteger(FILE* file)
 	return atoi(number.c_str());
 }
 
-float CaslFile::ReadDecimal(FILE* file)
+float CaslFile::ReadDecimal(FILE* file) const
 {
 	std::string number;
 	while (true)
