@@ -28,9 +28,9 @@ public:
 		m_sprite.Draw(renderContext);
 	}
 private:
-	Vector3 m_position = Vector3::Zero;		//座標。
-	Quaternion m_rotation = Quaternion::Identity;		//回転。
-	Vector3 m_scale = Vector3::One;			//大きさ。
-	Sprite m_sprite;		//スプライト。
+	Vector3 m_position;					//座標。
+	Quaternion m_rotation;				//回転。
+	Vector3 m_scale = g_vec3One;	//大きさ。
+	Sprite m_sprite;						//スプライト。
 };
 
