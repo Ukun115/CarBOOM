@@ -240,6 +240,9 @@
   <ItemGroup>
     <ClCompile Include="..\..\ExEngine\gameObject\Gameobjectmanager.cpp" />
     <ClCompile Include="..\..\ExEngine\gameObject\IGameObject.cpp" />
+    <ClCompile Include="..\..\ExEngine\level2D\CaslFile.cpp" />
+    <ClCompile Include="..\..\ExEngine\level2D\Level2D.cpp" />
+    <ClCompile Include="..\..\ExEngine\level2D\MapChip2D.cpp" />
     <ClCompile Include="..\..\ExEngine\physics\CapsuleCollider.cpp" />
     <ClCompile Include="..\..\ExEngine\physics\CharacterController.cpp" />
     <ClCompile Include="..\..\ExEngine\physics\MeshCollider.cpp" />
@@ -304,6 +307,9 @@
     <ClInclude Include="..\..\ExEngine\ExEngine.h" />
     <ClInclude Include="..\..\ExEngine\gameObject\GameObjectManager.h" />
     <ClInclude Include="..\..\ExEngine\gameObject\IGameobject.h" />
+    <ClInclude Include="..\..\ExEngine\level2D\CaslFile.h" />
+    <ClInclude Include="..\..\ExEngine\level2D\Level2D.h" />
+    <ClInclude Include="..\..\ExEngine\level2D\MapChip2D.h" />
     <ClInclude Include="..\..\ExEngine\physics\CapsuleCollider.h" />
     <ClInclude Include="..\..\ExEngine\physics\CharacterController.h" />
     <ClInclude Include="..\..\ExEngine\physics\ICollider.h" />

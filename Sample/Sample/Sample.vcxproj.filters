@@ -45,6 +45,9 @@
     <Filter Include="MiniEngine\font">
       <UniqueIdentifier>{8bb7f2c3-443e-4fb0-8791-dd6ab98e68a5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ExEngine\level2D">
+      <UniqueIdentifier>{a4310997-fc97-43c8-8c2b-26914419a85c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -208,6 +211,15 @@
     </ClCompile>
     <ClCompile Include="Hello2D.cpp">
       <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ExEngine\level2D\CaslFile.cpp">
+      <Filter>ExEngine\level2D</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ExEngine\level2D\Level2D.cpp">
+      <Filter>ExEngine\level2D</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ExEngine\level2D\MapChip2D.cpp">
+      <Filter>ExEngine\level2D</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -396,6 +408,15 @@
     </ClInclude>
     <ClInclude Include="Hello2D.h">
       <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ExEngine\level2D\MapChip2D.h">
+      <Filter>ExEngine\level2D</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ExEngine\level2D\CaslFile.h">
+      <Filter>ExEngine\level2D</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ExEngine\level2D\Level2D.h">
+      <Filter>ExEngine\level2D</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
