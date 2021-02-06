@@ -291,6 +291,7 @@
     <ClCompile Include="Background.cpp" />
     <ClCompile Include="Hello2D.cpp" />
     <ClCompile Include="HelloFont.cpp" />
+    <ClCompile Include="HelloLevel2D.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="stdafx.cpp">
@@ -366,6 +367,7 @@
     <ClInclude Include="Background.h" />
     <ClInclude Include="Hello2D.h" />
     <ClInclude Include="HelloFont.h" />
+    <ClInclude Include="HelloLevel2D.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="system\system.h" />

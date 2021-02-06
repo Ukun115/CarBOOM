@@ -203,9 +203,6 @@
     <ClCompile Include="..\..\ExEngine\level2D\CaslFile.cpp">
       <Filter>ExEngine\level2D</Filter>
     </ClCompile>
-    <ClCompile Include="Sample.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\ExEngine\level2D\Level2D.cpp">
       <Filter>ExEngine\level2D</Filter>
     </ClCompile>
@@ -390,9 +387,6 @@
     </ClInclude>
     <ClInclude Include="..\..\ExEngine\level2D\CaslFile.h">
       <Filter>ExEngine\level2D</Filter>
-    </ClInclude>
-    <ClInclude Include="Sample.h">
-      <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="..\..\ExEngine\level2D\Level2D.h">
       <Filter>ExEngine\level2D</Filter>
