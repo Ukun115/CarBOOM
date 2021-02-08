@@ -525,7 +525,7 @@ class Application(tk.Frame):
         self.load_image(myimg)
         
     #画像を削除する
-    def delete_image(self):
+    def delete_image(self,event=None):
         number = self.project_list.curselection()
         #何も選択されてなかったら処理をしない
         if len(number) == 0:
@@ -804,6 +804,11 @@ class Application(tk.Frame):
         self.canvas.bind('<Motion>', self.motion)
         self.canvas.bind('<B1-Motion>', self.dragged)
         self.canvas.bind('<ButtonRelease-1>', self.mouse_release)
+
+        #Deleteキー押したら削除
+        self.canvas.bind_all('<Delete>', self.delete_image)
+        
+        	
         #720*1280の枠を作る
         self.canvas_rect = self.canvas.create_rectangle(
             constant.ADD_CANVAS_SIZE,
