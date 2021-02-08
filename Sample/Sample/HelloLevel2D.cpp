@@ -10,7 +10,7 @@ bool HelloLevel2D::Start()
 
 			SpriteInitData data;
 			//DDSファイル(画像データ)のファイルパスを指定する。
-			data.m_ddsFilePath[0] = "Assets/sprite/title.dds";
+			data.m_ddsFilePath[0] = objdata.ddsFilePath;
 			//Sprite表示用のシェーダーのファイルパスを指定する。
 			data.m_fxFilePath = "Assets/shader/sprite.fx";
 			//スプライトの幅と高さを取得する。

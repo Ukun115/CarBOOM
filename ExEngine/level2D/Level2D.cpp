@@ -37,6 +37,7 @@ void Level2D::Init(
 		objData.width = caslData->width;
 		objData.height = caslData->height;
 		objData.name = caslData->name.get();
+		objData.ddsFilePath = caslData->ddsFileName.get();
 		auto isHook = false;
 		if (hookFunc != nullptr) {
 			//hookŠÖ”‚ªw’è‚³‚ê‚Ä‚¢‚é‚Ì‚ÅhookŠÖ”‚ğŒÄ‚Ño‚·B

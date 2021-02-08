@@ -474,13 +474,19 @@ class Application(tk.Frame):
                 file.write(bytes((str(scale[1]) + ',').encode()))
 
                 #ファイルパスを持ってきて
-                dds_file_path = myimg.file_name
-                #.の位置を調べる
-                number = dds_file_path.rfind('.')
-                #.から後を削除して
-                dds_file_path = dds_file_path[:number]
+                dds_file_path = fn
+                #スラッシュで切る
+                slash_number = dds_file_path.rfind('/')
+                dds_file_path = dds_file_path[:slash_number]
+
+                file_name = myimg.file_name
+                dot_number = file_name.rfind('.')
+                slash_number = file_name.rfind('/')
+                file_name = file_name[slash_number:dot_number]
+
+
                 #.ddsを加える
-                dds_file_path+='.dds'
+                dds_file_path+=file_name + '.dds'
 
                 #.ddsの場合のファイルパスを書き出す
                 file.write(bytes((str(len(dds_file_path)) + ',').encode()))
