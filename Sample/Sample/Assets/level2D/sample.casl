@@ -1,3 +1,4 @@
-2
-4,logo,33,C:/Users/akuro/Pictures/daiwa.png,-446.25,-25.0,541,941,10,0.7114854215918046,0.7114854215918046,77,C:/Users/akuro/Desktop/tm/tkEngineMini/Sample/Sample/Assets/level2D/daiwa.dds
-5,title,34,C:/Users/akuro/Pictures/tm/uni.png,-97.5,200.0,451,484,10,0.6472222222222221,0.6472222222222221,75,C:/Users/akuro/Desktop/tm/tkEngineMini/Sample/Sample/Assets/level2D/uni.dds
+3
+4,logo,75,C:/Users/akuro/Desktop/tm/tkEngineMini/Sample/Sample/Assets/sprite/logo.png,-532.5,252.5,64,64,10,3.372549019607843,3.372549019607843,76,C:/Users/akuro/Desktop/tm/tkEngineMini/Sample/Sample/Assets/level2D/logo.dds
+4,logo,75,C:/Users/akuro/Desktop/tm/tkEngineMini/Sample/Sample/Assets/sprite/logo.png,532.5,252.5,64,64,10,3.372549019607843,3.372549019607843,76,C:/Users/akuro/Desktop/tm/tkEngineMini/Sample/Sample/Assets/level2D/logo.dds
+5,title,76,C:/Users/akuro/Desktop/tm/tkEngineMini/Sample/Sample/Assets/sprite/title.png,-437.5,-157.5,128,128,10,3.166666666666667,3.166666666666667,77,C:/Users/akuro/Desktop/tm/tkEngineMini/Sample/Sample/Assets/level2D/title.dds
