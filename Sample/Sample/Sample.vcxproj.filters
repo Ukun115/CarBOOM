@@ -221,6 +221,9 @@
     <ClCompile Include="..\..\ExEngine\level2D\MapChip2D.cpp">
       <Filter>ExEngine\level2D</Filter>
     </ClCompile>
+    <ClCompile Include="HelloLevel2D.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="system\system.h">
@@ -417,6 +420,9 @@
     </ClInclude>
     <ClInclude Include="..\..\ExEngine\level2D\Level2D.h">
       <Filter>ExEngine\level2D</Filter>
+    </ClInclude>
+    <ClInclude Include="HelloLevel2D.h">
+      <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
