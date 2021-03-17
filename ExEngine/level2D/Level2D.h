@@ -14,6 +14,7 @@ struct Level2DObjectData {
 	int width = 0;		//横幅。
 	int height = 0;		//縦幅。
 	const char* name;	//名前。
+	const char* ddsFilePath;		//.ddsファイルのファイルパス。
 	/// <summary>
 	/// 引数で渡したオブジェクト名のオブジェクトを調べる。
 	/// </summary>
