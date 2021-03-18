@@ -478,6 +478,9 @@ class Application(tk.Frame):
                 #スラッシュで切る
                 slash_number = dds_file_path.rfind('/')
                 dds_file_path = dds_file_path[:slash_number]
+                asset_number = dds_file_path.find("Assets")
+                if asset_number != -1:
+                    dds_file_path = dds_file_path[asset_number:]
 
                 file_name = myimg.file_name
                 dot_number = file_name.rfind('.')
