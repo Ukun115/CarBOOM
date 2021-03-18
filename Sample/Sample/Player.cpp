@@ -59,7 +59,7 @@ void Player::Update()
 	//スケルトンを更新。
 	m_skeleton.Update(m_model.GetWorldMatrix());
 	//アニメーションを進める。
-	m_animation.Progress(1.0f / 60.0f);
+	m_animation.Progress(g_gameTime->GetFrameDeltaTime());
 
 	Vector3 moveSpeed;
 	moveSpeed.x = g_pad[0]->GetLStickXF() * -1.0f;

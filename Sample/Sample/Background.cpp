@@ -4,7 +4,7 @@
 bool Background::Start()
 {
 	ModelInitData initData;
-	initData.m_tkmFilePath = "Assets/modelData/bg/bg.tkm";
+	initData.m_tkmFilePath = "Assets/modelData/bg/bg2.tkm";
 	//シェーダーファイルのファイルパスを指定する。
 	initData.m_fxFilePath = "Assets/shader/model.fx";
 	//頂点シェーダーのエントリーポイント
@@ -13,6 +13,7 @@ bool Background::Start()
 
 	//メッシュコライダーを作成。
 	m_physicsStaticObject.CreateFromModel(m_model, m_model.GetWorldMatrix());
+	m_physicsStaticObject.SetFriction(10.0f);
 	return true;
 }
 void Background::Update()
