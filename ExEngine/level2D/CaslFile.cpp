@@ -62,7 +62,10 @@ void CaslFile::Load(const char* filePath)
 		fread(caslData.get()->ddsFileName.get(), ddsFileNameCount, 1, fp);
 
 
-		ReadOnlyOneCharacter(fp);
+		//ReadOnlyOneCharacter(fp);
+		//改行コードを読み飛ばし。
+		char dummy[256];
+		fgets(dummy, 256, fp);
 
 		m_caslDataList.push_back(std::move(caslData));
 	}
