@@ -243,12 +243,14 @@
     <ClCompile Include="..\..\ExEngine\level2D\CaslFile.cpp" />
     <ClCompile Include="..\..\ExEngine\level2D\Level2D.cpp" />
     <ClCompile Include="..\..\ExEngine\level2D\MapChip2D.cpp" />
+    <ClCompile Include="..\..\ExEngine\physics\BoxCollider.cpp" />
     <ClCompile Include="..\..\ExEngine\physics\CapsuleCollider.cpp" />
     <ClCompile Include="..\..\ExEngine\physics\CharacterController.cpp" />
     <ClCompile Include="..\..\ExEngine\physics\MeshCollider.cpp" />
     <ClCompile Include="..\..\ExEngine\physics\Physics.cpp" />
     <ClCompile Include="..\..\ExEngine\physics\PhysicsStaticObject.cpp" />
     <ClCompile Include="..\..\ExEngine\physics\RigidBody.cpp" />
+    <ClCompile Include="..\..\ExEngine\physics\SphereCollider.cpp" />
     <ClCompile Include="..\..\MiniEngine\Animation.cpp" />
     <ClCompile Include="..\..\MiniEngine\AnimationClip.cpp" />
     <ClCompile Include="..\..\MiniEngine\AnimationPlayController.cpp" />
@@ -293,7 +295,9 @@
     <ClCompile Include="HelloFont.cpp" />
     <ClCompile Include="HelloLevel2D.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="PhysicsBall.cpp" />
     <ClCompile Include="Player.cpp" />
+    <ClCompile Include="Seesaw.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
@@ -311,6 +315,7 @@
     <ClInclude Include="..\..\ExEngine\level2D\CaslFile.h" />
     <ClInclude Include="..\..\ExEngine\level2D\Level2D.h" />
     <ClInclude Include="..\..\ExEngine\level2D\MapChip2D.h" />
+    <ClInclude Include="..\..\ExEngine\physics\BoxCollider.h" />
     <ClInclude Include="..\..\ExEngine\physics\CapsuleCollider.h" />
     <ClInclude Include="..\..\ExEngine\physics\CharacterController.h" />
     <ClInclude Include="..\..\ExEngine\physics\ICollider.h" />
@@ -318,6 +323,7 @@
     <ClInclude Include="..\..\ExEngine\physics\Physics.h" />
     <ClInclude Include="..\..\ExEngine\physics\PhysicsStaticObject.h" />
     <ClInclude Include="..\..\ExEngine\physics\RigidBody.h" />
+    <ClInclude Include="..\..\ExEngine\physics\SphereCollider.h" />
     <ClInclude Include="..\..\MiniEngine\Animation.h" />
     <ClInclude Include="..\..\MiniEngine\AnimationClip.h" />
     <ClInclude Include="..\..\MiniEngine\AnimationPlayController.h" />
@@ -359,6 +365,8 @@
     <ClInclude Include="..\..\MiniEngine\Sprite.h" />
     <ClInclude Include="..\..\MiniEngine\StructuredBuffer.h" />
     <ClInclude Include="..\..\MiniEngine\Texture.h" />
+    <ClInclude Include="..\..\MiniEngine\time\GameTime.h" />
+    <ClInclude Include="..\..\MiniEngine\time\Stopwatch.h" />
     <ClInclude Include="..\..\MiniEngine\tkEngine.h" />
     <ClInclude Include="..\..\MiniEngine\tkFile\TkaFile.h" />
     <ClInclude Include="..\..\MiniEngine\tkFile\TkmFile.h" />
@@ -368,7 +376,9 @@
     <ClInclude Include="Hello2D.h" />
     <ClInclude Include="HelloFont.h" />
     <ClInclude Include="HelloLevel2D.h" />
+    <ClInclude Include="PhysicsBall.h" />
     <ClInclude Include="Player.h" />
+    <ClInclude Include="Seesaw.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="system\system.h" />
   </ItemGroup>

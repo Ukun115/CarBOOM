@@ -66,7 +66,7 @@ void PhysicsWorld::Init()
 		m_collisionConfig.get()
 	);
 
-	m_dynamicWorld->setGravity(btVector3(0, -10, 0));
+	m_dynamicWorld->setGravity(btVector3(0, -100, 0));
 #if BUILD_LEVEL!=BUILD_LEVEL_MASTER
 	m_debugDraw.Init();
 	m_dynamicWorld->setDebugDrawer(&m_debugDraw);

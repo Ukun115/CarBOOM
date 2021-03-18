@@ -48,6 +48,9 @@
     <Filter Include="ExEngine\level2D">
       <UniqueIdentifier>{a4310997-fc97-43c8-8c2b-26914419a85c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="MiniEngine\time">
+      <UniqueIdentifier>{79e79c47-a9d8-4c65-a8cd-e4933f43fe05}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -223,6 +226,18 @@
     </ClCompile>
     <ClCompile Include="HelloLevel2D.cpp">
       <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ExEngine\physics\SphereCollider.cpp">
+      <Filter>ExEngine\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="PhysicsBall.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Seesaw.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ExEngine\physics\BoxCollider.cpp">
+      <Filter>ExEngine\physics</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -423,6 +438,24 @@
     </ClInclude>
     <ClInclude Include="HelloLevel2D.h">
       <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ExEngine\physics\SphereCollider.h">
+      <Filter>ExEngine\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysicsBall.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\MiniEngine\time\Stopwatch.h">
+      <Filter>MiniEngine\time</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\MiniEngine\time\GameTime.h">
+      <Filter>MiniEngine\time</Filter>
+    </ClInclude>
+    <ClInclude Include="Seesaw.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ExEngine\physics\BoxCollider.h">
+      <Filter>ExEngine\physics</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
