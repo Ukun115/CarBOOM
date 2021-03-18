@@ -485,11 +485,11 @@ class Application(tk.Frame):
                 file_name = myimg.file_name
                 dot_number = file_name.rfind('.')
                 slash_number = file_name.rfind('/')
-                file_name = file_name[slash_number:dot_number]
+                file_name = file_name[slash_number+1:dot_number]
 
 
                 #.ddsを加える
-                dds_file_path+=file_name + '.dds'
+                dds_file_path=file_name + '.dds'
 
                 #.ddsの場合のファイルパスを書き出す
                 file.write(bytes((str(len(dds_file_path)) + ',').encode()))
