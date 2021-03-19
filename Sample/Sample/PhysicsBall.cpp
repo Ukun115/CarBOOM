@@ -14,12 +14,22 @@ bool PhysicsBall::Start()
 	
 	//„‘Ì‚ð‰Šú‰»B
 	RigidBodyInitData rbInitData;
+	//Ž¿—Ê‚ðÝ’è‚·‚éB
 	rbInitData.mass = 3.0f;
 	rbInitData.collider = &m_sphereCollider;
 	rbInitData.pos.y = 100.0f;
-	rbInitData.localInteria.Set(0.5f, 0.5f, 0.5f);
+	//‰ñ“]‚Ì‚µ‚â‚·‚³‚ðÝ’è‚·‚éB0`1
+	rbInitData.localInteria.Set(
+		0.5f, 
+		0.5f, 
+		0.5f
+	);
 	m_rigidBody.Init(rbInitData);
+	//–€ŽC—Í‚ðÝ’è‚·‚éB0`10
 	m_rigidBody.SetFriction(10.0f);
+	//üŒ`ˆÚ“®‚·‚é—v‘f‚ðÝ’è‚·‚éB
+	//0‚ðŽw’è‚µ‚½Ž²‚ÍˆÚ“®‚µ‚È‚¢B
+	m_rigidBody.SetLinearFactor(1.0f, 1.0f, 0.0f);
 	return true;
 }
 void PhysicsBall::Update()
@@ -31,12 +41,16 @@ void PhysicsBall::Update()
 	//„‘Ì‚ÌÀ•W‚Æ‰ñ“]‚ðƒ‚ƒfƒ‹‚É”½‰fB
 	m_model.UpdateWorldMatrix(pos, rot, g_vec3One);
 	//„‘Ì‚É—Í‚ð‰Á‚¦‚éB
-	Vector3 linearVelocity;
+	Vector3 force;
+	force.x = -g_pad[0]->GetLStickXF() * 500.0f;
+	force.z = -g_pad[0]->GetLStickYF() * 500.0f;
+	//—Í‚ð‰Á‚¦‚é
+	m_rigidBody.AddForce(
+		force,		//—Í
+		g_vec3Zero	//—Í‚ð‰Á‚¦‚é„‘Ì‚Ì‘Š‘ÎˆÊ’u
+	);
 
-	linearVelocity.x = -g_pad[0]->GetLStickXF() * 500.0f;
-	linearVelocity.z = -g_pad[0]->GetLStickYF() * 500.0f;
-	m_rigidBody.AddForce(linearVelocity, g_vec3Zero);
-	m_rigidBody.SetLinearFactor( 1.0f, 1.0f, 0.0f );
+	
 	Vector3 toCamere = g_camera3D->GetPosition() - g_camera3D->GetTarget();
 	g_camera3D->SetTarget(pos);
 	toCamere.y = 100.0f;
