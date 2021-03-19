@@ -31,7 +31,7 @@ bool HelloLevel2D::Start()
 			//Level2DクラスのSpriteで画像が読み込まれます。
 			return false;
 		}
-		return true;
+		return false;
 	});
 
 	return true;
@@ -39,6 +39,10 @@ bool HelloLevel2D::Start()
 
 void HelloLevel2D::Update()
 {
+	//タイトルを上下に動かす。
+	static float t = 0.0f;
+	t += g_gameTime->GetFrameDeltaTime();
+	m_position.y += sinf( t );
 	m_sprite.Update(m_position, Quaternion::Identity, m_scale);
 	//レベル2DクラスのSpriteの更新処理。
 	m_level2D.Update();

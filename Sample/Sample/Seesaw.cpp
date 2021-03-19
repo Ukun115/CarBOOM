@@ -59,6 +59,7 @@ void Seesaw::Update()
 	angularVel *= 0.98f;
 
 	m_rigidBody.SetAngularVelocity(angularVel);
+	
 	//„‘Ì‚ÌÀ•W‚Æ‰ñ“]‚ğƒ‚ƒfƒ‹‚É”½‰fB
 	m_model.UpdateWorldMatrix(pos, rot, g_vec3One);
 }
