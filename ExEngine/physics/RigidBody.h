@@ -107,20 +107,45 @@ public:
 		m_rigidBody->setFriction(friction);
 		m_rigidBody->setRollingFriction(friction);
 	}
+	/// <summary>
+	/// 移動可能な軸を設定。
+	/// </summary>
+	/// <param name="linearFactor"></param>
 	void SetLinearFactor(float x, float y, float z)
 	{
 		Vector3 v = { x, y, z };
 		SetLinearFactor(v);
 	}
-	/// <summary>
-	/// 移動可能な軸を設定。
-	/// </summary>
-	/// <param name="linearFactor"></param>
 	void SetLinearFactor(Vector3& linearFactor)
 	{
 		btVector3 v;
 		v.setValue(linearFactor.x, linearFactor.y, linearFactor.z);
 		m_rigidBody->setLinearFactor(v);
+	}
+	/// <summary>
+	/// 角速度を設定する
+	/// </summary>
+	/// <param name="vel"></param>
+	void SetAngularVelocity(Vector3 vel)
+	{
+		btVector3 v;
+		v.setValue(vel.x, vel.y, vel.z);
+		m_rigidBody->setAngularVelocity(v);
+		m_rigidBody->activate();
+	}
+	/// <summary>
+	/// 回転可能な軸を設定する。
+	/// </summary>
+	/// <param name="angluarFactor"></param>
+	void SetAngularFactor(Vector3 angluarFactor)
+	{
+		btVector3 v;
+		v.setValue(angluarFactor.x, angluarFactor.y, angluarFactor.z);
+		m_rigidBody->setAngularFactor(v);
+	}
+	void SetAngularFactor(float x, float y, float z)
+	{
+		SetAngularFactor({ x, y, z });
 	}
 private:
 	std::unique_ptr<btRigidBody>			m_rigidBody;		//剛体。
