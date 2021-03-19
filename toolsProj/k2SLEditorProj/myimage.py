@@ -117,8 +117,11 @@ class MyImage():
             #p_abs = pathlib.Path(file)
             #file = p_abs.relative_to()
             #self.file_name = file
-            self.file_name = os.path.relpath(file)
-            self.file_name = self.file_name.replace('\\','/')
+            try:
+                self.file_name = os.path.relpath(file)
+                self.file_name = self.file_name.replace('\\','/')
+            except:
+                self.file_name = file
 
 
             if self.name != 'rect':
