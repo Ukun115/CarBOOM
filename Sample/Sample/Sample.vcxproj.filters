@@ -51,6 +51,9 @@
     <Filter Include="MiniEngine\time">
       <UniqueIdentifier>{79e79c47-a9d8-4c65-a8cd-e4933f43fe05}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ExEngine\effect">
+      <UniqueIdentifier>{98180f29-4136-4cd9-82ce-8e31f75f6688}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -238,6 +241,12 @@
     </ClCompile>
     <ClCompile Include="..\..\ExEngine\physics\BoxCollider.cpp">
       <Filter>ExEngine\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ExEngine\effect\EffectEngine.cpp">
+      <Filter>ExEngine\effect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ExEngine\effect\Effect.cpp">
+      <Filter>ExEngine\effect</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -456,6 +465,12 @@
     </ClInclude>
     <ClInclude Include="..\..\ExEngine\physics\BoxCollider.h">
       <Filter>ExEngine\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ExEngine\effect\EffectEngine.h">
+      <Filter>ExEngine\effect</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ExEngine\effect\Effect.h">
+      <Filter>ExEngine\effect</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

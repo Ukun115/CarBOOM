@@ -7,6 +7,7 @@
 #include "HelloLevel2D.h"
 #include "PhysicsBall.h"
 #include "Seesaw.h"
+#include "effect/effect.h"
 
 ///////////////////////////////////////////////////////////////////
 // ウィンドウプログラムのメイン関数。
@@ -23,27 +24,56 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	//ゲームオブジェクトマネージャーのインスタンスを作成する。
 	GameObjectManager::CreateInstance();
 	PhysicsWorld::CreateInstance();
+
+	//step-1 エフェクトエンジンのインスタンスを作成する。
+	EffectEngine::CreateInstance();
+
 	
-	//プレイヤーを生成。
-	//NewGO<Player>(0);
-	//背景を生成。
-	NewGO<Background>(0);
-	////フォント表示のサンプルを生成
-	NewGO<HelloFont>(0);
-	////2D表示のサンプルを生成。
-	NewGO<Hello2D>(0);
-	////レベル2Dのサンプルを生成。
-	NewGO<HelloLevel2D>(0);
-	NewGO< PhysicsBall>(0);
-	NewGO<Seesaw>(0);
 	//////////////////////////////////////
 	// 初期化を行うコードを書くのはここまで！！！
 	//////////////////////////////////////
 	auto& renderContext = g_graphicsEngine->GetRenderContext();
 
+	//step-2 レーザーエフェクトの初期化。
+	Effect laserEffect;
+	laserEffect.Init(u"Assets/effect/laser.efk");
+
+	Effect laserEffect2;
+	laserEffect2.Init(u"Assets/effect/laser2.efk");
+
 	// ここからゲームループ。
 	while (DispatchWindowMessage())
 	{
+		if (g_pad[0]->IsTrigger(enButtonA)) {
+			//再生開始。
+			laserEffect.Play();
+		}
+		if (g_pad[0]->IsTrigger(enButtonB)) {
+			//再生開始。
+			laserEffect2.Play();
+		}
+		//step-3 エフェクトを動かす。
+		
+		auto pos = laserEffect.GetPosition();
+		pos.x += g_pad[0]->GetLStickXF();
+		pos.z += g_pad[0]->GetLStickYF();
+
+		auto rot = laserEffect.GetRotation();
+		rot.AddRotationY(g_pad[0]->GetRStickXF() * 0.1f);
+
+		laserEffect.SetPosition(pos);
+		laserEffect.SetRotation(rot);
+
+		pos = laserEffect2.GetPosition();
+		pos.x += g_pad[0]->IsPress(enButtonLeft);
+		pos.x -= g_pad[0]->IsPress(enButtonRight);
+		laserEffect2.SetPosition(pos);
+
+
+		//step-4 エフェクトのワールド行列を更新する。
+		laserEffect.Update();
+		laserEffect2.Update();
+
 		//レンダリング開始。
 		g_engine->BeginFrame();
 		
@@ -53,9 +83,14 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 		//物理ワールドの更新。
 		PhysicsWorld::GetInstance()->Update(g_gameTime->GetFrameDeltaTime());
 
+		//step-5 エフェクトエンジンの更新。
+		EffectEngine::GetInstance()->Update(g_gameTime->GetFrameDeltaTime());
+
 		//登録されているゲームオブジェクトの描画関数を呼び出す。
 		GameObjectManager::GetInstance()->ExecuteRender(renderContext);
 
+		//step-6 エフェクトのドロー。
+		EffectEngine::GetInstance()->Draw();
 		
 
 		g_engine->EndFrame();

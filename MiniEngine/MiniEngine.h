@@ -36,6 +36,7 @@
 #include "math/Vector.h"
 #include "math/Matrix.h"
 
+#include "TResourceBank.h"
 #include "tkEngine.h"
 #include "VertexBuffer.h"
 #include "IndexBuffer.h"

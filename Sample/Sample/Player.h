@@ -34,6 +34,7 @@ private:
 	Animation m_animation;	//アニメション再生処理。
 	AnimationClip m_animationClips[enAnimClip_Num];	//アニメーションクリップ。
 	Skeleton m_skeleton;	//スケルトン。
+	Quaternion m_rot;
 	CharacterController m_charaCon;
 };
 

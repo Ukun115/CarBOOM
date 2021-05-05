@@ -62,10 +62,12 @@ void Player::Update()
 	m_animation.Progress(g_gameTime->GetFrameDeltaTime());
 
 	Vector3 moveSpeed;
-	moveSpeed.x = g_pad[0]->GetLStickXF() * -1.0f;
-	moveSpeed.z = g_pad[0]->GetLStickYF() * -1.0f;
+	moveSpeed.x = g_pad[0]->GetLStickXF() * 1.0f;
+	moveSpeed.z = g_pad[0]->GetLStickYF() * 1.0f;
 	m_charaCon.Execute(moveSpeed, 1.0f);
-	m_model.UpdateWorldMatrix(m_charaCon.GetPosition(), g_quatIdentity, g_vec3One);
+
+	m_rot.AddRotationY(g_pad[0]->GetRStickXF() * 0.1f);
+	m_model.UpdateWorldMatrix(m_charaCon.GetPosition(), m_rot, g_vec3One);
 }
 void Player::Render(RenderContext& rc)
 {

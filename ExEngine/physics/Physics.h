@@ -17,7 +17,9 @@ class PhysicsWorld
 public:
 	static void CreateInstance()
 	{
-		m_instance = new PhysicsWorld();
+		if (m_instance == nullptr) {
+			m_instance = new PhysicsWorld();
+		}
 	}
 	static PhysicsWorld* GetInstance()
 	{
@@ -26,6 +28,7 @@ public:
 	static void DeleteInstance()
 	{
 		delete m_instance;
+		m_instance = nullptr;
 	}
 	
 	void Update(float deltaTime);
