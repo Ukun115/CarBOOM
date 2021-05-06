@@ -20,7 +20,7 @@ EffectEngine::EffectEngine()
 		3, 
 		&format,
 		1, 
-		DXGI_FORMAT_UNKNOWN, 
+		DXGI_FORMAT_D32_FLOAT,
 		false, 
 		8000
 	);
