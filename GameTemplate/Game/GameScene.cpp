@@ -1,23 +1,15 @@
 #include "stdafx.h"
 #include "GameScene.h"
-#include "DirectionLight.h"
 #include "PointLight.h"
 #include "ResultScene.h"
+#include "SkinModelRender.h"
 
 bool GameScene::Start()
 {
-	//ディレクションライトをロード
-	m_directionlight = NewGO<DirectionLight>(0);
-
-	//ポイントライトをロード
-	m_pointlight = NewGO<PointLight>(0);
-
 	//モデルをロード
 	m_skinmodelrender = NewGO<SkinModelRender>(0);
 	//モデルのファイルパスを設定。
 	m_skinmodelrender->Init("Assets/modelData/unityChan.tkm");
-	//モデルにディレクションライトの設定
-	m_skinmodelrender->SetDirLigData(directionLig);
 
 	//Start関数のreturn
 	return true;
@@ -25,7 +17,7 @@ bool GameScene::Start()
 
 GameScene::~GameScene()
 {
-
+	DeleteGO(m_skinmodelrender);
 }
 
 void GameScene::Update()

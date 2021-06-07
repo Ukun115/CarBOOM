@@ -8,7 +8,7 @@ struct PoiLigData {
 	float ptRange;			//‰e‹¿”ÍˆÍ
 };
 
-class PointLight
+class PointLight : public IGameObject
 {
 private:
 	bool Start();

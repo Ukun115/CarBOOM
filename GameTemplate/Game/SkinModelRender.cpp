@@ -22,6 +22,12 @@ void SkinModelRender::Update()
 
 void SkinModelRender::Init(const char* tkmFilePath)
 {
+	DirectionLight* m_directionlight = FindGO<DirectionLight>("directionlight");
+
+	//ディレクションライトクラスのオブジェクトが所持しているライトの構造体データを
+	//このオブジェクトが所持している構造体データに渡す。
+	m_dirLigData = m_directionlight->GetData();
+
 	//tkmファイルのファイルパスを設定する。
 	m_modelInitData.m_tkmFilePath = tkmFilePath;
 	//modelInitData.m_tkmFilePath = "Assets/modelData/unityChan.tkm";
@@ -29,7 +35,7 @@ void SkinModelRender::Init(const char* tkmFilePath)
 	m_modelInitData.m_fxFilePath = "Assets/shader/model.fx";
 	//モデルの初期化情報を定数バッファとしてディスクリプタヒープに
 	//登録するためにモデルの初期化情報として渡す。
-	m_modelInitData.m_expandConstantBuffer = m_dirLigData;
+	m_modelInitData.m_expandConstantBuffer = &m_dirLigData;
 	m_modelInitData.m_expandConstantBufferSize = sizeof(m_dirLigData);
 	//初期化情報を使ってモデル表示処理を初期化する
 	m_model.Init(m_modelInitData);

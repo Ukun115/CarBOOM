@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "system/system.h"
+#include "DirectionLight.h"
 #include "TitleScene.h"
 
 
@@ -24,14 +25,18 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	//////////////////////////////////////
 	auto& renderContext = g_graphicsEngine->GetRenderContext();
 
+	//ディレクションライトをロード
+	DirectionLight* m_directionlight = NewGO<DirectionLight>(0, "directionlight");
+	m_directionlight->SetDirectionData();
+
+	//タイトルシーンクラスから開始
+	TitleScene* titleScene = NewGO<TitleScene>(0);
+
 	// ここからゲームループ。
 	while (DispatchWindowMessage())
 	{
 		//レンダリング開始。
 		g_engine->BeginFrame();
-
-		//タイトルシーンクラスから開始
-		NewGO<TitleScene>(0);
 
 		//////////////////////////////////////
 		//ここから絵を描くコードを記述する。

@@ -38,7 +38,7 @@ cbuffer ModelCb : register(b0){
 cbuffer DirectionLightCb : register(b1)
 {
 	float3 ligDirection;	//ライトの方向
-	float4 ligColor;		//ライトの色
+	float3 ligColor;		//ライトの色
 
 	//視点のデータにアクセルするための変数を定数バッファに追加する
 	float3 eyePos;			//視点の位置
@@ -149,6 +149,8 @@ float4 PSMain(SPSIn psIn) : SV_Target0
 	float PI = 3.141592;
 	diffuseLig /= PI;
 
+	//return float4(diffuseLig, 1.0f);
+
 
 	///ディレクションライトのフォン鏡面反射
 
@@ -173,7 +175,7 @@ float4 PSMain(SPSIn psIn) : SV_Target0
 	float3 lig = diffuseLig + specularLig;
 
 	//ライトのすべての要素を一律で底上げする。
-	//ちょっと明るくしている（環境光）
+	//ちょっと明るくしている（環境光(アンビエントライト)）
 	lig.x += 0.3f;
 	lig.y += 0.3f;
 	lig.z += 0.3f;
@@ -186,7 +188,7 @@ float4 PSMain(SPSIn psIn) : SV_Target0
 
 
 	//これで途中までの光の当たり具合を返す。デバック用
-	//return float4(specularLig, 1.0f);
+	//return float4(ligColor, 1.0f);
 
 
 	//最終カラーを返す

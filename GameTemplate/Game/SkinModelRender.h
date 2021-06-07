@@ -4,11 +4,12 @@ class Model;
 
 class SkinModelRender : public IGameObject
 {
-private:
-
+public:
 	bool Start();
 	~SkinModelRender();
 	void Update();
+
+private:
 
 	Vector3    m_pos = Vector3::Zero;					//位置
 	Quaternion m_rot = Quaternion::Identity;			//回転
@@ -19,7 +20,10 @@ private:
 	//m_modelはモデルクラス
 	Model m_model;
 	//ディレクションライトの構造体の中身を入れられる箱
-	DirLigData* m_dirLigData = nullptr;
+	DirLigData m_dirLigData;
+
+	//ディレクションライトのクラス
+	//DirectionLight* m_directionlight = nullptr;		//ディレクションライトクラス型のポインタを作成
 
 public:
 	//3Dモデルをロードするための情報を設定する関数
@@ -36,5 +40,5 @@ public:
 	void Render(RenderContext& rc);
 
 	//ディレクションライトクラスの構造体の中の情報をm_dirLigDataにセット
-	void SetDirLigData(DirLigData& ligData) { m_dirLigData = &ligData; }
+	void SetDirLigData(DirLigData ligData) { m_dirLigData = ligData; }
 };

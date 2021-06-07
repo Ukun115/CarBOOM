@@ -73,6 +73,7 @@ public:
 	T* NewGameObject(int prio, const char* objectName)
 	{
 		T* newObject = new T();
+		newObject->SetName(objectName);
 		m_gameObjectListArray.at(prio).push_back(newObject);
 		return newObject;
 	}
