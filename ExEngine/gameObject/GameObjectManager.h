@@ -22,7 +22,7 @@
 ///		->グローバル変数の機能
 /// 2　インスタンスの数を一つに制限する機能。
 /// </reramk>
-/// 
+///
 class GameObjectManager {
 private:
 	GameObjectManager();
@@ -60,8 +60,8 @@ public:
 	/// </summary>
 	/// <param name="rc"></param>
 	void ExecuteRender(RenderContext& rc);
-	
-	
+
+
 	/*!
 	*@brief	ゲームオブジェクトのnew
 	*@details
@@ -94,7 +94,7 @@ public:
 	template<class T>
 	T* FindGameObject(const char* objectName)
 	{
-		
+
 		for (auto goList : m_gameObjectListArray) {
 			for (auto go : goList) {
 				if (go->IsMatchName(objectName)) {
@@ -104,7 +104,7 @@ public:
 				}
 			}
 		}
-		
+
 		//見つからなかった。
 		return nullptr;
 	}
@@ -124,7 +124,7 @@ public:
 			}
 		}
 	}
-	
+
 private:
 	enum { GAME_OBJECT_PRIO_MAX = 255 };		//!<ゲームオブジェクトの優先度の最大値。
 	typedef std::list<IGameObject*>	 GameObjectList;
@@ -167,7 +167,7 @@ static inline T* NewGO( int priority, const char* objectName = nullptr)
 {
 	return GameObjectManager::GetInstance()->NewGameObject<T>( priority, objectName);
 }
-	
+
 /*!
 	*@brief	ゲームオブジェクト削除のヘルパー関数。
 	* NewGOを使用して作成したオブジェクトは必ずDeleteGOを実行するように。
@@ -180,6 +180,5 @@ static inline void DeleteGO(IGameObject* go)
 
 
 
-	
 
- 
+

@@ -1,4 +1,5 @@
 #pragma once
+#include "DirectionLight.h"
 class Model;
 
 class SkinModelRender : public IGameObject
