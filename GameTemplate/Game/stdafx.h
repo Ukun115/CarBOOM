@@ -3,3 +3,7 @@
 
 #include "MiniEngine.h"
 #include "ExEngine.h"
+
+//ゲーム全体でいつでも使うのでstdafx.hでインクルードする
+
+#include "SkinModelRender.h"

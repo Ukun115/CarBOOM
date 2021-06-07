@@ -80,7 +80,7 @@ public:
 	/// <summary>
 	/// カメラの座標を設定する。
 	/// </summary>
-	void SetPosition( const Vector3& pos ) 
+	void SetPosition( const Vector3& pos )
 	{
 		m_position = pos;
 		m_isDirty = true;
@@ -133,7 +133,7 @@ public:
 	/// <summary>
 	/// ビュー行列の逆行列を取得。
 	/// </summary>
-	const Matrix& GetViewMatrixInv() 
+	const Matrix& GetViewMatrixInv()
 	{
 		if (m_isDirty) {
 			//更新する必要がある。
@@ -144,7 +144,7 @@ public:
 	/// <summary>
 	/// ビュー行列を取得。
 	/// </summary>
-	const Matrix& GetViewMatrix() 
+	const Matrix& GetViewMatrix()
 	{
 		if (m_isDirty) {
 			//更新する必要がある。
@@ -155,7 +155,7 @@ public:
 	/// <summary>
 	/// プロジェクション行列を取得。
 	/// </summary>
-	const Matrix& GetProjectionMatrix() 
+	const Matrix& GetProjectionMatrix()
 	{
 		if (m_isDirty) {
 			//更新する必要がある。
@@ -166,7 +166,7 @@ public:
 	/// <summary>
 	/// ビュー×プロジェクション行列を取得。
 	/// </summary>
-	const Matrix& GetViewProjectionMatrix() 
+	const Matrix& GetViewProjectionMatrix()
 	{
 		if (m_isDirty) {
 			//更新する必要がある。
@@ -177,7 +177,7 @@ public:
 	/// <summary>
 	/// カメラの回転行列を取得。
 	/// </summary>
-	const Matrix& GetCameraRotation() 
+	const Matrix& GetCameraRotation()
 	{
 		if (m_isDirty) {
 			//更新する必要がある。
@@ -316,7 +316,7 @@ public:
 	/// カメラのコピーを作成。
 	/// </summary>
 	/// <param name="dst"></param>
-	void CopyTo(Camera& dst) 
+	void CopyTo(Camera& dst)
 	{
 		memcpy(&dst, this, sizeof(dst));
 		m_isDirty = true;
