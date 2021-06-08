@@ -2,6 +2,7 @@
 #include "system/system.h"
 #include "DirectionLight.h"
 #include "PointLight.h"
+#include "SpotLight.h"
 #include "TitleScene.h"
 
 
@@ -33,6 +34,10 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	//ポイントライトをロード
 	PointLight* m_pointlight = NewGO<PointLight>(0, "pointlight");
 	m_pointlight->SetPointLightData();
+
+	//スポットライトをロード
+	SpotLight* m_spotlight = NewGO<SpotLight>(0, "spotlight");
+	m_spotlight->SetSpotLightData();
 
 	//タイトルシーンクラスから開始
 	TitleScene* titleScene = NewGO<TitleScene>(0);
