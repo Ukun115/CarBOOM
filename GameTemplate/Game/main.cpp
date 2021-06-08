@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "system/system.h"
 #include "DirectionLight.h"
+#include "PointLight.h"
 #include "TitleScene.h"
 
 
@@ -27,7 +28,11 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 
 	//ディレクションライトをロード
 	DirectionLight* m_directionlight = NewGO<DirectionLight>(0, "directionlight");
-	m_directionlight->SetDirectionData();
+	m_directionlight->SetDirectionLightData();
+
+	//ポイントライトをロード
+	PointLight* m_pointlight = NewGO<PointLight>(0, "pointlight");
+	m_pointlight->SetPointLightData();
 
 	//タイトルシーンクラスから開始
 	TitleScene* titleScene = NewGO<TitleScene>(0);
@@ -44,6 +49,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 
 		GameObjectManager::GetInstance()->ExecuteUpdate();
 		GameObjectManager::GetInstance()->ExecuteRender(renderContext);
+
 
 		//////////////////////////////////////
 		//絵を描くコードを書くのはここまで！！！

@@ -5,7 +5,10 @@
 
 bool TitleScene::Start()
 {
-
+	////ƒTƒ“ƒvƒ‹”wŒi‰æ‘œ‚ğ‰Šú‰»B
+	//m_spriteRender = NewGO<SpriteRender>(0);
+	//m_spriteRender->Init("Assets/image/eheheNS.dds", 1300.0f, 750.0f);
+	//m_spriteRender->SetPosition(Vector3::Zero);
 
 	//StartŠÖ”‚Ìreturn•¶
 	return true;
@@ -13,7 +16,7 @@ bool TitleScene::Start()
 
 TitleScene::~TitleScene()
 {
-
+	DeleteGO(m_spriteRender);
 }
 
 void TitleScene::Update()

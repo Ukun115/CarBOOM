@@ -7,3 +7,4 @@
 //ゲーム全体でいつでも使うのでstdafx.hでインクルードする
 
 #include "SkinModelRender.h"
+#include "SpriteRender.h"

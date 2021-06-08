@@ -11,13 +11,19 @@ struct PoiLigData {
 class PointLight : public IGameObject
 {
 private:
-	bool Start();
-	~PointLight();
-	void Update();
 
 	// ポイントライトのデータを作成
 	PoiLigData PointLig;
 
 public:
+	bool Start();
+	~PointLight();
+	void Update();
 
+	void SetPointLightData();
+
+	PoiLigData& GetData()
+	{
+		return PointLig;
+	}
 };

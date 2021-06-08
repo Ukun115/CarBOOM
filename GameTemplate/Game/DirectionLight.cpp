@@ -19,7 +19,7 @@ void DirectionLight::Update()
 
 }
 
-void DirectionLight::SetDirectionData()
+void DirectionLight::SetDirectionLightData()
 {
 	//ディレクションライトの方向を設定
 	directionLig.ligDirection.x = 1.0f;
@@ -28,9 +28,9 @@ void DirectionLight::SetDirectionData()
 	//ディレクションライトを正規化して大きさ1のベクトルにする
 	directionLig.ligDirection.Normalize();
 	//ディレクションライトの色を設定
-	directionLig.ligColor.x = 0.5f;
-	directionLig.ligColor.y = 0.5f;
-	directionLig.ligColor.z = 0.5f;
+	directionLig.ligColor.x = 1.0f;
+	directionLig.ligColor.y = 1.0f;
+	directionLig.ligColor.z = 1.0f;
 
 	//視点の位置を設定する
 	directionLig.eyePos = g_camera3D->GetPosition();

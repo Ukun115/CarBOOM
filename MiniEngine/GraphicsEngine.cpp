@@ -68,7 +68,7 @@ bool GraphicsEngine::Init(HWND hwnd, UINT frameBufferWidth, UINT frameBufferHeig
 	//
 	g_graphicsEngine = this;
 
-	
+
 
 
 	m_frameBufferWidth = frameBufferWidth;
@@ -94,7 +94,7 @@ bool GraphicsEngine::Init(HWND hwnd, UINT frameBufferWidth, UINT frameBufferHeig
 		MessageBox(hwnd, TEXT("スワップチェインの作成に失敗しました。"), TEXT("エラー"), MB_OK);
 		return false;
 	}
-	
+
 	//フレームバッファ用のディスクリプタヒープを作成する。
 	if (!CreateDescriptorHeapForFrameBuffer()) {
 		MessageBox(hwnd, TEXT("フレームバッファ用のディスクリプタヒープの作成に失敗しました。"), TEXT("エラー"), MB_OK);
@@ -135,7 +135,7 @@ bool GraphicsEngine::Init(HWND hwnd, UINT frameBufferWidth, UINT frameBufferHeig
 		MessageBox(hwnd, TEXT("GPUと同期をとるためのオブジェクトの作成に失敗しました。"), TEXT("エラー"), MB_OK);
 		return false;
 	}
-	
+
 	//レンダリングコンテキストの作成。
 	m_renderContext.Init(m_commandList);
 
@@ -181,7 +181,7 @@ bool GraphicsEngine::Init(HWND hwnd, UINT frameBufferWidth, UINT frameBufferHeig
 	m_directXTKGfxMemroy = std::make_unique<DirectX::GraphicsMemory>(m_d3dDevice);
 	//フォント描画エンジンを初期化。
 	m_fontEngine.Init();
-	
+
 	return true;
 }
 
@@ -220,7 +220,7 @@ bool GraphicsEngine::CreateD3DDevice( IDXGIFactory4* dxgiFactory )
 	for (int i = 0; dxgiFactory->EnumAdapters(i, &adapterTmp) != DXGI_ERROR_NOT_FOUND; i++) {
 		DXGI_ADAPTER_DESC desc;
 		adapterTmp->GetDesc(&desc);
-		
+
 		if (desc.DedicatedVideoMemory > videoMemorySize) {
 			//こちらのビデオメモリの方が多いので、こちらを使う。
 			adapterMaxVideoMemory = adapterTmp;

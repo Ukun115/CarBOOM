@@ -22,6 +22,8 @@ struct SPSIn {
 	float4 pos 			: SV_POSITION;	//スクリーン空間でのピクセルの座標。
 	float normal		: NORMAL;
 	float2 uv 			: TEXCOORD0;	//uv座標。
+
+	float4 worldPos : TEXCOORD1;
 };
 
 ////////////////////////////////////////////////
@@ -34,23 +36,22 @@ cbuffer ModelCb : register(b0){
 	float4x4 mProj;
 };
 
-//ディレクションライトのデータを受け取るための定数バッファ
-cbuffer DirectionLightCb : register(b1)
+//ライトのデータを受け取るための定数バッファ
+cbuffer LightCb : register(b1)
 {
-	float3 ligDirection;	//ライトの方向
-	float3 ligColor;		//ライトの色
+	//ディレクションライト
 
+	float3 dirLigDirection;	//ライトの方向
+	float3 dirLigColor;		//ライトの色
 	//視点のデータにアクセルするための変数を定数バッファに追加する
 	float3 eyePos;			//視点の位置
-};
 
-//ポイントライトのデータを受け取るための定数バッファ
-cbuffer PointLightCb : register(b2)
-{
-	float3 ptPosition;		//ライトの位置
-	float3 ptColor;			//ライトの色
-	float ptRange;			//ライトの影響範囲
-}
+	//ポイントライト
+
+	float3 ptLigPosition;		//ライトの位置
+	float3 ptLigColor;			//ライトの色
+	float  pLigtRange;			//ライトの影響範囲
+};
 
 
 ////////////////////////////////////////////////
@@ -97,6 +98,7 @@ SPSIn VSMainCore(SVSIn vsIn, uniform bool hasSkin)
 		m = mWorld;
 	}
 	psIn.pos = mul(m, vsIn.pos);
+	psIn.worldPos = psIn.pos;
 	psIn.pos = mul(mView, psIn.pos);
 	psIn.pos = mul(mProj, psIn.pos);
 
@@ -130,7 +132,7 @@ float4 PSMain(SPSIn psIn) : SV_Target0
 	///ディレクションライトのランバート拡散反射
 
 	//ピクセルの法線とライトの方向の内積を計算する
-	float t = dot(psIn.normal,ligDirection);
+	float t = dot(psIn.normal,dirLigDirection);
 	//内積の結果に-1を乗算する
 	t *= -1.0f;
 	//内積の結果が0以下なら0にする
@@ -139,23 +141,21 @@ float4 PSMain(SPSIn psIn) : SV_Target0
 		t = 0.0f;
 	}
 	//光が当たったサーフェイスから視点に伸びるベクトルを求める
-	float3 toEye = eyePos - psIn.pos;
+	float3 toEye = eyePos - psIn.worldPos;
 	//正規化して大きさ1のベクトルにする
 	toEye = normalize(toEye);
 	//ピクセルが受けている光を求める
-	float3 diffuseLig = ligColor * t;
+	float3 dirDiffuseLig = dirLigColor * t;
 
 	//ランバート拡散反射
 	float PI = 3.141592;
-	diffuseLig /= PI;
-
-	//return float4(diffuseLig, 1.0f);
+	dirDiffuseLig /= PI;
 
 
 	///ディレクションライトのフォン鏡面反射
 
 	//反射ベクトルを求める
-	float3 refVec = reflect(ligDirection, psIn.normal);
+	float3 refVec = reflect(dirLigDirection, psIn.normal);
 	//鏡面反射の強さを求める
 	//dot関数を利用しrefVecとtoEyeの内積を求める
 	t = dot(refVec, toEye);
@@ -169,10 +169,64 @@ float4 PSMain(SPSIn psIn) : SV_Target0
 	//鏡面反射の強さを絞る
 	t = pow(t, 5.0f);
 	//鏡面反射の光を求める
-	float3 specularLig = ligColor * t;
+	float3 dirSpecularLig = dirLigColor * t;
 
-	//拡散反射光と鏡面反射光を足し算して、最終的な光を求める
-	float3 lig = diffuseLig + specularLig;
+
+	///ポイントライトのランバート拡散反射とフォン鏡面反射
+
+	//このサーフェイスに入射しているポイントライトの光の向きを計算する
+	float3 ligDir = psIn.worldPos - ptLigPosition;
+	//正規化して大きさ1のベクトルにする
+	ligDir = normalize(ligDir);
+	//減衰なしのランバート拡散反射光を計算する
+	//ピクセルの法線とライトの方向の内積を計算する
+	t = dot(psIn.normal, ligDir) * -1.0f;
+	//内積の値を0以上の値にする
+	t = max(0.0f, t);
+
+	//ランバート拡散反射の光を求める
+	float3 ptDiffuseLig = ptLigColor * t;
+
+	//減衰なしのフォン鏡面反射光を計算する
+	//反射ベクトルを求める
+	refVec = reflect(ligDir, psIn.normal);
+	//光が当たったサーフェイスから視点に伸びるベクトルを求める
+	toEye = eyePos - psIn.worldPos;
+	//正規化して大きさ1のベクトルにする
+	toEye = normalize(toEye);
+	//鏡面反射の強さを求める
+	t = dot(refVec, toEye);
+	//鏡面反射の強さを0以上の数値にする
+	t = max(0.0f, t);
+	//鏡面反射の強さを絞る
+	t = pow(t, 5.0f);
+
+	//フォン鏡面反射の光を求める
+	float3 ptSpecularLig = ptLigColor * t;
+
+	//距離減衰の計算
+
+	//ポイントライトとの距離を計算する
+	float3 distance = length(psIn.worldPos - ptLigPosition);
+	//影響率は距離に比例して小さくなっていく
+	float affect = 1.0f - 1.0f / pLigtRange * distance;
+	//影響力がマイナスにならないようにする補正をかける
+	if (affect < 0.0f)
+	{
+		affect = 0.0f;
+	}
+	//影響の仕方を指数関数的にする
+	affect = pow(affect, 3.0f);
+	//拡散反射光と鏡面反射光に減衰率を乗算して影響を弱める
+	ptDiffuseLig *= affect;
+	ptSpecularLig *= affect;
+
+
+	//ディレクションライトの拡散反射光と鏡面反射光を足し算して、最終的な光を求める
+	float3 lig = dirDiffuseLig + dirSpecularLig;
+	//ポイントライトの拡散反射光と鏡面反射光を追加で足し算して、最終的な光を求める
+	lig += ptDiffuseLig + ptSpecularLig;
+
 
 	//ライトのすべての要素を一律で底上げする。
 	//ちょっと明るくしている（環境光(アンビエントライト)）
@@ -188,7 +242,7 @@ float4 PSMain(SPSIn psIn) : SV_Target0
 
 
 	//これで途中までの光の当たり具合を返す。デバック用
-	//return float4(ligColor, 1.0f);
+	//return float4(ptLigColor, 1.0f);
 
 
 	//最終カラーを返す

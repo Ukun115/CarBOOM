@@ -7,7 +7,7 @@
 class Texture;
 
 //スプライトに設定できる最大テクスチャ数。
-const int MAX_TEXTURE = 16;	
+const int MAX_TEXTURE = 16;
 //拡張SRVが設定されるレジスタの開始番号。
 const int EXPAND_SRV_REG__START_NO = 10;
 
@@ -76,6 +76,17 @@ public:
 	{
 		return m_isInited;
 	}
+
+	void SetPosition(const Vector3& pos) {
+		m_position = pos;
+	}
+	void SetRotation(const Quaternion& rot) {
+		m_rotation = rot;
+	}
+	void SetScale(const Vector3& sca) {
+		m_scale = sca;
+	}
+
 private:
 	/// <summary>
 	/// テクスチャを初期化。
@@ -113,6 +124,7 @@ private:
 	Texture m_textures[MAX_TEXTURE];	//テクスチャ。
 	Texture* m_textureExternal[MAX_TEXTURE] = {nullptr};	//外部から指定されたテクスチャ
 	Vector3 m_position ;				//座標。
+	Vector3 m_scale = { 1.0f,1.0f,1.0f };
 	Vector2 m_size;						//サイズ。
 	Quaternion m_rotation ;			//回転。
 	Matrix m_world;					//ワールド行列。

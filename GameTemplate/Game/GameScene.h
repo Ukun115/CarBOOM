@@ -13,7 +13,7 @@ private:
 	DirectionLight* m_directionlight;		//ディレクションライトクラス型のポインタを作成
 	PointLight* m_pointlight;				//ポイントライトクラス型
 	SkinModelRender* m_skinmodelrender;		//スキンモデルレンダークラス型
-
+	SkinModelRender* m_bgModel;		//スキンモデルレンダークラス型
 	DirLigData directionLig;				// ディレクションライトのデータを作成
 
 	Vector3 m_unityPos = Vector3::Zero;	//ユニティーちゃんの位置情報
