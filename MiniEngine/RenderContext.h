@@ -13,6 +13,14 @@ namespace raytracing{
 /// </summary>
 class RenderContext {
 public:
+	typedef enum {
+		RenderMode_Normal,
+		RenderMode_Shadow,
+		RenderMode_ZPrepass,
+		RenderMode_Font,
+
+		RenderMode_Num
+	}Render_Mode;
 	/// <summary>
 	/// 初期化。
 	/// </summary>
@@ -118,7 +126,7 @@ public:
 		m_descriptorHeaps[0] = descHeap;
 		m_commandList->SetDescriptorHeaps(1, m_descriptorHeaps);
 	}
-	
+
 	void SetDescriptorHeap(DescriptorHeap& descHeap);
 	void SetComputeDescriptorHeap(DescriptorHeap& descHeap);
 	/// <summary>
@@ -183,14 +191,14 @@ public:
 	/// <param name="renderTarget">レンダリングターゲット</param>
 	/// <param name="clearColor">クリアカラー</param>
 	void ClearRenderTargetViews(
-		int numRt, 
+		int numRt,
 		RenderTarget* renderTargets[]
 	);
 	void ClearRenderTargetView(D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle, const float* clearColor)
 	{
 		m_commandList->ClearRenderTargetView(rtvHandle, clearColor, 0, nullptr);
 	}
-	
+
 	/// <summary>
 	/// デプスステンシルビューをクリア
 	/// </summary>
@@ -287,7 +295,7 @@ public:
 	/// <param name="ThreadGroupCountX"></param>
 	/// <param name="ThreadGroupCountY"></param>
 	/// <param name="ThreadGroupCountZ"></param>
-	void Dispatch( 
+	void Dispatch(
 		UINT ThreadGroupCountX,
 		UINT ThreadGroupCountY,
 		UINT ThreadGroupCountZ )
@@ -318,6 +326,17 @@ public:
 	{
 		m_commandList->CopyResource(pDst, pSrc);
 	}
+
+	void SetRenderMode(Render_Mode mode) {
+
+		m_renderMode = mode;
+	}
+
+	Render_Mode GetRenderMode() {
+
+		return m_renderMode;
+	}
+
 private:
 
 	/// <summary>
@@ -357,5 +376,8 @@ private:
 	ID3D12DescriptorHeap* m_descriptorHeaps[MAX_DESCRIPTOR_HEAP];			//ディスクリプタヒープの配列。
 	ConstantBuffer* m_constantBuffers[MAX_CONSTANT_BUFFER] = { nullptr };	//定数バッファの配列。
 	Texture* m_shaderResources[MAX_SHADER_RESOURCE] = { nullptr };			//シェーダーリソースの配列。
+	D3D12_VIEWPORT m_viewport;
+
+	Render_Mode m_renderMode = RenderMode_Normal;
 };
 

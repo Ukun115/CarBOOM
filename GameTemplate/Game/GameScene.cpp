@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include "GameScene.h"
 #include "ResultScene.h"
-#include "SkinModelRender.h"
 
 bool GameScene::Start()
 {
@@ -27,25 +26,12 @@ GameScene::~GameScene()
 {
 
 	DeleteGO(m_skinmodelrender);
+	DeleteGO(m_bgModel);
 }
 
 void GameScene::Update()
 {
-	//動くかどうかのテスト/////////////////////////////
-	if (g_pad[0]->IsPress(enButtonRight)) {
-		m_unityPos.x += 1.0f;
-	}
-	if (g_pad[0]->IsPress(enButtonLeft)) {
-		m_unityPos.x -= 1.0f;
-	}
-	if (g_pad[0]->IsPress(enButtonUp)) {
-		m_unityPos.z += 1.0f;
-	}
-	if (g_pad[0]->IsPress(enButtonDown)) {
-		m_unityPos.z -= 1.0f;
-	}
-	m_skinmodelrender->SetPosition(m_unityPos);	//位置情報更新
-	//////////////////////////////////////////////////////////////////////
+
 
 	//Aボタン(キーボード：J)が押されたら、
 	if (g_pad[0]->IsTrigger(enButtonA))

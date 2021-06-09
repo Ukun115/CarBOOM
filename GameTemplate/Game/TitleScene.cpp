@@ -5,10 +5,10 @@
 
 bool TitleScene::Start()
 {
-	////サンプル背景画像を初期化。
-	//m_spriteRender = NewGO<SpriteRender>(0);
-	//m_spriteRender->Init("Assets/image/eheheNS.dds", 1300.0f, 750.0f);
-	//m_spriteRender->SetPosition(Vector3::Zero);
+	//サンプル背景画像を初期化。
+	m_spriteRender = NewGO<SpriteRender>(0);
+	m_spriteRender->Init("Assets/image/eheheNS.dds", 1300.0f, 750.0f);
+	m_spriteRender->SetPosition(Vector3::Zero);
 
 	//Start関数のreturn文
 	return true;

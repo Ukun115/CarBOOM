@@ -16,6 +16,7 @@ public:
 	bool Start();
 	~SpriteRender();
 	void Update();
+	void Render(RenderContext& renderContext);
 
 	void Init(const char* filepath, float width, float height, AlphaBlendMode mode = AlphaBlendMode::AlphaBlendMode_Trans);
 
@@ -27,11 +28,4 @@ public:
 	void SetScale(const Vector3& sca) { m_sca = sca; }
 	//色のセット関数
 	void SetMulColor(const Vector4& mulCol) { m_mulColor = mulCol; }
-
-	// 関数宣言
-	void InitRootSignature(RootSignature& rs);
-	void InitPipelineState(PipelineState& pipelineState, RootSignature& rs, Shader& vs, Shader& ps);
-
-
-
 };
