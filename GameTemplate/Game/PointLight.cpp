@@ -28,16 +28,3 @@ void PointLight::Update()
 	//}
 }
 
-void PointLight::SetPointLightData()
-{
-	//ポイントライトの座標を設定
-	PointLig.ptPosition.x = 0.0f;
-	PointLig.ptPosition.y = 0.0f;
-	PointLig.ptPosition.z = 0.0f;
-	//ポイントライトの色を設定
-	PointLig.ptColor.x = 1.0f;
-	PointLig.ptColor.y = 1.0f;
-	PointLig.ptColor.z = 1.0f;
-	//ポイントライトの影響範囲を設定
-	PointLig.ptRange = 100;
-}

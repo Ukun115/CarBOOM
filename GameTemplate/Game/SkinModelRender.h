@@ -1,16 +1,7 @@
 #pragma once
-#include "DirectionLight.h"
-#include "PointLight.h"
-#include "SpotLight.h"
+#include "Light.h"
 class Model;
-
-//ライト全体のデータ構造体
-struct ligData
-{
-	DirLigData  dirLigData;			//ディレクションライトの構造体データ
-	PoiLigData  poiLigData;			//ポイントライトの構造体データ
-	SpotLigData spotLigData;		//スポットライトの構造体データ
-};
+class Light;
 
 class SkinModelRender : public IGameObject
 {
@@ -30,11 +21,7 @@ private:
 	//m_modelはモデルクラス
 	Model m_model;
 
-	ligData m_ligData;
-
-	DirectionLight* m_directionLight = nullptr;
-	PointLight* m_pointLight = nullptr;
-	SpotLight* m_spotLight = nullptr;
+	Light* m_light;
 
 
 public:
@@ -52,13 +39,4 @@ public:
 
 	//描画関数
 	void Render(RenderContext& rc);
-
-	////ディレクションライトクラスの構造体の中の情報をdirLigDataにセット
-	//void SetDirLigData(const DirLigData ligData) { dirLigData = ligData; }
-
-	////ポイントライトクラスの構造体の中の情報をpoiLigDataにセット
-	//void SetPoiLigData(const PoiLigData ligData) { poiLigData = ligData; }
-
-	////スポットライトクラスの構造体の中の情報をspotLigDataにセット
-	//void SetSpotLigData(const SpotLigData ligData) { spotLigData = ligData; }
 };

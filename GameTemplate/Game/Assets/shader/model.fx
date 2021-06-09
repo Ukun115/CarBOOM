@@ -25,6 +25,27 @@ struct SPSIn {
 
 	float4 worldPos : TEXCOORD1;
 };
+//ディレクションライトの構造体の定義
+struct fxDirLigData {
+	float3 dirLigDirection;	//ライトの方向
+	float3 dirLigColor;		//ライトの色
+};
+
+//ポイントライトの構造体の定義
+struct fxPoiLigData {
+	float3 ptLigPosition;	//ライトの位置
+	float3 ptLigColor;		//ライトの色
+	float  ptLigRange;		//ライトの影響範囲
+};
+
+//スポットライトの構造体の定義
+struct fxSpotLigData {
+	float3 spLigPosition;		//ライトの位置
+	float3 spLigColor;			//ライトの色
+	float  spLigRange;			//ライトの射出範囲
+	float3 spLigDirection;		//ライトの射出方向
+	float  spLigAngle;			//ライトの射出角度
+};
 
 ////////////////////////////////////////////////
 // 定数バッファ。
@@ -40,25 +61,14 @@ cbuffer ModelCb : register(b0){
 cbuffer LightCb : register(b1)
 {
 	//ディレクションライト
-
-	float3 dirLigDirection;	//ライトの方向
-	float3 dirLigColor;		//ライトの色
-	//視点のデータにアクセルするための変数を定数バッファに追加する
-	float3 eyePos;			//視点の位置
-
+	fxDirLigData dirligdata;
 	//ポイントライト
-
-	float3 ptLigPosition;	//ライトの位置
-	float3 ptLigColor;		//ライトの色
-	float  ptLigRange;		//ライトの影響範囲
-
+	fxPoiLigData poiligdata;
 	//スポットライト
+	fxSpotLigData spotligdata;
 
-	float3 spLigPosition;		//ライトの位置
-	float3 spLigColor;			//ライトの色
-	float  spLigRange;			//ライトの射出範囲
-	float3 spLigDirection;		//ライトの射出方向
-	float  spLigAngle;			//ライトの射出角度
+	//視点のデータにアクセスするための変数を定数バッファに追加する
+	float3 eyePos;			//視点の位置
 };
 
 
@@ -140,7 +150,7 @@ float4 PSMain(SPSIn psIn) : SV_Target0
 	///ディレクションライトのランバート拡散反射
 
 	//ピクセルの法線とライトの方向の内積を計算する
-	float t = dot(psIn.normal,dirLigDirection);
+	float t = dot(psIn.normal,dirligdata.dirLigDirection);
 	//内積の結果に-1を乗算する
 	t *= -1.0f;
 	//内積の結果が0以下なら0にする
@@ -153,7 +163,7 @@ float4 PSMain(SPSIn psIn) : SV_Target0
 	//正規化して大きさ1のベクトルにする
 	toEye = normalize(toEye);
 	//ピクセルが受けている光を求める
-	float3 dirDiffuseLig = dirLigColor * t;
+	float3 dirDiffuseLig = dirligdata.dirLigColor * t;
 
 	//ランバート拡散反射
 	float PI = 3.141592;
@@ -163,7 +173,7 @@ float4 PSMain(SPSIn psIn) : SV_Target0
 	///ディレクションライトのフォン鏡面反射
 
 	//反射ベクトルを求める
-	float3 refVec = reflect(dirLigDirection, psIn.normal);
+	float3 refVec = reflect(dirligdata.dirLigDirection, psIn.normal);
 	//鏡面反射の強さを求める
 	//dot関数を利用しrefVecとtoEyeの内積を求める
 	t = dot(refVec, toEye);
@@ -177,13 +187,13 @@ float4 PSMain(SPSIn psIn) : SV_Target0
 	//鏡面反射の強さを絞る
 	t = pow(t, 5.0f);
 	//鏡面反射の光を求める
-	float3 dirSpecularLig = dirLigColor * t;
+	float3 dirSpecularLig = dirligdata.dirLigColor * t;
 
 
 	///ポイントライトのランバート拡散反射とフォン鏡面反射
 
 	//このサーフェイスに入射しているポイントライトの光の向きを計算する
-	float3 ptligDir = psIn.worldPos - ptLigPosition;
+	float3 ptligDir = psIn.worldPos - poiligdata.ptLigPosition;
 	//正規化して大きさ1のベクトルにする
 	ptligDir = normalize(ptligDir);
 	//減衰なしのランバート拡散反射光を計算する
@@ -192,7 +202,7 @@ float4 PSMain(SPSIn psIn) : SV_Target0
 	//内積の値を0以上の値にする
 	t = max(0.0f, t);
 	//ランバート拡散反射(距離減衰なし)の光を求める
-	float3 ptDiffuseLig = ptLigColor * t;
+	float3 ptDiffuseLig = poiligdata.ptLigColor * t;
 
 	//反射ベクトルを求める
 	refVec = reflect(ptligDir, psIn.normal);
@@ -207,14 +217,14 @@ float4 PSMain(SPSIn psIn) : SV_Target0
 	//鏡面反射の強さを絞る
 	t = pow(t, 5.0f);
 	//フォン鏡面反射(距離減衰なし)の光を求める
-	float3 ptSpecularLig = ptLigColor * t;
+	float3 ptSpecularLig = poiligdata.ptLigColor * t;
 
 	//ポイントライトの距離減衰の計算
 
 	//ポイントライトとの距離を計算する
-	float3 distance = length(psIn.worldPos - ptLigPosition);
+	float3 distance = length(psIn.worldPos - poiligdata.ptLigPosition);
 	//影響率は距離に比例して小さくなっていく
-	float affect = 1.0f - 1.0f / ptLigRange * distance;
+	float affect = 1.0f - 1.0f / poiligdata.ptLigRange * distance;
 	//影響力がマイナスにならないようにする補正をかける
 	if (affect < 0.0f)
 	{
@@ -231,7 +241,7 @@ float4 PSMain(SPSIn psIn) : SV_Target0
 
 	//このサーフェイスに入射しているスポットライトの光の向きを計算する
 	//ピクセルの座標-スポットライトの座標を計算
-	float3 spligDir = psIn.worldPos - spLigPosition;
+	float3 spligDir = psIn.worldPos - spotligdata.spLigPosition;
 	// 正規化して大きさ1のベクトルにする
 	spligDir = normalize(spligDir);
 	// ピクセルの法線とライトの方向の内積を計算する
@@ -239,7 +249,7 @@ float4 PSMain(SPSIn psIn) : SV_Target0
 	// 内積の値を0以上の値にする
 	t = max(0.0f, t);
 	//ランバート拡散反射(距離減衰なし)の光を求める
-	float3 spDiffuseLig = spLigColor* t;
+	float3 spDiffuseLig = spotligdata.spLigColor* t;
 
 	//反射ベクトルを求める
 	refVec = reflect(spligDir, psIn.normal);
@@ -254,14 +264,14 @@ float4 PSMain(SPSIn psIn) : SV_Target0
 	//鏡面反射の強さを絞る
 	t = pow(t, 5.0f);
 	//フォン鏡面反射(距離減衰なし)の光を求める
-	float3 spSpecularLig = spLigColor * t;
+	float3 spSpecularLig = spotligdata.spLigColor * t;
 
 	//スポットライトの距離減衰の計算
 
 	//スポットライトとの距離を計算する
-	distance = length(psIn.worldPos - spLigPosition);
+	distance = length(psIn.worldPos - spotligdata.spLigPosition);
 	//影響率は距離に比例して小さくなっていく
-	affect = 1.0f - 1.0f / spLigRange * distance;
+	affect = 1.0f - 1.0f / spotligdata.spLigRange * distance;
 	//影響力がマイナスにならないようにする補正をかける
 	if (affect < 0.0f)
 	{
@@ -275,12 +285,12 @@ float4 PSMain(SPSIn psIn) : SV_Target0
 
 	//入射光と射出方向の角度を求める
 	//dot関数を利用して内積を求める
-	float angle = dot(spligDir, spLigDirection);
+	float angle = dot(spligDir, spotligdata.spLigDirection);
 	//dot関数で求めた値をacos関数に渡して角度を求める
 	angle = acos(angle);
 	//角度による影響率を求める
 	//角度に比例して小さくなっていく影響率を計算する
-	affect = 1.0f - 1.0f / spLigAngle * angle;
+	affect = 1.0f - 1.0f / spotligdata.spLigAngle * angle;
 	//影響力がマイナスにならないように補正をかける
 	if (affect < 0.0f)
 	{
@@ -315,7 +325,7 @@ float4 PSMain(SPSIn psIn) : SV_Target0
 
 
 	//これで途中までの光の当たり具合を返す。デバック用
-	//return float4(ptLigColor, 1.0f);
+	//return float4(dirligdata.dirLigColor, 1.0f);
 
 
 	//最終カラーを返す

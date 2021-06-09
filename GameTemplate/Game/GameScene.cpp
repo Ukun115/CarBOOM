@@ -1,17 +1,21 @@
 #include "stdafx.h"
 #include "GameScene.h"
-#include "PointLight.h"
 #include "ResultScene.h"
 #include "SkinModelRender.h"
 
 bool GameScene::Start()
 {
-	//モデルをロード
+	//車（青）モデルをロード
 	m_skinmodelrender = NewGO<SkinModelRender>(0);
 	//モデルのファイルパスを設定。
 	m_skinmodelrender->Init("Assets/modelData/LowPoly_PlayerCar_Bule.tkm");
+	//モデルの大きさを2倍
 	m_skinmodelrender->SetScale({2,2,2});
+	//モデルのX座標を原点からずらしてポイントライトがわかりやすいようにする
+	m_unityPos.x = 50.0f;
+	m_skinmodelrender->SetPosition(m_unityPos);
 
+	//洞窟モデルをロード
 	m_bgModel = NewGO<SkinModelRender>(0);
 	m_bgModel->Init("Assets/modelData/bg/bg.tkm");
 
@@ -27,7 +31,7 @@ GameScene::~GameScene()
 
 void GameScene::Update()
 {
-	//ユニティーちゃんが動くかどうかのテスト/////////////////////////////
+	//動くかどうかのテスト/////////////////////////////
 	if (g_pad[0]->IsPress(enButtonRight)) {
 		m_unityPos.x += 1.0f;
 	}
