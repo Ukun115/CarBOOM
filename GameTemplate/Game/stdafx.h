@@ -9,3 +9,4 @@
 #include "SkinModelRender.h"
 #include "SpriteRender.h"
 #include "Light.h"
+#include "Sound.h"
