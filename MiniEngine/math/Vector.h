@@ -165,7 +165,7 @@ public:
 	{
 		Set(_v.x, _v.y, _v.z);
 	}
-		
+
 	/// <summary>
 	/// ベクトルの加算。
 	/// </summary>
@@ -173,7 +173,7 @@ public:
 	/// this += _v;
 	/// </remarks>
 	/// <param name="_v">加算されるベクトル。</param>
-	void Add( const Vector3& _v) 
+	void Add( const Vector3& _v)
 	{
 		DirectX::XMVECTOR xmv0 = DirectX::XMLoadFloat3(&vec);
 		DirectX::XMVECTOR xmv1 = DirectX::XMLoadFloat3(&_v.vec);
@@ -257,7 +257,7 @@ public:
 	/// <remarks>
 	/// this->x = v0.y * v1.z - v0.z * v1.y;
 	/// this->y = v0.z * v1.x - v0.x * v1.z;
-	/// this->z = v0.x * v1.y - v0.y * v1.x; 
+	/// this->z = v0.x * v1.y - v0.y * v1.x;
 	/// </remarks>
 	void Cross(const Vector3& v0, const Vector3& v1)
 	{
@@ -387,7 +387,7 @@ public:
 	/// Vector3 v = {20.0f, 30.0f, 40.0f};
 	///	v *= 10;
 	/// </remarks>
-	const Vector3& operator*=(float s) 
+	const Vector3& operator*=(float s)
 	{
 		Scale(s);
 		return *this;
@@ -466,7 +466,7 @@ public:
 		dst.z = z;
 		dst.w = w;
 	}
-	
+
 	/// <summary>
 	/// 代入演算子。
 	/// </summary>
@@ -663,7 +663,7 @@ const Vector4 g_vec4Yellow = { 1.0f, 1.0f, 0.0f, 1.0f };
 class Quaternion : public Vector4{
 public:
 	static const Quaternion Identity;		//!<単位クォータニオン。
-	Quaternion() 
+	Quaternion()
 	{
 		x = y = z = 0.0f;
 		w = 1.0f;
@@ -728,7 +728,7 @@ public:
 		SetRotationDeg(g_vec3AxisZ, angle);
 	}
 
-	
+
 
 	/// <summary>
 	/// 任意の軸周りの回転クォータニオンを作成。
@@ -857,7 +857,7 @@ public:
 		DirectX::XMStoreFloat3(&_v.vec, xmv);
 	}
 };
-	
+
 //整数型のベクトルクラス。
 __declspec(align(16)) class Vector4i {
 public:
