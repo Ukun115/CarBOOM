@@ -30,7 +30,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	Light* m_light = NewGO<Light>(0, "light");
 
 	//タイトルシーンクラスから開始
-	TitleScene* titleScene = NewGO<TitleScene>(0);
+	TitleScene* titleScene = NewGO<TitleScene>(0,"titlescene");
 
 	// ここからゲームループ。
 	while (DispatchWindowMessage())

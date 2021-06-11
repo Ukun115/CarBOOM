@@ -4,7 +4,7 @@
 
 #pragma once
 
-	
+
 /*!
 	*@brief	仮想ボタン定義。
 	*/
@@ -137,7 +137,6 @@ public:
 public:
 	enum { MAX_PAD = 4 };
 	enum class EnXInputPadState {
-		Undef,		//不明。
 		Connect,	//接続されている。
 		Disconnect,	//接続されていない。
 	};

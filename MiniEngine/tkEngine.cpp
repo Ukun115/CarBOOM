@@ -27,8 +27,8 @@ void TkEngine::BeginFrame()
 {
 	m_gameTime.BeginMeasurement();
 	m_graphicsEngine->BeginRender();
+	GamePad::BeginFrame();
 	for (auto& pad : m_pad) {
-		pad.BeginFrame();
 		pad.Update();
 	}
 	

@@ -16,7 +16,7 @@ namespace {
 		EnButton vButton;		//!<仮想ボタン。
 		DWORD	 xButton;		//!<XBoxコントローラのボタン。
 	};
-		
+
 	const VirtualPadToXPad vPadToXPadTable[enButtonNum] = {
 		{ enButtonUp		, XINPUT_GAMEPAD_DPAD_UP },
 		{ enButtonDown		, XINPUT_GAMEPAD_DPAD_DOWN },
@@ -62,7 +62,7 @@ namespace {
 		{ enButtonLB3		, 'M',			0xFFFFFFFF	},
 	};
 }
-GamePad::EnXInputPadState GamePad::m_padStates[4] = { GamePad::EnXInputPadState::Undef };
+GamePad::EnXInputPadState GamePad::m_padStates[4] = { GamePad::EnXInputPadState::Disconnect };
 GamePad::GamePad()
 {
 	memset(&m_state, 0, sizeof(m_state));
@@ -76,7 +76,7 @@ void GamePad::BeginFrame()
 {
 	//全て未定義にする。
 	for (auto& padState : m_padStates) {
-		padState = EnXInputPadState::Undef;
+		padState = EnXInputPadState::Disconnect;
 	}
 }
 void GamePad::Update()
@@ -84,7 +84,7 @@ void GamePad::Update()
 	//アクティブパッドを探す。
 	DWORD result = ERROR_DEVICE_NOT_CONNECTED;
 	for (int i = m_padNo; i < MAX_PAD; i++) {
-		if (m_padStates[i] == EnXInputPadState::Undef) {
+		if (m_padStates[i] != EnXInputPadState::Connect) {
 			//このパッドは未調査。
 			result = XInputGetState(i, &m_state.state);
 			if (result == ERROR_SUCCESS) {
@@ -99,7 +99,7 @@ void GamePad::Update()
 			}
 		}
 	}
-		
+
 	if (result == ERROR_SUCCESS) {
 		//接続されている。
 		m_state.bConnected = true;
@@ -181,7 +181,7 @@ void GamePad::Update()
 			else {
 				m_rStickY = static_cast<float>(m_state.state.Gamepad.sThumbRY) / -SHRT_MIN;
 			}
-		}			
+		}
 	}
 	else {
 		//接続されていない場合はキーボードの入力でエミュレートする。

@@ -23,10 +23,10 @@ bool Light::Start()
 
 	//ライトクラスの中のディレクションライトをセット
 	SetDirectionLightData();
-	//ライトクラスの中のポイントライトをセット
-	SetPointLightData();
-	//ライトクラスの中のスポットライトをセット
-	SetSpotLightData();
+	////ライトクラスの中のポイントライトをセット
+	//SetPointLightData();
+	////ライトクラスの中のスポットライトをセット
+	//SetSpotLightData();
 
 	//Start関数のreturn文
 	return true;

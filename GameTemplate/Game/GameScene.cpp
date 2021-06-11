@@ -12,12 +12,12 @@ namespace
 bool GameScene::Start()
 {
 	//プレイヤークラスを追加
-	NewGO<Player>(0);
+	m_player = NewGO<Player>(0);
 
 	//ステージモデルをロード
-	bg_normal = NewGO<SkinModelRender>(0);
+	m_normalStage = NewGO<SkinModelRender>(0);
 	//モデルのファイルパスを設定。
-	bg_normal->Init("Assets/modelData/bg/stage_00.tkm");
+	m_normalStage->Init("Assets/modelData/bg/stage_00.tkm");
 
 	//Start関数のreturn
 	return true;
@@ -25,15 +25,16 @@ bool GameScene::Start()
 
 GameScene::~GameScene()
 {
-
+	//ステージを削除。
+	DeleteGO(m_normalStage);
+	//プレイヤークラスを削除。
+	DeleteGO(m_player);
 }
 
 void GameScene::Update()
 {
-
-
 	//Aボタン(キーボード：J)が押されたら、
-	if (g_pad[0]->IsTrigger(enButtonA))
+	if (g_pad[0]->IsTrigger(enButtonSelect))
 	{
 		//リザルト画面に遷移
 		NewGO<ResultScene>(0);

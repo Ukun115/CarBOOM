@@ -15,6 +15,6 @@ public:
 	bool Start();
 	~Player();
 	void Update();
-	void DataUpdate();
+	void PlaDataUpdate();	//プレイヤーの位置回転拡大率の情報更新関数
 };
 
