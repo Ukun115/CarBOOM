@@ -19,10 +19,6 @@ void FontRender::Init
 
 void FontRender::Render(RenderContext& rc)
 {
-
-	if (rc.GetRenderMode() == RenderContext::Render_Mode::RenderMode_Font)
-	{
-
 		m_font.Begin(rc);
 
 		m_font.Draw
@@ -36,6 +32,4 @@ void FontRender::Render(RenderContext& rc)
 		);
 
 		m_font.End(rc);
-	}
-
 }

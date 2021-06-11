@@ -36,7 +36,7 @@ bool TitleScene::Start()
 TitleScene::~TitleScene()
 {
 	//プレイヤーの数だけ名前表示画像を削除
-	for (int i = 0; i < m_totalPlayerNum; i++)
+	for (int i = PLAYER1; i < m_totalPlayerNum; i++)
 	{
 		DeleteGO(m_spriteRender[i]);
 	}
