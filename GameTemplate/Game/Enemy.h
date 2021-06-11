@@ -9,4 +9,3 @@ public:
 	~Enemy();
 	void Update();
 };
-

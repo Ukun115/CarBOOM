@@ -22,7 +22,7 @@ namespace
 bool TitleScene::Start()
 {
 	//1Pは無条件で追加フラグを真に。
-	addPlayer[PLAYER1] = true;
+	isAddPlayer[PLAYER1] = true;
 
 	//サンプル背景画像を初期化。
 	m_spriteRender[PLAYER1] = NewGO<SpriteRender>(0);
@@ -44,45 +44,44 @@ TitleScene::~TitleScene()
 
 void TitleScene::Update()
 {
-
-	//プレイヤーを追加する
-	if(m_totalPlayerNum != MAXPLAYERNUM)
-	{
-		//登録されていないコントローラーのスタートボタンが押されたら、
-		if (g_pad[m_totalPlayerNum]->IsTrigger(enButtonB))
+	if (isCanGameStartFlg == true) {
+		//プレイヤーを追加する
+		if (m_totalPlayerNum != MAXPLAYERNUM)
 		{
-			//新規プレイヤーの追加フラグを真に。
-			addPlayer[m_totalPlayerNum] = true;
+			//登録されていないコントローラーのスタートボタンが押されたら、
+			if (g_pad[m_totalPlayerNum]->IsTrigger(enButtonA))
+			{
+				//新規プレイヤーの追加フラグを真に。
+				isAddPlayer[m_totalPlayerNum] = true;
 
-			//プレイヤーのアクティブ化
-			//サンプル背景画像を初期化。
-			m_spriteRender[m_totalPlayerNum] = NewGO<SpriteRender>(0);
-			//2Pのアクティブ化
-			if (m_totalPlayerNum == PLAYER2)
-			{
-				m_spriteRender[PLAYER2]->Init("Assets/image/eheheNS.dds", 230.0f, 120.0f);
-				//画像のポジション指定
-				m_spriteRender[PLAYER2]->SetPosition(PLAYER2_NAMEPOS);
+				//プレイヤーのアクティブ化
+				//サンプル背景画像を初期化。
+				m_spriteRender[m_totalPlayerNum] = NewGO<SpriteRender>(0);
+				//2Pのアクティブ化
+				if (m_totalPlayerNum == PLAYER2)
+				{
+					m_spriteRender[PLAYER2]->Init("Assets/image/eheheNS.dds", 230.0f, 120.0f);
+					//画像のポジション指定
+					m_spriteRender[PLAYER2]->SetPosition(PLAYER2_NAMEPOS);
+				}
+				//3Pのアクティブ化
+				if (m_totalPlayerNum == PLAYER3)
+				{
+					m_spriteRender[PLAYER3]->Init("Assets/image/eheheNS.dds", 230.0f, 120.0f);
+					//画像のポジション指定
+					m_spriteRender[PLAYER3]->SetPosition(PLAYER3_NAMEPOS);
+				}
+				//4Pのアクティブ化
+				if (m_totalPlayerNum == PLAYER4)
+				{
+					m_spriteRender[PLAYER4]->Init("Assets/image/eheheNS.dds", 230.0f, 120.0f);
+					//画像のポジション指定
+					m_spriteRender[PLAYER4]->SetPosition(PLAYER4_NAMEPOS);
+				}
+				//次のプレイヤーへ...
+				m_totalPlayerNum++;
 			}
-			//3Pのアクティブ化
-			if (m_totalPlayerNum == PLAYER3)
-			{
-				m_spriteRender[PLAYER3]->Init("Assets/image/eheheNS.dds", 230.0f, 120.0f);
-				//画像のポジション指定
-				m_spriteRender[PLAYER3]->SetPosition(PLAYER3_NAMEPOS);
-			}
-			//4Pのアクティブ化
-			if (m_totalPlayerNum == PLAYER4)
-			{
-				m_spriteRender[PLAYER4]->Init("Assets/image/eheheNS.dds", 230.0f, 120.0f);
-				//画像のポジション指定
-				m_spriteRender[PLAYER4]->SetPosition(PLAYER4_NAMEPOS);
-			}
-			//次のプレイヤーへ...
-			m_totalPlayerNum++;
 		}
-	}
-
 		//1Pのスタートボタンが押されたらゲーム開始
 		if (g_pad[PLAYER1]->IsTrigger(enButtonStart))
 		{
@@ -90,5 +89,9 @@ void TitleScene::Update()
 			NewGO<GameScene>(0);
 			//このクラスの削除
 			//DeleteGO(this);
+
+			//一度のみゲーム開始ボタンを押せるようにする
+			isCanGameStartFlg = false;
 		}
+	}
 }
