@@ -1,5 +1,10 @@
 #include "stdafx.h"
 
+namespace
+{
+
+}
+
 bool Sound::Start()
 {
 

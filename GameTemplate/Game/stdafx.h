@@ -3,6 +3,7 @@
 
 #include "MiniEngine.h"
 #include "ExEngine.h"
+#include "tkSoundSource.h"
 
 //ゲーム全体でいつでも使うのでstdafx.hでインクルードする
 

@@ -1,5 +1,9 @@
 #include "stdafx.h"
 
+namespace
+{
+
+}
 
 bool SkinModelRender::Start()
 {

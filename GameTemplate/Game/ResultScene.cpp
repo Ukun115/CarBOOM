@@ -1,6 +1,11 @@
 #include "stdafx.h"
 #include "ResultScene.h"
 
+namespace
+{
+
+}
+
 bool ResultScene::Start()
 {
 

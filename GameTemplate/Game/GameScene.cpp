@@ -1,22 +1,23 @@
 #include "stdafx.h"
 #include "GameScene.h"
 #include "ResultScene.h"
+#include "Player.h"
+
+
+namespace
+{
+
+}
 
 bool GameScene::Start()
 {
-	//車（青）モデルをロード
-	m_skinmodelrender = NewGO<SkinModelRender>(0);
-	//モデルのファイルパスを設定。
-	m_skinmodelrender->Init("Assets/modelData/LowPoly_PlayerCar_Bule.tkm");
-	//モデルの大きさを2倍
-	m_skinmodelrender->SetScale({2,2,2});
-	//モデルのX座標を原点からずらしてポイントライトがわかりやすいようにする
-	m_unityPos.x = 50.0f;
-	m_skinmodelrender->SetPosition(m_unityPos);
+	//プレイヤークラスを追加
+	NewGO<Player>(0);
 
-	//洞窟モデルをロード
-	m_bgModel = NewGO<SkinModelRender>(0);
-	m_bgModel->Init("Assets/modelData/bg/bg.tkm");
+	//ステージモデルをロード
+	bg_normal = NewGO<SkinModelRender>(0);
+	//モデルのファイルパスを設定。
+	bg_normal->Init("Assets/modelData/bg/stage_00.tkm");
 
 	//Start関数のreturn
 	return true;
@@ -25,8 +26,6 @@ bool GameScene::Start()
 GameScene::~GameScene()
 {
 
-	DeleteGO(m_skinmodelrender);
-	DeleteGO(m_bgModel);
 }
 
 void GameScene::Update()

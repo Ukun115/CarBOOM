@@ -43,17 +43,10 @@ class Light : public IGameObject
 {
 private:
 
-	//Y軸周りの回転クォータニオン
-	Quaternion qRotY;
-	//X軸周りの回転クォータニオン
-	Vector3 rotAxis;
-	Quaternion qRotX;
-
 
 
 public:
 	bool Start();
-	Light();
 	~Light();
 	void Update();
 
