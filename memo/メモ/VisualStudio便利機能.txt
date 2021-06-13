@@ -1,0 +1,9 @@
+【VisualStudio便利機能】
+
+ctrl+K → ctrl+O	(hファイル→cppファイルへ移動)
+					(cppファイル→hファイルへ移動)
+
+
+char型（8ビット）	キャラ型　チャー型
+
+unsigned  符号なし（-なし）
