@@ -99,7 +99,7 @@ void GameScene::Update()
 			//「3」表示
 			m_sprite[0] = NewGO<SpriteRender>(3);
 			m_sprite[0]->SetPosition({ 0.0f,0.0f,0.0f });
-			m_sprite[0]->Init("Assets/image/DDS/3.dds", 1000.0f, 1000.0f);
+			m_sprite[0]->Init("Assets/image/DDS/3.dds", 200.0f, 200.0f);
 
 			break;
 
@@ -110,7 +110,7 @@ void GameScene::Update()
 			//「2」表示
 			m_sprite[1] = NewGO<SpriteRender>(3);
 			m_sprite[1]->SetPosition({ 0.0f,0.0f,0.0f });
-			m_sprite[1]->Init("Assets/image/DDS/2.dds", 1000.0f, 1000.0f);
+			m_sprite[1]->Init("Assets/image/DDS/2.dds", 200.0f, 200.0f);
 
 			break;
 
@@ -121,7 +121,7 @@ void GameScene::Update()
 			//「1」表示
 			m_sprite[2] = NewGO<SpriteRender>(3);
 			m_sprite[2]->SetPosition({ 0.0f,0.0f,0.0f });
-			m_sprite[2]->Init("Assets/image/DDS/1.dds", 1000.0f, 1000.0f);
+			m_sprite[2]->Init("Assets/image/DDS/1.dds", 200.0f, 200.0f);
 
 			break;
 
@@ -132,7 +132,7 @@ void GameScene::Update()
 			//「GO!!」表示
 			m_sprite[3] = NewGO<SpriteRender>(3);
 			m_sprite[3]->SetPosition({ 0.0f,0.0f,0.0f });
-			m_sprite[3]->Init("Assets/image/DDS/GO.dds", 1000.0f, 1000.0f);
+			m_sprite[3]->Init("Assets/image/DDS/START!!.dds", 400.0f, 200.0f);
 
 			break;
 
