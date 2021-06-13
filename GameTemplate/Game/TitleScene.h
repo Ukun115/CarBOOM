@@ -15,6 +15,10 @@ private:
 
 	bool isButtonFlg = true;	//trueで表示、falseで非表示
 
+	SpriteRender* m_sprite[4] = { nullptr };
+	int m_countDownTimer = 0;	//カウントダウンタイマー
+	bool m_countTimeFlg = true;
+
 public:
 	bool Start();
 	~TitleScene();
@@ -22,4 +26,6 @@ public:
 
 	//プレイヤーが追加されているかのフラグを取得する関数
 	bool GetPlaFlg(int x) { return isAddPlayer[x]; }
+
+	bool GetCountDownFlg() { return m_countTimeFlg; }
 };

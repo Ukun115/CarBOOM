@@ -212,4 +212,62 @@ void TitleScene::Update()
 			}
 		}
 	}
+	//ゲームシーンに遷移したら、
+	else if(m_countTimeFlg)
+	{
+		//スタートまでのカウントダウンを開始
+
+		switch (m_countDownTimer) {
+		case 0:
+			//「3」表示
+			m_sprite[0] = NewGO<SpriteRender>(3);
+			m_sprite[0]->SetPosition({ 0.0f,0.0f,0.0f });
+			m_sprite[0]->Init("Assets/image/DDS/3.dds", 1000.0f, 1000.0f);
+
+			break;
+
+		case 60:
+			//「3」削除。
+			DeleteGO(m_sprite[0]);
+
+			//「2」表示
+			m_sprite[1] = NewGO<SpriteRender>(3);
+			m_sprite[1]->SetPosition({ 0.0f,0.0f,0.0f });
+			m_sprite[1]->Init("Assets/image/DDS/2.dds", 1000.0f, 1000.0f);
+
+			break;
+
+		case 120:
+			//「2」削除。
+			DeleteGO(m_sprite[1]);
+
+			//「1」表示
+			m_sprite[2] = NewGO<SpriteRender>(3);
+			m_sprite[2]->SetPosition({ 0.0f,0.0f,0.0f });
+			m_sprite[2]->Init("Assets/image/DDS/1.dds", 1000.0f, 1000.0f);
+
+			break;
+
+		case 180:
+			//「1」削除。
+			DeleteGO(m_sprite[2]);
+
+			//「GO!!」表示
+			m_sprite[3] = NewGO<SpriteRender>(3);
+			m_sprite[3]->SetPosition({ 0.0f,0.0f,0.0f });
+			m_sprite[3]->Init("Assets/image/DDS/GO.dds", 1000.0f, 1000.0f);
+
+			break;
+
+		case 300:
+			//「GO!!」削除。
+			DeleteGO(m_sprite[3]);
+
+			//カウントダウンの処理を抜ける。
+			m_countTimeFlg = false;
+
+			break;
+		}
+		m_countDownTimer++;
+	}
 }

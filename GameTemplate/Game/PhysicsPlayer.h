@@ -34,7 +34,7 @@ private:
 	RigidBodyInitData rbInitData[4];
 
 	SkinModelRender* m_player[4] = { nullptr };		//最大プレイ人数4人
-	TitleScene* m_getAddPlayerFlg = nullptr;
+	TitleScene* m_titlescene = nullptr;
 	GameScene* m_nowTime = nullptr;
 
 	Vector3    m_pos[4];		//プレイヤーの位置

@@ -21,13 +21,13 @@ namespace
 
 bool PhysicsPlayer::Start()
 {
-	m_getAddPlayerFlg = FindGO<TitleScene>("titlescene");
+	m_titlescene = FindGO<TitleScene>("titlescene");
 	m_nowTime = FindGO<GameScene>("gamescene");
 
 	for (int i = PLAYER1; i < MAXPLAYERNUM; i++)
 	{
 		//登録されていたら実行
-		if (m_getAddPlayerFlg->GetPlaFlg(i) == true)
+		if (m_titlescene->GetPlaFlg(i) == true)
 		{
 			//プレイヤーをロード
 			m_player[i] = NewGO<SkinModelRender>(0);
@@ -109,95 +109,97 @@ void PhysicsPlayer::Update()
 	//登録されているプレイヤー数ループ
 	for (int i = PLAYER1; i < m_plaNum; i++)
 	{
-		//０秒になったらプレイヤーの処理を全て止める
-		if (m_nowTime->GetNowTime() != 0)
-		{
+		//制限時間が０秒になったらプレイヤーの処理を全て止める
+		if (m_nowTime->GetNowTime() != 0) {
+			//ゲーム開始のカウントダウンが終わるまでプレイヤーの処理をすべて止める
+			if (m_titlescene->GetCountDownFlg() == false)
+			{
 
-			//ステージの中心()原点とプレイヤーとの距離を計算
-			m_diff = m_pos[i] - m_origin;
-			//ステージ上から外れているとき、
-			//(ベクトルの長さを取得し、それが250.0fより大きく、500以下の値だったら、)
-			if (m_diff.Length() > 250.0f && m_diff.Length() <= 500.0f)
-			{
-				//落下させる
-				m_pos[i].y -= 2.0f;
-			}
-			//落下から少し時間が経過したら、
-			//基本はステータスの初期化をここでしています。
-			else if (m_diff.Length() > 500.0f)
-			{
-				//プレイヤーを初期位置に持っていく。
-				PlaResporn(i);
-				//ちょっと上にプレイヤーを戻す。
-				m_pos[i].y += 50.0f;
-
-				//フラグを立てる
-				m_respornFallFlg[i] = true;
-			}
-			//ステージ上にリスポーンしたというフラグが立ったら、
-			else if (m_respornFallFlg[i])
-			{
-				//ステージ上に落下させる処理
-				if (m_pos[i].y != 0.0f)
+				//ステージの中心()原点とプレイヤーとの距離を計算
+				m_diff = m_pos[i] - m_origin;
+				//ステージ上から外れているとき、
+				//(ベクトルの長さを取得し、それが250.0fより大きく、500以下の値だったら、)
+				if (m_diff.Length() > 250.0f && m_diff.Length() <= 500.0f)
 				{
-					m_pos[i].y -= 1.0f;
+					//落下させる
+					m_pos[i].y -= 2.0f;
 				}
+				//落下から少し時間が経過したら、
+				//基本はステータスの初期化をここでしています。
+				else if (m_diff.Length() > 500.0f)
+				{
+					//プレイヤーを初期位置に持っていく。
+					PlaResporn(i);
+					//ちょっと上にプレイヤーを戻す。
+					m_pos[i].y += 50.0f;
+
+					//フラグを立てる
+					m_respornFallFlg[i] = true;
+				}
+				//ステージ上にリスポーンしたというフラグが立ったら、
+				else if (m_respornFallFlg[i])
+				{
+					//ステージ上に落下させる処理
+					if (m_pos[i].y != 0.0f)
+					{
+						m_pos[i].y -= 1.0f;
+					}
+					else
+					{
+						//プレイヤーの蓄積されているスピードを初期化。
+						m_moveSpeed[i] = { 0.0f,0.0f,0.0f };
+
+						//押した時のタイマー初期化
+						m_pressTimer[i] = 0;
+						//離した時のタイマー初期化
+						m_releaseTimer[i] = 0;
+						isBPushFlg[i] = false;
+						//これらを初期化しないと、着地した際に勝手にダッシュ攻撃するバグが発生します。
+
+
+						//フラグを折る
+						m_respornFallFlg[i] = false;
+					}
+				}
+				//ステージ上にいるとき実行、
 				else
 				{
-					//プレイヤーの蓄積されているスピードを初期化。
-					m_moveSpeed[i] = { 0.0f,0.0f,0.0f };
+					//回転処理
+					PlaTurn(i);
 
-					//押した時のタイマー初期化
-					m_pressTimer[i] = 0;
-					//離した時のタイマー初期化
-					m_releaseTimer[i] = 0;
-					isBPushFlg[i] = false;
-					//これらを初期化しないと、着地した際に勝手にダッシュ攻撃するバグが発生します。
+					//押しているとき、
+					if (g_pad[i]->IsPress(enButtonB) && isBPushFlg[i] == false)
+					{
+						//押した時のタイマーを加算
+						m_pressTimer[i]++;
 
+						//離した時のタイマー初期化
+						m_releaseTimer[i] = 0;
 
-					//フラグを折る
-					m_respornFallFlg[i] = false;
+						isBPushFlg[i] = true;
+					}
+					//離したとき、
+					if (!g_pad[i]->IsPress(enButtonB) && isBPushFlg[i] == true)
+					{
+						//離した時のタイマーを加算
+						m_releaseTimer[i]++;
+
+						//押した時のタイマー初期化
+						m_pressTimer[i] = 0;
+
+					}
+
+					//プレイヤーの状態
+					PlaNowSpeed(i);
+
+					m_pos[i] += m_moveSpeed[i];
+
+					////剛体の座標と回転を設定。
+					//m_rigidBody[i].SetPositionAndRotation(m_pos[i], m_rot[i]);
+					////剛体の座標と回転を取得。
+					//m_rigidBody[i].GetPositionAndRotation(m_pos[i], m_rot[i]);
 				}
 			}
-			//ステージ上にいるとき実行、
-			else
-			{
-				//回転処理
-				PlaTurn(i);
-
-				//押しているとき、
-				if (g_pad[i]->IsPress(enButtonB) && isBPushFlg[i] == false)
-				{
-					//押した時のタイマーを加算
-					m_pressTimer[i]++;
-
-					//離した時のタイマー初期化
-					m_releaseTimer[i] = 0;
-
-					isBPushFlg[i] = true;
-				}
-				//離したとき、
-				if (!g_pad[i]->IsPress(enButtonB) && isBPushFlg[i] == true)
-				{
-					//離した時のタイマーを加算
-					m_releaseTimer[i]++;
-
-					//押した時のタイマー初期化
-					m_pressTimer[i] = 0;
-
-				}
-
-				//プレイヤーの状態
-				PlaNowSpeed(i);
-
-				m_pos[i] += m_moveSpeed[i];
-
-				////剛体の座標と回転を設定。
-				//m_rigidBody[i].SetPositionAndRotation(m_pos[i], m_rot[i]);
-				////剛体の座標と回転を取得。
-				//m_rigidBody[i].GetPositionAndRotation(m_pos[i], m_rot[i]);
-			}
-
 			//登録されているプレイヤーの情報を更新
 			PlaDataUpdate(i);
 		}

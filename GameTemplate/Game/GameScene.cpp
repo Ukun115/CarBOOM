@@ -5,6 +5,7 @@
 #include "PhysicsEnemy.h"
 #include "PhysicsPlayer.h"
 #include "Stage.h"
+#include "TitleScene.h"
 
 namespace
 {
@@ -33,6 +34,8 @@ namespace
 
 bool GameScene::Start()
 {
+	m_titlescene = FindGO<TitleScene>("titlescene");
+
 	//プレイヤークラス
 	physicsPlayer = NewGO<PhysicsPlayer>(0,"physicsplayer");
 	//敵クラス
@@ -89,34 +92,38 @@ GameScene::~GameScene()
 
 void GameScene::Update()
 {
-	//制限時間を縮めていく。
-	m_timer--;
-	counttime = m_timer / 60;
-	//０秒になってからのカウントがマイナスに行かないように補正
-	if (counttime < 0)
+	//カウントダウンが終わってから制限時間を刻んでいく。
+	if (m_titlescene->GetCountDownFlg() == false)
 	{
-		counttime = 0;
+		//制限時間を縮めていく。
+		m_timer--;
 	}
-	wchar_t text1[64];
-	swprintf_s(text1, L"%d", counttime);
-	//画面表示
-	m_timeLimit->SetText(text1);
+		counttime = m_timer / 60;
+		//０秒になってからのカウントがマイナスに行かないように補正
+		if (counttime < 0)
+		{
+			counttime = 0;
+		}
+		wchar_t text1[64];
+		swprintf_s(text1, L"%d", counttime);
+		//画面表示
+		m_timeLimit->SetText(text1);
 
-	//制限時間が0秒になったら、
-	if (counttime == 0)
-	{
-		//リザルト画面に遷移
-		NewGO<ResultScene>(0);
-	}
+		//制限時間が0秒になったら、
+		if (counttime == 0)
+		{
+			//リザルト画面に遷移
+			NewGO<ResultScene>(0);
+		}
 
-	//1Pのセレクトボタン(キーボード：スペース)が押されたら、
-	if (g_pad[0]->IsTrigger(enButtonSelect))
-	{
-		//リザルト画面に遷移
-		NewGO<ResultScene>(0);
-		//このクラスの削除
-		DeleteGO(this);
-	}
+		//1Pのセレクトボタン(キーボード：スペース)が押されたら、
+		if (g_pad[0]->IsTrigger(enButtonSelect))
+		{
+			//リザルト画面に遷移
+			NewGO<ResultScene>(0);
+			//このクラスの削除
+			DeleteGO(this);
+		}
 }
 
 //「Score : 」の表示位置判別関数
