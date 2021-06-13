@@ -5,7 +5,6 @@
 #include "PhysicsEnemy.h"
 #include "PhysicsPlayer.h"
 #include "Stage.h"
-#include "TitleScene.h"
 
 namespace
 {
@@ -34,8 +33,6 @@ namespace
 
 bool GameScene::Start()
 {
-	m_titlescene = FindGO<TitleScene>("titlescene");
-
 	//プレイヤークラス
 	physicsPlayer = NewGO<PhysicsPlayer>(0,"physicsplayer");
 	//敵クラス
@@ -92,38 +89,96 @@ GameScene::~GameScene()
 
 void GameScene::Update()
 {
+	//ゲームシーンに遷移したら、
+	if (m_countTimeFlg)
+	{
+		//スタートまでのカウントダウンを開始
+
+		switch (m_countDownTimer) {
+			case 0:
+			//「3」表示
+			m_sprite[0] = NewGO<SpriteRender>(3);
+			m_sprite[0]->SetPosition({ 0.0f,0.0f,0.0f });
+			m_sprite[0]->Init("Assets/image/DDS/3.dds", 1000.0f, 1000.0f);
+
+			break;
+
+			case 60:
+			//「3」削除。
+			DeleteGO(m_sprite[0]);
+
+			//「2」表示
+			m_sprite[1] = NewGO<SpriteRender>(3);
+			m_sprite[1]->SetPosition({ 0.0f,0.0f,0.0f });
+			m_sprite[1]->Init("Assets/image/DDS/2.dds", 1000.0f, 1000.0f);
+
+			break;
+
+			case 120:
+			//「2」削除。
+			DeleteGO(m_sprite[1]);
+
+			//「1」表示
+			m_sprite[2] = NewGO<SpriteRender>(3);
+			m_sprite[2]->SetPosition({ 0.0f,0.0f,0.0f });
+			m_sprite[2]->Init("Assets/image/DDS/1.dds", 1000.0f, 1000.0f);
+
+			break;
+
+			case 180:
+			//「1」削除。
+			DeleteGO(m_sprite[2]);
+
+			//「GO!!」表示
+			m_sprite[3] = NewGO<SpriteRender>(3);
+			m_sprite[3]->SetPosition({ 0.0f,0.0f,0.0f });
+			m_sprite[3]->Init("Assets/image/DDS/GO.dds", 1000.0f, 1000.0f);
+
+			break;
+
+			case 300:
+			//「GO!!」削除。
+			DeleteGO(m_sprite[3]);
+
+			//カウントダウンの処理を抜ける。
+			m_countTimeFlg = false;
+
+			break;
+		}
+		m_countDownTimer++;
+	}
 	//カウントダウンが終わってから制限時間を刻んでいく。
-	if (m_titlescene->GetCountDownFlg() == false)
+	else
 	{
 		//制限時間を縮めていく。
 		m_timer--;
 	}
-		counttime = m_timer / 60;
-		//０秒になってからのカウントがマイナスに行かないように補正
-		if (counttime < 0)
-		{
-			counttime = 0;
-		}
-		wchar_t text1[64];
-		swprintf_s(text1, L"%d", counttime);
-		//画面表示
-		m_timeLimit->SetText(text1);
+	counttime = m_timer / 60;
+	//０秒になってからのカウントがマイナスに行かないように補正
+	if (counttime < 0)
+	{
+		counttime = 0;
+	}
+	wchar_t text1[64];
+	swprintf_s(text1, L"%d", counttime);
+	//画面表示
+	m_timeLimit->SetText(text1);
 
-		//制限時間が0秒になったら、
-		if (counttime == 0)
-		{
-			//リザルト画面に遷移
-			NewGO<ResultScene>(0);
-		}
+	//制限時間が0秒になったら、
+	if (counttime == 0)
+	{
+		//リザルト画面に遷移
+		NewGO<ResultScene>(0);
+	}
 
-		//1Pのセレクトボタン(キーボード：スペース)が押されたら、
-		if (g_pad[0]->IsTrigger(enButtonSelect))
-		{
-			//リザルト画面に遷移
-			NewGO<ResultScene>(0);
-			//このクラスの削除
-			DeleteGO(this);
-		}
+	//1Pのセレクトボタン(キーボード：スペース)が押されたら、
+	if (g_pad[0]->IsTrigger(enButtonSelect))
+	{
+		//リザルト画面に遷移
+		NewGO<ResultScene>(0);
+		//このクラスの削除
+		DeleteGO(this);
+	}
 }
 
 //「Score : 」の表示位置判別関数

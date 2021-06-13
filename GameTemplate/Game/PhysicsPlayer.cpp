@@ -21,8 +21,8 @@ namespace
 
 bool PhysicsPlayer::Start()
 {
-	m_titlescene = FindGO<TitleScene>("titlescene");
 	m_nowTime = FindGO<GameScene>("gamescene");
+	m_titlescene = FindGO<TitleScene>("titlescene");
 
 	for (int i = PLAYER1; i < MAXPLAYERNUM; i++)
 	{
@@ -112,7 +112,7 @@ void PhysicsPlayer::Update()
 		//制限時間が０秒になったらプレイヤーの処理を全て止める
 		if (m_nowTime->GetNowTime() != 0) {
 			//ゲーム開始のカウントダウンが終わるまでプレイヤーの処理をすべて止める
-			if (m_titlescene->GetCountDownFlg() == false)
+			if (m_nowTime->GetCountDownFlg() == false)
 			{
 
 				//ステージの中心()原点とプレイヤーとの距離を計算
