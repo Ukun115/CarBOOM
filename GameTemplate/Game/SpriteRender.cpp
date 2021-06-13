@@ -20,7 +20,6 @@ SpriteRender::~SpriteRender()
 
 void SpriteRender::Update()
 {
-
 	//位置、回転、拡大率を更新
 	m_sprite.Update(m_pos,m_rot,m_sca);
 }

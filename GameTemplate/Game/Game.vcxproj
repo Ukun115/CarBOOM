@@ -243,6 +243,7 @@
     <ClCompile Include="..\..\ExEngine\level2D\CaslFile.cpp" />
     <ClCompile Include="..\..\ExEngine\level2D\Level2D.cpp" />
     <ClCompile Include="..\..\ExEngine\level2D\MapChip2D.cpp" />
+    <ClCompile Include="..\..\ExEngine\physics\BoxCollider.cpp" />
     <ClCompile Include="..\..\ExEngine\physics\CapsuleCollider.cpp" />
     <ClCompile Include="..\..\ExEngine\physics\CharacterController.cpp" />
     <ClCompile Include="..\..\ExEngine\physics\MeshCollider.cpp" />
@@ -293,11 +294,13 @@
     <ClCompile Include="GameScene.cpp" />
     <ClCompile Include="Light.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Player.cpp" />
+    <ClCompile Include="PhysicsEnemy.cpp" />
+    <ClCompile Include="PhysicsPlayer.cpp" />
     <ClCompile Include="ResultScene.cpp" />
     <ClCompile Include="SkinModelRender.cpp" />
     <ClCompile Include="Sound.cpp" />
     <ClCompile Include="SpriteRender.cpp" />
+    <ClCompile Include="Stage.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
@@ -316,6 +319,7 @@
     <ClInclude Include="..\..\ExEngine\level2D\CaslFile.h" />
     <ClInclude Include="..\..\ExEngine\level2D\Level2D.h" />
     <ClInclude Include="..\..\ExEngine\level2D\MapChip2D.h" />
+    <ClInclude Include="..\..\ExEngine\physics\BoxCollider.h" />
     <ClInclude Include="..\..\ExEngine\physics\CapsuleCollider.h" />
     <ClInclude Include="..\..\ExEngine\physics\CharacterController.h" />
     <ClInclude Include="..\..\ExEngine\physics\ICollider.h" />
@@ -373,11 +377,13 @@
     <ClInclude Include="FontRender.h" />
     <ClInclude Include="GameScene.h" />
     <ClInclude Include="Light.h" />
-    <ClInclude Include="Player.h" />
+    <ClInclude Include="PhysicsEnemy.h" />
+    <ClInclude Include="PhysicsPlayer.h" />
     <ClInclude Include="ResultScene.h" />
     <ClInclude Include="SkinModelRender.h" />
     <ClInclude Include="Sound.h" />
     <ClInclude Include="SpriteRender.h" />
+    <ClInclude Include="Stage.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="system\system.h" />
     <ClInclude Include="TitleScene.h" />

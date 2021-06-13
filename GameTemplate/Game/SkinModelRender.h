@@ -23,7 +23,6 @@ private:
 
 	Light* m_light;
 
-
 public:
 	//3Dモデルをロードするための情報を設定する関数
 	void Init(const char* tkmFilePath);
@@ -36,6 +35,8 @@ public:
 	void SetRotation(const Quaternion rot) { m_rot = rot; }
 	//拡大率を設定するセット関数
 	void SetScale(const Vector3 sca) { m_sca = sca; }
+
+	Model& GetModel() { return m_model ; }
 
 	//描画関数
 	void Render(RenderContext& rc);

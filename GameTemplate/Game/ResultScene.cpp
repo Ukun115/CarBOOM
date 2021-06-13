@@ -8,10 +8,9 @@ namespace
 
 bool ResultScene::Start()
 {
-	//サンプル背景画像を初期化。
-	m_spriteRender = NewGO<SpriteRender>(0);
-	m_spriteRender->Init("Assets/image/eheheNS.dds", 230.0f, 120.0f);
-	m_spriteRender->SetPosition(Vector3::Zero);
+	//リザルト文字画像を初期化。
+	m_resultSprite = NewGO<SpriteRender>(0);
+	m_resultSprite->Init("Assets/image/DDS/Result.dds", 300.0f, 300.0f);
 
 	//Start関数のreturn文
 	return true;
@@ -19,12 +18,12 @@ bool ResultScene::Start()
 
 ResultScene::~ResultScene()
 {
-	DeleteGO(m_spriteRender);
+	DeleteGO(m_resultSprite);
 }
 
 void ResultScene::Update()
 {
-	//Aボタン(キーボード：J)が押されたら、
+	//1Pのセレクトボタン(キーボード：スペース)が押されたら、
 	if (g_pad[0]->IsTrigger(enButtonSelect))
 	{
 		//exeを閉じてゲーム終了

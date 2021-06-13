@@ -20,15 +20,15 @@ GameObjectManager::~GameObjectManager()
 	m_instance = nullptr;
 }
 void GameObjectManager::ExecuteUpdate()
-{	
+{
 	//死亡フラグがついているゲームオブジェクトを破棄する。
 	for (auto& goList : m_gameObjectListArray) {
-		goList.remove_if([&](IGameObject* go) {	
+		goList.remove_if([&](IGameObject* go) {
 			if (go->IsDead()) {
 				delete go;
 				return true;
 			}
-			return false;	 
+			return false;
 		});
 	}
 

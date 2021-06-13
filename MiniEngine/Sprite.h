@@ -87,6 +87,17 @@ public:
 		m_scale = sca;
 	}
 
+	//カラーを設定するインライン関数
+	void SetMulColor(const Vector4& mulColor)
+	{
+		m_constantBufferCPU.mulColor = mulColor;
+	}
+	//カラーを得るインライン関数
+	const Vector4& GetMulColor()
+	{
+		return m_constantBufferCPU.mulColor;
+	}
+
 private:
 	/// <summary>
 	/// テクスチャを初期化。

@@ -24,8 +24,6 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	//////////////////////////////////////
 	auto& renderContext = g_graphicsEngine->GetRenderContext();
 
-
-
 	//ライトクラスをロード
 	Light* m_light = NewGO<Light>(0, "light");
 
@@ -45,6 +43,8 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 		GameObjectManager::GetInstance()->ExecuteUpdate();
 		GameObjectManager::GetInstance()->ExecuteRender(renderContext);
 
+		//物理ワールドの更新。
+		PhysicsWorld::GetInstance()->Update(g_gameTime->GetFrameDeltaTime());
 
 		//////////////////////////////////////
 		//絵を描くコードを書くのはここまで！！！
