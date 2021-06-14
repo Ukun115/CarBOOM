@@ -23,9 +23,10 @@ private:
 	//FontRender* m_plaScore[4] = { nullptr };
 
 public:
-	bool Start();
-	~GameScene();
-	void Update();
+	bool Start()override;
+	~GameScene()override;
+	void Update()override;
+
 	Vector2 GetScorePos(int x);
 
 	int GetNowTime() { return counttime; }

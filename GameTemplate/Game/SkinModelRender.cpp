@@ -26,7 +26,7 @@ void SkinModelRender::Update()
 
 void SkinModelRender::Init(const char* tkmFilePath)
 {
-
+	//インスタンスを探す。
 	m_light = FindGO<Light>("light");
 
 	//tkmファイルのファイルパスを設定する。

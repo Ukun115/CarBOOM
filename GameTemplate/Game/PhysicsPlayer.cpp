@@ -21,6 +21,7 @@ namespace
 
 bool PhysicsPlayer::Start()
 {
+	//インスタンスを探す。
 	m_nowTime = FindGO<GameScene>("gamescene");
 	m_titlescene = FindGO<TitleScene>("titlescene");
 
@@ -114,13 +115,15 @@ void PhysicsPlayer::Update()
 			//ゲーム開始のカウントダウンが終わるまでプレイヤーの処理をすべて止める
 			if (m_nowTime->GetCountDownFlg() == false)
 			{
-
 				//ステージの中心()原点とプレイヤーとの距離を計算
 				m_diff = m_pos[i] - m_origin;
 				//ステージ上から外れているとき、
 				//(ベクトルの長さを取得し、それが250.0fより大きく、500以下の値だったら、)
 				if (m_diff.Length() > 250.0f && m_diff.Length() <= 500.0f)
 				{
+					//プレイヤーが着地しているフラグを折る
+					m_isPlaLanding[i] = false;
+
 					//落下させる
 					m_pos[i].y -= 2.0f;
 				}
@@ -164,6 +167,8 @@ void PhysicsPlayer::Update()
 				//ステージ上にいるとき実行、
 				else
 				{
+					m_isPlaLanding[i] = true;
+
 					//回転処理
 					PlaTurn(i);
 
@@ -195,9 +200,16 @@ void PhysicsPlayer::Update()
 					m_pos[i] += m_moveSpeed[i];
 
 					////剛体の座標と回転を設定。
-					//m_rigidBody[i].SetPositionAndRotation(m_pos[i], m_rot[i]);
+					////m_rigidBody[i].SetPositionAndRotation(m_pos[i], m_rot[i]);
 					////剛体の座標と回転を取得。
 					//m_rigidBody[i].GetPositionAndRotation(m_pos[i], m_rot[i]);
+					////剛体の座標と回転をモデルに反映。
+					//m_player[i]->GetModel().UpdateWorldMatrix(m_pos[i], m_rot[i], g_vec3One);
+					////剛体に力を加える。
+					//m_rigidBody[i].AddForce(
+					//	m_moveSpeed[i],		//力
+					//	g_vec3Zero	//力を加える剛体の相対位置
+					//);
 				}
 			}
 			//登録されているプレイヤーの情報を更新

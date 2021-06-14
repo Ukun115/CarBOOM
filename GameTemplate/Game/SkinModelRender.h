@@ -6,9 +6,9 @@ class Light;
 class SkinModelRender : public IGameObject
 {
 public:
-	bool Start();
-	~SkinModelRender();
-	void Update();
+	bool Start()override;
+	~SkinModelRender()override;
+	void Update()override;
 
 private:
 

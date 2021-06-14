@@ -12,9 +12,10 @@ private:
 	Sprite m_sprite;
 
 public:
-	bool Start();
-	~SpriteRender();
-	void Update();
+	bool Start()override;
+	~SpriteRender()override;
+	void Update()override;
+
 	void Render(RenderContext& renderContext);
 
 	void Init(const char* filepath, float width, float height, AlphaBlendMode mode = AlphaBlendMode::AlphaBlendMode_Trans);
@@ -27,7 +28,4 @@ public:
 	void SetScale(const Vector3& sca) { m_sca = sca; }
 	//色のセット関数
 	void SetMulColor(const Vector4& mulColor) { m_sprite.SetMulColor(mulColor); }
-
-	//色を得る関数
-	const Vector4& GetMulColor() { return m_sprite.GetMulColor(); }
 };

@@ -5,7 +5,7 @@ class Sound : public IGameObject
 private:
 
 public:
-	bool Start();
-	~Sound();
-	void Update();
+	bool Start()override;
+	~Sound()override;
+	void Update()override;
 };

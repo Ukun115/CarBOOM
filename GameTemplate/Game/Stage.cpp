@@ -3,12 +3,12 @@
 
 bool Stage::Start()
 {
-	m_skinModelRender = NewGO<SkinModelRender>(0);
+	m_stage[0] = NewGO<SkinModelRender>(0);
 	//ステージ１をロード
-	m_skinModelRender->Init("Assets/modelData/bg/stage_00.tkm");
+	m_stage[0]->Init("Assets/modelData/bg/stage_00.tkm");
 
 	//メッシュコライダーを初期化。
-	m_meshCollider.CreateFromModel(m_skinModelRender->GetModel(), m_skinModelRender->GetModel().GetWorldMatrix());
+	m_meshCollider.CreateFromModel(m_stage[0]->GetModel(), m_stage[0]->GetModel().GetWorldMatrix());
 
 	//剛体を初期化。
 	RigidBodyInitData rbInitData;

@@ -5,8 +5,8 @@ private:
 	SpriteRender* m_resultSprite = nullptr;
 
 public:
-	bool Start();
-	~ResultScene();
-	void Update();
+	bool Start()override;
+	~ResultScene()override;
+	void Update()override;
 };
 

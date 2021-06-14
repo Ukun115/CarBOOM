@@ -46,9 +46,9 @@ private:
 
 
 public:
-	bool Start();
-	~Light();
-	void Update();
+	bool Start()override;
+	~Light()override;
+	void Update()override;
 
 	//ライトのデータを作成
 	ligData m_ligdata;

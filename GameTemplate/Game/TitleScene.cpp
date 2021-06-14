@@ -28,7 +28,6 @@ namespace
 
 	const Vector3 BUTTON_POS = { 0.0f, -200.0f,0.0f };				//プッシュスタートボタンの表示位置
 	const Vector3 BUTTON_SCA = { 1.2f, 1.2f,1.2f };					//プッシュスタートボタンの大きさ
-	const Vector4 BUTTON_MULCOL = { 1.0f, 1.0f,1.0f ,0.0f};			//プッシュスタートボタンの乗算カラー
 
 	const int MAXPLAYERNUM = 4;		//最大プレイ人数
 
@@ -54,7 +53,6 @@ bool TitleScene::Start()
 	m_pushStartButtonSprite->Init("Assets/image/DDS/PRESSSTARTBUTTON.dds", 400.0f, 200.0f);
 	m_pushStartButtonSprite->SetPosition({ BUTTON_POS });
 	m_pushStartButtonSprite->SetScale({ BUTTON_SCA });
-	m_pushStartButtonSprite->SetMulColor({ BUTTON_MULCOL });//透明
 
 	//1Pは無条件で追加フラグを真に。
 	isAddPlayer[PLAYER1] = true;
@@ -185,31 +183,27 @@ void TitleScene::Update()
 		}
 
 		//PRESSSTARTBUTTONの点滅処理
-		//フラグが立っていると、
-		if (isButtonFlg == true)
+		if (m_buttonTimerFlg)
 		{
-			//だんだんと透明にする
-			m_pushStartButtonSprite->SetMulColor({ 1.0f,1.0f,1.0f,m_pushStartButtonSprite->GetMulColor().w - PRESSSTARTBUTTON_CHANGE_ALPHA_SPEED });
+			//タイマー加算
+			m_buttonTimer++;
 
-			//完全に透明になったら、
-			if (m_pushStartButtonSprite->GetMulColor().w <= 0.0f)
-			{
-				//フラグを折る
-				isButtonFlg = false;
-			}
+			m_pushStartButtonSprite->Activate();
 		}
-		//フラグが折れたら、
 		else
 		{
-			//だんだんと不透明にする
-			m_pushStartButtonSprite->SetMulColor({ 1.0f,1.0f,1.0f,m_pushStartButtonSprite->GetMulColor().w + PRESSSTARTBUTTON_CHANGE_ALPHA_SPEED });
+			//タイマー減算
+			m_buttonTimer--;
 
-			//不透明になったら
-			if (m_pushStartButtonSprite->GetMulColor().w >= 0.8f)
-			{
-				//フラグを立てる
-				isButtonFlg = true;
-			}
+			m_pushStartButtonSprite->Deactivate();
+		}
+		if (m_buttonTimer > 60)
+		{
+			m_buttonTimerFlg = false;
+		}
+		if (m_buttonTimer < 0)
+		{
+			m_buttonTimerFlg = true;
 		}
 	}
 }

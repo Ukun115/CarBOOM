@@ -2,7 +2,7 @@
 #include "GameScene.h"
 #include "ResultScene.h"
 
-#include "PhysicsEnemy.h"
+#include "Enemy.h"
 #include "PhysicsPlayer.h"
 #include "Stage.h"
 
@@ -36,7 +36,7 @@ bool GameScene::Start()
 	//プレイヤークラス
 	physicsPlayer = NewGO<PhysicsPlayer>(0,"physicsplayer");
 	//敵クラス
-	//enemy = NewGO<Enemy>(0);
+	enemy = NewGO<Enemy>(0);
 	//ステージクラス
 	physicsStage = NewGO<Stage>(0);
 

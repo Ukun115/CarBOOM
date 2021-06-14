@@ -24,7 +24,9 @@ public:
 	void PlaNowSpeed(int x);
 
 	//プレイヤーポジションをゲットする関数
-	Vector3 GetPlaPos() { return  m_pos[0]; }
+	Vector3 GetPlaPos(int x) { return  m_pos[x]; }
+
+	bool GetIsPlaLanding(int x) { return m_isPlaLanding[x]; }
 
 private:
 	BoxCollider m_boxCollider[4];		//当たり判定
@@ -57,4 +59,7 @@ private:
 	Vector3 m_diff;								//プレイヤーとステージの中心（原点）との距離
 
 	bool m_respornFallFlg[4] = {false};	//少し上にリスポーンされるので、落下させるフラグ
+
+	bool m_isPlaLanding[4] = {false};	//プレイヤーが着地しているかしていないかを判別するフラグ
+
 };

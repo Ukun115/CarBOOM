@@ -13,12 +13,13 @@ private:
 	int m_totalPlayerNum = 1;			//プレイヤーの合計数
 	bool isCanGameStartFlg = true;		//trueのときはゲームスタートボタンを押せる
 
-	bool isButtonFlg = true;	//trueで表示、falseで非表示
+	int m_buttonTimer = 0;
+	bool m_buttonTimerFlg = true;
 
 public:
-	bool Start();
-	~TitleScene();
-	void Update();
+	bool Start()override;
+	~TitleScene()override;
+	void Update()override;
 
 	//プレイヤーが追加されているかのフラグを取得する関数
 	bool GetPlaFlg(int x) { return isAddPlayer[x]; }

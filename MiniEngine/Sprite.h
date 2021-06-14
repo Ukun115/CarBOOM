@@ -92,11 +92,6 @@ public:
 	{
 		m_constantBufferCPU.mulColor = mulColor;
 	}
-	//カラーを得るインライン関数
-	const Vector4& GetMulColor()
-	{
-		return m_constantBufferCPU.mulColor;
-	}
 
 private:
 	/// <summary>
