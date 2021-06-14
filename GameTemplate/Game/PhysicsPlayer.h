@@ -18,8 +18,10 @@ public:
 	void PlaTurn(int x);
 	//攻撃準備処理
 	void PlaAttackBefore(int x);
-	//攻撃処理
-	void PlaAtack(int x);
+	//攻撃処理1
+	void PlaAtack1(int x);
+	//攻撃処理2
+	void PlaAtack2(int x);
 
 	void PlaNowSpeed(int x);
 
@@ -62,4 +64,10 @@ private:
 
 	bool m_isPlaLanding[4] = {false};	//プレイヤーが着地しているかしていないかを判別するフラグ
 
+	SpriteRender* m_sprite1[4] = { nullptr };
+	SpriteRender* m_sprite2[4] = { nullptr };
+	bool isAtack0Flg[4] = { false };		//Bボタンが押された時のフラグ
+	bool isAtack1Flg[4] = { false };		//Bボタンが押された時のフラグ
+	bool isAtack2Flg[4] = { false };		//Bボタンが押された時のフラグ
+	int m_atackTime[4];				    //攻撃のタイマー
 };

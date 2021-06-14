@@ -25,6 +25,30 @@ bool PhysicsPlayer::Start()
 	m_nowTime = FindGO<GameScene>("gamescene");
 	m_titlescene = FindGO<TitleScene>("titlescene");
 
+	//各プレイヤーの２段階溜め攻撃の可視化
+	for (int i = 0; i < 4; i++)
+	{
+		m_sprite1[i] = NewGO<SpriteRender>(3);
+		m_sprite1[i]->SetPosition({ -500.0f,0.0f,0.0f });
+		m_sprite1[i]->Init("Assets/image/DDS/1.dds", 100.0f, 100.0f);
+		m_sprite1[i]->Deactivate();
+
+
+		m_sprite2[i] = NewGO<SpriteRender>(3);
+		m_sprite2[i]->SetPosition({ -500.0f,0.0f,0.0f });
+		m_sprite2[i]->Init("Assets/image/DDS/2.dds", 100.0f, 100.0f);
+		m_sprite2[i]->Deactivate();
+	}
+	m_sprite1[0]->SetPosition({ -550.0f,200.0f,0.0f });
+	m_sprite1[1]->SetPosition({ 550.0f,200.0f,0.0f });
+	m_sprite1[2]->SetPosition({ -550.0f,-200.0f,0.0f });
+	m_sprite1[3]->SetPosition({ 550.0f,-200.0f,0.0f });
+	m_sprite2[0]->SetPosition({ -550.0f,200.0f,0.0f });
+	m_sprite2[1]->SetPosition({ 550.0f,200.0f,0.0f });
+	m_sprite2[2]->SetPosition({ -550.0f,-200.0f,0.0f });
+	m_sprite2[3]->SetPosition({ 550.0f,-200.0f,0.0f });
+
+
 	for (int i = PLAYER1; i < MAXPLAYERNUM; i++)
 	{
 		//登録されていたら実行
@@ -102,6 +126,12 @@ PhysicsPlayer::~PhysicsPlayer()
 	{
 		//プレイヤーを削除
 		DeleteGO(m_player[i]);
+	}
+	//ため攻撃の際の段階文字表示の削除。
+	for (int i = 0; i < 4; i++)
+	{
+		DeleteGO(m_sprite1[i]);
+		DeleteGO(m_sprite2[i]);
 	}
 }
 
@@ -192,6 +222,8 @@ void PhysicsPlayer::Update()
 						//押した時のタイマー初期化
 						m_pressTimer[i] = 0;
 
+						m_sprite1[i]->Deactivate();
+						m_sprite2[i]->Deactivate();
 					}
 
 					//プレイヤーの状態
@@ -282,6 +314,12 @@ void PhysicsPlayer::PlaNowSpeed(int x)
 	{
 		//移動処理
 		PlaMove(x);
+		isBPushFlg[x] = false;
+		isAtack0Flg[x] = false;
+		isAtack1Flg[x] = false;
+		isAtack2Flg[x] = false;
+		m_atackTime[x] = 0;
+
 	}
 	if (m_pressTimer[x] > 0 && m_releaseTimer[x] == 0)
 	{
@@ -289,17 +327,40 @@ void PhysicsPlayer::PlaNowSpeed(int x)
 		PlaAttackBefore(x);
 
 	}
-	if (m_releaseTimer[x] > 0 && m_releaseTimer[x] < 10 && m_pressTimer[x] == 0)
+
+	if (m_releaseTimer[x] > 0 && m_pressTimer[x] == 0 && isAtack0Flg[x] == true)
+	{
+		//押した時のタイマー初期化
+		m_pressTimer[x] = 0;
+
+		//離した時のタイマー初期化
+		m_releaseTimer[x] = 0;
+		isBPushFlg[x] = false;
+		isAtack0Flg[x] = false;
+		isAtack1Flg[x] = false;
+		isAtack2Flg[x] = false;
+		m_atackTime[x] = 0;
+	}
+	if (m_releaseTimer[x] > 0 && m_pressTimer[x] == 0 && isAtack1Flg[x] == true)
 	{
 		//攻撃処理
-		PlaAtack(x);
+		PlaAtack1(x);
+	}
+	if (m_releaseTimer[x] > 0 && m_pressTimer[x] == 0 && isAtack2Flg[x] == true)
+	{
+		//攻撃処理2
+		PlaAtack2(x);
 	}
 
-	if (m_releaseTimer[x] == 10 && m_pressTimer[x] == 0)
+	if (m_releaseTimer[x] == 20 && m_pressTimer[x] == 0)
 	{
 		//移動処理
 		PlaMove(x);
 		isBPushFlg[x] = false;
+		isAtack0Flg[x] = false;
+		isAtack1Flg[x] = false;
+		isAtack2Flg[x] = false;
+		m_atackTime[x] = 0;
 	}
 }
 
@@ -347,20 +408,58 @@ void PhysicsPlayer::PlaTurn(int x)
 //攻撃準備処理
 void PhysicsPlayer::PlaAttackBefore(int x)
 {
-	m_moveSpeed[x].x += m_leftStick_x[x] * 1.5f * g_gameTime->GetFrameDeltaTime();
-	m_moveSpeed[x].z += m_leftStick_y[x] * 1.5f * g_gameTime->GetFrameDeltaTime();
+		m_moveSpeed[x].x += m_leftStick_x[x] * 1.5f * g_gameTime->GetFrameDeltaTime();
+		m_moveSpeed[x].z += m_leftStick_y[x] * 1.5f * g_gameTime->GetFrameDeltaTime();
 
-	//摩擦力を設定する
-	m_friction[x] = m_moveSpeed[x];
-	m_friction[x] *= -5.0f;
+		//摩擦力を設定する
+		m_friction[x] = m_moveSpeed[x];
+		m_friction[x] *= -5.0f;
 
-	//摩擦力を加算する
-	m_moveSpeed[x].x += m_friction[x].x * g_gameTime->GetFrameDeltaTime();
-	m_moveSpeed[x].z += m_friction[x].z * g_gameTime->GetFrameDeltaTime();
+		//摩擦力を加算する
+		m_moveSpeed[x].x += m_friction[x].x * g_gameTime->GetFrameDeltaTime();
+		m_moveSpeed[x].z += m_friction[x].z * g_gameTime->GetFrameDeltaTime();
+		m_atackTime[x]++;
+		if (m_atackTime[x] > 0 && m_atackTime[x] < 30)
+		{
+			isAtack0Flg[x] = true;
+			isAtack1Flg[x] = false;
+			isAtack2Flg[x] = false;
+
+
+		}
+		if (m_atackTime[x] >= 30 && m_atackTime[x] < 90)
+		{
+			isAtack0Flg[x] = false;
+			isAtack1Flg[x] = true;
+			isAtack2Flg[x] = false;
+			//「1」表示
+			if (m_atackTime[x] == 30) {
+				m_sprite2[x]->Deactivate();
+				m_sprite1[x]->Activate();
+			}
+		}
+		if (m_atackTime[x] > 90)
+		{
+			isAtack0Flg[x] = false;
+			isAtack1Flg[x] = false;
+			isAtack2Flg[x] = true;
+			if (m_atackTime[x] == 91) {
+				//「2」表示
+				m_sprite1[x]->Deactivate();
+				m_sprite2[x]->Activate();
+
+			}
+		}
 }
 
-//攻撃処理
-void PhysicsPlayer::PlaAtack(int x)
+//攻撃処理1
+void PhysicsPlayer::PlaAtack1(int x)
 {
-	m_moveSpeed[x] = m_plaDir[x] * 5.0f;
+	m_moveSpeed[x] = m_plaDir[x] * 4.0f;
+}
+
+//攻撃処理2
+void PhysicsPlayer::PlaAtack2(int x)
+{
+	m_moveSpeed[x] = m_plaDir[x] * 7.0f;
 }
