@@ -9,7 +9,7 @@ namespace
 bool ResultScene::Start()
 {
 	//ƒŠƒUƒ‹ƒg•¶š‰æ‘œ‚ğ‰Šú‰»B
-	m_resultSprite = NewGO<SpriteRender>(0);
+	m_resultSprite = NewGO<SpriteRender>(0, nullptr);
 	m_resultSprite->Init("Assets/image/DDS/Result.dds", 300.0f, 300.0f);
 
 	//StartŠÖ”‚Ìreturn•¶

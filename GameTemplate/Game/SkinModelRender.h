@@ -36,7 +36,7 @@ public:
 	//Šg‘å—¦‚ğİ’è‚·‚éƒZƒbƒgŠÖ”
 	void SetScale(const Vector3 sca) { m_sca = sca; }
 
-	Model& GetModel() { return m_model ; }
+	Model* GetModel() { return &m_model ; }
 
 	//•`‰æŠÖ”
 	void Render(RenderContext& rc);

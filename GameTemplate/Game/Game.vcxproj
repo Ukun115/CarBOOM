@@ -294,7 +294,6 @@
     <ClCompile Include="GameScene.cpp" />
     <ClCompile Include="Light.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="PhysicsEnemy.cpp" />
     <ClCompile Include="PhysicsPlayer.cpp" />
     <ClCompile Include="ResultScene.cpp" />
     <ClCompile Include="SkinModelRender.cpp" />
@@ -377,7 +376,6 @@
     <ClInclude Include="FontRender.h" />
     <ClInclude Include="GameScene.h" />
     <ClInclude Include="Light.h" />
-    <ClInclude Include="PhysicsEnemy.h" />
     <ClInclude Include="PhysicsPlayer.h" />
     <ClInclude Include="ResultScene.h" />
     <ClInclude Include="SkinModelRender.h" />

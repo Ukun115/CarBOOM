@@ -3,14 +3,11 @@ class PhysicsPlayer;
 class TitleScene;
 class GameScene;
 
+#include "../../ExEngine/physics/CharacterController.h"
+
 class Enemy : public IGameObject
 {
 private:
-	BoxCollider m_boxCollider[6];		//当たり判定
-	RigidBody m_rigidBody[6];			//剛体
-
-	Vector3 m_boxColliderSize[6];				//縦横高さ
-	RigidBodyInitData rbInitData[6];
 
 	SkinModelRender* m_enemy[6] = { nullptr };		//敵6体
 	PhysicsPlayer* m_player;	//プレイヤー。
@@ -39,6 +36,31 @@ private:
 
 	bool m_respornFallFlg[6] = { false };	//少し上にリスポーンされるので、落下させるフラグ
 
+	CharacterController m_charaCon[6];		//キャラクタコントローラ。
+
+	float distance = 10000.0f;
+	int a = 0;
+
+	enum ENEMY
+	{
+		ENEMY1,		//エネミー１
+		ENEMY2,		//エネミー２
+		ENEMY3,		//エネミー３
+		ENEMY4,		//エネミー４
+		ENEMY5,		//エネミー５
+		ENEMY6,		//エネミー６
+		ENEMYNUM	//敵の総数
+	};
+
+	enum PLAYER
+	{
+		PLAYER1,
+		PLAYER2,
+		PLAYER3,
+		PLAYER4,
+		MAXPLAYERNUM
+	};
+
 public:
 	bool Start()override;
 	~Enemy()override;
@@ -53,4 +75,8 @@ public:
 
 	//パトカーを初期位置に戻す関数
 	void EneResporn(int x);
+
+	Vector3 GetEnemySpeed(int x) { return m_moveSpeed[x]; }
+
+	Vector3 GetEnemyPos(int x) { return m_enePos[x]; }
 };

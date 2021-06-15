@@ -8,6 +8,7 @@ public:
 
 private:
 	SkinModelRender* m_stage[1] = { nullptr };
-	MeshCollider m_meshCollider;	//メッシュコライダー
-	RigidBody m_rigidBody;			//リジッドボディ
+
+	//静的物理オブジェクト
+	PhysicsStaticObject m_physicsStaticObject;
 };

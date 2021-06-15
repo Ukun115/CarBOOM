@@ -21,7 +21,7 @@ void Shader::Load(const wchar_t* filePath, const char* entryFuncName, const char
 	UINT compileFlags = 0;
 #endif
 	auto hr = D3DCompileFromFile(filePath, nullptr, nullptr, entryFuncName, shaderModel, compileFlags, 0, &m_blob, &errorBlob);
-	
+
 	if (FAILED(hr)) {
 		if (hr == STIERR_OBJECTNOTFOUND) {
 			std::wstring errorMessage;
@@ -76,7 +76,7 @@ void Shader::LoadRaytracing(const wchar_t* filePath)
 		MessageBox(nullptr, L"CreateIncludeHandlerに失敗しました。", L"エラー", MB_OK);
 		std::abort();
 	}
-	
+
 	//dxcコンパイラの作成。
 	CComPtr<IDxcCompiler> dxcCompiler;
 	hr = DxcCreateInstance(CLSID_DxcCompiler, IID_PPV_ARGS(&dxcCompiler));
@@ -92,7 +92,7 @@ void Shader::LoadRaytracing(const wchar_t* filePath)
 		MessageBox(nullptr, L"シェーダーソースのBlobの作成に失敗しました。", L"エラー", MB_OK);
 		std::abort();
 	}
-	
+
 	CComPtr<IDxcIncludeHandler> dxcIncludeHandler;
 	dxclib->CreateIncludeHandler(&dxcIncludeHandler);
 	const wchar_t* args[] = {

@@ -23,4 +23,6 @@ public:
 
 	//プレイヤーが追加されているかのフラグを取得する関数
 	bool GetPlaFlg(int x) { return isAddPlayer[x]; }
+
+	int GetTotalPlaNum(){ return m_totalPlayerNum; }
 };

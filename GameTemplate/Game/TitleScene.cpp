@@ -37,19 +37,19 @@ namespace
 bool TitleScene::Start()
 {
 	//タイトルロゴを表示
-	m_titleSprite = NewGO<SpriteRender>(0);
+	m_titleSprite = NewGO<SpriteRender>(0,nullptr);
 	m_titleSprite->Init("Assets/image/DDS/TitleRogo.dds", 300.0f, 150.0f);
 	m_titleSprite->SetPosition({ TITLE_POS });
 	m_titleSprite->SetScale({ TITLE_SCA });
 
 	//王冠を表示
-	m_crownSprite = NewGO<SpriteRender>(1);
+	m_crownSprite = NewGO<SpriteRender>(1, nullptr);
 	m_crownSprite->Init("Assets/image/DDS/crowngold.dds", 300.0f, 300.0f);
 	m_crownSprite->SetPosition({ PLAYER1_CROWNPOS });
 	m_crownSprite->SetScale({ CROWNSCA });
 
 	//PUSH START BUTTONを表示
-	m_pushStartButtonSprite = NewGO<SpriteRender>(1);
+	m_pushStartButtonSprite = NewGO<SpriteRender>(1, nullptr);
 	m_pushStartButtonSprite->Init("Assets/image/DDS/PRESSSTARTBUTTON.dds", 400.0f, 200.0f);
 	m_pushStartButtonSprite->SetPosition({ BUTTON_POS });
 	m_pushStartButtonSprite->SetScale({ BUTTON_SCA });
@@ -58,14 +58,14 @@ bool TitleScene::Start()
 	isAddPlayer[PLAYER1] = true;
 	//1Pは非アクティブ時がないため、初めからアクティブ画像を表示
 	//（一番上のレイヤーに置きたいのでプライオリティーは最高値）
-	m_plaActiveName[PLAYER1] = NewGO<SpriteRender>(1);
+	m_plaActiveName[PLAYER1] = NewGO<SpriteRender>(1, nullptr);
 	m_plaActiveName[PLAYER1]->Init("Assets/image/DDS/Player1_ActiveName.dds", 120.0f, 120.0f);
 	m_plaActiveName[PLAYER1]->SetPosition(PLAYER1_NAMEPOS);
 
 	//2P～4Pの非アクティブ画像を表示。
 	for (int i = PLAYER1; i < MAXPLAYERNUM; i++) {
 		//（一番上のレイヤーに置きたいのでプライオリティーは最高値）
-		m_plaDeactiveName[i] = NewGO<SpriteRender>(1);
+		m_plaDeactiveName[i] = NewGO<SpriteRender>(1, nullptr);
 		//1P
 		if (i == PLAYER1)
 		{
@@ -132,7 +132,7 @@ void TitleScene::Update()
 				isAddPlayer[m_totalPlayerNum] = true;
 
 				//プレイヤーのアクティブ化（一番上のレイヤーに置きたいのでプライオリティーは最高値）
-				m_plaActiveName[m_totalPlayerNum] = NewGO<SpriteRender>(1);
+				m_plaActiveName[m_totalPlayerNum] = NewGO<SpriteRender>(1,nullptr);
 				//2Pのアクティブ化+アクティブ画像表示
 				if (m_totalPlayerNum == PLAYER2)
 				{

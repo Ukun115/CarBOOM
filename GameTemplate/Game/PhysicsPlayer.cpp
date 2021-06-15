@@ -2,15 +2,11 @@
 #include "PhysicsPlayer.h"
 #include "TitleScene.h"
 #include "GameScene.h"
+#include "Enemy.h"
 
 namespace
 {
 	const Vector3 PlAYER_NORMALSIZE = { 1.4f,1.4f,1.4f };			//プレイヤーの初期サイズ
-	const int PLAYER1 = 0;			//1P
-	const int PLAYER2 = 1;			//2P
-	const int PLAYER3 = 2;			//3P
-	const int PLAYER4 = 3;			//4P
-	const int MAXPLAYERNUM = 4;		//プレイヤーの最大人数
 	const Vector3 PLAYER1_RESPOS = { -100.0f,0.0f, 100.0f };		//リスポーン座標(左上)
 	const Vector3 PLAYER2_RESPOS = {  100.0f,0.0f, 100.0f };		//リスポーン座標(右上)
 	const Vector3 PLAYER3_RESPOS = { -100.0f,0.0f,-100.0f };		//リスポーン座標(左下)
@@ -24,6 +20,7 @@ bool PhysicsPlayer::Start()
 	//インスタンスを探す。
 	m_nowTime = FindGO<GameScene>("gamescene");
 	m_titlescene = FindGO<TitleScene>("titlescene");
+	m_enemy = FindGO<Enemy>("enemy");
 
 	//各プレイヤーの２段階溜め攻撃の可視化
 	for (int i = 0; i < 4; i++)
@@ -32,7 +29,6 @@ bool PhysicsPlayer::Start()
 		m_sprite1[i]->SetPosition({ -500.0f,0.0f,0.0f });
 		m_sprite1[i]->Init("Assets/image/DDS/1.dds", 100.0f, 100.0f);
 		m_sprite1[i]->Deactivate();
-
 
 		m_sprite2[i] = NewGO<SpriteRender>(3);
 		m_sprite2[i]->SetPosition({ -500.0f,0.0f,0.0f });
@@ -48,7 +44,6 @@ bool PhysicsPlayer::Start()
 	m_sprite2[2]->SetPosition({ -550.0f,-200.0f,0.0f });
 	m_sprite2[3]->SetPosition({ 550.0f,-200.0f,0.0f });
 
-
 	for (int i = PLAYER1; i < MAXPLAYERNUM; i++)
 	{
 		//登録されていたら実行
@@ -56,32 +51,6 @@ bool PhysicsPlayer::Start()
 		{
 			//プレイヤーをロード
 			m_player[i] = NewGO<SkinModelRender>(0);
-
-			////当たり判定
-
-			////コライダーを初期化。
-			////コライダーの大きさを初期化。
-			//m_boxColliderSize[i] = { 18.0f,10.0f,40.0f };
-			//m_boxCollider[i].Create(m_boxColliderSize[i]);
-			////質量を設定する。
-			//rbInitData[i].mass = 3.0f;
-			//rbInitData[i].collider = &m_boxCollider[i];
-			//if (i == PLAYER1)
-			//rbInitData[i].pos = PLAYER1_RESPOS;
-			//if (i == PLAYER2)
-			//	rbInitData[i].pos = PLAYER2_RESPOS;
-			//if (i == PLAYER3)
-			//	rbInitData[i].pos = PLAYER3_RESPOS;
-			//if (i == PLAYER4)
-			//	rbInitData[i].pos = PLAYER4_RESPOS;
-			////はじめはちょっと上から
-			//rbInitData[i].pos.y = 100.0f;
-			//m_rigidBody[i].Init(rbInitData[i]);
-			////摩擦力を設定する。0～10
-			//m_rigidBody[i].SetFriction(0.1f);
-			////線形移動する要素を設定する。
-			////0を指定した軸は移動しない。
-			//m_rigidBody[i].SetLinearFactor(1.0f, 1.0f, 1.0f);
 
 			//モデルのファイルパスを設定＆初期座標(リスポーン座標)の設定。
 			//追加されたプレイヤーの名前画像の表示と位置決め
@@ -109,6 +78,8 @@ bool PhysicsPlayer::Start()
 			m_player[i]->SetScale(PlAYER_NORMALSIZE);
 			//プレイヤーを初期位置に持っていく。
 			PlaResporn(i);
+
+			m_charaCon[i].Init(15.0f, 85.0f, m_pos[i]);
 
 			//プレイヤー数を+1
 			m_plaNum++;
@@ -142,161 +113,139 @@ void PhysicsPlayer::Update()
 	{
 		//制限時間が０秒になったらプレイヤーの処理を全て止める
 		if (m_nowTime->GetNowTime() != 0) {
+
 			//ゲーム開始のカウントダウンが終わるまでプレイヤーの処理をすべて止める
 			if (m_nowTime->GetCountDownFlg() == false)
 			{
-				//ステージの中心()原点とプレイヤーとの距離を計算
-				m_diff = m_pos[i] - m_origin;
-				//ステージ上から外れているとき、
-				//(ベクトルの長さを取得し、それが250.0fより大きく、500以下の値だったら、)
-				if (m_diff.Length() > 250.0f && m_diff.Length() <= 500.0f)
-				{
-					//プレイヤーが着地しているフラグを折る
-					m_isPlaLanding[i] = false;
+				//重力の影響を与える
+				m_moveSpeed[i].y -= 0.2f;
 
-					//落下させる
-					m_pos[i].y -= 2.0f;
-				}
-				//落下から少し時間が経過したら、
-				//基本はステータスの初期化をここでしています。
-				else if (m_diff.Length() > 500.0f)
+				//押しているとき、
+				if (g_pad[i]->IsPress(enButtonB) && isBPushFlg[i] == false)
 				{
-					//プレイヤーを初期位置に持っていく。
+					//押した時のタイマーを加算
+					m_pressTimer[i]++;
+
+					//離した時のタイマー初期化
+					m_releaseTimer[i] = 0;
+
+					isBPushFlg[i] = true;
+				}
+				//離したとき、
+				if (!g_pad[i]->IsPress(enButtonB) && isBPushFlg[i] == true)
+				{
+					//離した時のタイマーを加算
+					m_releaseTimer[i]++;
+
+					//押した時のタイマー初期化
+					m_pressTimer[i] = 0;
+
+					m_sprite1[i]->Deactivate();
+					m_sprite2[i]->Deactivate();
+				}
+
+				//プレイヤーの状態
+				PlaNowSpeed(i);
+
+				//スピードの補正
+				if (m_moveSpeed[i].x > 5.0f) {
+					m_moveSpeed[i].x = 5.0f;	//右方向の最大速度
+				}
+				if (m_moveSpeed[i].x < -5.0f) {
+					m_moveSpeed[i].x = -5.0f;	//左方向の最大速度
+				}
+				if (m_moveSpeed[i].z > 5.0f) {
+					m_moveSpeed[i].z = 5.0f;	//上方向の最大速度
+				}
+				if (m_moveSpeed[i].z < -5.0f) {
+					m_moveSpeed[i].z = -5.0f;	//下方向の最大速度
+				}
+
+				//回転処理
+				PlaTurn(i);
+
+				//パトカーとぶつかったときの処理
+				for (int u = 0; u < 6; u++)
+				{
+					if (m_enemy->GetEnemyPos(u).Length() == 0.1f)
+					{
+						m_moveSpeed[i] += m_enemy->GetEnemySpeed(u);
+					}
+				}
+
+				//キャラクターコントローラーを使った移動処理に変更。
+				m_pos[i] = m_charaCon[i].Execute(m_moveSpeed[i], 1.0f);
+
+				/// <summary>
+				/// リスポーン処理
+				/// </summary>
+				if (m_pos[i].y < -1000.0f)
+				{
+					//プレイヤーの座標をリスポーン座標に移動
 					PlaResporn(i);
-					//ちょっと上にプレイヤーを戻す。
-					m_pos[i].y += 50.0f;
 
-					//フラグを立てる
-					m_respornFallFlg[i] = true;
+					//キャラコンの座標にプレイヤーの座標をいれる
+					m_charaCon[i].SetPosition(m_pos[i]);
+
+					//スピードを初期化
+					m_moveSpeed[i] = { Vector3::Zero };
+
+					//キャラクターコントローラーを使った移動処理に変更。
+					m_pos[i] = m_charaCon[i].Execute(m_moveSpeed[i], 1.0f);
 				}
-				//ステージ上にリスポーンしたというフラグが立ったら、
-				else if (m_respornFallFlg[i])
-				{
-					//ステージ上に落下させる処理
-					if (m_pos[i].y != 0.0f)
-					{
-						m_pos[i].y -= 1.0f;
-					}
-					else
-					{
-						//プレイヤーの蓄積されているスピードを初期化。
-						m_moveSpeed[i] = { 0.0f,0.0f,0.0f };
 
-						//押した時のタイマー初期化
-						m_pressTimer[i] = 0;
-						//離した時のタイマー初期化
-						m_releaseTimer[i] = 0;
-						isBPushFlg[i] = false;
-						//これらを初期化しないと、着地した際に勝手にダッシュ攻撃するバグが発生します。
-
-
-						//フラグを折る
-						m_respornFallFlg[i] = false;
-					}
-				}
-				//ステージ上にいるとき実行、
-				else
-				{
-					m_isPlaLanding[i] = true;
-
-					//回転処理
-					PlaTurn(i);
-
-					//押しているとき、
-					if (g_pad[i]->IsPress(enButtonB) && isBPushFlg[i] == false)
-					{
-						//押した時のタイマーを加算
-						m_pressTimer[i]++;
-
-						//離した時のタイマー初期化
-						m_releaseTimer[i] = 0;
-
-						isBPushFlg[i] = true;
-					}
-					//離したとき、
-					if (!g_pad[i]->IsPress(enButtonB) && isBPushFlg[i] == true)
-					{
-						//離した時のタイマーを加算
-						m_releaseTimer[i]++;
-
-						//押した時のタイマー初期化
-						m_pressTimer[i] = 0;
-
-						m_sprite1[i]->Deactivate();
-						m_sprite2[i]->Deactivate();
-					}
-
-					//プレイヤーの状態
-					PlaNowSpeed(i);
-
-					m_pos[i] += m_moveSpeed[i];
-
-					////剛体の座標と回転を設定。
-					////m_rigidBody[i].SetPositionAndRotation(m_pos[i], m_rot[i]);
-					////剛体の座標と回転を取得。
-					//m_rigidBody[i].GetPositionAndRotation(m_pos[i], m_rot[i]);
-					////剛体の座標と回転をモデルに反映。
-					//m_player[i]->GetModel().UpdateWorldMatrix(m_pos[i], m_rot[i], g_vec3One);
-					////剛体に力を加える。
-					//m_rigidBody[i].AddForce(
-					//	m_moveSpeed[i],		//力
-					//	g_vec3Zero	//力を加える剛体の相対位置
-					//);
-				}
+				//登録されているプレイヤーの情報を更新
+				PlaDataUpdate(i);
 			}
-			//登録されているプレイヤーの情報を更新
-			PlaDataUpdate(i);
 		}
 	}
 }
-
 //選択されたプレイヤーをリスポーン位置まで戻す関数
 void PhysicsPlayer::PlaResporn(int x)
 {
-	//1P
-	if (x == PLAYER1)
+	switch (x)
 	{
-		m_pos[x] = PLAYER1_RESPOS;		//リスポーン座標(左上)
+		//1P
+	 case PLAYER1:
+			m_pos[x] = PLAYER1_RESPOS;		//リスポーン座標(左上)
 
-		//プレイヤーがリスポーンしたときに全プレイヤー統一でステージ中央を向かせておいたほうが
-		//リスポーン時違和感がないので、ステージ中央を向かせておく。
-		m_rotAngle[x] = 2.5f;
-		//回転情報をセットする
-		m_rot[x].SetRotation(Vector3::AxisY, m_rotAngle[x]);
-	}
-	//2P
-	else if (x == PLAYER2)
-	{
-		m_pos[x] = PLAYER2_RESPOS;		//リスポーン座標(右上)
+			//プレイヤーがリスポーンしたときに全プレイヤー統一でステージ中央を向かせておいたほうが
+			//リスポーン時違和感がないので、ステージ中央を向かせておく。
+			m_rotAngle[x] = 2.5f;
+			break;
+		//2P
+	 case PLAYER2:
+			m_pos[x] = PLAYER2_RESPOS;		//リスポーン座標(右上)
 
-		//プレイヤーがリスポーンしたときに全プレイヤー統一でステージ中央を向かせておいたほうが
-		//リスポーン時違和感がないので、ステージ中央を向かせておく。
-		m_rotAngle[x] = 3.7f;
-		//回転情報をセットする
-		m_rot[x].SetRotation(Vector3::AxisY, m_rotAngle[x]);
-	}
-	//3P
-	else if (x == PLAYER3)
-	{
-		m_pos[x] = PLAYER3_RESPOS;		//リスポーン座標(左下)
+			//プレイヤーがリスポーンしたときに全プレイヤー統一でステージ中央を向かせておいたほうが
+			//リスポーン時違和感がないので、ステージ中央を向かせておく。
+			m_rotAngle[x] = 3.7f;
+			break;
+		//3P
+	 case PLAYER3:
+			m_pos[x] = PLAYER3_RESPOS;		//リスポーン座標(左下)
 
-		//プレイヤーがリスポーンしたときに全プレイヤー統一でステージ中央を向かせておいたほうが
-		//リスポーン時違和感がないので、ステージ中央を向かせておく。
-		m_rotAngle[x] = 1.0f;
-		//回転情報をセットする
-		m_rot[x].SetRotation(Vector3::AxisY, m_rotAngle[x]);
-	}
-	//4P
-	else if (x == PLAYER4)
-	{
-		m_pos[x] = PLAYER4_RESPOS;		//リスポーン座標(右下)
+			//プレイヤーがリスポーンしたときに全プレイヤー統一でステージ中央を向かせておいたほうが
+			//リスポーン時違和感がないので、ステージ中央を向かせておく。
+			m_rotAngle[x] = 1.0f;
+			break;
+		//4P
+	 case PLAYER4:
+			m_pos[x] = PLAYER4_RESPOS;		//リスポーン座標(右下)
 
-		//プレイヤーがリスポーンしたときに全プレイヤー統一でステージ中央を向かせておいたほうが
-		//リスポーン時違和感がないので、ステージ中央を向かせておく。
-		m_rotAngle[x] = 5.5f;
-		//回転情報をセットする
-		m_rot[x].SetRotation(Vector3::AxisY, m_rotAngle[x]);
+			//プレイヤーがリスポーンしたときに全プレイヤー統一でステージ中央を向かせておいたほうが
+			//リスポーン時違和感がないので、ステージ中央を向かせておく。
+			m_rotAngle[x] = 5.5f;
+			break;
 	}
+
+	//位置をセット
+	m_player[x]->SetPosition(m_pos[x]);
+
+	//回転情報をセットする
+	m_rot[x].SetRotation(Vector3::AxisY, m_rotAngle[x]);
+
+	m_player[x]->SetRotation(m_rot[x]);
 }
 
 //プレイヤーの情報を更新する関数
@@ -325,7 +274,6 @@ void PhysicsPlayer::PlaNowSpeed(int x)
 	{
 		//攻撃準備処理
 		PlaAttackBefore(x);
-
 	}
 
 	if (m_releaseTimer[x] > 0 && m_pressTimer[x] == 0 && isAtack0Flg[x] == true)
@@ -344,12 +292,14 @@ void PhysicsPlayer::PlaNowSpeed(int x)
 	if (m_releaseTimer[x] > 0 && m_pressTimer[x] == 0 && isAtack1Flg[x] == true)
 	{
 		//攻撃処理
-		PlaAtack1(x);
+		//PlaAtack1(x);
+		m_moveSpeed[x] *= 2.0f;
 	}
 	if (m_releaseTimer[x] > 0 && m_pressTimer[x] == 0 && isAtack2Flg[x] == true)
 	{
 		//攻撃処理2
-		PlaAtack2(x);
+		//PlaAtack2(x);
+		m_moveSpeed[x] *= 4.0f;
 	}
 
 	if (m_releaseTimer[x] == 20 && m_pressTimer[x] == 0)
@@ -368,12 +318,12 @@ void PhysicsPlayer::PlaNowSpeed(int x)
 void PhysicsPlayer::PlaMove(int x)
 {
 	//左スティックの入力量を加算する
-	m_moveSpeed[x].x += m_leftStick_x[x] * 5.0f * g_gameTime->GetFrameDeltaTime();
-	m_moveSpeed[x].z += m_leftStick_y[x] * 5.0f * g_gameTime->GetFrameDeltaTime();
+	m_moveSpeed[x].x += m_leftStick_x[x] * 10.0f * g_gameTime->GetFrameDeltaTime();
+	m_moveSpeed[x].z += m_leftStick_y[x] * 10.0f * g_gameTime->GetFrameDeltaTime();
 
 	//摩擦力を設定する
 	m_friction[x] = m_moveSpeed[x];
-	m_friction[x] *= -1.5f;
+	m_friction[x] *= -2.0f;
 
 	//摩擦力を加算する
 	m_moveSpeed[x].x += m_friction[x].x * g_gameTime->GetFrameDeltaTime();
@@ -399,10 +349,6 @@ void PhysicsPlayer::PlaTurn(int x)
 	m_rotAngle[x] = atan2(m_moveSpeed[x].x, m_moveSpeed[x].z);
 
 	m_rot[x].SetRotation(Vector3::AxisY, m_rotAngle[x]);
-
-	//向きを設定する
-	m_plaDir[x] = m_moveSpeed[x];
-	m_plaDir[x].Normalize();
 }
 
 //攻撃準備処理
@@ -450,16 +396,4 @@ void PhysicsPlayer::PlaAttackBefore(int x)
 
 			}
 		}
-}
-
-//攻撃処理1
-void PhysicsPlayer::PlaAtack1(int x)
-{
-	m_moveSpeed[x] = m_plaDir[x] * 4.0f;
-}
-
-//攻撃処理2
-void PhysicsPlayer::PlaAtack2(int x)
-{
-	m_moveSpeed[x] = m_plaDir[x] * 7.0f;
 }

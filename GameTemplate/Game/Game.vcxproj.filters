@@ -239,9 +239,6 @@
     <ClCompile Include="PhysicsPlayer.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="PhysicsEnemy.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\ExEngine\physics\BoxCollider.cpp">
       <Filter>ExEngine\physics</Filter>
     </ClCompile>
@@ -461,9 +458,6 @@
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="PhysicsPlayer.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="PhysicsEnemy.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="..\..\ExEngine\physics\BoxCollider.h">
