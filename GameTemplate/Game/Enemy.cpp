@@ -86,6 +86,33 @@ void Enemy::Update()
 				//スタートした瞬間にパトカーがダッシュしてしまうのを回避する処理
 				if (m_startDelayTimer < 600)
 				{
+					//登録されているプレイヤーとぶつかったときの処理
+					for (int u = PLAYER1; u < m_titlescene->GetTotalPlaNum(); u++)
+					{
+						//プレイヤーとパトカーとの距離を計算
+						m_diff = m_plaPos[u] - m_enePos[i];
+
+						//距離の長さが30.0fより小さかったら、
+						if (m_diff.Length() < 30.0f)
+						{
+							m_plaPushSpeed = m_player->GetPlaSpeed(u);
+							////これだとプッシュパワーが強すぎるため、威力を弱める
+							//m_plaPushSpeed.x /= 20;
+							//m_plaPushSpeed.y /= 20;
+							//m_plaPushSpeed.z /= 20;
+
+							//エネミーに影響
+							m_moveSpeed[i] += m_plaPushSpeed;
+						}
+					}
+
+					//キャラクターコントローラーを使った移動処理に変更。
+					m_enePos[i] = m_charaCon[i].Execute(m_moveSpeed[i], 1.0f);
+
+					m_enePos[i] += m_moveSpeed[i];
+					m_rot2[i].SetRotationDeg(Vector3::AxisX, 0.0f);	//3dsMaxで設定されているアニメーションでキャラが回転しているので、補正を入れる
+					m_rot2[i].Multiply(m_rot[i], m_rot2[i]);
+
 					//タイマー加算
 					m_startDelayTimer++;
 				}
@@ -131,6 +158,26 @@ void Enemy::Update()
 						//CTのカウントを0にする
 						m_cTime[i] = 0;
 					}
+
+					////登録されているプレイヤーとぶつかったときの処理
+					//for (int u = PLAYER1; u < m_titlescene->GetTotalPlaNum(); u++)
+					//{
+					//	//プレイヤーとパトカーとの距離を計算
+					//	m_diff = m_plaPos[u] - m_enePos[i];
+
+					//	//距離の長さが30.0fより小さかったら、
+					//	if (m_diff.Length() < 30.0f)
+					//	{
+					//		m_plaPushSpeed = m_player->GetPlaSpeed(u);
+					//		////これだとプッシュパワーが強すぎるため、威力を弱める
+					//		//m_plaPushSpeed.x *= 20;
+					//		//m_plaPushSpeed.y *= 20;
+					//		//m_plaPushSpeed.z *= 20;
+
+					//		//エネミーに影響
+					//		m_moveSpeed[i] += m_plaPushSpeed;
+					//	}
+					//}
 
 					//キャラクターコントローラーを使った移動処理に変更。
 					m_enePos[i] = m_charaCon[i].Execute(m_moveSpeed[i], 1.0f);

@@ -167,9 +167,19 @@ void PhysicsPlayer::Update()
 				//パトカーとぶつかったときの処理
 				for (int u = 0; u < 6; u++)
 				{
-					if (m_enemy->GetEnemyPos(u).Length() == 0.1f)
+					//プレイヤーとパトカーとの距離を計算
+					m_diff = m_enemy->GetEnemyPos(u) - m_pos[i];
+					//距離の長さが30.0fより小さかったら、
+					if (m_diff.Length() < 30.0f)
 					{
-						m_moveSpeed[i] += m_enemy->GetEnemySpeed(u);
+						m_enePushSpeed = m_enemy->GetEnemySpeed(u);
+						//これだとプッシュパワーが強すぎるため、威力を弱める
+						m_enePushSpeed.x /= 20;
+						m_enePushSpeed.y /= 20;
+						m_enePushSpeed.z /= 20;
+
+						//プレイヤーに影響
+						m_moveSpeed[i] += m_enePushSpeed;
 					}
 				}
 

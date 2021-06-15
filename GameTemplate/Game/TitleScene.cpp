@@ -11,10 +11,6 @@ namespace
 	const Vector3 TITLE_POS = { -60.0f, 50.0f,0.0f };			//タイトルの表示位置
 	const Vector3 TITLE_SCA = { 6.0f, 6.0f,6.0f };			//タイトルの大きさ
 
-	const int PLAYER1   = 0;	//1P
-	const int PLAYER2   = 1;	//2P
-	const int PLAYER3   = 2;	//3P
-	const int PLAYER4   = 3;	//4P
 	const Vector3 PLAYER1_NAMEPOS = {-570.0f, 300.0f,0.0f};			//プレイヤー1の名前表示位置
 	const Vector3 PLAYER2_NAMEPOS = { 570.0f, 300.0f,0.0f};			//プレイヤー2の名前表示位置
 	const Vector3 PLAYER3_NAMEPOS = {-570.0f,-300.0f,0.0f};			//プレイヤー3の名前表示位置
@@ -28,8 +24,6 @@ namespace
 
 	const Vector3 BUTTON_POS = { 0.0f, -200.0f,0.0f };				//プッシュスタートボタンの表示位置
 	const Vector3 BUTTON_SCA = { 1.2f, 1.2f,1.2f };					//プッシュスタートボタンの大きさ
-
-	const int MAXPLAYERNUM = 4;		//最大プレイ人数
 
 	const float PRESSSTARTBUTTON_CHANGE_ALPHA_SPEED = 0.02f;
 }

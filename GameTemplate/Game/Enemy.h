@@ -32,7 +32,8 @@ private:
 	PhysicsPlayer* m_physicsPlayer = nullptr;
 
 	Vector3 m_origin = { 0.0f,0.0f,0.0f };		//原点
-	Vector3 m_diff;								//パトカーとステージの中心（原点）との距離
+	Vector3 m_diff;								//パトカーとプレイヤーとの距離
+	Vector3 m_plaPushSpeed;
 
 	bool m_respornFallFlg[6] = { false };	//少し上にリスポーンされるので、落下させるフラグ
 

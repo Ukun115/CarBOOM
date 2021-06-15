@@ -27,6 +27,9 @@ public:
 	//プレイヤーポジションをゲットする関数
 	Vector3 GetPlaPos(int x) { return  m_pos[x]; }
 
+
+	Vector3 GetPlaSpeed(int x) { return m_moveSpeed[x]; }
+
 private:
 	CharacterController m_charaCon[4];		//キャラクタコントローラ。
 
@@ -42,6 +45,7 @@ private:
 	int m_plaNum = 0;	//プレイヤー数をカウントする変数
 
 	Vector3 m_moveSpeed[4];				//移動速度
+	Vector3 m_enePushSpeed;				//エネミーから与えられるプッシュパワー
 	Vector3 m_plaDir[4];					//向き
 	float m_leftStick_x[4];				//左スティックのx入力量
 	float m_leftStick_y[4];				//左スティックのy入力量
@@ -52,7 +56,7 @@ private:
 	Vector3 m_friction[4];				//摩擦
 
 	Vector3 m_origin = {0.0f,0.0f,0.0f};		//原点
-	Vector3 m_diff;								//プレイヤーとステージの中心（原点）との距離
+	Vector3 m_diff;								//プレイヤーとエネミーとの距離
 
 	bool m_respornFallFlg[4] = {false};	//少し上にリスポーンされるので、落下させるフラグ
 

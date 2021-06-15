@@ -16,6 +16,15 @@ private:
 	int m_buttonTimer = 0;
 	bool m_buttonTimerFlg = true;
 
+	enum PLAYER
+	{
+		PLAYER1,	//1P
+		PLAYER2,	//2P
+		PLAYER3,	//3P
+		PLAYER4,	//4P
+		MAXPLAYERNUM	//Å‘åƒvƒŒƒCl”
+	};
+
 public:
 	bool Start()override;
 	~TitleScene()override;
