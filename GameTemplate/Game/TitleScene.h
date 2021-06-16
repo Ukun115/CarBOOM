@@ -4,7 +4,6 @@ class TitleScene : public IGameObject
 {
 private:
 	SpriteRender* m_titleSprite = nullptr;
-	SpriteRender* m_crownSprite = nullptr;
 	SpriteRender* m_pushStartButtonSprite = nullptr;
 
 	SpriteRender* m_plaDeactiveName[4] = {nullptr};		//スプライトレンダー

@@ -57,7 +57,7 @@ public:
 	void SetDirectionLightData();
 
 	//ポイントライトのデータを設定するセット関数
-	void SetPointLightData();
+	void SetPointLightData(Vector3 x, Vector3 y, float z);
 
 	//スポットライトのデータを設定するセット関数
 	void SetSpotLightData();

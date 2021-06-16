@@ -5,10 +5,6 @@ namespace
 	const Vector3 DIRLIG_DIR = { 1.0f, -1.0f ,-1.0f };	//ディレクションライトの初期方向
 	const Vector3 DIRLIG_COL = { 1.0f, 1.0f ,1.0f };	//ディレクションライトの初期カラー
 
-	const Vector3 POILIG_POS = { 0.0f, 0.0f ,0.0f };	//ポイントライトの初期位置
-	const Vector3 POILIG_COL = { 1.0f, 1.0f ,1.0f };	//ポイントライトの初期カラー
-	const float	  POILIG_RAN = 100.0f;					//ポイントライトの初期影響範囲
-
 	const Vector3 SPOLIG_POS = { 0.0f, 0.0f ,0.0f };	//スポットライトの初期位置
 	const Vector3 SPOLIG_COL = { 1.0f, 1.0f ,1.0f };	//スポットライトの初期カラー
 	const Vector3 SPOLIG_DIR = { 1.0f, -1.0f ,-1.0f };	//スポットライトの初期方向
@@ -22,7 +18,7 @@ bool Light::Start()
 	m_ligdata.eyePos = g_camera3D->GetPosition();
 
 	//ライトクラスの中のディレクションライトをセット
-	SetDirectionLightData();
+	//SetDirectionLightData();
 	////ライトクラスの中のポイントライトをセット
 	//SetPointLightData();
 	////ライトクラスの中のスポットライトをセット
@@ -80,14 +76,14 @@ void Light::SetDirectionLightData()
 	m_ligdata.dirLigData.ligColor = DIRLIG_COL;
 }
 
-void Light::SetPointLightData()
+void Light::SetPointLightData(Vector3 x,Vector3 y,float z)
 {
 	//ポイントライトの座標を設定
-	m_ligdata.poiLigData.ptPosition = POILIG_POS;
+	m_ligdata.poiLigData.ptPosition = x;
 	//ポイントライトの色を設定
-	m_ligdata.poiLigData.ptColor = POILIG_COL;
+	m_ligdata.poiLigData.ptColor = y;
 	//ポイントライトの影響範囲を設定
-	m_ligdata.poiLigData.ptRange = POILIG_RAN;
+	m_ligdata.poiLigData.ptRange = z;
 }
 
 void Light::SetSpotLightData()

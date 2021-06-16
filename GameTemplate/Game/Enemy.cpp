@@ -54,6 +54,7 @@ bool Enemy::Start()
 		}
 		m_enemy[i]->SetScale({0.7f,0.7f,0.7f});
 
+		//当たり判定のイニシャライズ(初期化)
 		m_charaCon[i].Init(15.0f, 85.0f, m_enePos[i]);
 	}
 
@@ -96,10 +97,6 @@ void Enemy::Update()
 						if (m_diff.Length() < 30.0f)
 						{
 							m_plaPushSpeed = m_player->GetPlaSpeed(u);
-							////これだとプッシュパワーが強すぎるため、威力を弱める
-							//m_plaPushSpeed.x /= 20;
-							//m_plaPushSpeed.y /= 20;
-							//m_plaPushSpeed.z /= 20;
 
 							//エネミーに影響
 							m_moveSpeed[i] += m_plaPushSpeed;
@@ -128,7 +125,7 @@ void Enemy::Update()
 						ctFlg[i] = true;
 
 						//距離設定
-						Kyori(i);
+						Distance(i);
 
 						//移動処理
 						EneMove(i);
@@ -159,25 +156,25 @@ void Enemy::Update()
 						m_cTime[i] = 0;
 					}
 
-					////登録されているプレイヤーとぶつかったときの処理
-					//for (int u = PLAYER1; u < m_titlescene->GetTotalPlaNum(); u++)
-					//{
-					//	//プレイヤーとパトカーとの距離を計算
-					//	m_diff = m_plaPos[u] - m_enePos[i];
+					//登録されているプレイヤーとぶつかったときの処理
+					for (int u = PLAYER1; u < m_titlescene->GetTotalPlaNum(); u++)
+					{
+						//プレイヤーとパトカーとの距離を計算
+						m_diff = m_plaPos[u] - m_enePos[i];
 
-					//	//距離の長さが30.0fより小さかったら、
-					//	if (m_diff.Length() < 30.0f)
-					//	{
-					//		m_plaPushSpeed = m_player->GetPlaSpeed(u);
-					//		////これだとプッシュパワーが強すぎるため、威力を弱める
-					//		//m_plaPushSpeed.x *= 20;
-					//		//m_plaPushSpeed.y *= 20;
-					//		//m_plaPushSpeed.z *= 20;
+						//距離の長さが30.0fより小さかったら、
+						if (m_diff.Length() < 30.0f)
+						{
+							m_plaPushSpeed = m_player->GetPlaSpeed(u);
+							////これだとプッシュパワーが強すぎるため、威力を弱める
+							//m_plaPushSpeed.x *= 20;
+							//m_plaPushSpeed.y *= 20;
+							//m_plaPushSpeed.z *= 20;
 
-					//		//エネミーに影響
-					//		m_moveSpeed[i] += m_plaPushSpeed;
-					//	}
-					//}
+							//エネミーに影響
+							m_moveSpeed[i] += m_plaPushSpeed;
+						}
+					}
 
 					//キャラクターコントローラーを使った移動処理に変更。
 					m_enePos[i] = m_charaCon[i].Execute(m_moveSpeed[i], 1.0f);
@@ -209,11 +206,10 @@ void Enemy::Update()
 			m_enemy[i]->SetPosition(m_enePos[i]);	//位置情報更新
 		}
 	}
-	//残り30秒になったらポイントライトでパトランプを光らせるようにする
 }
 
 //距離設定
-void Enemy::Kyori(int x)
+void Enemy::Distance(int x)
 {
 	//登録されているプレイヤーの分処理をする
 	for (int i = 0; i < m_titlescene->GetTotalPlaNum(); i++)
@@ -222,23 +218,28 @@ void Enemy::Kyori(int x)
 		m_plaPos[i] = m_player->GetPlaPos(i);
 		//車の位置とパトカーの位置の距離を取得
 		m_mostShortKyori[i] = m_plaPos[i] - m_enePos[x];
-		//取得した距離の長さがこれより短いとき、
-		if (distance > m_mostShortKyori[i].Length())
-		{
-			distance = m_mostShortKyori[i].Length();
-			a = x;
+	}
+
+	//m_mostShortKyori[0].Length()の値が一番小さくなるように並び替え(ソート)
+	for (int s = 0; s < m_titlescene->GetTotalPlaNum() - 1; s++) {
+		for (int t = s + 1; t < m_titlescene->GetTotalPlaNum(); t++) {
+			if (m_mostShortKyori[t].Length() < m_mostShortKyori[s].Length()) {
+				Vector3 tmp = m_mostShortKyori[t];
+				m_mostShortKyori[t] = m_mostShortKyori[s];
+				m_mostShortKyori[s] = tmp;
+			}
 		}
 	}
-	m_mostShortKyori[x] = m_plaPos[a] - m_enePos[x];
+
 	//プレイヤーからエネミーのベクトルを正規化して方向だけの情報にする
-	m_mostShortKyori[x].Normalize();
+	m_mostShortKyori[0].Normalize();
 }
 
 //移動処理
 void Enemy::EneMove(int x)
 {
 	//方向だけのm_kyori[x]に速さを掛けて速度にする
-	m_moveSpeed[x] = m_mostShortKyori[x] * 7.0f;
+	m_moveSpeed[x] = m_mostShortKyori[0] * 5.0f;
 }
 
 //回転処理

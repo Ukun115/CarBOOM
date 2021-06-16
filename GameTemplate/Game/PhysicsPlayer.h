@@ -35,7 +35,7 @@ private:
 
 	SkinModelRender* m_player[4] = { nullptr };		//最大プレイ人数4人
 	TitleScene* m_titlescene = nullptr;
-	GameScene* m_nowTime = nullptr;
+	GameScene* m_gamescene = nullptr;
 	Enemy* m_enemy = nullptr;
 
 	Vector3    m_pos[4];		//プレイヤーの位置
@@ -68,6 +68,8 @@ private:
 	bool isAtack1Flg[4] = { false };		//Bボタンが押された時のフラグ
 	bool isAtack2Flg[4] = { false };		//Bボタンが押された時のフラグ
 	int m_atackTime[4];				    //攻撃のタイマー
+
+	int m_pushPlayer[5];
 
 	enum
 	{

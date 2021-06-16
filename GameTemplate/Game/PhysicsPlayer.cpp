@@ -18,7 +18,7 @@ namespace
 bool PhysicsPlayer::Start()
 {
 	//インスタンスを探す。
-	m_nowTime = FindGO<GameScene>("gamescene");
+	m_gamescene = FindGO<GameScene>("gamescene");
 	m_titlescene = FindGO<TitleScene>("titlescene");
 	m_enemy = FindGO<Enemy>("enemy");
 
@@ -85,6 +85,10 @@ bool PhysicsPlayer::Start()
 			m_plaNum++;
 		}
 	}
+	for (int i = 0; i < 5; i++)
+	{
+		m_pushPlayer[i] = 4;	//初期値は自滅判定の4。
+	}
 
 	//Start関数のreturn文
 	return true;
@@ -112,10 +116,10 @@ void PhysicsPlayer::Update()
 	for (int i = PLAYER1; i < m_plaNum; i++)
 	{
 		//制限時間が０秒になったらプレイヤーの処理を全て止める
-		if (m_nowTime->GetNowTime() != 0) {
+		if (m_gamescene->GetNowTime() != 0) {
 
 			//ゲーム開始のカウントダウンが終わるまでプレイヤーの処理をすべて止める
-			if (m_nowTime->GetCountDownFlg() == false)
+			if (m_gamescene->GetCountDownFlg() == false)
 			{
 				//重力の影響を与える
 				m_moveSpeed[i].y -= 0.2f;
@@ -164,7 +168,10 @@ void PhysicsPlayer::Update()
 				//回転処理
 				PlaTurn(i);
 
-				//パトカーとぶつかったときの処理
+				/// <summary>
+				/// 衝突処理
+				/// </summary>
+				//パトカーとぶつかったときパトカーに押される処理
 				for (int u = 0; u < 6; u++)
 				{
 					//プレイヤーとパトカーとの距離を計算
@@ -180,6 +187,32 @@ void PhysicsPlayer::Update()
 
 						//プレイヤーに影響
 						m_moveSpeed[i] += m_enePushSpeed;
+					}
+				}
+				//ほかプレイヤー(u)と自分(i)がぶつかったとき、ほかプレイヤーに押される処理
+				for (int u = PLAYER1; u < m_plaNum; u++) {
+					if (u == i)
+					{
+						//uとiの値が同じの時はしたの処理は行わずスキップする
+						continue;
+					}
+					//プレイヤー同士の距離を計算
+					m_diff = m_pos[u] - m_pos[i];
+					//距離の長さが30.0fより小さかったら、
+					if (m_diff.Length() < 40.0f)
+					{
+						//衝突しているほかプレイヤーの力を保存
+						m_enePushSpeed = m_moveSpeed[u];
+						////これだとプッシュパワーが強すぎるため、威力を弱める
+						//m_enePushSpeed.x /= 20;
+						//m_enePushSpeed.y /= 20;
+						//m_enePushSpeed.z /= 20;
+
+						//プレイヤーに影響
+						m_moveSpeed[i] += m_enePushSpeed;
+
+						//誰が押してきたかを保存
+						m_pushPlayer[i] = u;
 					}
 				}
 
@@ -202,6 +235,10 @@ void PhysicsPlayer::Update()
 
 					//キャラクターコントローラーを使った移動処理に変更。
 					m_pos[i] = m_charaCon[i].Execute(m_moveSpeed[i], 1.0f);
+
+					//落下時最後に触れた敵にポイントを与えるm_pushPlayer = 最後に押してきた敵のナンバー
+					m_gamescene->GetPlayerAddScore(m_pushPlayer[i],i);
+					m_pushPlayer[i] = 4;	//４で初期化し、４のまま落ちると、自滅とみなし自身のポイントが減る
 				}
 
 				//登録されているプレイヤーの情報を更新

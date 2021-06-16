@@ -4,12 +4,16 @@
 class PhysicsPlayer;
 class Enemy;
 class Stage;
+class TitleScene;
 
 class GameScene :public IGameObject
 {
 private:
+	TitleScene* m_titlescene = nullptr;
+
 	SkinModelRender* m_normalStage = nullptr;
 	SpriteRender* m_sprite[4] = { nullptr };
+	SpriteRender* m_crownSprite = nullptr;
 
 	FontRender* m_ScoreFontRender[4] = { nullptr };
 	FontRender* m_TextScoreFontRender[4] = { nullptr };
@@ -26,7 +30,16 @@ private:
 	int m_countDownTimer = 0;
 	bool m_countTimeFlg = true;
 
-	//FontRender* m_plaScore[4] = { nullptr };
+	enum
+	{
+		PLAYER1,		//1P
+		PLAYER2,		//2P
+		PLAYER3,		//3P
+		PLAYER4,		//4P
+		MAXPLAYERNUM	//プレイヤーの最大人数
+	};
+
+	int ehehe = 0;
 
 public:
 	bool Start()override;
@@ -39,4 +52,9 @@ public:
 	int GetNowTime() { return counttime; }
 
 	bool GetCountDownFlg() { return m_countTimeFlg; }
+
+	void GetPlayerAddScore(int x,int y);
+
+	//現在の１位に王冠を渡す関数
+	void NowCrown();
 };

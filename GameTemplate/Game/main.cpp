@@ -26,6 +26,8 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 
 	//ライトクラスをロード
 	Light* m_light = NewGO<Light>(0, "light");
+	//ディレクションライトをセット
+	m_light->SetDirectionLightData();
 
 	//タイトルシーンクラスから開始
 	TitleScene* titleScene = NewGO<TitleScene>(0,"titlescene");

@@ -16,12 +16,6 @@ namespace
 	const Vector3 PLAYER3_NAMEPOS = {-570.0f,-300.0f,0.0f};			//プレイヤー3の名前表示位置
 	const Vector3 PLAYER4_NAMEPOS = { 570.0f,-300.0f,0.0f};			//プレイヤー4の名前表示位置
 
-	const Vector3 PLAYER1_CROWNPOS = { -470.0f, 300.0f,0.0f };		//プレイヤー1の王冠表示位置
-	const Vector3 PLAYER2_CROWNPOS = { 470.0f, 300.0f,0.0f };		//プレイヤー2の王冠表示位置
-	const Vector3 PLAYER3_CROWNPOS = { -470.0f, -300.0f,0.0f };		//プレイヤー3の王冠表示位置
-	const Vector3 PLAYER4_CROWNPOS = { 470.0f, -300.0f,0.0f };		//プレイヤー4の王冠表示位置
-	const Vector3 CROWNSCA = { 0.2f, 0.2f,0.2f };					//王冠の大きさ
-
 	const Vector3 BUTTON_POS = { 0.0f, -200.0f,0.0f };				//プッシュスタートボタンの表示位置
 	const Vector3 BUTTON_SCA = { 1.2f, 1.2f,1.2f };					//プッシュスタートボタンの大きさ
 
@@ -35,12 +29,6 @@ bool TitleScene::Start()
 	m_titleSprite->Init("Assets/image/DDS/TitleRogo.dds", 300.0f, 150.0f);
 	m_titleSprite->SetPosition({ TITLE_POS });
 	m_titleSprite->SetScale({ TITLE_SCA });
-
-	//王冠を表示
-	m_crownSprite = NewGO<SpriteRender>(1, nullptr);
-	m_crownSprite->Init("Assets/image/DDS/crowngold.dds", 300.0f, 300.0f);
-	m_crownSprite->SetPosition({ PLAYER1_CROWNPOS });
-	m_crownSprite->SetScale({ CROWNSCA });
 
 	//PUSH START BUTTONを表示
 	m_pushStartButtonSprite = NewGO<SpriteRender>(1, nullptr);

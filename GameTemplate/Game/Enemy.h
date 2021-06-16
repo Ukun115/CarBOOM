@@ -14,8 +14,8 @@ private:
 	Vector3    m_plaPos[4];		//プレイヤーの位置
 	Vector3    m_enePos[6];		//エネミーの位置
 	Quaternion m_rot[6];		//エネミーの回転
-	Vector3    m_mostShortKyori[6];   //プレイヤー1と敵の距離
-	Vector3    m_newKyori[6];   //プレイヤー2と敵の距離
+	Vector3    m_mostShortKyori[4];   //プレイヤーと敵の距離
+	Vector3    m_muki[4];       //エネミーの向き
 
 	Vector3 m_moveSpeed[6];				//移動速度
 	Vector3 m_eneDir[6];					//向き
@@ -38,9 +38,6 @@ private:
 	bool m_respornFallFlg[6] = { false };	//少し上にリスポーンされるので、落下させるフラグ
 
 	CharacterController m_charaCon[6];		//キャラクタコントローラ。
-
-	float distance = 10000.0f;
-	int a = 0;
 
 	enum ENEMY
 	{
@@ -72,7 +69,7 @@ public:
 	//回転処理
 	void EneTurn(int x);
 	//距離設定
-	void Kyori(int x);
+	void Distance(int x);
 
 	//パトカーを初期位置に戻す関数
 	void EneResporn(int x);

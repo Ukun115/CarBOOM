@@ -5,6 +5,7 @@
 #include "Enemy.h"
 #include "PhysicsPlayer.h"
 #include "Stage.h"
+#include "TitleScene.h"
 
 namespace
 {
@@ -24,16 +25,11 @@ namespace
 	const Vector2 PLAYER3_SCOREFONTPOS = { -630.0f,-200.0f };	//プレイヤー3のSCROE文字表示
 	const Vector2 PLAYER4_SCOREFONTPOS = { 350.0f,-200.0f };	//プレイヤー4のSCROE文字表示
 
-	const int PLAYER1 = 0;
-	const int PLAYER2 = 1;
-	const int PLAYER3 = 2;
-	const int PLAYER4 = 3;
-	const int MAXPLAYERNUM = 4;		//プレイヤーの最大人数
-
-	const int SWITCH_PLA1 = 0;
-	const int SWITCH_PLA2 = 1;
-	const int SWITCH_PLA3 = 2;
-	const int SWITCH_PLA4 = 3;
+	const Vector3 PLAYER1_CROWNPOS = { -470.0f, 300.0f,0.0f };		//プレイヤー1の王冠表示位置
+	const Vector3 PLAYER2_CROWNPOS = { 470.0f, 300.0f,0.0f };		//プレイヤー2の王冠表示位置
+	const Vector3 PLAYER3_CROWNPOS = { -470.0f, -300.0f,0.0f };		//プレイヤー3の王冠表示位置
+	const Vector3 PLAYER4_CROWNPOS = { 470.0f, -300.0f,0.0f };		//プレイヤー4の王冠表示位置
+	const Vector3 CROWNSCA = { 0.2f, 0.2f,0.2f };					//王冠の大きさ
 }
 
 bool GameScene::Start()
@@ -44,6 +40,15 @@ bool GameScene::Start()
 	physicsPlayer = NewGO<PhysicsPlayer>(0, "physicsplayer");
 	//ステージクラス
 	physicsStage = NewGO<Stage>(0, nullptr);
+
+	//インスタンスを作成
+	m_titlescene = FindGO<TitleScene>("titlescene");
+
+	//王冠を表示
+	m_crownSprite = NewGO<SpriteRender>(1, nullptr);
+	m_crownSprite->Init("Assets/image/DDS/crowngold.dds", 300.0f, 300.0f);
+	m_crownSprite->SetPosition({ PLAYER1_CROWNPOS });
+	m_crownSprite->SetScale({ CROWNSCA });
 
 	//フォントクラス（一番上のレイヤーに置きたいのでプライオリティーは最高値）
 	m_timeLimit = NewGO<FontRender>(1);
@@ -190,6 +195,9 @@ void GameScene::Update()
 		m_TextScoreFontRender[i]->SetText(text1);
 	}
 
+	//現在のスコア１位を判定し、王冠画像を移動
+	NowCrown();
+
 	//制限時間が0秒になったら、
 	if (counttime == 0)
 	{
@@ -207,21 +215,21 @@ void GameScene::Update()
 	}
 }
 
-//「Score : 」の表示位置判別関数
+//「Score」の表示位置判別関数
 Vector2 GameScene::GetScorePos(int x)
 {
 	switch (x)
 	{
-	case SWITCH_PLA1:
+	case PLAYER1:
 		return PLAYER1_SCOREFONTPOS;
 		break;
-	case SWITCH_PLA2:
+	case PLAYER2:
 		return PLAYER2_SCOREFONTPOS;
 		break;
-	case SWITCH_PLA3:
+	case PLAYER3:
 		return PLAYER3_SCOREFONTPOS;
 		break;
-	case SWITCH_PLA4:
+	case PLAYER4:
 		return PLAYER4_SCOREFONTPOS;
 		break;
 	}
@@ -230,17 +238,79 @@ Vector2 GameScene::GetScorePos(int x)
 Vector2 GameScene::SetScoreTextPos(int t) {
 	switch (t)
 	{
-	case SWITCH_PLA1:
+	case PLAYER1:
 		return PLA1SCORE_POS;
 		break;
-	case SWITCH_PLA2:
+	case PLAYER2:
 		return PLA2SCORE_POS;
 		break;
-	case SWITCH_PLA3:
+	case PLAYER3:
 		return PLA3SCORE_POS;
 		break;
-	case SWITCH_PLA4:
+	case PLAYER4:
 		return  PLA4SCORE_POS;
 		break;
+	}
+}
+
+//ｘは落としたプレイヤー、yは自滅したプレイヤー
+void GameScene::GetPlayerAddScore(int x,int y)
+{
+	//自滅したとき、
+	if (x == 4)
+	{
+		//ポイント減少ペナルティ
+		m_plscore[y] -= 20;
+		//点数が０以下にならないように補正
+		if (m_plscore[y] < 0)
+		{
+			m_plscore[y] = 0;
+		}
+	}
+	//落としたとき、
+	else
+	{
+		//ポイント増加
+		m_plscore[x] += 30;
+	}
+}
+
+//王冠画像の位置更新関数
+void GameScene::NowCrown()
+{
+	for (int i = PLAYER1; i < MAXPLAYERNUM; i++)
+	{
+		for (int u = PLAYER1; u < MAXPLAYERNUM; u++)
+		{
+			//番号が同じときは次のループに行く
+			if (i == u)
+			{
+				continue;
+			}
+			//今のプレイヤー(i)と次のプレイヤー(u)を比較
+			//次のプレイヤーのほうがスコアが高いとき、
+			if (m_plscore[i] < m_plscore[u])
+			{
+				ehehe = u;
+			}
+
+			//王冠の位置を次のプレイヤーの位置に変更
+			if (ehehe == 0)
+			{
+				m_crownSprite->SetPosition({ PLAYER1_CROWNPOS });
+			}
+			if (ehehe == 1)
+			{
+				m_crownSprite->SetPosition({ PLAYER2_CROWNPOS });
+			}
+			if (ehehe == 2)
+			{
+				m_crownSprite->SetPosition({ PLAYER3_CROWNPOS });
+			}
+			if (ehehe == 3)
+			{
+				m_crownSprite->SetPosition({ PLAYER4_CROWNPOS });
+			}
+		}
 	}
 }
