@@ -1,7 +1,7 @@
 #pragma once
 #include "FontRender.h"
 
-class PhysicsPlayer;
+class Player;
 class Enemy;
 class Stage;
 class TitleScene;
@@ -18,13 +18,13 @@ private:
 	FontRender* m_ScoreFontRender[4] = { nullptr };
 	FontRender* m_TextScoreFontRender[4] = { nullptr };
 
-	PhysicsPlayer* physicsPlayer = nullptr;
+	Player* physicsPlayer = nullptr;
 	Enemy* enemy = nullptr;
 	Stage* physicsStage = nullptr;
 
 	FontRender* m_timeLimit = nullptr;
 	int counttime = 0;
-	int m_timer = 3600;	//60秒
+	int m_timer = 60;	//60秒
 	int m_plscore[4] = { 0 };
 
 	int m_countDownTimer = 0;
@@ -39,7 +39,7 @@ private:
 		MAXPLAYERNUM	//プレイヤーの最大人数
 	};
 
-	int ehehe = 0;
+	int m_nowNumOnePla = 0;
 
 public:
 	bool Start()override;

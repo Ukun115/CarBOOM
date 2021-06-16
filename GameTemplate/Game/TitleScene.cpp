@@ -11,10 +11,10 @@ namespace
 	const Vector3 TITLE_POS = { -60.0f, 50.0f,0.0f };			//タイトルの表示位置
 	const Vector3 TITLE_SCA = { 6.0f, 6.0f,6.0f };			//タイトルの大きさ
 
-	const Vector3 PLAYER1_NAMEPOS = {-570.0f, 300.0f,0.0f};			//プレイヤー1の名前表示位置
-	const Vector3 PLAYER2_NAMEPOS = { 570.0f, 300.0f,0.0f};			//プレイヤー2の名前表示位置
-	const Vector3 PLAYER3_NAMEPOS = {-570.0f,-300.0f,0.0f};			//プレイヤー3の名前表示位置
-	const Vector3 PLAYER4_NAMEPOS = { 570.0f,-300.0f,0.0f};			//プレイヤー4の名前表示位置
+	const Vector3 PLAYER1_NAMEPOS = {-480.0f, 310.0f,0.0f};			//プレイヤー1の名前表示位置
+	const Vector3 PLAYER2_NAMEPOS = { 480.0f, 310.0f,0.0f};			//プレイヤー2の名前表示位置
+	const Vector3 PLAYER3_NAMEPOS = {-480.0f,-310.0f,0.0f};			//プレイヤー3の名前表示位置
+	const Vector3 PLAYER4_NAMEPOS = { 480.0f,-310.0f,0.0f};			//プレイヤー4の名前表示位置
 
 	const Vector3 BUTTON_POS = { 0.0f, -200.0f,0.0f };				//プッシュスタートボタンの表示位置
 	const Vector3 BUTTON_SCA = { 1.2f, 1.2f,1.2f };					//プッシュスタートボタンの大きさ
@@ -41,7 +41,7 @@ bool TitleScene::Start()
 	//1Pは非アクティブ時がないため、初めからアクティブ画像を表示
 	//（一番上のレイヤーに置きたいのでプライオリティーは最高値）
 	m_plaActiveName[PLAYER1] = NewGO<SpriteRender>(1, nullptr);
-	m_plaActiveName[PLAYER1]->Init("Assets/image/DDS/Player1_ActiveName.dds", 120.0f, 120.0f);
+	m_plaActiveName[PLAYER1]->Init("Assets/image/DDS/Player1_ActiveName.dds", 300.0f, 150.0f);
 	m_plaActiveName[PLAYER1]->SetPosition(PLAYER1_NAMEPOS);
 
 	//2P～4Pの非アクティブ画像を表示。
@@ -51,7 +51,7 @@ bool TitleScene::Start()
 		//1P
 		if (i == PLAYER1)
 		{
-			m_plaDeactiveName[i]->Init("Assets/image/DDS/Player1_DeactiveName.dds", 120.0f, 120.0f);
+			m_plaDeactiveName[i]->Init("Assets/image/DDS/Player1_DeactiveName.dds", 300.0f, 150.0f);
 			m_plaDeactiveName[i]->SetPosition(PLAYER1_NAMEPOS);
 			//非アクティブ時はないため、非表示にしておく。
 			m_plaDeactiveName[i]->Deactivate();
@@ -59,19 +59,19 @@ bool TitleScene::Start()
 		//2P
 		if (i == PLAYER2)
 		{
-			m_plaDeactiveName[i]->Init("Assets/image/DDS/Player2_DeactiveName.dds", 120.0f, 120.0f);
+			m_plaDeactiveName[i]->Init("Assets/image/DDS/Player2_DeactiveName.dds", 300.0f, 150.0f);
 			m_plaDeactiveName[i]->SetPosition(PLAYER2_NAMEPOS);
 		}
 		//3P
 		if (i == PLAYER3)
 		{
-			m_plaDeactiveName[i]->Init("Assets/image/DDS/Player3_DeactiveName.dds", 120.0f, 120.0f);
+			m_plaDeactiveName[i]->Init("Assets/image/DDS/Player3_DeactiveName.dds", 300.0f, 150.0f);
 			m_plaDeactiveName[i]->SetPosition(PLAYER3_NAMEPOS);
 		}
 		//4P
 		if (i == PLAYER4)
 		{
-			m_plaDeactiveName[i]->Init("Assets/image/DDS/Player4_DeactiveName.dds", 120.0f, 120.0f);
+			m_plaDeactiveName[i]->Init("Assets/image/DDS/Player4_DeactiveName.dds", 300.0f, 150.0f);
 			m_plaDeactiveName[i]->SetPosition(PLAYER4_NAMEPOS);
 		}
 	}
@@ -118,21 +118,21 @@ void TitleScene::Update()
 				//2Pのアクティブ化+アクティブ画像表示
 				if (m_totalPlayerNum == PLAYER2)
 				{
-					m_plaActiveName[PLAYER2]->Init("Assets/image/DDS/Player2_ActiveName.dds", 120.0f, 120.0f);
+					m_plaActiveName[PLAYER2]->Init("Assets/image/DDS/Player2_ActiveName.dds", 300.0f, 150.0f);
 					//画像のポジション指定
 					m_plaActiveName[PLAYER2]->SetPosition(PLAYER2_NAMEPOS);
 				}
 				//3Pのアクティブ化+アクティブ画像表示
 				if (m_totalPlayerNum == PLAYER3)
 				{
-					m_plaActiveName[PLAYER3]->Init("Assets/image/DDS/Player3_ActiveName.dds", 120.0f, 120.0f);
+					m_plaActiveName[PLAYER3]->Init("Assets/image/DDS/Player3_ActiveName.dds", 300.0f, 150.0f);
 					//画像のポジション指定
 					m_plaActiveName[PLAYER3]->SetPosition(PLAYER3_NAMEPOS);
 				}
 				//4Pのアクティブ化+アクティブ画像表示
 				if (m_totalPlayerNum == PLAYER4)
 				{
-					m_plaActiveName[PLAYER4]->Init("Assets/image/DDS/Player4_ActiveName.dds", 120.0f, 120.0f);
+					m_plaActiveName[PLAYER4]->Init("Assets/image/DDS/Player4_ActiveName.dds", 300.0f, 150.0f);
 					//画像のポジション指定
 					m_plaActiveName[PLAYER4]->SetPosition(PLAYER4_NAMEPOS);
 				}

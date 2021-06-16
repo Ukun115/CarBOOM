@@ -3,7 +3,7 @@
 #include "ResultScene.h"
 
 #include "Enemy.h"
-#include "PhysicsPlayer.h"
+#include "Player.h"
 #include "Stage.h"
 #include "TitleScene.h"
 
@@ -15,9 +15,9 @@ namespace
 	const float     TIMELIMIT_SCA = 1.5f;						//制限時間フォントの拡大率
 	const Vector2   TIMELIMIT_PIV = { 0.0f,0.0f };				//制限時間フォントの基点
 
-	const Vector2   PLA1SCORE_POS = { -460.0f, 255.0f };			//1Pスコアフォントの位置
+	const Vector2   PLA1SCORE_POS = { -460.0f, 255.0f };		//1Pスコアフォントの位置
 	const Vector2   PLA2SCORE_POS = { 520.0f, 255.0f };			//2Pスコアフォントの位置
-	const Vector2   PLA3SCORE_POS = { -460.0f,-205.0f };			//3Pスコアフォントの位置
+	const Vector2   PLA3SCORE_POS = { -460.0f,-205.0f };		//3Pスコアフォントの位置
 	const Vector2   PLA4SCORE_POS = { 520.0f,-205.0f };			//4Pスコアフォントの位置
 
 	const Vector2 PLAYER1_SCOREFONTPOS = { -630.0f,260.0f };	//プレイヤー1のSCROE文字表示
@@ -25,10 +25,10 @@ namespace
 	const Vector2 PLAYER3_SCOREFONTPOS = { -630.0f,-200.0f };	//プレイヤー3のSCROE文字表示
 	const Vector2 PLAYER4_SCOREFONTPOS = { 350.0f,-200.0f };	//プレイヤー4のSCROE文字表示
 
-	const Vector3 PLAYER1_CROWNPOS = { -470.0f, 300.0f,0.0f };		//プレイヤー1の王冠表示位置
-	const Vector3 PLAYER2_CROWNPOS = { 470.0f, 300.0f,0.0f };		//プレイヤー2の王冠表示位置
-	const Vector3 PLAYER3_CROWNPOS = { -470.0f, -300.0f,0.0f };		//プレイヤー3の王冠表示位置
-	const Vector3 PLAYER4_CROWNPOS = { 470.0f, -300.0f,0.0f };		//プレイヤー4の王冠表示位置
+	const Vector3 PLAYER1_CROWNPOS = { -320.0f, 310.0f,0.0f };		//プレイヤー1の王冠表示位置
+	const Vector3 PLAYER2_CROWNPOS = { 300.0f, 310.0f,0.0f };		//プレイヤー2の王冠表示位置
+	const Vector3 PLAYER3_CROWNPOS = { -300.0f, -310.0f,0.0f };		//プレイヤー3の王冠表示位置
+	const Vector3 PLAYER4_CROWNPOS = { 300.0f, -310.0f,0.0f };		//プレイヤー4の王冠表示位置
 	const Vector3 CROWNSCA = { 0.2f, 0.2f,0.2f };					//王冠の大きさ
 }
 
@@ -37,7 +37,7 @@ bool GameScene::Start()
 	//敵クラス
 	enemy = NewGO<Enemy>(0,"enemy");
 	//プレイヤークラス
-	physicsPlayer = NewGO<PhysicsPlayer>(0, "physicsplayer");
+	physicsPlayer = NewGO<Player>(0, "physicsplayer");
 	//ステージクラス
 	physicsStage = NewGO<Stage>(0, nullptr);
 
@@ -204,15 +204,6 @@ void GameScene::Update()
 		//リザルト画面に遷移
 		NewGO<ResultScene>(0, nullptr);
 	}
-
-	//1Pのセレクトボタン(キーボード：スペース)が押されたら、
-	if (g_pad[0]->IsTrigger(enButtonSelect))
-	{
-		//リザルト画面に遷移
-		NewGO<ResultScene>(0, nullptr);
-		//このクラスの削除
-		DeleteGO(this);
-	}
 }
 
 //「Score」の表示位置判別関数
@@ -259,7 +250,7 @@ void GameScene::GetPlayerAddScore(int x,int y)
 	//自滅したとき、
 	if (x == 4)
 	{
-		//ポイント減少ペナルティ
+		//20pt減少
 		m_plscore[y] -= 20;
 		//点数が０以下にならないように補正
 		if (m_plscore[y] < 0)
@@ -270,8 +261,20 @@ void GameScene::GetPlayerAddScore(int x,int y)
 	//落としたとき、
 	else
 	{
-		//ポイント増加
+		//30pt増加
 		m_plscore[x] += 30;
+		//もし落とした敵が1位だったら、
+		if (y == m_nowNumOnePla)
+		{
+			//落とされた１位はマイナス60pt
+			//これを入れることで１位が狙われやすい仕様にしている。
+			m_plscore[y] -= 60;
+			//点数が０以下にならないように補正
+			if (m_plscore[y] < 0)
+			{
+				m_plscore[y] = 0;
+			}
+		}
 	}
 }
 
@@ -291,26 +294,26 @@ void GameScene::NowCrown()
 			//次のプレイヤーのほうがスコアが高いとき、
 			if (m_plscore[i] < m_plscore[u])
 			{
-				ehehe = u;
-			}
-
-			//王冠の位置を次のプレイヤーの位置に変更
-			if (ehehe == 0)
-			{
-				m_crownSprite->SetPosition({ PLAYER1_CROWNPOS });
-			}
-			if (ehehe == 1)
-			{
-				m_crownSprite->SetPosition({ PLAYER2_CROWNPOS });
-			}
-			if (ehehe == 2)
-			{
-				m_crownSprite->SetPosition({ PLAYER3_CROWNPOS });
-			}
-			if (ehehe == 3)
-			{
-				m_crownSprite->SetPosition({ PLAYER4_CROWNPOS });
+				m_nowNumOnePla = u;
 			}
 		}
+	}
+
+	//王冠の位置を次のプレイヤーの位置に変更
+	if (m_nowNumOnePla == 0)
+	{
+		m_crownSprite->SetPosition({ PLAYER1_CROWNPOS });
+	}
+	if (m_nowNumOnePla == 1)
+	{
+		m_crownSprite->SetPosition({ PLAYER2_CROWNPOS });
+	}
+	if (m_nowNumOnePla == 2)
+	{
+		m_crownSprite->SetPosition({ PLAYER3_CROWNPOS });
+	}
+	if (m_nowNumOnePla == 3)
+	{
+		m_crownSprite->SetPosition({ PLAYER4_CROWNPOS });
 	}
 }

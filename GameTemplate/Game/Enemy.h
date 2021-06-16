@@ -1,5 +1,5 @@
 #pragma once
-class PhysicsPlayer;
+class Player;
 class TitleScene;
 class GameScene;
 
@@ -10,7 +10,7 @@ class Enemy : public IGameObject
 private:
 
 	SkinModelRender* m_enemy[6] = { nullptr };		//敵6体
-	PhysicsPlayer* m_player;	//プレイヤー。
+	Player* m_player;	//プレイヤー。
 	Vector3    m_plaPos[4];		//プレイヤーの位置
 	Vector3    m_enePos[6];		//エネミーの位置
 	Quaternion m_rot[6];		//エネミーの回転
@@ -29,7 +29,7 @@ private:
 	GameScene* m_gamescene = nullptr;
 	int m_startDelayTimer = 0;		//スタートを遅らせる変数
 
-	PhysicsPlayer* m_physicsPlayer = nullptr;
+	Player* m_physicsPlayer = nullptr;
 
 	Vector3 m_origin = { 0.0f,0.0f,0.0f };		//原点
 	Vector3 m_diff;								//パトカーとプレイヤーとの距離
