@@ -78,7 +78,6 @@ bool Player::Start()
 			m_player[i]->SetScale(PlAYER_NORMALSIZE);
 			//プレイヤーを初期位置に持っていく。
 			PlaResporn(i);
-			m_pos[i].y = 0.0f;
 
 			m_charaCon[i].Init(15.0f, 85.0f, m_pos[i]);
 
@@ -125,7 +124,6 @@ void Player::Update()
 			//ゲーム開始のカウントダウンが終わるまでプレイヤーの処理をすべて止める
 			if (m_gamescene->GetCountDownFlg() == false)
 			{
-
 				//押しているとき、
 				if (g_pad[i]->IsPress(enButtonB) && isBPushFlg[i] == false)
 				{
@@ -170,10 +168,10 @@ void Player::Update()
 				//回転処理
 				PlaTurn(i);
 
-				/// <summary>
-				/// 衝突処理
-				/// </summary>
-				//パトカーとぶつかったときパトカーに押される処理
+				///// <summary>
+				///// 衝突処理
+				///// </summary>
+				// //パトカーとぶつかったときパトカーに押される処理
 				for (int u = 0; u < 6; u++)
 				{
 					//プレイヤーとパトカーとの距離を計算
@@ -203,18 +201,27 @@ void Player::Update()
 					//距離の長さが30.0fより小さかったら、
 					if (m_diff.Length() < 40.0f)
 					{
-						//衝突しているほかプレイヤーの力を保存
+						//ぶつかってきたプレイヤーの力を保存
 						m_enePushSpeed = m_moveSpeed[u];
-						////これだとプッシュパワーが強すぎるため、威力を弱める
-						//m_enePushSpeed.x /= 20;
-						//m_enePushSpeed.y /= 20;
-						//m_enePushSpeed.z /= 20;
+
+						//ぶつかってきたプレイヤーはそのままステージ外に落ちないように減速させる
+						m_moveSpeed[u] /= 2.0;
+
+						if (tyazi2 == true)
+						{
+							//チャージ２を受けたとき割る２しただけではそのまま落ちちゃうので
+							//さらに減速させる
+							m_moveSpeed[u] = { 0.0f,0.0f,0.0f };
+						}
 
 						//プレイヤーに影響
 						m_moveSpeed[i] += m_enePushSpeed;
 
 						//誰が押してきたかを保存
 						m_pushPlayer[i] = u;
+
+						//フラグをfalseに。。。
+						tyazi2 = false;
 					}
 				}
 
@@ -244,34 +251,13 @@ void Player::Update()
 					//自滅とみなし自身のポイントが減るようにセットしておく
 					m_pushPlayer[i] = 4;
 				}
-				///// <summary>
-				///// 動けなくなったらリスポーンする処理
-				///// </summary>
-				//if (m_moveSpeed[i].Length() < 2.0f)
-				//{
-				//	m_noMooveTimer[i]++;
-				//}
-				////動いたらタイマーを初期化
-				//else
-				//{
-				//	m_noMooveTimer[i] = 0;
-				//}
-				//if (m_noMooveTimer[i] > 240)
-				//{
-				//	//リスポーンさせる
-				//	PlaResporn(i);
-
-				//	//キャラコンの座標にプレイヤーの座標をいれる
-				//	m_charaCon[i].SetPosition(m_pos[i]);
-
-				//	//スピードを初期化
-				//	m_moveSpeed[i] = { Vector3::Zero };
-
-				//	//キャラクターコントローラーを使った移動処理に変更。
-				//	m_pos[i] = m_charaCon[i].Execute(m_moveSpeed[i], 1.0f);
-
-				//	m_noMooveTimer[i] = 0;
-				//}
+			}
+			else
+			{
+				//重力の影響を与える
+				m_moveSpeed[i].y -= 0.2f;
+				//キャラクターコントローラーを使った移動処理に変更。
+				m_pos[i] = m_charaCon[i].Execute(m_moveSpeed[i], 1.0f);
 			}
 			//登録されているプレイヤーの情報を更新
 			PlaDataUpdate(i);
@@ -375,7 +361,9 @@ void Player::PlaNowSpeed(int x)
 	if (m_releaseTimer[x] > 0 && m_pressTimer[x] == 0 && isAtack2Flg[x] == true)
 	{
 		//チャージ攻撃2処理
-		m_moveSpeed[x] *= 4.0f;
+		m_moveSpeed[x] *= 2.0f;
+
+		tyazi2 = true;
 	}
 
 	if (m_releaseTimer[x] == 20 && m_pressTimer[x] == 0)

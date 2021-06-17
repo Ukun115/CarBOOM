@@ -27,6 +27,9 @@ public:
 	//プレイヤーポジションをゲットする関数
 	Vector3 GetPlaPos(int x) { return  m_pos[x]; }
 
+	//プレイヤーの人数を取得
+	int GetPlaNum() { return m_plaNum; }
+
 
 	Vector3 GetPlaSpeed(int x) { return m_moveSpeed[x]; }
 
@@ -81,4 +84,7 @@ private:
 	};
 
 	int m_noMooveTimer[4] = { 0 };
+
+	bool tyazi2 = false;
+	int tyazimasatuTimer = 0;
 };

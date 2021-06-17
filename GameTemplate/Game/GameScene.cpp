@@ -20,6 +20,11 @@ namespace
 	const Vector2   PLA3SCORE_POS = { -460.0f,-205.0f };		//3Pスコアフォントの位置
 	const Vector2   PLA4SCORE_POS = { 520.0f,-205.0f };			//4Pスコアフォントの位置
 
+	const Vector4	PLAYER1SCORE_COL = { 1.0f,0.0f,0.0f,1.0f };
+	const Vector4	PLAYER2SCORE_COL = { 0.0f,0.0f,1.0f,1.0f };
+	const Vector4	PLAYER3SCORE_COL = { 1.0f,1.0f,0.0f,1.0f };
+	const Vector4	PLAYER4SCORE_COL = { .0f,1.0f,0.0f,1.0f };
+
 	const Vector2 PLAYER1_SCOREFONTPOS = { -630.0f,260.0f };	//プレイヤー1のSCROE文字表示
 	const Vector2 PLAYER2_SCOREFONTPOS = { 350.0f,260.0f };		//プレイヤー2のSCROE文字表示
 	const Vector2 PLAYER3_SCOREFONTPOS = { -630.0f,-200.0f };	//プレイヤー3のSCROE文字表示
@@ -37,7 +42,7 @@ bool GameScene::Start()
 	//敵クラス
 	enemy = NewGO<Enemy>(0,"enemy");
 	//プレイヤークラス
-	physicsPlayer = NewGO<Player>(0, "physicsplayer");
+	player = NewGO<Player>(0, "player");
 	//ステージクラス
 	physicsStage = NewGO<Stage>(0, nullptr);
 
@@ -58,7 +63,7 @@ bool GameScene::Start()
 		(
 			L"Score",
 			GetScorePos(i),
-			TIMELIMIT_COL,	//カラー
+			ScoreColor(i),	//カラー
 			TIMELIMIT_ROT,	//傾き
 			TIMELIMIT_SCA,	//拡大率
 			TIMELIMIT_PIV	//基点
@@ -69,7 +74,7 @@ bool GameScene::Start()
 		(
 			L"",
 			SetScoreTextPos(i),
-			TIMELIMIT_COL,	//カラー
+			ScoreColor(i),	//カラー
 			TIMELIMIT_ROT,	//傾き
 			TIMELIMIT_SCA,	//拡大率
 			TIMELIMIT_PIV	//基点
@@ -101,7 +106,7 @@ GameScene::~GameScene()
 	//ステージを削除。
 	DeleteGO(m_normalStage);
 	//プレイヤークラスを削除。
-	DeleteGO(physicsPlayer);
+	DeleteGO(player);
 	//タイムを削除
 	DeleteGO(m_timeLimit);
 }
@@ -240,6 +245,25 @@ Vector2 GameScene::SetScoreTextPos(int t) {
 		break;
 	case PLAYER4:
 		return  PLA4SCORE_POS;
+		break;
+	}
+}
+
+Vector4 GameScene::ScoreColor(int c)
+{
+	switch (c)
+	{
+	case PLAYER1:
+		return PLAYER1SCORE_COL;
+		break;
+	case PLAYER2:
+		return PLAYER2SCORE_COL;
+		break;
+	case PLAYER3:
+		return PLAYER3SCORE_COL;
+		break;
+	case PLAYER4:
+		return PLAYER4SCORE_COL;
 		break;
 	}
 }

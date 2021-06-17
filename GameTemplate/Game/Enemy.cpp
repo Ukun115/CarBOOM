@@ -19,7 +19,7 @@ bool Enemy::Start()
 	//インスタンスを探す。
 	m_gamescene  = FindGO<GameScene>("gamescene");
 	m_titlescene = FindGO<TitleScene>("titlescene");
-	m_player	 = FindGO<Player>("physicsplayer");
+	m_player	 = FindGO<Player>("player");
 
 	for (int i = ENEMY1; i < ENEMYNUM; i++)
 	{
@@ -87,22 +87,6 @@ void Enemy::Update()
 				//スタートした瞬間にパトカーがダッシュしてしまうのを回避する処理
 				if (m_startDelayTimer < 600)
 				{
-					//登録されているプレイヤーとぶつかったときの処理
-					for (int u = PLAYER1; u < m_titlescene->GetTotalPlaNum(); u++)
-					{
-						//プレイヤーとパトカーとの距離を計算
-						m_diff = m_plaPos[u] - m_enePos[i];
-
-						//距離の長さが30.0fより小さかったら、
-						if (m_diff.Length() < 30.0f)
-						{
-							m_plaPushSpeed = m_player->GetPlaSpeed(u);
-
-							//エネミーに影響
-							m_moveSpeed[i] += m_plaPushSpeed;
-						}
-					}
-
 					//キャラクターコントローラーを使った移動処理に変更。
 					m_enePos[i] = m_charaCon[i].Execute(m_moveSpeed[i], 1.0f);
 
@@ -155,26 +139,6 @@ void Enemy::Update()
 						//CTのカウントを0にする
 						m_cTime[i] = 0;
 					}
-
-					////登録されているプレイヤーとぶつかったときの処理
-					//for (int u = PLAYER1; u < m_titlescene->GetTotalPlaNum(); u++)
-					//{
-					//	//プレイヤーとパトカーとの距離を計算
-					//	m_diff = m_plaPos[u] - m_enePos[i];
-
-					//	//距離の長さが30.0fより小さかったら、
-					//	if (m_diff.Length() < 30.0f)
-					//	{
-					//		m_plaPushSpeed = m_player->GetPlaSpeed(u);
-					//		//これだとプッシュパワーが強すぎるため、威力を弱める
-					//		m_plaPushSpeed.x /= 2;
-					//		m_plaPushSpeed.y /= 2;
-					//		m_plaPushSpeed.z /= 2;
-
-					//		//エネミーに影響
-					//		m_moveSpeed[i] += m_plaPushSpeed;
-					//	}
-					//}
 
 					//キャラクターコントローラーを使った移動処理に変更。
 					m_enePos[i] = m_charaCon[i].Execute(m_moveSpeed[i], 1.0f);

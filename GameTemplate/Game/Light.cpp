@@ -17,13 +17,6 @@ bool Light::Start()
 	//視点の位置を設定する
 	m_ligdata.eyePos = g_camera3D->GetPosition();
 
-	//ライトクラスの中のディレクションライトをセット
-	//SetDirectionLightData();
-	//ライトクラスの中のポイントライトをセット
-	//SetPointLightData();
-	//ライトクラスの中のスポットライトをセット
-	//SetSpotLightData();
-
 	//Start関数のreturn文
 	return true;
 }

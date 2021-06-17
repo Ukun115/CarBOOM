@@ -18,13 +18,13 @@ private:
 	FontRender* m_ScoreFontRender[4] = { nullptr };
 	FontRender* m_TextScoreFontRender[4] = { nullptr };
 
-	Player* physicsPlayer = nullptr;
+	Player* player = nullptr;
 	Enemy* enemy = nullptr;
 	Stage* physicsStage = nullptr;
 
 	FontRender* m_timeLimit = nullptr;
 	int counttime = 0;
-	int m_timer = 60;	//60秒
+	int m_timer = 3600;	//60秒
 	int m_plscore[4] = { 0 };
 
 	int m_countDownTimer = 0;
@@ -48,12 +48,15 @@ public:
 
 	Vector2 GetScorePos(int x);
 	Vector2 SetScoreTextPos(int t);
+	Vector4 ScoreColor(int c);
 
 	int GetNowTime() { return counttime; }
 
 	bool GetCountDownFlg() { return m_countTimeFlg; }
 
 	void GetPlayerAddScore(int x,int y);
+
+	int GetPlaScore(int x) { return m_plscore[x]; };		//各プレイヤーのスコアを取得する関数
 
 	//現在の１位に王冠を渡す関数
 	void NowCrown();
