@@ -39,6 +39,12 @@ private:
 
 	CharacterController m_charaCon[6];		//キャラクタコントローラ。
 
+	int ehehe = 0;
+	Vector3 m_randEneResPos[10];		//リスポーン位置計10か所
+
+	int m_startDelay[6];
+	int m_eneCTCount[6];
+
 	enum ENEMY
 	{
 		ENEMY1,		//エネミー１
@@ -73,6 +79,8 @@ public:
 
 	//パトカーを初期位置に戻す関数
 	void EneResporn(int x);
+
+	int EneResProtectOverlap(int x);
 
 	Vector3 GetEnemySpeed(int x) { return m_moveSpeed[x]; }
 

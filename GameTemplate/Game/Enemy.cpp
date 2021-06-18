@@ -6,12 +6,7 @@
 
 namespace
 {
-	const Vector3 ENEMY1_RESPOS = { -50.0f,0.0f,50.0f };		//初期座標(リスポーン座標)
-	const Vector3 ENEMY2_RESPOS = { 50.0f,0.0f,50.0f };			//初期座標(リスポーン座標)
-	const Vector3 ENEMY3_RESPOS = { 0.0f,0.0f,0.0f };			//初期座標(リスポーン座標)
-	const Vector3 ENEMY4_RESPOS = { -50.0f,0.0f,-50.0f };		//初期座標(リスポーン座標)
-	const Vector3 ENEMY5_RESPOS = { 50.0f,0.0f,-50.0f };		//初期座標(リスポーン座標)
-	const Vector3 ENEMY6_RESPOS = { 0.0f,0.0f,-50.0f };			//初期座標(リスポーン座標)
+
 }
 
 bool Enemy::Start()
@@ -20,6 +15,24 @@ bool Enemy::Start()
 	m_gamescene  = FindGO<GameScene>("gamescene");
 	m_titlescene = FindGO<TitleScene>("titlescene");
 	m_player	 = FindGO<Player>("player");
+
+	m_randEneResPos[0] = { -150.0f,0.0f,150.0f };
+	m_randEneResPos[1] = { 0.0f,0.0f,100.0f };
+	m_randEneResPos[2] = { 100.0f,0.0f,100.0f };
+	m_randEneResPos[3] = { -100.0f,0.0f,00.0f };
+	m_randEneResPos[4] = { 0.0f,0.0f,0.0f };
+	m_randEneResPos[5] = { 100.0f,0.0f,0.0f };
+	m_randEneResPos[6] = { -100.0f,0.0f,-100.0f };
+	m_randEneResPos[7] = { 0.0f,0.0f,-100.0f };
+	m_randEneResPos[8] = { 100.0f,0.0f,-100.0f };
+	m_randEneResPos[9] = { 150.0f,0.0f,150.0f };
+
+	//リスポーン座標がプレイヤー1P～4Pの座標と同じにならないようにしないといけない。
+	//【プレイヤーのリスポーン位置】
+	// { -100.0f,0.0f,100.0f }		//1P
+	// {  100.0f,150.0f, 100.0f }	//2P
+	//{ -100.0f,150.0f,-100.0f }	//3P
+	//{  100.0f,150.0f,-100.0f }	//4P
 
 	for (int i = ENEMY1; i < ENEMYNUM; i++)
 	{
@@ -30,32 +43,37 @@ bool Enemy::Start()
 		//初期座標(リスポーン座標)の設定。
 		if (i == ENEMY1)
 		{
-			m_enePos[ENEMY1] = ENEMY1_RESPOS;		//エネミー１の場所
+			m_enePos[ENEMY1] = m_randEneResPos[0];		//エネミー１の場所
 		}
 		else if (i == ENEMY2)
 		{
-			m_enePos[ENEMY2] = ENEMY2_RESPOS;		//エネミー２の場所
+			m_enePos[ENEMY2] = m_randEneResPos[1];		//エネミー２の場所
 		}
 		else if (i == ENEMY3)
 		{
-			m_enePos[ENEMY3] = ENEMY3_RESPOS;		//エネミー３の場所
+			m_enePos[ENEMY3] = m_randEneResPos[3];		//エネミー３の場所
 		}
 		else if (i == ENEMY4)
 		{
-			m_enePos[ENEMY4] = ENEMY4_RESPOS;		//エネミー４の場所
+			m_enePos[ENEMY4] = m_randEneResPos[4];		//エネミー４の場所
 		}
 		else if (i == ENEMY5)
 		{
-			m_enePos[ENEMY5] = ENEMY5_RESPOS;		//エネミー５の場所
+			m_enePos[ENEMY5] = m_randEneResPos[7];		//エネミー５の場所
 		}
 		else if (i == ENEMY6)
 		{
-			m_enePos[ENEMY6] = ENEMY6_RESPOS;		//エネミー６の場所
+			m_enePos[ENEMY6] = m_randEneResPos[9];		//エネミー６の場所
 		}
 		m_enemy[i]->SetScale({0.7f,0.7f,0.7f});
 
 		//当たり判定のイニシャライズ(初期化)
 		m_charaCon[i].Init(15.0f, 85.0f, m_enePos[i]);
+
+		//300～600の範囲のランダムの値を取得
+		m_startDelay[i] = (300 + (int)(rand() * (600 - 300 + 1.0) / (1.0 + RAND_MAX)));
+
+		m_eneCTCount[i] = (120 + (int)(rand() * (140 - 120 + 1.0) / (1.0 + RAND_MAX)));
 	}
 
 	//Start関数のreturn文
@@ -85,7 +103,7 @@ void Enemy::Update()
 				m_moveSpeed[i].y -= 0.2f;
 
 				//スタートした瞬間にパトカーがダッシュしてしまうのを回避する処理
-				if (m_startDelayTimer < 600)
+				if (m_startDelayTimer < m_startDelay[i])
 				{
 					//キャラクターコントローラーを使った移動処理に変更。
 					m_enePos[i] = m_charaCon[i].Execute(m_moveSpeed[i], 1.0f);
@@ -130,8 +148,8 @@ void Enemy::Update()
 						m_moveSpeed[i].z += m_friction[i].z * g_gameTime->GetFrameDeltaTime();
 					}
 
-					//CTのカウントが180秒の時
-					if (m_cTime[i] == 120) {
+					//CTのカウントが120秒の時
+					if (m_cTime[i] == m_eneCTCount[i]) {
 
 						//CTフラグを下ろす
 						ctFlg[i] = false;
@@ -221,34 +239,6 @@ void Enemy::EneTurn(int x)
 //パトカーをリスポーン位置まで戻す関数
 void Enemy::EneResporn(int x)
 {
-	//1
-	if (x == ENEMY1)
-	{
-		m_enePos[x] = ENEMY1_RESPOS;
-	}
-	//2
-	else if (x == ENEMY2)
-	{
-		m_enePos[x] = ENEMY2_RESPOS;
-	}
-	//3
-	else if (x == ENEMY3)
-	{
-		m_enePos[x] = ENEMY3_RESPOS;
-	}
-	//4
-	else if (x == ENEMY4)
-	{
-		m_enePos[x] = ENEMY4_RESPOS;
-	}
-	//5
-	else if (x == ENEMY5)
-	{
-		m_enePos[x] = ENEMY5_RESPOS;
-	}
-	//6
-	else if (x == ENEMY6)
-	{
-		m_enePos[x] = ENEMY6_RESPOS;
-	}
+	//ランダムでリスポーン位置を入れる
+	m_enePos[x] = m_randEneResPos[rand() % 10];
 }

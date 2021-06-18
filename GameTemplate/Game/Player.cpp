@@ -7,10 +7,10 @@
 namespace
 {
 	const Vector3 PlAYER_NORMALSIZE = { 1.4f,1.4f,1.4f };			//プレイヤーの初期サイズ
-	const Vector3 PLAYER1_RESPOS = { -100.0f,150.0f, 100.0f };		//リスポーン座標(左上)
-	const Vector3 PLAYER2_RESPOS = {  100.0f,150.0f, 100.0f };		//リスポーン座標(右上)
+	const Vector3 PLAYER1_RESPOS = { -100.0f,150.0f,100.0f };		//リスポーン座標(左上)
+	const Vector3 PLAYER2_RESPOS = { 100.0f,150.0f, 100.0f };		//リスポーン座標(右上)
 	const Vector3 PLAYER3_RESPOS = { -100.0f,150.0f,-100.0f };		//リスポーン座標(左下)
-	const Vector3 PLAYER4_RESPOS = {  100.0f,150.0f,-100.0f };		//リスポーン座標(右下)
+	const Vector3 PLAYER4_RESPOS = { 100.0f,150.0f,-100.0f };		//リスポーン座標(右下)
 	const float PLANAME_WIDTHSIZE = 230.0f;			//プレイヤーの画面角に置かれている名前の画像の「横の」大きさ
 	const float PLANAME_HEIGHTSIZE = 120.0f;		//プレイヤーの画面角に置かれている名前の画像の「縦の」大きさ
 }
@@ -209,8 +209,9 @@ void Player::Update()
 
 						if (tyazi2 == true)
 						{
+							m_enePushSpeed *= 5.0f;
 							//チャージ２を受けたとき割る２しただけではそのまま落ちちゃうので
-							//さらに減速させる
+							//止まるようにする
 							m_moveSpeed[u] = { 0.0f,0.0f,0.0f };
 						}
 
@@ -356,12 +357,12 @@ void Player::PlaNowSpeed(int x)
 	if (m_releaseTimer[x] > 0 && m_pressTimer[x] == 0 && isAtack1Flg[x] == true)
 	{
 		//チャージ攻撃1の処理
-		m_moveSpeed[x] *= 2.0f;
+		m_moveSpeed[x] = m_plaDir[x] * 10.0f;
 	}
 	if (m_releaseTimer[x] > 0 && m_pressTimer[x] == 0 && isAtack2Flg[x] == true)
 	{
 		//チャージ攻撃2処理
-		m_moveSpeed[x] *= 2.0f;
+		m_moveSpeed[x] = m_plaDir[x] * 20.0f;
 
 		tyazi2 = true;
 	}
@@ -460,4 +461,6 @@ void Player::PlaAttackBefore(int x)
 
 			}
 		}
+		m_plaDir[x] = m_moveSpeed[x];
+		m_plaDir->Normalize();
 }

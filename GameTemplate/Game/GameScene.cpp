@@ -13,28 +13,32 @@ namespace
 	const Vector4   TIMELIMIT_COL = { 1.0f,1.0f,1.0f,1.0f };	//制限時間フォントの色
 	const float     TIMELIMIT_ROT = 0.0f;						//制限時間フォントの傾き
 	const float     TIMELIMIT_SCA = 1.5f;						//制限時間フォントの拡大率
-	const Vector2   TIMELIMIT_PIV = { 0.0f,0.0f };				//制限時間フォントの基点
+	const Vector2   TIMELIMIT_PIV = { 1.0f,1.0f };				//制限時間フォントの基点
 
-	const Vector2   PLA1SCORE_POS = { -460.0f, 255.0f };		//1Pスコアフォントの位置
-	const Vector2   PLA2SCORE_POS = { 520.0f, 255.0f };			//2Pスコアフォントの位置
-	const Vector2   PLA3SCORE_POS = { -460.0f,-205.0f };		//3Pスコアフォントの位置
-	const Vector2   PLA4SCORE_POS = { 520.0f,-205.0f };			//4Pスコアフォントの位置
+	const Vector2   PLA1SCORE_POS = { -520.0f, 255.0f };		//1Pスコアフォントの位置
+	const Vector2   PLA2SCORE_POS = { 450.0f, 255.0f };			//2Pスコアフォントの位置
+	const Vector2   PLA3SCORE_POS = { -520.0f,-205.0f };		//3Pスコアフォントの位置
+	const Vector2   PLA4SCORE_POS = { 450.0f,-205.0f };			//4Pスコアフォントの位置
 
 	const Vector4	PLAYER1SCORE_COL = { 1.0f,0.0f,0.0f,1.0f };
 	const Vector4	PLAYER2SCORE_COL = { 0.0f,0.0f,1.0f,1.0f };
 	const Vector4	PLAYER3SCORE_COL = { 1.0f,1.0f,0.0f,1.0f };
-	const Vector4	PLAYER4SCORE_COL = { .0f,1.0f,0.0f,1.0f };
+	const Vector4	PLAYER4SCORE_COL = { 0.0f,1.0f,0.0f,1.0f };
+	const Vector4	PLAYERSCORE_GRAYCOL = { 0.7f,0.7f,0.7f,1.0f };
 
-	const Vector2 PLAYER1_SCOREFONTPOS = { -630.0f,260.0f };	//プレイヤー1のSCROE文字表示
-	const Vector2 PLAYER2_SCOREFONTPOS = { 350.0f,260.0f };		//プレイヤー2のSCROE文字表示
-	const Vector2 PLAYER3_SCOREFONTPOS = { -630.0f,-200.0f };	//プレイヤー3のSCROE文字表示
-	const Vector2 PLAYER4_SCOREFONTPOS = { 350.0f,-200.0f };	//プレイヤー4のSCROE文字表示
+	const Vector2 PLAYER1_SCOREFONTPOS = { -420.0f,235.0f };	//プレイヤー1のSCROE文字表示
+	const Vector2 PLAYER2_SCOREFONTPOS = { 550.0f,235.0f };		//プレイヤー2のSCROE文字表示
+	const Vector2 PLAYER3_SCOREFONTPOS = { -420.0f,-230.0f };	//プレイヤー3のSCROE文字表示
+	const Vector2 PLAYER4_SCOREFONTPOS = { 550.0f,-230.0f };	//プレイヤー4のSCROE文字表示
+	const float SCORESCA = 0.85f;								//SCORE文字の大きさ
 
 	const Vector3 PLAYER1_CROWNPOS = { -320.0f, 310.0f,0.0f };		//プレイヤー1の王冠表示位置
 	const Vector3 PLAYER2_CROWNPOS = { 300.0f, 310.0f,0.0f };		//プレイヤー2の王冠表示位置
 	const Vector3 PLAYER3_CROWNPOS = { -300.0f, -310.0f,0.0f };		//プレイヤー3の王冠表示位置
 	const Vector3 PLAYER4_CROWNPOS = { 300.0f, -310.0f,0.0f };		//プレイヤー4の王冠表示位置
-	const Vector3 CROWNSCA = { 0.2f, 0.2f,0.2f };					//王冠の大きさ
+	const Vector3 CROWNSCA = { 0.2f, 0.2f,0.2f };					//王冠画像の大きさ
+
+	const Vector3 CROWNMODELSCA = {0.5f,0.5f,0.5f};
 }
 
 bool GameScene::Start()
@@ -49,11 +53,18 @@ bool GameScene::Start()
 	//インスタンスを作成
 	m_titlescene = FindGO<TitleScene>("titlescene");
 
-	//王冠を表示
+	//王冠画像を初期化
 	m_crownSprite = NewGO<SpriteRender>(1, nullptr);
 	m_crownSprite->Init("Assets/image/DDS/crowngold.dds", 300.0f, 300.0f);
 	m_crownSprite->SetPosition({ PLAYER1_CROWNPOS });
 	m_crownSprite->SetScale({ CROWNSCA });
+	//はじめは誰も一位じゃないので隠しておく。
+	m_crownSprite->Deactivate();
+
+	//王冠モデルを初期化
+	m_crownModel = NewGO<SkinModelRender>(1, nullptr);
+	m_crownModel->Init("Assets/modelData/Crown.tkm");
+	m_crownModel->SetScale({ Vector3::Zero });	//はじめは誰も１位じゃないので大きさを0にして隠しておく
 
 	//フォントクラス（一番上のレイヤーに置きたいのでプライオリティーは最高値）
 	m_timeLimit = NewGO<FontRender>(1);
@@ -61,11 +72,11 @@ bool GameScene::Start()
 		m_ScoreFontRender[i] = NewGO<FontRender>(1, nullptr);
 		m_ScoreFontRender[i]->Init
 		(
-			L"Score",
+			L"pt",
 			GetScorePos(i),
 			ScoreColor(i),	//カラー
 			TIMELIMIT_ROT,	//傾き
-			TIMELIMIT_SCA,	//拡大率
+			SCORESCA,	//拡大率
 			TIMELIMIT_PIV	//基点
 		);
 
@@ -83,6 +94,14 @@ bool GameScene::Start()
 
 		//文字の境界線表示
 		m_ScoreFontRender[i]->SetShadowParam(true, 1.0f, Vector4::Black);
+		//文字の境界線表示
+		m_TextScoreFontRender[i]->SetShadowParam(true, 1.0f, Vector4::Black);
+	}
+	//登録されていないプレイヤーのスコアはグレー表示にする
+	for (int i = m_titlescene->GetTotalPlaNum() ; i < 4; i++)
+	{
+		m_ScoreFontRender[i]->SetColor(PLAYERSCORE_GRAYCOL);
+		m_TextScoreFontRender[i]->SetColor(PLAYERSCORE_GRAYCOL);
 	}
 	//初期設定。
 	m_timeLimit->Init
@@ -206,8 +225,12 @@ void GameScene::Update()
 	//制限時間が0秒になったら、
 	if (counttime == 0)
 	{
-		//リザルト画面に遷移
-		NewGO<ResultScene>(0, nullptr);
+		m_resultsenniTimer++;
+		if(m_resultsenniTimer > 120)
+		{
+			//リザルト画面に遷移
+			NewGO<ResultScene>(0, nullptr);
+		}
 	}
 }
 
@@ -305,19 +328,19 @@ void GameScene::GetPlayerAddScore(int x,int y)
 //王冠画像の位置更新関数
 void GameScene::NowCrown()
 {
-	for (int i = PLAYER1; i < MAXPLAYERNUM; i++)
+	for (int i = PLAYER1; i < m_titlescene->GetTotalPlaNum(); i++)
 	{
-		for (int u = PLAYER1; u < MAXPLAYERNUM; u++)
+		for (int u = PLAYER1; u < m_titlescene->GetTotalPlaNum(); u++)
 		{
-			//番号が同じときは次のループに行く
-			if (i == u)
-			{
-				continue;
-			}
 			//今のプレイヤー(i)と次のプレイヤー(u)を比較
 			//次のプレイヤーのほうがスコアが高いとき、
 			if (m_plscore[i] < m_plscore[u])
 			{
+				//王冠スプライトを表示させる
+				m_crownSprite->Activate();
+				//王冠モデルを表示させる
+				m_crownModel->SetScale(CROWNMODELSCA);
+
 				m_nowNumOnePla = u;
 			}
 		}
@@ -327,17 +350,29 @@ void GameScene::NowCrown()
 	if (m_nowNumOnePla == 0)
 	{
 		m_crownSprite->SetPosition({ PLAYER1_CROWNPOS });
+		//王冠モデルをそのプレイヤーの頭上に置く
+		m_crownModelPos = player->GetPlaPos(0);
+		m_crownModel->SetPosition({ m_crownModelPos.x,m_crownModelPos.y + 30.0f,m_crownModelPos.z });
 	}
 	if (m_nowNumOnePla == 1)
 	{
 		m_crownSprite->SetPosition({ PLAYER2_CROWNPOS });
+		//王冠モデルをそのプレイヤーの頭上に置く
+		m_crownModelPos = player->GetPlaPos(1);
+		m_crownModel->SetPosition({ m_crownModelPos.x,m_crownModelPos.y + 30.0f,m_crownModelPos.z });
 	}
 	if (m_nowNumOnePla == 2)
 	{
 		m_crownSprite->SetPosition({ PLAYER3_CROWNPOS });
+		//王冠モデルをそのプレイヤーの頭上に置く
+		m_crownModelPos = player->GetPlaPos(2);
+		m_crownModel->SetPosition({ m_crownModelPos.x,m_crownModelPos.y + 30.0f,m_crownModelPos.z });
 	}
 	if (m_nowNumOnePla == 3)
 	{
 		m_crownSprite->SetPosition({ PLAYER4_CROWNPOS });
+		//王冠モデルをそのプレイヤーの頭上に置く
+		m_crownModelPos = player->GetPlaPos(3);
+		m_crownModel->SetPosition({ m_crownModelPos.x,m_crownModelPos.y + 30.0f,m_crownModelPos.z });
 	}
 }

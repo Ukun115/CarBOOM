@@ -9,6 +9,11 @@ namespace
 	const Vector3 NUMBER2_POS = { 150.0f,-50.0f,0.0f };
 	const Vector3 NUMBER3_POS = { 150.0f,-150.0f,0.0f };
 	const Vector3 NUMBER4_POS = { 150.0f,-250.0f,0.0f };
+
+	const Vector3 RANKING1_POS = { -150.0f,50.0f,0.0f };
+	const Vector3 RANKING2_POS = { -150.0f,-50.0f,0.0f };
+	const Vector3 RANKING3_POS = { -150.0f,-150.0f,0.0f };
+	const Vector3 RANKING4_POS = { -150.0f,-250.0f,0.0f };
 }
 
 bool ResultScene::Start()
@@ -16,6 +21,37 @@ bool ResultScene::Start()
 	//インスタンスを作成
 	m_gamescene = FindGO<GameScene>("gamescene");
 	m_player = FindGO<Player>("player");
+
+	//順位文字を初期化し、表示
+	for (int i = 0; i < 4; i++)
+	{
+		m_rankingSprite[i] = NewGO<SpriteRender>(2, nullptr);
+
+		//１位画像
+		if (i == 0)
+		{
+			m_rankingSprite[i]->Init("Assets/image/DDS/1st.dds", 150.0f, 150.0f);
+			m_rankingSprite[i]->SetPosition(RANKING1_POS);
+		}
+		//2位画像
+		if (i == 1)
+		{
+			m_rankingSprite[i]->Init("Assets/image/DDS/2nd.dds", 150.0f, 150.0f);
+			m_rankingSprite[i]->SetPosition(RANKING2_POS);
+		}
+		//3位画像
+		if (i == 2)
+		{
+			m_rankingSprite[i]->Init("Assets/image/DDS/3rd.dds", 150.0f, 150.0f);
+			m_rankingSprite[i]->SetPosition(RANKING3_POS);
+		}
+		//4位画像
+		if (i == 3)
+		{
+			m_rankingSprite[i]->Init("Assets/image/DDS/4th.dds", 150.0f, 150.0f);
+			m_rankingSprite[i]->SetPosition(RANKING4_POS);
+		}
+	}
 
 	//リザルト文字画像を初期化。
 	m_resultSprite = NewGO<SpriteRender>(2, nullptr);

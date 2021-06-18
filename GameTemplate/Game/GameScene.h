@@ -12,6 +12,7 @@ private:
 	TitleScene* m_titlescene = nullptr;
 
 	SkinModelRender* m_normalStage = nullptr;
+	SkinModelRender* m_crownModel = nullptr;
 	SpriteRender* m_sprite[4] = { nullptr };
 	SpriteRender* m_crownSprite = nullptr;
 
@@ -40,6 +41,10 @@ private:
 	};
 
 	int m_nowNumOnePla = 0;
+
+	Vector3 m_crownModelPos = {0.0f,0.0f,0.0f};
+
+	int m_resultsenniTimer = 0;
 
 public:
 	bool Start()override;
