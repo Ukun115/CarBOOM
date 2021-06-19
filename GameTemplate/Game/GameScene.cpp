@@ -7,8 +7,12 @@
 #include "Stage.h"
 #include "TitleScene.h"
 
+
 namespace
 {
+	const int PRIORITY_0 = 0;	//優先度0
+	const int PRIORITY_1 = 1;	//優先度1
+
 	const Vector2   TIMELIMIT_POS = { -40.0f,300.0f };			//制限時間フォントの位置
 	const Vector4   TIMELIMIT_COL = { 1.0f,1.0f,1.0f,1.0f };	//制限時間フォントの色
 	const float     TIMELIMIT_ROT = 0.0f;						//制限時間フォントの傾き
@@ -41,20 +45,21 @@ namespace
 	const Vector3 CROWNMODELSCA = {0.5f,0.5f,0.5f};
 }
 
+
 bool GameScene::Start()
 {
-	//敵クラス
-	enemy = NewGO<Enemy>(0,"enemy");
-	//プレイヤークラス
-	player = NewGO<Player>(0, "player");
-	//ステージクラス
-	physicsStage = NewGO<Stage>(0, nullptr);
+	//インスタンスを探す。
+	m_titleScene = FindGO<TitleScene>("titlescene");
 
-	//インスタンスを作成
-	m_titlescene = FindGO<TitleScene>("titlescene");
+	//敵クラス
+	m_enemy = NewGO<Enemy>(PRIORITY_0,"enemy");
+	//プレイヤークラス
+	m_player = NewGO<Player>(PRIORITY_0, "player");
+	//ステージクラス
+	m_normalStage = NewGO<Stage>(PRIORITY_0, nullptr);
 
 	//王冠画像を初期化
-	m_crownSprite = NewGO<SpriteRender>(1, nullptr);
+	m_crownSprite = NewGO<SpriteRender>(PRIORITY_1, nullptr);
 	m_crownSprite->Init("Assets/image/DDS/crowngold.dds", 300.0f, 300.0f);
 	m_crownSprite->SetPosition({ PLAYER1_CROWNPOS });
 	m_crownSprite->SetScale({ CROWNSCA });
@@ -62,30 +67,30 @@ bool GameScene::Start()
 	m_crownSprite->Deactivate();
 
 	//王冠モデルを初期化
-	m_crownModel = NewGO<SkinModelRender>(1, nullptr);
+	m_crownModel = NewGO<SkinModelRender>(PRIORITY_1, nullptr);
 	m_crownModel->Init("Assets/modelData/Crown.tkm");
 	m_crownModel->SetScale({ Vector3::Zero });	//はじめは誰も１位じゃないので大きさを0にして隠しておく
 
 	//フォントクラス（一番上のレイヤーに置きたいのでプライオリティーは最高値）
-	m_timeLimit = NewGO<FontRender>(1);
+	m_timeLimit = NewGO<FontRender>(PRIORITY_1,nullptr);
 	for (int i = 0; i < 4; i++) {
-		m_ScoreFontRender[i] = NewGO<FontRender>(1, nullptr);
+		m_ScoreFontRender[i] = NewGO<FontRender>(PRIORITY_1, nullptr);
 		m_ScoreFontRender[i]->Init
 		(
 			L"pt",
 			GetScorePos(i),
-			ScoreColor(i),	//カラー
+			ScoreColor(i),	//色
 			TIMELIMIT_ROT,	//傾き
 			SCORESCA,	//拡大率
 			TIMELIMIT_PIV	//基点
 		);
 
-		m_TextScoreFontRender[i] = NewGO<FontRender>(1, nullptr);
+		m_TextScoreFontRender[i] = NewGO<FontRender>(PRIORITY_1, nullptr);
 		m_TextScoreFontRender[i]->Init
 		(
 			L"",
 			SetScoreTextPos(i),
-			ScoreColor(i),	//カラー
+			ScoreColor(i),	//色
 			TIMELIMIT_ROT,	//傾き
 			TIMELIMIT_SCA,	//拡大率
 			TIMELIMIT_PIV	//基点
@@ -98,7 +103,7 @@ bool GameScene::Start()
 		m_TextScoreFontRender[i]->SetShadowParam(true, 1.0f, Vector4::Black);
 	}
 	//登録されていないプレイヤーのスコアはグレー表示にする
-	for (int i = m_titlescene->GetTotalPlaNum() ; i < 4; i++)
+	for (int i = m_titleScene->GetTotalPlaNum() ; i < 4; i++)
 	{
 		m_ScoreFontRender[i]->SetColor(PLAYERSCORE_GRAYCOL);
 		m_TextScoreFontRender[i]->SetColor(PLAYERSCORE_GRAYCOL);
@@ -108,7 +113,7 @@ bool GameScene::Start()
 	(
 		L"",
 		TIMELIMIT_POS,	//位置
-		TIMELIMIT_COL,	//カラー
+		TIMELIMIT_COL,	//色
 		TIMELIMIT_ROT,	//傾き
 		TIMELIMIT_SCA,	//拡大率
 		TIMELIMIT_PIV	//基点
@@ -120,27 +125,31 @@ bool GameScene::Start()
 	return true;
 }
 
+
 GameScene::~GameScene()
 {
 	//ステージを削除。
 	DeleteGO(m_normalStage);
 	//プレイヤークラスを削除。
-	DeleteGO(player);
+	DeleteGO(m_player);
+	//敵クラスを削除。
+	DeleteGO(m_enemy);
 	//タイムを削除
 	DeleteGO(m_timeLimit);
 }
 
+
 void GameScene::Update()
 {
 	//ゲームシーンに遷移したら、
-	if (m_countTimeFlg)
+	if (m_isCountTimeFlg)
 	{
 		//スタートまでのカウントダウンを開始
 
 		switch (m_countDownTimer) {
 		case 0:
 			//「3」表示
-			m_sprite[0] = NewGO<SpriteRender>(3, nullptr);
+			m_sprite[0] = NewGO<SpriteRender>(PRIORITY_1, nullptr);
 			m_sprite[0]->SetPosition({ 0.0f,0.0f,0.0f });
 			m_sprite[0]->Init("Assets/image/DDS/3.dds", 200.0f, 200.0f);
 
@@ -151,7 +160,7 @@ void GameScene::Update()
 			DeleteGO(m_sprite[0]);
 
 			//「2」表示
-			m_sprite[1] = NewGO<SpriteRender>(3, nullptr);
+			m_sprite[1] = NewGO<SpriteRender>(PRIORITY_1, nullptr);
 			m_sprite[1]->SetPosition({ 0.0f,0.0f,0.0f });
 			m_sprite[1]->Init("Assets/image/DDS/2.dds", 200.0f, 200.0f);
 
@@ -162,7 +171,7 @@ void GameScene::Update()
 			DeleteGO(m_sprite[1]);
 
 			//「1」表示
-			m_sprite[2] = NewGO<SpriteRender>(3, nullptr);
+			m_sprite[2] = NewGO<SpriteRender>(PRIORITY_1, nullptr);
 			m_sprite[2]->SetPosition({ 0.0f,0.0f,0.0f });
 			m_sprite[2]->Init("Assets/image/DDS/1.dds", 200.0f, 200.0f);
 
@@ -173,7 +182,7 @@ void GameScene::Update()
 			DeleteGO(m_sprite[2]);
 
 			//「GO!!」表示
-			m_sprite[3] = NewGO<SpriteRender>(3, nullptr);
+			m_sprite[3] = NewGO<SpriteRender>(PRIORITY_1, nullptr);
 			m_sprite[3]->SetPosition({ 0.0f,0.0f,0.0f });
 			m_sprite[3]->Init("Assets/image/DDS/START!!.dds", 400.0f, 200.0f);
 
@@ -184,7 +193,7 @@ void GameScene::Update()
 			DeleteGO(m_sprite[3]);
 
 			//カウントダウンの処理を抜ける。
-			m_countTimeFlg = false;
+			m_isCountTimeFlg = false;
 
 			break;
 		}
@@ -196,16 +205,16 @@ void GameScene::Update()
 		//制限時間を縮めていく。
 		m_timer--;
 	}
-	counttime = m_timer / 60;
+	m_counttime = m_timer / 60;
 	//０秒になってからのカウントがマイナスに行かないように補正
-	if (counttime < 0)
+	if (m_counttime < 0)
 	{
-		counttime = 0;
+		m_counttime = 0;
 	}
 
 	//残り時間の描画
 	wchar_t text1[64];
-	swprintf_s(text1, L"%d", counttime);
+	swprintf_s(text1, L"%d", m_counttime);
 	//画面表示
 	m_timeLimit->SetText(text1);
 
@@ -223,18 +232,19 @@ void GameScene::Update()
 	NowCrown();
 
 	//制限時間が0秒になったら、
-	if (counttime == 0)
+	if (m_counttime == 0)
 	{
 		m_resultsenniTimer++;
 		if(m_resultsenniTimer > 120)
 		{
 			//リザルト画面に遷移
-			NewGO<ResultScene>(0, nullptr);
+			NewGO<ResultScene>(PRIORITY_0, nullptr);
 		}
 	}
 }
 
-//「Score」の表示位置判別関数
+
+//プレイヤーごとの「pt」文字の位置を指定する関数
 Vector2 GameScene::GetScorePos(int x)
 {
 	switch (x)
@@ -254,6 +264,7 @@ Vector2 GameScene::GetScorePos(int x)
 	}
 }
 
+//プレイヤーごとのスコアの位置を指定する関数
 Vector2 GameScene::SetScoreTextPos(int t) {
 	switch (t)
 	{
@@ -272,6 +283,7 @@ Vector2 GameScene::SetScoreTextPos(int t) {
 	}
 }
 
+//プレイヤーごとのスコアの色を指定する関数
 Vector4 GameScene::ScoreColor(int c)
 {
 	switch (c)
@@ -291,7 +303,9 @@ Vector4 GameScene::ScoreColor(int c)
 	}
 }
 
-//ｘは落としたプレイヤー、yは自滅したプレイヤー
+
+/*プレイヤーの得点変動処理関数
+  (ｘは落としたプレイヤー、yは自滅したプレイヤー)*/
 void GameScene::GetPlayerAddScore(int x,int y)
 {
 	//自滅したとき、
@@ -325,12 +339,13 @@ void GameScene::GetPlayerAddScore(int x,int y)
 	}
 }
 
-//王冠画像の位置更新関数
+
+//１位に王冠画像と王冠モデルを渡す関数
 void GameScene::NowCrown()
 {
-	for (int i = PLAYER1; i < m_titlescene->GetTotalPlaNum(); i++)
+	for (int i = PLAYER1; i < m_titleScene->GetTotalPlaNum(); i++)
 	{
-		for (int u = PLAYER1; u < m_titlescene->GetTotalPlaNum(); u++)
+		for (int u = PLAYER1; u < m_titleScene->GetTotalPlaNum(); u++)
 		{
 			//今のプレイヤー(i)と次のプレイヤー(u)を比較
 			//次のプレイヤーのほうがスコアが高いとき、
@@ -351,28 +366,28 @@ void GameScene::NowCrown()
 	{
 		m_crownSprite->SetPosition({ PLAYER1_CROWNPOS });
 		//王冠モデルをそのプレイヤーの頭上に置く
-		m_crownModelPos = player->GetPlaPos(0);
+		m_crownModelPos = m_player->GetPlaPos(0);
 		m_crownModel->SetPosition({ m_crownModelPos.x,m_crownModelPos.y + 30.0f,m_crownModelPos.z });
 	}
 	if (m_nowNumOnePla == 1)
 	{
 		m_crownSprite->SetPosition({ PLAYER2_CROWNPOS });
 		//王冠モデルをそのプレイヤーの頭上に置く
-		m_crownModelPos = player->GetPlaPos(1);
+		m_crownModelPos = m_player->GetPlaPos(1);
 		m_crownModel->SetPosition({ m_crownModelPos.x,m_crownModelPos.y + 30.0f,m_crownModelPos.z });
 	}
 	if (m_nowNumOnePla == 2)
 	{
 		m_crownSprite->SetPosition({ PLAYER3_CROWNPOS });
 		//王冠モデルをそのプレイヤーの頭上に置く
-		m_crownModelPos = player->GetPlaPos(2);
+		m_crownModelPos = m_player->GetPlaPos(2);
 		m_crownModel->SetPosition({ m_crownModelPos.x,m_crownModelPos.y + 30.0f,m_crownModelPos.z });
 	}
 	if (m_nowNumOnePla == 3)
 	{
 		m_crownSprite->SetPosition({ PLAYER4_CROWNPOS });
 		//王冠モデルをそのプレイヤーの頭上に置く
-		m_crownModelPos = player->GetPlaPos(3);
+		m_crownModelPos = m_player->GetPlaPos(3);
 		m_crownModel->SetPosition({ m_crownModelPos.x,m_crownModelPos.y + 30.0f,m_crownModelPos.z });
 	}
 }

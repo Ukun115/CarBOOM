@@ -3,8 +3,11 @@
 #include "GameScene.h"
 #include "Player.h"
 
+
 namespace
 {
+	const int PRIORITY_1 = 1;	//優先度1
+
 	const Vector3 NUMBER1_POS = { 150.0f,50.0f,0.0f };
 	const Vector3 NUMBER2_POS = { 150.0f,-50.0f,0.0f };
 	const Vector3 NUMBER3_POS = { 150.0f,-150.0f,0.0f };
@@ -16,16 +19,17 @@ namespace
 	const Vector3 RANKING4_POS = { -150.0f,-250.0f,0.0f };
 }
 
+
 bool ResultScene::Start()
 {
-	//インスタンスを作成
-	m_gamescene = FindGO<GameScene>("gamescene");
+	//インスタンスを探す。
+	m_gameScene = FindGO<GameScene>("gamescene");
 	m_player = FindGO<Player>("player");
 
 	//順位文字を初期化し、表示
 	for (int i = 0; i < 4; i++)
 	{
-		m_rankingSprite[i] = NewGO<SpriteRender>(2, nullptr);
+		m_rankingSprite[i] = NewGO<SpriteRender>(PRIORITY_1, nullptr);
 
 		//１位画像
 		if (i == 0)
@@ -54,7 +58,7 @@ bool ResultScene::Start()
 	}
 
 	//リザルト文字画像を初期化。
-	m_resultSprite = NewGO<SpriteRender>(2, nullptr);
+	m_resultSprite = NewGO<SpriteRender>(PRIORITY_1, nullptr);
 	m_resultSprite->Init("Assets/image/DDS/Result.dds", 600.0f, 300.0f);
 	Vector3 m_resSprPos = { 0.0f,160.0f,0.0f };
 	m_resultSprite->SetPosition(m_resSprPos);
@@ -62,7 +66,7 @@ bool ResultScene::Start()
 	//プレイヤー文字画像を初期化。
 	for (int i = 0; i < m_player->GetPlaNum(); i++)
 	{
-		m_plaNum[i] = NewGO<SpriteRender>(2, nullptr);
+		m_plaNum[i] = NewGO<SpriteRender>(PRIORITY_1, nullptr);
 		if (i == 0)
 		{
 			m_plaNum[i]->Init("Assets/image/DDS/Player1_ActiveName.dds", 340.0f, 170.0f);
@@ -100,6 +104,7 @@ bool ResultScene::Start()
 	return true;
 }
 
+
 ResultScene::~ResultScene()
 {
 	DeleteGO(m_resultSprite);
@@ -110,9 +115,10 @@ ResultScene::~ResultScene()
 	}
 }
 
+
 void ResultScene::Update()
 {
-	//セレクトボタン(キーボード：スペース)が押されたら、
+	//プレイヤーの内、誰かのセレクトボタンが押されたら、
 	for (int i = 0; i < 4; i++) {
 		if (g_pad[i]->IsTrigger(enButtonSelect))
 		{
@@ -122,12 +128,14 @@ void ResultScene::Update()
 	}
 }
 
+
+//順位によってソートしプレイヤー名の画像を並び替える関数
 void ResultScene::RankingSort()
 {
 	//プレイヤーの人数分スコアをゲット
 	for (int i = 0; i < m_player->GetPlaNum(); i++)
 	{
-		m_plaScore[i] = m_gamescene->GetPlaScore(i);
+		m_plaScore[i] = m_gameScene->GetPlaScore(i);
 
 	}
 	//ソート

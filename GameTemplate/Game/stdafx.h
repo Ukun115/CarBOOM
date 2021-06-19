@@ -5,10 +5,9 @@
 #include "ExEngine.h"
 #include "tkSoundSource.h"
 
-//ゲーム全体でいつでも使うのでstdafx.hでインクルードする
-
-#include "SkinModelRender.h"
-#include "SpriteRender.h"
-#include "FontRender.h"
-#include "Light.h"
-#include "Sound.h"
+//ゲーム全体で頻繁に使うのでstdafx.hでhをインクルードする
+#include "SkinModelRender.h"	//モデル
+#include "SpriteRender.h"		//画像
+#include "FontRender.h"			//文字
+#include "Light.h"				//ライト
+#include "Sound.h"				//サウンド

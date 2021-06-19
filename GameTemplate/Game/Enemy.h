@@ -3,86 +3,93 @@ class Player;
 class TitleScene;
 class GameScene;
 
-#include "../../ExEngine/physics/CharacterController.h"
 
 class Enemy : public IGameObject
 {
 private:
 
-	SkinModelRender* m_enemy[6] = { nullptr };		//敵6体
-	Player* m_player;	//プレイヤー。
-	Vector3    m_plaPos[4];		//プレイヤーの位置
-	Vector3    m_enePos[6];		//エネミーの位置
-	Quaternion m_rot[6];		//エネミーの回転
-	Vector3    m_mostShortKyori[4];   //プレイヤーと敵の距離
-	Vector3    m_muki[4];       //エネミーの向き
+	/// <summary>
+	/// クラスのポインタ
+	/// </summary>
+	TitleScene* m_titleScene = nullptr;
+	GameScene* m_gameScene = nullptr;
+	SkinModelRender* m_enemy[6] = { nullptr };		//敵6体分
+	Player* m_player = nullptr;
 
-	Vector3 m_moveSpeed[6];				//移動速度
-	Vector3 m_eneDir[6];					//向き
-	float m_rotAngle[6];				//回転角度
-	Vector3 m_friction[6];				//摩擦
-	Quaternion m_rot2[6];
-	int m_cTime[6];				//攻撃のCT
-	bool ctFlg[6] = { false };		//CTのフラグ
 
-	TitleScene* m_titlescene = nullptr;
-	GameScene* m_gamescene = nullptr;
-	int m_startDelayTimer = 0;		//スタートを遅らせる変数
+	CharacterController m_charaCon[6];		//敵６体分のキャラクタコントローラークラスを作成
 
-	Player* m_physicsPlayer = nullptr;
 
-	Vector3 m_origin = { 0.0f,0.0f,0.0f };		//原点
-	Vector3 m_diff;								//パトカーとプレイヤーとの距離
-	Vector3 m_plaPushSpeed;
+	/// <summary>
+	/// フラグ
+	/// </summary>
+	bool m_isCtFlg[6] = { false };		//敵６体分のCTのフラグ
 
-	bool m_respornFallFlg[6] = { false };	//少し上にリスポーンされるので、落下させるフラグ
 
-	CharacterController m_charaCon[6];		//キャラクタコントローラ。
+	/// <summary>
+	/// タイマー
+	/// </summary>
+	int m_startDelayTimer = 0;		//スタートを遅らせるタイマー
+	int m_startDelay[6];			//敵６体分のスタート遅延時間
+	int m_cTime[6];					//敵６体分の攻撃CTタイマー
+	int m_eneCTCount[6];			//敵６体分のCT時間
 
-	int ehehe = 0;
-	Vector3 m_randEneResPos[10];		//リスポーン位置計10か所
 
-	int m_startDelay[6];
-	int m_eneCTCount[6];
+	//敵情報
+	Vector3    m_enePos[6];			//敵６体分の敵の位置
+	Quaternion m_rot[6];			//敵６体分の敵の回転
+	float m_rotAngle[6];			//敵６体分の回転角度
+	Vector3 m_moveSpeed[6];			//敵６体分の移動速度
+	Vector3 m_friction[6];			//敵６体分の摩擦
+	Vector3    m_plaPos[4];			//プレイヤー4体分のプレイヤーの位置
+	Vector3    m_mostShortKyori[4];	 //プレイヤー4体分と敵の距離
+	Vector3 m_randEneResPos[10];	//敵のリスポーン位置計10か所
 
+
+	/// <summary>
+	/// 列挙型の宣言
+	/// </summary>
 	enum ENEMY
 	{
-		ENEMY1,		//エネミー１
-		ENEMY2,		//エネミー２
-		ENEMY3,		//エネミー３
-		ENEMY4,		//エネミー４
-		ENEMY5,		//エネミー５
-		ENEMY6,		//エネミー６
-		ENEMYNUM	//敵の総数
+		ENEMY1,		 //敵１の配列での番号
+		ENEMY2,		 //敵２の配列での番号
+		ENEMY3,		 //敵３の配列での番号
+		ENEMY4,		 //敵４の配列での番号
+		ENEMY5,		 //敵５の配列での番号
+		ENEMY6,		 //敵６の配列での番号
+		ENEMYNUM	 //敵の総数
 	};
-
 	enum PLAYER
 	{
-		PLAYER1,
-		PLAYER2,
-		PLAYER3,
-		PLAYER4,
-		MAXPLAYERNUM
+		PLAYER1,		//1Pの配列での番号
+		PLAYER2,		//2Pの配列での番号
+		PLAYER3,		//3Pの配列での番号
+		PLAYER4,		//4Pの配列での番号
+		MAXPLAYERNUM	//プレイヤーの最大数
 	};
 
 public:
+
 	bool Start()override;
 	~Enemy()override;
 	void Update()override;
 
-	//移動処理
-	void EneMove(int x);
-	//回転処理
-	void EneTurn(int x);
-	//距離設定
-	void Distance(int x);
 
-	//パトカーを初期位置に戻す関数
+	//敵の移動処理関数
+	void EneMove(int x);
+	//敵の回転処理関数
+	void EneTurn(int x);
+	//敵から最寄りのプレイヤーを検索する関数
+	void Distance(int x);
+	//敵のリスポーン処理関数
 	void EneResporn(int x);
 
-	int EneResProtectOverlap(int x);
 
-	Vector3 GetEnemySpeed(int x) { return m_moveSpeed[x]; }
-
+	/// <summary>
+	/// ゲット関数
+	/// </summary>
+	//敵の位置を取得する関数
 	Vector3 GetEnemyPos(int x) { return m_enePos[x]; }
+	//敵の速度を取得する関数
+	Vector3 GetEnemySpeed(int x) { return m_moveSpeed[x]; }
 };

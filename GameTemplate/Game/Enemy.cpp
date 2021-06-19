@@ -3,17 +3,21 @@
 #include "Player.h"
 #include "TitleScene.h"
 #include "GameScene.h"
+#include "../../ExEngine/physics/CharacterController.h"		//キャラコンを使うためにインクルード
+		//↑2階層上にディレクトリを移動してからフォルダを潜っている。
+
 
 namespace
 {
-
+	const int PRIORITY_0 = 0;	//優先度0
 }
+
 
 bool Enemy::Start()
 {
 	//インスタンスを探す。
-	m_gamescene  = FindGO<GameScene>("gamescene");
-	m_titlescene = FindGO<TitleScene>("titlescene");
+	m_titleScene = FindGO<TitleScene>("titlescene");
+	m_gameScene  = FindGO<GameScene>("gamescene");
 	m_player	 = FindGO<Player>("player");
 
 	m_randEneResPos[0] = { -150.0f,0.0f,150.0f };
@@ -36,43 +40,43 @@ bool Enemy::Start()
 
 	for (int i = ENEMY1; i < ENEMYNUM; i++)
 	{
-		//パトカー(敵)をロード
-		m_enemy[i] = NewGO<SkinModelRender>(0);
+		//敵をロード
+		m_enemy[i] = NewGO<SkinModelRender>(PRIORITY_0,nullptr);
 		//モデルのファイルパスを設定
-		m_enemy[i]->Init("Assets/modelData/LowPoly_PoliceCar.tkm");	//パトカー
+		m_enemy[i]->Init("Assets/modelData/LowPoly_PoliceCar.tkm");	//敵モデル
 		//初期座標(リスポーン座標)の設定。
 		if (i == ENEMY1)
 		{
-			m_enePos[ENEMY1] = m_randEneResPos[0];		//エネミー１の場所
+			m_enePos[ENEMY1] = m_randEneResPos[0];		//敵１の場所
 		}
 		else if (i == ENEMY2)
 		{
-			m_enePos[ENEMY2] = m_randEneResPos[1];		//エネミー２の場所
+			m_enePos[ENEMY2] = m_randEneResPos[1];		//敵２の場所
 		}
 		else if (i == ENEMY3)
 		{
-			m_enePos[ENEMY3] = m_randEneResPos[3];		//エネミー３の場所
+			m_enePos[ENEMY3] = m_randEneResPos[3];		//敵3の場所
 		}
 		else if (i == ENEMY4)
 		{
-			m_enePos[ENEMY4] = m_randEneResPos[4];		//エネミー４の場所
+			m_enePos[ENEMY4] = m_randEneResPos[4];		//敵4の場所
 		}
 		else if (i == ENEMY5)
 		{
-			m_enePos[ENEMY5] = m_randEneResPos[7];		//エネミー５の場所
+			m_enePos[ENEMY5] = m_randEneResPos[7];		//敵5の場所
 		}
 		else if (i == ENEMY6)
 		{
-			m_enePos[ENEMY6] = m_randEneResPos[9];		//エネミー６の場所
+			m_enePos[ENEMY6] = m_randEneResPos[9];		//敵6の場所
 		}
 		m_enemy[i]->SetScale({0.7f,0.7f,0.7f});
 
 		//当たり判定のイニシャライズ(初期化)
 		m_charaCon[i].Init(15.0f, 85.0f, m_enePos[i]);
 
-		//300～600の範囲のランダムの値を取得
+		//300～600の範囲のランダム値でスタート時の敵のDAを遅らせるタイマーの値に代入
 		m_startDelay[i] = (300 + (int)(rand() * (600 - 300 + 1.0) / (1.0 + RAND_MAX)));
-
+		//120～140の範囲のランダム値でDA後のCTタイマーの値に代入
 		m_eneCTCount[i] = (120 + (int)(rand() * (140 - 120 + 1.0) / (1.0 + RAND_MAX)));
 	}
 
@@ -80,39 +84,34 @@ bool Enemy::Start()
 	return true;
 }
 
+
 Enemy::~Enemy()
 {
-	//全エネミーを削除。
+	//全ての敵を削除。
 	for (int i = ENEMY1; i < ENEMYNUM; i++)
 	{
 		DeleteGO(m_enemy[i]);
 	}
 }
 
+
 void Enemy::Update()
 {
-	//登録されているエネミー数ループ
+	//全敵分ループ
 	for (int i = ENEMY1; i < ENEMYNUM; i++)
 	{
 		//制限時間が０秒になったらプレイヤーの処理を全て止める
-		if (m_gamescene->GetNowTime() != 0) {
+		if (m_gameScene->GetNowTime() != 0) {
 			//ゲーム開始のカウントダウンが終わるまでプレイヤーの処理をすべて止める
-			if (m_gamescene->GetCountDownFlg() == false)
+			if (m_gameScene->GetCountDownFlg() == false)
 			{
 				//重力の影響を与える
 				m_moveSpeed[i].y -= 0.2f;
 
-				//スタートした瞬間にパトカーがダッシュしてしまうのを回避する処理
+				//スタートした瞬間に敵がダッシュしてしまうのを回避する処理
 				if (m_startDelayTimer < m_startDelay[i])
 				{
-					//キャラクターコントローラーを使った移動処理に変更。
-					m_enePos[i] = m_charaCon[i].Execute(m_moveSpeed[i], 1.0f);
-
-					m_enePos[i] += m_moveSpeed[i];
-					m_rot2[i].SetRotationDeg(Vector3::AxisX, 0.0f);	//3dsMaxで設定されているアニメーションでキャラが回転しているので、補正を入れる
-					m_rot2[i].Multiply(m_rot[i], m_rot2[i]);
-
-					//タイマー加算
+					//スタート時にDAを遅らせるタイマーを加算
 					m_startDelayTimer++;
 				}
 				//落ちていないときは基本ここの処理が実行される。
@@ -121,10 +120,10 @@ void Enemy::Update()
 					//回転処理
 					EneTurn(i);
 
-					if (ctFlg[i] == false) {
+					if (m_isCtFlg[i] == false) {
 
 						//CTをカウントするフラグを立てる
-						ctFlg[i] = true;
+						m_isCtFlg[i] = true;
 
 						//距離設定
 						Distance(i);
@@ -133,8 +132,8 @@ void Enemy::Update()
 						EneMove(i);
 					}
 
-					//CTフラグが立ってる時
-					if (ctFlg[i] == true) {
+					//CTフラグが立ってるとき、
+					if (m_isCtFlg[i] == true) {
 
 						//CTをカウントする
 						m_cTime[i]++;
@@ -148,11 +147,11 @@ void Enemy::Update()
 						m_moveSpeed[i].z += m_friction[i].z * g_gameTime->GetFrameDeltaTime();
 					}
 
-					//CTのカウントが120秒の時
+					//CTのカウントが120秒～140秒のとき、
 					if (m_cTime[i] == m_eneCTCount[i]) {
 
 						//CTフラグを下ろす
-						ctFlg[i] = false;
+						m_isCtFlg[i] = false;
 
 						//CTのカウントを0にする
 						m_cTime[i] = 0;
@@ -180,31 +179,30 @@ void Enemy::Update()
 					}
 
 					m_enePos[i] += m_moveSpeed[i];
-					m_rot2[i].SetRotationDeg(Vector3::AxisX, 0.0f);	//3dsMaxで設定されているアニメーションでキャラが回転しているので、補正を入れる
-					m_rot2[i].Multiply(m_rot[i], m_rot2[i]);
 				}
 			}
-			m_enemy[i]->SetRotation(m_rot2[i]);		//回転情報更新
+			m_enemy[i]->SetRotation(m_rot[i]);		//回転情報更新
 			m_enemy[i]->SetPosition(m_enePos[i]);	//位置情報更新
 		}
 	}
 }
 
-//距離設定
+
+//敵から最寄りのプレイヤーを検索する関数
 void Enemy::Distance(int x)
 {
 	//登録されているプレイヤーの分処理をする
-	for (int i = 0; i < m_titlescene->GetTotalPlaNum(); i++)
+	for (int i = 0; i < m_titleScene->GetTotalPlaNum(); i++)
 	{
-		//車の位置を取得
+		//プレイヤーの位置を取得
 		m_plaPos[i] = m_player->GetPlaPos(i);
-		//車の位置とパトカーの位置の距離を取得
+		//プレイヤーの位置と敵の位置の距離を取得
 		m_mostShortKyori[i] = m_plaPos[i] - m_enePos[x];
 	}
 
 	//m_mostShortKyori[0].Length()の値が一番小さくなるように並び替え(ソート)
-	for (int s = 0; s < m_titlescene->GetTotalPlaNum() - 1; s++) {
-		for (int t = s + 1; t < m_titlescene->GetTotalPlaNum(); t++) {
+	for (int s = 0; s < m_titleScene->GetTotalPlaNum() - 1; s++) {
+		for (int t = s + 1; t < m_titleScene->GetTotalPlaNum(); t++) {
 			if (m_mostShortKyori[t].Length() < m_mostShortKyori[s].Length()) {
 				Vector3 tmp = m_mostShortKyori[t];
 				m_mostShortKyori[t] = m_mostShortKyori[s];
@@ -213,18 +211,20 @@ void Enemy::Distance(int x)
 		}
 	}
 
-	//プレイヤーからエネミーのベクトルを正規化して方向だけの情報にする
+	//プレイヤーから敵のベクトルを正規化して方向だけの情報にする
 	m_mostShortKyori[0].Normalize();
 }
 
-//移動処理
+
+//敵の移動処理関数
 void Enemy::EneMove(int x)
 {
 	//方向だけのm_kyori[x]に速さを掛けて速度にする
 	m_moveSpeed[x] = m_mostShortKyori[0] * 5.0f;
 }
 
-//回転処理
+
+//敵の回転処理関数
 void Enemy::EneTurn(int x)
 {
 	if (fabsf(m_moveSpeed[x].x) < 0.001f && fabsf(m_moveSpeed[x].z) < 0.001f) {
@@ -236,7 +236,8 @@ void Enemy::EneTurn(int x)
 	m_rot[x].SetRotation(Vector3::AxisY, m_rotAngle[x]);
 }
 
-//パトカーをリスポーン位置まで戻す関数
+
+//敵のリスポーン処理関数
 void Enemy::EneResporn(int x)
 {
 	//ランダムでリスポーン位置を入れる

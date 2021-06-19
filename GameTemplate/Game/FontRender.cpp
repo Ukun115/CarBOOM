@@ -1,14 +1,19 @@
 #include "stdafx.h"
 
+
+//フォントの初期化関数
 void FontRender::Init
 (
-	const wchar_t* text,
-	const Vector2 position,
-	Vector4 color,
-	float rotation,
-	float scale,
-	Vector2 pivot		)
+	const wchar_t* text,		//テキスト
+	const Vector2 position,		//位置
+	Vector4 color,				//色
+	float rotation,				//回転
+	float scale,				//拡大率
+	Vector2 pivot		)		//基点
 {
+	/// <summary>
+	/// フォント構造体に初期化で設定したデータを代入
+	/// </summary>
 	swprintf_s(m_fontValue.text, text);
 	m_fontValue.position = position;
 	m_fontValue.color = color;
@@ -17,6 +22,7 @@ void FontRender::Init
 	m_fontValue.pivot = pivot;
 }
 
+//描画関数
 void FontRender::Render(RenderContext& rc)
 {
 		m_font.Begin(rc);
