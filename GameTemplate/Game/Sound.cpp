@@ -1,9 +1,11 @@
 #include "stdafx.h"
 
+
 namespace
 {
 
 }
+
 
 bool Sound::Start()
 {
@@ -12,10 +14,12 @@ bool Sound::Start()
 	return true;
 }
 
+
 Sound::~Sound()
 {
 
 }
+
 
 void Sound::Update()
 {

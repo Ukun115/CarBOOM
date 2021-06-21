@@ -1,9 +1,11 @@
 #include "stdafx.h"
 
+
 namespace
 {
 
 }
+
 
 bool SpriteRender::Start()
 {
@@ -13,10 +15,12 @@ bool SpriteRender::Start()
 	return true;
 }
 
+
 SpriteRender::~SpriteRender()
 {
 
 }
+
 
 void SpriteRender::Update()
 {
@@ -24,6 +28,8 @@ void SpriteRender::Update()
 	m_sprite.Update(m_pos,m_rot,m_sca);
 }
 
+
+//画像を初期化する関数
 void SpriteRender::Init(const char* filepath, float width, float height, AlphaBlendMode mode)
 {
 	m_spriteInitData.m_ddsFilePath[0] = filepath;					//ファイルパス
@@ -35,7 +41,8 @@ void SpriteRender::Init(const char* filepath, float width, float height, AlphaBl
 	m_sprite.Init(m_spriteInitData);
 }
 
-//これがないと描画されない
+
+//描画関数
 void SpriteRender::Render(RenderContext& renderContext)
 {
 	//ドロー関数

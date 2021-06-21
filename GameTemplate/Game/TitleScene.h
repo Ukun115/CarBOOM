@@ -1,36 +1,68 @@
 #pragma once
 
+
 class TitleScene : public IGameObject
 {
 private:
+
+	/// <summary>
+	/// クラスのポインタ
+	/// </summary>
 	SpriteRender* m_titleSprite = nullptr;
 	SpriteRender* m_pushStartButtonSprite = nullptr;
+	SpriteRender* m_plaActiveName[4] = {nullptr};		//プレイヤー4人分用意
+	SpriteRender* m_plaDeactiveName[4] = {nullptr};		//プレイヤー4人分用意
 
-	SpriteRender* m_plaDeactiveName[4] = {nullptr};		//スプライトレンダー
-	SpriteRender* m_plaActiveName[4] = {nullptr};		//スプライトレンダー
-	bool isAddPlayer[4] = { false };		//プレイヤーが登録されたかの判別フラグ
-	int m_totalPlayerNum = 1;			//プレイヤーの合計数
-	bool isCanGameStartFlg = true;		//trueのときはゲームスタートボタンを押せる
 
-	int m_buttonTimer = 0;
-	bool m_buttonTimerFlg = true;
+	/// <summary>
+	/// フラグ
+	/// </summary>
+	bool m_isAddPlayerFlg[4] = { false };		//各プレイヤーが登録されているかの判別フラグ
+	bool m_isCanGameStartFlg = true;			//trueのときはゲームスタートボタンを押せる
+	bool m_isFlashingFontTimerActiveFlg = true;		//trueのとき点滅文字の表示タイミング
 
+
+	/// <summary>
+	/// タイマー
+	/// </summary>
+	unsigned int m_flashingFontTimer = 0;		//点滅文字の表示非表示の切り替えタイマー
+
+
+	unsigned int m_totalPlaNum = 1;			//プレイヤーの合計数を計測
+
+
+	/// <summary>
+	/// 列挙型の宣言
+	/// </summary>
 	enum PLAYER
 	{
-		PLAYER1,	//1P
-		PLAYER2,	//2P
-		PLAYER3,	//3P
-		PLAYER4,	//4P
-		MAXPLAYERNUM	//最大プレイ人数
+		PLAYER1,		//1Pの配列での番号
+		PLAYER2,		//2Pの配列での番号
+		PLAYER3,		//3Pの配列での番号
+		PLAYER4,		//4Pの配列での番号
+		MAXPLAYERNUM	//プレイヤーの最大数
 	};
 
 public:
+
 	bool Start()override;
 	~TitleScene()override;
 	void Update()override;
 
-	//プレイヤーが追加されているかのフラグを取得する関数
-	bool GetPlaFlg(int x) { return isAddPlayer[x]; }
 
-	int GetTotalPlaNum(){ return m_totalPlayerNum; }
+	//プレイヤーを追加する関数
+	void AddPlayer();
+	//ゲーム画面に遷移する関数
+	void GameSceneTransition();
+	//「PRESS START BUTTON」文字画像の点滅処理関数
+	void FlashingFont();
+
+
+	/// <summary>
+	/// ゲット関数
+	/// </summary>
+	//プレイヤーが追加されているかどうかを取得する関数
+	bool GetPlaFlg(int x) { return m_isAddPlayerFlg[x]; }
+	//登録されたプレイヤーの合計人数を取得する関数
+	int GetTotalPlaNum(){ return m_totalPlaNum; }
 };
