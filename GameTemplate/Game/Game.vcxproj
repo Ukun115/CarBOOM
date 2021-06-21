@@ -300,6 +300,7 @@
     <ClCompile Include="Sound.cpp" />
     <ClCompile Include="SpriteRender.cpp" />
     <ClCompile Include="Stage.cpp" />
+    <ClCompile Include="StageSelectScene.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
@@ -382,6 +383,7 @@
     <ClInclude Include="Sound.h" />
     <ClInclude Include="SpriteRender.h" />
     <ClInclude Include="Stage.h" />
+    <ClInclude Include="StageSelectScene.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="system\system.h" />
     <ClInclude Include="TitleScene.h" />

@@ -2,6 +2,7 @@
 class Player;
 class TitleScene;
 class GameScene;
+class StageSelectScene;
 
 
 class Enemy : public IGameObject
@@ -15,6 +16,7 @@ private:
 	GameScene* m_gameScene = nullptr;
 	SkinModelRender* m_enemy[6] = { nullptr };		//敵6体分
 	Player* m_player = nullptr;
+	StageSelectScene* m_stageSelectScene = nullptr;
 
 
 	CharacterController m_charaCon[6];		//敵６体分のキャラクタコントローラークラスを作成
@@ -44,6 +46,7 @@ private:
 	Vector3    m_plaPos[4];			//プレイヤー4体分のプレイヤーの位置
 	Vector3    m_mostShortKyori[4];	 //プレイヤー4体分と敵の距離
 	Vector3 m_ranEneResPos[10];	//敵のリスポーン位置計10か所
+	float m_randEneResAngle[4];     //敵のリスポーン回転角度4か所
 
 
 	/// <summary>
@@ -108,7 +111,7 @@ public:
 
 
 	/// <summary>
-	/// ゲット関数
+	/// ゲッター関数
 	/// </summary>
 	//敵の位置を取得する関数
 	Vector3 GetEnemyPos(int x) { return m_enePos[x]; }

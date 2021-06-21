@@ -46,7 +46,7 @@ public:
 
 
 	/// <summary>
-	/// ゲット関数
+	/// ゲッター関数
 	/// </summary>
 	//モデルの位置を取得する関数
 	Vector3 GetPosition() { return m_pos; }

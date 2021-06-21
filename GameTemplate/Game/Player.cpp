@@ -3,6 +3,7 @@
 #include "TitleScene.h"
 #include "GameScene.h"
 #include "Enemy.h"
+#include "StageSelectScene.h"
 #include "../../ExEngine/physics/CharacterController.h"		//キャラコンを使うためにインクルード
 
 
@@ -17,6 +18,8 @@ namespace
 	const Vector3 PLAYER2_RESPOS = { 100.0f,150.0f, 100.0f };		//リスポーン座標(右上)
 	const Vector3 PLAYER3_RESPOS = { -100.0f,150.0f,-100.0f };		//リスポーン座標(左下)
 	const Vector3 PLAYER4_RESPOS = { 100.0f,150.0f,-100.0f };		//リスポーン座標(右下)
+
+	const int STAGE3 = 3;		//ステージ番号
 }
 
 
@@ -26,6 +29,7 @@ bool Player::Start()
 	m_titleScene = FindGO<TitleScene>("titlescene");
 	m_gameScene = FindGO<GameScene>("gamescene");
 	m_enemy = FindGO<Enemy>("enemy");
+	m_stageSelectScene = FindGO<StageSelectScene>("stageselectscene");
 
 	//各プレイヤーの２段階溜め攻撃の可視化
 	for (int i = 0; i < 4; i++)
@@ -326,6 +330,15 @@ void Player::PlaMove(int x)
 	m_friction[x] = m_moveSpeed[x];
 	m_friction[x] *= -2.0f;
 
+	//つるつるステージが選択されているとき、
+	if (m_stageSelectScene->GetStageNum() == STAGE3)
+	{
+		//摩擦が一切ない変数を定義
+		Vector3 m_stage3Friction = {Vector3::Zero};
+		//摩擦を0にする
+		m_friction[x] = m_stage3Friction;
+	}
+
 	//摩擦力を加算する
 	m_moveSpeed[x].x += m_friction[x].x * g_gameTime->GetFrameDeltaTime();
 	m_moveSpeed[x].z += m_friction[x].z * g_gameTime->GetFrameDeltaTime();
@@ -382,6 +395,15 @@ void Player::PlaAttackBefore(int x)
 	//摩擦力を設定する
 	m_friction[x] = m_moveSpeed[x];
 	m_friction[x] *= -2.0f;
+
+	//つるつるステージが選択されているとき、
+	if (m_stageSelectScene->GetStageNum() == STAGE3)
+	{
+		//摩擦が一切ない変数を定義
+		Vector3 m_stage3Friction = { Vector3::Zero };
+		//摩擦を0にする
+		m_friction[x] = m_stage3Friction;
+	}
 
 	m_atackTime[x]++;
 	if (m_atackTime[x] > 0 && m_atackTime[x] < 30)

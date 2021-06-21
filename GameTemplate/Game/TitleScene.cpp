@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "TitleScene.h"
-#include "GameScene.h"
+#include "StageSelectScene.h"
 
 
 /// <summary>
@@ -103,8 +103,8 @@ TitleScene::~TitleScene()
 
 void TitleScene::Update()
 {
-	//ゲーム画面に遷移すると抜けるフラグ
-	if (m_isCanGameStartFlg == true) {
+	//ステージ選択画面に遷移すると抜けるフラグ
+	if (m_isCanStageSelectSceneFlg == true) {
 		//登録されたプレイヤー数が最大数4人になるまで追加できる
 		if (m_totalPlaNum != MaxPlayerNum)
 		{
@@ -122,8 +122,8 @@ void TitleScene::Update()
 		{
 			if (g_pad[i]->IsTrigger(enButtonStart))
 			{
-				//ゲーム画面に遷移
-				GameSceneTransition();
+				//ステージ選択画面に遷移
+				StageSelectSceneTransition();
 			}
 		}
 
@@ -169,11 +169,11 @@ void TitleScene::AddPlayer()
 }
 
 
-//ゲーム画面に遷移する関数
-void TitleScene::GameSceneTransition()
+//ステージ選択画面に遷移する関数
+void TitleScene::StageSelectSceneTransition()
 {
-	//ゲーム画面に遷移
-	NewGO<GameScene>(PRIORITY_0, "gamescene");
+	//ステージ選択画面に遷移
+	NewGO<StageSelectScene>(PRIORITY_0, "stageselectscene");
 	////このクラスの削除
 	////DeleteGO(this);
 
@@ -182,8 +182,8 @@ void TitleScene::GameSceneTransition()
 	//PUSHSTARTBUTTONを削除。
 	DeleteGO(m_pushStartButtonSprite);
 
-	//ゲーム画面に遷移後、ゲーム開始ボタンとプレイヤー追加ボタンを押せなくするフラグ
-	m_isCanGameStartFlg = false;
+	//ステージ選択画面に遷移後、ボタンとプレイヤー追加ボタンを押せなくするフラグ
+	m_isCanStageSelectSceneFlg = false;
 }
 
 

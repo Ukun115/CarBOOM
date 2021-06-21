@@ -3,6 +3,7 @@
 #include "Player.h"
 #include "TitleScene.h"
 #include "GameScene.h"
+#include "StageSelectScene.h"
 #include "../../ExEngine/physics/CharacterController.h"		//キャラコンを使うためにインクルード
 		//↑2階層上にディレクトリを移動してからフォルダを潜っている。
 
@@ -23,6 +24,8 @@ namespace
 	const Vector3 ENE_RES_POS_8 = { 0.0f,0.0f,-100.0f };
 	const Vector3 ENE_RES_POS_9 = { 100.0f,0.0f,-100.0f };
 	const Vector3 ENE_RES_POS_10 = { 150.0f,0.0f,150.0f };
+
+	const int STAGE3 = 3;		//ステージ番号
 }
 
 
@@ -32,6 +35,7 @@ bool Enemy::Start()
 	m_titleScene = FindGO<TitleScene>("titlescene");
 	m_gameScene  = FindGO<GameScene>("gamescene");
 	m_player	 = FindGO<Player>("player");
+	m_stageSelectScene = FindGO<StageSelectScene>("stageselectscene");
 
 	//敵のリスポーン位置１～１０
 	m_ranEneResPos[ResPos1]  = ENE_RES_POS_1;
@@ -51,6 +55,11 @@ bool Enemy::Start()
 	// {  100.0f,150.0f, 100.0f }	//2P
 	//{ -100.0f,150.0f,-100.0f }	//3P
 	//{  100.0f,150.0f,-100.0f }	//4P
+
+	m_randEneResAngle[0] = 1.0f;
+	m_randEneResAngle[1] = 2.5f;
+	m_randEneResAngle[2] = 3.7f;
+	m_randEneResAngle[3] = 5.5f;
 
 	//敵の最大数繰り返す
 	for (int i = Enemy1; i < MaxEnemyNum; i++)
@@ -268,6 +277,14 @@ void Enemy::EneFriction(int x)
 	//摩擦力を設定する
 	m_friction[x] = m_moveSpeed[x];
 	m_friction[x] *= -1.5f;
+	//つるつるステージが選択されているとき、
+	if (m_stageSelectScene->GetStageNum() == STAGE3)
+	{
+		//摩擦が一切ない変数を定義
+		Vector3 m_stage3Friction = { Vector3::Zero };
+		//摩擦を0にする
+		m_friction[x] = m_stage3Friction;
+	}
 	//摩擦力を加算する
 	m_moveSpeed[x].x += m_friction[x].x * g_gameTime->GetFrameDeltaTime();
 	m_moveSpeed[x].z += m_friction[x].z * g_gameTime->GetFrameDeltaTime();

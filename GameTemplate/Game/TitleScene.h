@@ -18,7 +18,7 @@ private:
 	/// フラグ
 	/// </summary>
 	bool m_isAddPlayerFlg[4] = { false };		//各プレイヤーが登録されているかの判別フラグ
-	bool m_isCanGameStartFlg = true;			//trueのときはゲームスタートボタンを押せる
+	bool m_isCanStageSelectSceneFlg = true;			//trueのときはゲームスタートボタンを押せる
 	bool m_isFlashingFontTimerActiveFlg = true;		//trueのとき点滅文字の表示タイミング
 
 
@@ -53,13 +53,13 @@ public:
 	//プレイヤーを追加する関数
 	void AddPlayer();
 	//ゲーム画面に遷移する関数
-	void GameSceneTransition();
+	void StageSelectSceneTransition();
 	//「PRESS START BUTTON」文字画像の点滅処理関数
 	void FlashingFont();
 
 
 	/// <summary>
-	/// ゲット関数
+	/// ゲッター関数
 	/// </summary>
 	//プレイヤーが追加されているかどうかを取得する関数
 	bool GetPlaFlg(int x) { return m_isAddPlayerFlg[x]; }

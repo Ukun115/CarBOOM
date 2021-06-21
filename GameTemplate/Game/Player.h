@@ -2,6 +2,7 @@
 class TitleScene;
 class GameScene;
 class Enemy;
+class StageSelectScene;
 
 
 class Player : public IGameObject
@@ -17,6 +18,7 @@ private:
 	SpriteRender* m_DASpr1[4] = { nullptr };		//プレイヤー4人分
 	SpriteRender* m_DASpr2[4] = { nullptr };		//プレイヤー4人分
 	Enemy* m_enemy = nullptr;
+	StageSelectScene* m_stageSelectScene = nullptr;
 
 
 	CharacterController m_charaCon[4];		//プレイヤー4人分のキャラクタコントローラークラスを作成
@@ -101,7 +103,7 @@ public:
 
 
 	/// <summary>
-	/// ゲット関数
+	/// ゲッター関数
 	/// </summary>
 	//プレイヤーの人数を取得する関数
 	int GetPlaNum() { return m_plaNum; }

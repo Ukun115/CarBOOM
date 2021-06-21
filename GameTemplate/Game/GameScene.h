@@ -88,7 +88,7 @@ public:
 
 
 	/// <summary>
-	/// ゲット関数
+	/// ゲッター関数
 	/// </summary>
 	//現在の残り制限時間を取得する関数
 	int GetNowTime() { return m_counttime; }

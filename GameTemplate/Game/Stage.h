@@ -1,4 +1,5 @@
 #pragma once
+class StageSelectScene;
 
 
 class Stage : public IGameObject
@@ -8,10 +9,24 @@ private:
 	/// <summary>
 	/// クラスのポインタ
 	/// </summary>
-	SkinModelRender* m_stage[1] = { nullptr };	//全ステージ分用意
+	SkinModelRender* m_stage = { nullptr };
+	StageSelectScene* m_stageSelectScene;
 
 
 	PhysicsStaticObject m_physicsStaticObject;		//静的物理オブジェクトクラスを作成
+
+
+	/// <summary>
+	/// 列挙型の宣言
+	/// </summary>
+	//ステージ番号
+	enum StageNum
+	{
+		ehehe,
+		Stage1,
+		Stage2,
+		Stage3,
+	};
 
 public:
 

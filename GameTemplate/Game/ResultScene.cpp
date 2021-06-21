@@ -65,6 +65,10 @@ bool ResultScene::Start()
 	Vector3 m_resSprPos = { 0.0f,160.0f,0.0f };
 	m_resultSprite->SetPosition(m_resSprPos);
 
+	//全員のスコアが同点の場合Draw文字画像を一番上に表示
+	
+
+
 	for (int i = 0; i < m_player->GetPlaNum(); i++)
 	{
 		//プレイヤー文字画像オブジェクト生成
