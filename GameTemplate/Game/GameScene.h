@@ -39,12 +39,32 @@ private:
 	int m_counttime = 0;
 	int m_timer = 3600;	//60秒
 	int m_plscore[4] = { 0 };
+<<<<<<< HEAD
 	unsigned int m_countDownTimer = 0;
 	unsigned int m_nowNumOnePla = 0;
 	Vector3 m_crownModelPos = {0.0f,0.0f,0.0f};
 	unsigned int m_resultsenniTimer = 0;
 	wchar_t text1[64];	//制限時間フォント
 	wchar_t text2[64];	//プレイヤースコアフォント
+
+
+	/// <summary>
+	/// 列挙型の宣言
+	/// </summary>
+	enum PLAYER
+	{
+		PLAYER1,		//1Pの配列での番号
+		PLAYER2,		//2Pの配列での番号
+		PLAYER3,		//3Pの配列での番号
+		PLAYER4,		//4Pの配列での番号
+		MAXPLAYERNUM	//プレイヤーの最大数
+	};
+=======
+	int m_countDownTimer = 0;
+	int m_nowNumOnePla = 0;
+	Vector3 m_crownModelPos = {0.0f,0.0f,0.0f};
+	int m_resultsenniTimer = 0;
+>>>>>>> remotes/origin/master
 
 
 	/// <summary>
@@ -66,12 +86,15 @@ public:
 	void Update()override;
 
 
+<<<<<<< HEAD
 	//制限時間処理関数
 	void TimeLimit();
 	//プレイヤーのスコア描画関数
 	void PlaScoreDraw();
 	//カウントダウン処理関数
 	void CountDown();
+=======
+>>>>>>> remotes/origin/master
 	//プレイヤーごとのスコアの位置を指定する関数
 	Vector2 SetScoreTextPos(int t);
 	//プレイヤーごとの「pt」文字の位置を指定する関数
@@ -83,8 +106,11 @@ public:
 	void GetPlayerAddScore(int x,int y);
 	//１位に王冠画像と王冠モデルを渡す関数
 	void NowCrown();
+<<<<<<< HEAD
 	//リザルト画面に遷移する関数
 	void ResultSceneTransition();
+=======
+>>>>>>> remotes/origin/master
 
 
 	/// <summary>

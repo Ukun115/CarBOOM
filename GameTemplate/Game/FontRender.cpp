@@ -14,12 +14,21 @@ void FontRender::Init
 	/// <summary>
 	/// フォント構造体に初期化で設定したデータを代入
 	/// </summary>
+<<<<<<< HEAD
 	swprintf_s(m_fontValue.text, text);	//テキスト
 	m_fontValue.position = position;	//位置
 	m_fontValue.color = color;			//色
 	m_fontValue.rotation = rotation;	//回転
 	m_fontValue.scale = scale;			//拡大率
 	m_fontValue.pivot = pivot;			//基点
+=======
+	swprintf_s(m_fontValue.text, text);
+	m_fontValue.position = position;
+	m_fontValue.color = color;
+	m_fontValue.rotation = rotation;
+	m_fontValue.scale = scale;
+	m_fontValue.pivot = pivot;
+>>>>>>> remotes/origin/master
 }
 
 //描画関数

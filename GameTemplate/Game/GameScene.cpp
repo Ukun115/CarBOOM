@@ -10,9 +10,14 @@
 
 namespace
 {
+<<<<<<< HEAD
 	//優先度
 	const int PRIORITY_0 = 0;
 	const int PRIORITY_1 = 1;
+=======
+	const int PRIORITY_0 = 0;	//優先度0
+	const int PRIORITY_1 = 1;	//優先度1
+>>>>>>> remotes/origin/master
 
 	const Vector2   TIMELIMIT_POS = { -40.0f,300.0f };			//制限時間フォントの位置
 	const Vector4   TIMELIMIT_COL = { 1.0f,1.0f,1.0f,1.0f };	//制限時間フォントの色
@@ -58,6 +63,7 @@ bool GameScene::Start()
 	//インスタンスを探す。
 	m_titleScene = FindGO<TitleScene>("titlescene");
 
+<<<<<<< HEAD
 	//敵オブジェクト生成
 	m_enemy = NewGO<Enemy>(PRIORITY_0,"enemy");
 	//プレイヤーオブジェクト生成
@@ -72,10 +78,27 @@ bool GameScene::Start()
 	m_crownSprite->SetPosition({ PLAYER1_CROWN_POS });						//位置を設定
 	m_crownSprite->SetScale({ CROWN_SCA });									//拡大率を設定
 	m_crownSprite->Deactivate();					//はじめは誰も一位じゃないので隠しておく。
+=======
+	//敵クラス
+	m_enemy = NewGO<Enemy>(PRIORITY_0,"enemy");
+	//プレイヤークラス
+	m_player = NewGO<Player>(PRIORITY_0, "player");
+	//ステージクラス
+	m_normalStage = NewGO<Stage>(PRIORITY_0, nullptr);
+
+	//王冠画像を初期化
+	m_crownSprite = NewGO<SpriteRender>(PRIORITY_1, nullptr);
+	m_crownSprite->Init("Assets/image/DDS/crowngold.dds", 300.0f, 300.0f);
+	m_crownSprite->SetPosition({ PLAYER1_CROWNPOS });
+	m_crownSprite->SetScale({ CROWNSCA });
+	//はじめは誰も一位じゃないので隠しておく。
+	m_crownSprite->Deactivate();
+>>>>>>> remotes/origin/master
 
 	//王冠モデルオブジェクト生成
 	m_crownModel = NewGO<SkinModelRender>(PRIORITY_1, nullptr);
 	//王冠モデルを初期化
+<<<<<<< HEAD
 	m_crownModel->Init("Assets/modelData/Crown.tkm");
 	m_crownModel->SetScale({ Vector3::Zero });	//はじめは誰も１位じゃないので大きさを0にして隠しておく
 
@@ -105,6 +128,35 @@ bool GameScene::Start()
 			FONT_ROT,				//傾き
 			FONT_SCA,				//拡大率
 			FONT_PIV				//基点
+=======
+	m_crownModel = NewGO<SkinModelRender>(PRIORITY_1, nullptr);
+	m_crownModel->Init("Assets/modelData/Crown.tkm");
+	m_crownModel->SetScale({ Vector3::Zero });	//はじめは誰も１位じゃないので大きさを0にして隠しておく
+
+	//フォントクラス（一番上のレイヤーに置きたいのでプライオリティーは最高値）
+	m_timeLimit = NewGO<FontRender>(PRIORITY_1,nullptr);
+	for (int i = 0; i < 4; i++) {
+		m_ScoreFontRender[i] = NewGO<FontRender>(PRIORITY_1, nullptr);
+		m_ScoreFontRender[i]->Init
+		(
+			L"pt",
+			GetScorePos(i),
+			ScoreColor(i),	//色
+			TIMELIMIT_ROT,	//傾き
+			SCORESCA,	//拡大率
+			TIMELIMIT_PIV	//基点
+		);
+
+		m_TextScoreFontRender[i] = NewGO<FontRender>(PRIORITY_1, nullptr);
+		m_TextScoreFontRender[i]->Init
+		(
+			L"",
+			SetScoreTextPos(i),
+			ScoreColor(i),	//色
+			TIMELIMIT_ROT,	//傾き
+			TIMELIMIT_SCA,	//拡大率
+			TIMELIMIT_PIV	//基点
+>>>>>>> remotes/origin/master
 		);
 
 
@@ -125,9 +177,15 @@ bool GameScene::Start()
 		L"",			//テキスト
 		TIMELIMIT_POS,	//位置
 		TIMELIMIT_COL,	//色
+<<<<<<< HEAD
 		FONT_ROT,		//傾き
 		FONT_SCA,		//拡大率
 		FONT_PIV		//基点
+=======
+		TIMELIMIT_ROT,	//傾き
+		TIMELIMIT_SCA,	//拡大率
+		TIMELIMIT_PIV	//基点
+>>>>>>> remotes/origin/master
 	);
 	//文字の境界線表示
 	m_timeLimit->SetShadowParam(true, 1.0f, Vector4::Black);
@@ -159,8 +217,17 @@ void GameScene::Update()
 		CountDown();
 	}
 
+<<<<<<< HEAD
 	//制限時間のカウント&描画処理
 	TimeLimit();
+=======
+		switch (m_countDownTimer) {
+		case 0:
+			//「3」表示
+			m_sprite[0] = NewGO<SpriteRender>(PRIORITY_1, nullptr);
+			m_sprite[0]->SetPosition({ 0.0f,0.0f,0.0f });
+			m_sprite[0]->Init("Assets/image/DDS/3.dds", 200.0f, 200.0f);
+>>>>>>> remotes/origin/master
 
 	//プレイヤーのスコア描画関数
 	PlaScoreDraw();
@@ -168,6 +235,7 @@ void GameScene::Update()
 	//現在のスコア１位を判定し、王冠画像を移動
 	NowCrown();
 
+<<<<<<< HEAD
 	//制限時間が0秒になったら、
 	if (m_counttime == 0)
 	{
@@ -175,6 +243,12 @@ void GameScene::Update()
 		ResultSceneTransition();
 	}
 }
+=======
+			//「2」表示
+			m_sprite[1] = NewGO<SpriteRender>(PRIORITY_1, nullptr);
+			m_sprite[1]->SetPosition({ 0.0f,0.0f,0.0f });
+			m_sprite[1]->Init("Assets/image/DDS/2.dds", 200.0f, 200.0f);
+>>>>>>> remotes/origin/master
 
 //カウントダウン処理関数
 void GameScene::CountDown()
@@ -197,11 +271,18 @@ void GameScene::CountDown()
 		//「3」削除。
 		DeleteGO(m_sprite[ARRAY_NUM_0]);
 
+<<<<<<< HEAD
 		//「２」画像オブジェクト生成
 		m_sprite[ARRAY_NUM_1] = NewGO<SpriteRender>(PRIORITY_1, nullptr);
 		m_sprite[ARRAY_NUM_1]->SetPosition({ 0.0f,0.0f,0.0f });
 		//初期化
 		m_sprite[ARRAY_NUM_1]->Init("Assets/image/DDS/2.dds", 200.0f, 200.0f);
+=======
+			//「1」表示
+			m_sprite[2] = NewGO<SpriteRender>(PRIORITY_1, nullptr);
+			m_sprite[2]->SetPosition({ 0.0f,0.0f,0.0f });
+			m_sprite[2]->Init("Assets/image/DDS/1.dds", 200.0f, 200.0f);
+>>>>>>> remotes/origin/master
 
 		break;
 
@@ -210,11 +291,18 @@ void GameScene::CountDown()
 		//「2」削除。
 		DeleteGO(m_sprite[ARRAY_NUM_1]);
 
+<<<<<<< HEAD
 		//「１」画像オブジェクト生成
 		m_sprite[ARRAY_NUM_2] = NewGO<SpriteRender>(PRIORITY_1, nullptr);
 		m_sprite[ARRAY_NUM_2]->SetPosition({ 0.0f,0.0f,0.0f });
 		//初期化
 		m_sprite[ARRAY_NUM_2]->Init("Assets/image/DDS/1.dds", 200.0f, 200.0f);
+=======
+			//「GO!!」表示
+			m_sprite[3] = NewGO<SpriteRender>(PRIORITY_1, nullptr);
+			m_sprite[3]->SetPosition({ 0.0f,0.0f,0.0f });
+			m_sprite[3]->Init("Assets/image/DDS/START!!.dds", 400.0f, 200.0f);
+>>>>>>> remotes/origin/master
 
 		break;
 
@@ -223,11 +311,16 @@ void GameScene::CountDown()
 		//「1」削除。
 		DeleteGO(m_sprite[ARRAY_NUM_2]);
 
+<<<<<<< HEAD
 		//「START」画像オブジェクト生成
 		m_sprite[ARRAY_NUM_3] = NewGO<SpriteRender>(PRIORITY_1, nullptr);
 		m_sprite[ARRAY_NUM_3]->SetPosition({ 0.0f,0.0f,0.0f });
 		//初期化
 		m_sprite[ARRAY_NUM_3]->Init("Assets/image/DDS/START!!.dds", 400.0f, 200.0f);
+=======
+			//カウントダウンの処理を抜ける。
+			m_isCountTimeFlg = false;
+>>>>>>> remotes/origin/master
 
 		break;
 
@@ -256,16 +349,25 @@ void GameScene::TimeLimit()
 		//制限時間を縮めていく。
 		m_timer--;
 	}
+<<<<<<< HEAD
 
 	m_counttime = m_timer / 60;
 
+=======
+	m_counttime = m_timer / 60;
+>>>>>>> remotes/origin/master
 	//０秒になってからのカウントがマイナスに行かないように補正
 	if (m_counttime < 0)
 	{
 		m_counttime = 0;
 	}
 
+<<<<<<< HEAD
 	//制限時間の描画
+=======
+	//残り時間の描画
+	wchar_t text1[64];
+>>>>>>> remotes/origin/master
 	swprintf_s(text1, L"%d", m_counttime);
 	//画面表示
 	m_timeLimit->SetText(text1);
@@ -277,8 +379,27 @@ void GameScene::PlaScoreDraw()
 {
 	for (int i = 0; i < 4; i++) {
 		//プレイヤーごとのスコアの描画
+<<<<<<< HEAD
 		swprintf_s(text2, L"%d", m_plscore[i]);
 		m_TextScoreFontRender[i]->SetText(text2);
+=======
+		swprintf_s(text1, L"%d", m_plscore[i]);
+		m_TextScoreFontRender[i]->SetText(text1);
+	}
+
+	//現在のスコア１位を判定し、王冠画像を移動
+	NowCrown();
+
+	//制限時間が0秒になったら、
+	if (m_counttime == 0)
+	{
+		m_resultsenniTimer++;
+		if(m_resultsenniTimer > 120)
+		{
+			//リザルト画面に遷移
+			NewGO<ResultScene>(PRIORITY_0, nullptr);
+		}
+>>>>>>> remotes/origin/master
 	}
 }
 
@@ -303,7 +424,10 @@ Vector2 GameScene::GetScorePos(int x)
 	}
 }
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> remotes/origin/master
 //プレイヤーごとのスコアの位置を指定する関数
 Vector2 GameScene::SetScoreTextPos(int t) {
 	switch (t)
@@ -323,7 +447,10 @@ Vector2 GameScene::SetScoreTextPos(int t) {
 	}
 }
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> remotes/origin/master
 //プレイヤーごとのスコアの色を指定する関数
 Vector4 GameScene::ScoreColor(int c)
 {

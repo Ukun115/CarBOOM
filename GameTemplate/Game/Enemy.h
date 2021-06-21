@@ -29,10 +29,17 @@ private:
 	/// <summary>
 	/// タイマー
 	/// </summary>
+<<<<<<< HEAD
 	unsigned int m_startDelayTimer = 0;		//スタートを遅らせるタイマー
 	unsigned int m_startDelay[6];			//敵６体分のスタート遅延時間
 	unsigned int m_cTime[6];					//敵６体分の攻撃CTタイマー
 	unsigned int m_eneCTCount[6];			//敵６体分のCT時間
+=======
+	int m_startDelayTimer = 0;		//スタートを遅らせるタイマー
+	int m_startDelay[6];			//敵６体分のスタート遅延時間
+	int m_cTime[6];					//敵６体分の攻撃CTタイマー
+	int m_eneCTCount[6];			//敵６体分のCT時間
+>>>>>>> remotes/origin/master
 
 
 	//敵情報
@@ -43,12 +50,17 @@ private:
 	Vector3 m_friction[6];			//敵６体分の摩擦
 	Vector3    m_plaPos[4];			//プレイヤー4体分のプレイヤーの位置
 	Vector3    m_mostShortKyori[4];	 //プレイヤー4体分と敵の距離
+<<<<<<< HEAD
 	Vector3 m_ranEneResPos[10];	//敵のリスポーン位置計10か所
+=======
+	Vector3 m_randEneResPos[10];	//敵のリスポーン位置計10か所
+>>>>>>> remotes/origin/master
 
 
 	/// <summary>
 	/// 列挙型の宣言
 	/// </summary>
+<<<<<<< HEAD
 	enum enumEnemy
 	{
 		Enemy1,		 //敵１の配列での番号
@@ -80,6 +92,25 @@ private:
 		ResPos8,	//８つ目
 		ResPos9,	//９つ目
 		ResPos10,	//１０つ目
+=======
+	enum ENEMY
+	{
+		ENEMY1,		 //敵１の配列での番号
+		ENEMY2,		 //敵２の配列での番号
+		ENEMY3,		 //敵３の配列での番号
+		ENEMY4,		 //敵４の配列での番号
+		ENEMY5,		 //敵５の配列での番号
+		ENEMY6,		 //敵６の配列での番号
+		ENEMYNUM	 //敵の総数
+	};
+	enum PLAYER
+	{
+		PLAYER1,		//1Pの配列での番号
+		PLAYER2,		//2Pの配列での番号
+		PLAYER3,		//3Pの配列での番号
+		PLAYER4,		//4Pの配列での番号
+		MAXPLAYERNUM	//プレイヤーの最大数
+>>>>>>> remotes/origin/master
 	};
 
 public:
@@ -88,10 +119,16 @@ public:
 	~Enemy()override;
 	void Update()override;
 
+<<<<<<< HEAD
 	//敵の位置,回転を更新する関数
 	void EneDataUpdate(int x);
 	//敵のDA処理関数
 	void EneDA(int x);
+=======
+
+	//敵の移動処理関数
+	void EneMove(int x);
+>>>>>>> remotes/origin/master
 	//敵の回転処理関数
 	void EneTurn(int x);
 	//敵から最寄りのプレイヤーを検索する関数

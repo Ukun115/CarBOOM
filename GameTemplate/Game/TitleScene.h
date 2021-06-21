@@ -17,6 +17,7 @@ private:
 	/// <summary>
 	/// フラグ
 	/// </summary>
+<<<<<<< HEAD
 	bool m_isAddPlayerFlg[4] = { false };		//各プレイヤーが登録されているかの判別フラグ
 	bool m_isCanGameStartFlg = true;			//trueのときはゲームスタートボタンを押せる
 	bool m_isFlashingFontTimerActiveFlg = true;		//trueのとき点滅文字の表示タイミング
@@ -29,6 +30,20 @@ private:
 
 
 	unsigned int m_totalPlaNum = 1;			//プレイヤーの合計数を計測
+=======
+	bool m_isAddPlayerFlg[4] = { false };		//プレイヤーが登録されたかの判別フラグ
+	bool m_isCanGameStartFlg = true;		//trueのときはゲームスタートボタンを押せる
+	bool m_isButtonTimerActiveFlg = true;
+
+
+	/// <summary>
+	/// タイマー
+	/// </summary>
+	int m_buttonTimer = 0;
+
+
+	int m_totalPlayerNum = 1;			//プレイヤーの合計数を計測
+>>>>>>> remotes/origin/master
 
 
 	/// <summary>
@@ -50,6 +65,7 @@ public:
 	void Update()override;
 
 
+<<<<<<< HEAD
 	//プレイヤーを追加する関数
 	void AddPlayer();
 	//ゲーム画面に遷移する関数
@@ -58,11 +74,17 @@ public:
 	void FlashingFont();
 
 
+=======
+>>>>>>> remotes/origin/master
 	/// <summary>
 	/// ゲット関数
 	/// </summary>
 	//プレイヤーが追加されているかどうかを取得する関数
 	bool GetPlaFlg(int x) { return m_isAddPlayerFlg[x]; }
 	//登録されたプレイヤーの合計人数を取得する関数
+<<<<<<< HEAD
 	int GetTotalPlaNum(){ return m_totalPlaNum; }
+=======
+	int GetTotalPlaNum(){ return m_totalPlayerNum; }
+>>>>>>> remotes/origin/master
 };

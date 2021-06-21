@@ -8,6 +8,7 @@ namespace
 {
 	const int PRIORITY_1 = 1;	//優先度1
 
+<<<<<<< HEAD
 	const Vector3 NUMBER1_POS = { 150.0f,50.0f,0.0f };		//１位プレイヤーの表示位置
 	const Vector3 NUMBER2_POS = { 150.0f,-50.0f,0.0f };		//２位プレイヤーの表示位置
 	const Vector3 NUMBER3_POS = { 150.0f,-150.0f,0.0f };	//３位プレイヤーの表示位置
@@ -17,6 +18,17 @@ namespace
 	const Vector3 RANKING2_POS = { -150.0f,-50.0f,0.0f };	//２位画像の位置
 	const Vector3 RANKING3_POS = { -150.0f,-150.0f,0.0f };	//３位画像の位置
 	const Vector3 RANKING4_POS = { -150.0f,-250.0f,0.0f };	//４位画像の位置
+=======
+	const Vector3 NUMBER1_POS = { 150.0f,50.0f,0.0f };
+	const Vector3 NUMBER2_POS = { 150.0f,-50.0f,0.0f };
+	const Vector3 NUMBER3_POS = { 150.0f,-150.0f,0.0f };
+	const Vector3 NUMBER4_POS = { 150.0f,-250.0f,0.0f };
+
+	const Vector3 RANKING1_POS = { -150.0f,50.0f,0.0f };
+	const Vector3 RANKING2_POS = { -150.0f,-50.0f,0.0f };
+	const Vector3 RANKING3_POS = { -150.0f,-150.0f,0.0f };
+	const Vector3 RANKING4_POS = { -150.0f,-250.0f,0.0f };
+>>>>>>> remotes/origin/master
 }
 
 
@@ -29,7 +41,10 @@ bool ResultScene::Start()
 	//順位文字を初期化し、表示
 	for (int i = 0; i < 4; i++)
 	{
+<<<<<<< HEAD
 		//順位画像オブジェクト生成
+=======
+>>>>>>> remotes/origin/master
 		m_rankingSprite[i] = NewGO<SpriteRender>(PRIORITY_1, nullptr);
 
 		//１位画像
@@ -58,7 +73,11 @@ bool ResultScene::Start()
 		}
 	}
 
+<<<<<<< HEAD
 	//リザルト文字画像オブジェクト生成
+=======
+	//リザルト文字画像を初期化。
+>>>>>>> remotes/origin/master
 	m_resultSprite = NewGO<SpriteRender>(PRIORITY_1, nullptr);
 	m_resultSprite->Init("Assets/image/DDS/Result.dds", 600.0f, 300.0f);
 	Vector3 m_resSprPos = { 0.0f,160.0f,0.0f };
@@ -66,9 +85,13 @@ bool ResultScene::Start()
 
 	for (int i = 0; i < m_player->GetPlaNum(); i++)
 	{
+<<<<<<< HEAD
 		//プレイヤー文字画像オブジェクト生成
 		m_plaNum[i] = NewGO<SpriteRender>(PRIORITY_1, nullptr);
 		//1P
+=======
+		m_plaNum[i] = NewGO<SpriteRender>(PRIORITY_1, nullptr);
+>>>>>>> remotes/origin/master
 		if (i == 0)
 		{
 			m_plaNum[i]->Init("Assets/image/DDS/Player1_ActiveName.dds", 340.0f, 170.0f);

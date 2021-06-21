@@ -11,7 +11,11 @@ namespace
 	const int PRIORITY_0 = 0;	//優先度0
 	const int PRIORITY_1 = 1;	//優先度1
 
+<<<<<<< HEAD
 	const Vector3 PlAYER_SCA = { 1.4f,1.4f,1.4f };			//プレイヤーの拡大率
+=======
+	const Vector3 PlAYER_NORMALSIZE = { 1.4f,1.4f,1.4f };			//プレイヤーの初期サイズ
+>>>>>>> remotes/origin/master
 	const Vector3 PLAYER1_RESPOS = { -100.0f,150.0f,100.0f };		//リスポーン座標(左上)
 	const Vector3 PLAYER2_RESPOS = { 100.0f,150.0f, 100.0f };		//リスポーン座標(右上)
 	const Vector3 PLAYER3_RESPOS = { -100.0f,150.0f,-100.0f };		//リスポーン座標(左下)
@@ -29,6 +33,7 @@ bool Player::Start()
 	//各プレイヤーの２段階溜め攻撃の可視化
 	for (int i = 0; i < 4; i++)
 	{
+<<<<<<< HEAD
 		//溜め１段階目の「１」画像オブジェクト生成
 		m_DASpr1[i] = NewGO<SpriteRender>(PRIORITY_1,nullptr);
 		m_DASpr1[i]->SetPosition({ -500.0f,0.0f,0.0f });
@@ -41,6 +46,17 @@ bool Player::Start()
 		m_DASpr2[i]->Init("Assets/image/DDS/2.dds", 100.0f, 100.0f);
 		//非表示
 		m_DASpr2[i]->Deactivate();
+=======
+		m_sprite1[i] = NewGO<SpriteRender>(PRIORITY_1,nullptr);
+		m_sprite1[i]->SetPosition({ -500.0f,0.0f,0.0f });
+		m_sprite1[i]->Init("Assets/image/DDS/1.dds", 100.0f, 100.0f);
+		m_sprite1[i]->Deactivate();
+
+		m_sprite2[i] = NewGO<SpriteRender>(PRIORITY_1,nullptr);
+		m_sprite2[i]->SetPosition({ -500.0f,0.0f,0.0f });
+		m_sprite2[i]->Init("Assets/image/DDS/2.dds", 100.0f, 100.0f);
+		m_sprite2[i]->Deactivate();
+>>>>>>> remotes/origin/master
 	}
 	m_DASpr1[0]->SetPosition({ -550.0f,200.0f,0.0f });
 	m_DASpr1[1]->SetPosition({ 550.0f,200.0f,0.0f });
@@ -56,7 +72,11 @@ bool Player::Start()
 		//登録されていたら実行
 		if (m_titleScene->GetPlaFlg(i) == true)
 		{
+<<<<<<< HEAD
 			//プレイヤーモデルオブジェクト生成
+=======
+			//プレイヤーをロード
+>>>>>>> remotes/origin/master
 			m_player[i] = NewGO<SkinModelRender>(PRIORITY_0,nullptr);
 
 			//モデルのファイルパスを設定＆初期座標(リスポーン座標)の設定。
@@ -133,8 +153,34 @@ void Player::Update()
 			//ゲーム開始のカウントダウンが終わるまでプレイヤーの処理をすべて止める
 			if (m_gameScene->GetCountDownFlg() == false)
 			{
+<<<<<<< HEAD
 				//プレイヤーのDA溜め状態
 				PlaDAState(i);
+=======
+				//Bボタンを押しているとき、
+				if (g_pad[i]->IsPress(enButtonB) && m_isBPushFlg[i] == false)
+				{
+					//押しているときのタイマーを加算
+					m_pressTimer[i]++;
+
+					//離したときのタイマー初期化
+					m_releaseTimer[i] = 0;
+
+					m_isBPushFlg[i] = true;
+				}
+				//Bボタンを離したとき、
+				if (!g_pad[i]->IsPress(enButtonB) && m_isBPushFlg[i] == true)
+				{
+					//離したときのタイマーを加算
+					m_releaseTimer[i]++;
+
+					//押したときのタイマー初期化
+					m_pressTimer[i] = 0;
+
+					m_sprite1[i]->Deactivate();
+					m_sprite2[i]->Deactivate();
+				}
+>>>>>>> remotes/origin/master
 
 				//プレイヤーの状態
 				PlaNowState(i);
@@ -144,16 +190,102 @@ void Player::Update()
 				//回転処理
 				PlaTurn(i);
 
+<<<<<<< HEAD
 				//プレイヤーが敵とぶつかったとき敵に押される処理
 				PlaAndEneClash(i);
 				//プレイヤーとプレイヤーがぶつかったときの処理
 				PlaAndPlaClash(i);
+=======
+				///// <summary>
+				///// 衝突処理
+				///// </summary>
+				//敵とぶつかったときパトカーに押される処理
+				for (int u = 0; u < 6; u++)
+				{
+					//プレイヤーと敵との距離を計算
+					m_diff = m_enemy->GetEnemyPos(u) - m_pos[i];
+					//距離の長さが30.0fより小さかったら、
+					if (m_diff.Length() < 30.0f)
+					{
+						m_enePushSpeed = m_enemy->GetEnemySpeed(u);
+						//これだとプッシュパワーが強すぎるため、威力を弱める
+						m_enePushSpeed.x /= 20;
+						m_enePushSpeed.y /= 20;
+						m_enePushSpeed.z /= 20;
+
+						//プレイヤーに影響
+						m_moveSpeed[i] += m_enePushSpeed;
+					}
+				}
+				//ほかプレイヤー(u)と自分(i)がぶつかったとき、ほかプレイヤーに押される処理
+				for (int u = PLAYER1; u < m_plaNum; u++) {
+					if (u == i)
+					{
+						//uとiの値が同じのときは下の処理は行わずスキップする
+						continue;
+					}
+					//プレイヤー同士の距離を計算
+					m_diff = m_pos[u] - m_pos[i];
+					//距離の長さが30.0fより小さかったら、
+					if (m_diff.Length() < 40.0f)
+					{
+						//ぶつかってきたプレイヤーの力を保存
+						m_enePushSpeed = m_moveSpeed[u];
+
+						//ぶつかってきたプレイヤーはそのままステージ外に落ちないように減速させる
+						m_moveSpeed[u] /= 2.0;
+
+						if (m_isTyazi2Flg == true)
+						{
+							m_enePushSpeed *= 5.0f;
+							//チャージ２を受けたとき割る２しただけではそのまま落ちちゃうので
+							//止まるようにする
+							m_moveSpeed[u] = { 0.0f,0.0f,0.0f };
+						}
+
+						//プレイヤーに影響
+						m_moveSpeed[i] += m_enePushSpeed;
+
+						//誰が押してきたかを保存
+						m_pushPlayer[i] = u;
+
+						//フラグをfalseに。。。
+						m_isTyazi2Flg = false;
+					}
+				}
+>>>>>>> remotes/origin/master
 
 				//キャラクターコントローラーを使った移動処理に変更。
 				m_pos[i] = m_charaCon[i].Execute(m_moveSpeed[i], 1.0f);
 
+<<<<<<< HEAD
 				//プレイヤーのリスポーン処理
 				PlaResporn(i);
+=======
+				/// <summary>
+				/// リスポーン処理
+				/// </summary>
+				if (m_pos[i].y < -1000.0f)
+				{
+					//プレイヤーの座標をリスポーン座標に移動
+					PlaResporn(i);
+
+					//キャラコンの座標にプレイヤーの座標をいれる
+					m_charaCon[i].SetPosition(m_pos[i]);
+
+					//スピードを初期化
+					m_moveSpeed[i] = { Vector3::Zero };
+
+					//キャラクターコントローラーを使った移動処理に変更。
+					m_pos[i] = m_charaCon[i].Execute(m_moveSpeed[i], 1.0f);
+
+					//落下時最後に触れた敵にポイントを与えるm_pushPlayer = 最後に押してきた敵のナンバー
+					m_gameScene->GetPlayerAddScore(m_pushPlayer[i],i);
+					//４で初期化し、４のまま落ちると、
+					//自滅とみなし自身のポイントが減るようにセットしておく
+					m_pushPlayer[i] = 4;
+				}
+>>>>>>> remotes/origin/master
 			}
 			else
 			{
@@ -170,7 +302,11 @@ void Player::Update()
 }
 
 
+<<<<<<< HEAD
 //プレイヤーのリスポーン処理関数
+=======
+//プレイヤーを初期位置にリスポーンさせる関数
+>>>>>>> remotes/origin/master
 void Player::PlaResporn(int x)
 {
 	if (m_pos[x].y < -1000.0f)
@@ -254,7 +390,11 @@ void Player::PlaDataUpdate(int x)
 
 
 //プレイヤーの現在の状態を伝える関数
+<<<<<<< HEAD
 void Player::PlaNowState(int x)
+=======
+void Player::PlaNowSpeed(int x)
+>>>>>>> remotes/origin/master
 {
 	if (m_pressTimer[x] == 0 && m_releaseTimer[x] == 0)
 	{
@@ -329,6 +469,7 @@ void Player::PlaMove(int x)
 }
 
 
+<<<<<<< HEAD
 //プレイヤーの移動速度に補正を入れる関数
 void Player::PlaSpeedCorrection(int x)
 {
@@ -348,6 +489,8 @@ void Player::PlaSpeedCorrection(int x)
 }
 
 
+=======
+>>>>>>> remotes/origin/master
 //プレイヤーの回転処理関数
 void Player::PlaTurn(int x)
 {
@@ -379,6 +522,7 @@ void Player::PlaAttackBefore(int x)
 	//摩擦力を設定する
 	m_friction[x] = m_moveSpeed[x];
 	m_friction[x] *= -2.0f;
+<<<<<<< HEAD
 
 	//摩擦力を加算する
 	m_moveSpeed[x].x += m_friction[x].x * g_gameTime->GetFrameDeltaTime();
@@ -412,9 +556,33 @@ void Player::PlaAttackBefore(int x)
 			//「2」表示
 			m_DASpr1[x]->Deactivate();
 			m_DASpr2[x]->Activate();
+=======
 
+	//摩擦力を加算する
+	m_moveSpeed[x].x += m_friction[x].x * g_gameTime->GetFrameDeltaTime();
+	m_moveSpeed[x].z += m_friction[x].z * g_gameTime->GetFrameDeltaTime();
+	m_atackTime[x]++;
+	if (m_atackTime[x] > 0 && m_atackTime[x] < 30)
+	{
+		m_isAtack0Flg[x] = true;
+		m_isAtack1Flg[x] = false;
+		m_isAtack2Flg[x] = false;
+>>>>>>> remotes/origin/master
+
+
+	}
+	if (m_atackTime[x] >= 30 && m_atackTime[x] < 90)
+	{
+		m_isAtack0Flg[x] = false;
+		m_isAtack1Flg[x] = true;
+		m_isAtack2Flg[x] = false;
+		//「1」表示
+		if (m_atackTime[x] == 30) {
+			m_sprite2[x]->Deactivate();
+			m_sprite1[x]->Activate();
 		}
 	}
+<<<<<<< HEAD
 	m_plaDir[x] = m_moveSpeed[x];
 	m_plaDir->Normalize();
 }
@@ -519,4 +687,20 @@ void Player::Gravity(int x)
 {
 	//重力の影響を与える
 	m_moveSpeed[x].y -= 0.2f;
+=======
+	if (m_atackTime[x] > 90)
+	{
+		m_isAtack0Flg[x] = false;
+		m_isAtack1Flg[x] = false;
+		m_isAtack2Flg[x] = true;
+		if (m_atackTime[x] == 91) {
+			//「2」表示
+			m_sprite1[x]->Deactivate();
+			m_sprite2[x]->Activate();
+
+		}
+	}
+	m_plaDir[x] = m_moveSpeed[x];
+	m_plaDir->Normalize();
+>>>>>>> remotes/origin/master
 }

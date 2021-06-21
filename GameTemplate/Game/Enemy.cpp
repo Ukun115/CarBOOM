@@ -10,6 +10,7 @@
 namespace
 {
 	const int PRIORITY_0 = 0;	//優先度0
+<<<<<<< HEAD
 
 	const int RES_POS_NUM = 10;	//リスポーン位置の総数
 	//敵の各リスポーン位置
@@ -23,6 +24,8 @@ namespace
 	const Vector3 ENE_RES_POS_8 = { 0.0f,0.0f,-100.0f };
 	const Vector3 ENE_RES_POS_9 = { 100.0f,0.0f,-100.0f };
 	const Vector3 ENE_RES_POS_10 = { 150.0f,0.0f,150.0f };
+=======
+>>>>>>> remotes/origin/master
 }
 
 
@@ -55,6 +58,7 @@ bool Enemy::Start()
 	//敵の最大数繰り返す
 	for (int i = Enemy1; i < MaxEnemyNum; i++)
 	{
+<<<<<<< HEAD
 		//敵モデルオブジェクト生成
 		m_enemy[i] = NewGO<SkinModelRender>(PRIORITY_0,nullptr);
 		//モデルのファイルパスを設定
@@ -62,9 +66,44 @@ bool Enemy::Start()
 		//敵の初期座標(リスポーン座標)の設定。
 		EneResporn(i);
 		//元が少し大きかったので、大きさを小さくする
+=======
+		//敵をロード
+		m_enemy[i] = NewGO<SkinModelRender>(PRIORITY_0,nullptr);
+		//モデルのファイルパスを設定
+		m_enemy[i]->Init("Assets/modelData/LowPoly_PoliceCar.tkm");	//敵モデル
+		//初期座標(リスポーン座標)の設定。
+		if (i == ENEMY1)
+		{
+			m_enePos[ENEMY1] = m_randEneResPos[0];		//敵１の場所
+		}
+		else if (i == ENEMY2)
+		{
+			m_enePos[ENEMY2] = m_randEneResPos[1];		//敵２の場所
+		}
+		else if (i == ENEMY3)
+		{
+			m_enePos[ENEMY3] = m_randEneResPos[3];		//敵3の場所
+		}
+		else if (i == ENEMY4)
+		{
+			m_enePos[ENEMY4] = m_randEneResPos[4];		//敵4の場所
+		}
+		else if (i == ENEMY5)
+		{
+			m_enePos[ENEMY5] = m_randEneResPos[7];		//敵5の場所
+		}
+		else if (i == ENEMY6)
+		{
+			m_enePos[ENEMY6] = m_randEneResPos[9];		//敵6の場所
+		}
+>>>>>>> remotes/origin/master
 		m_enemy[i]->SetScale({0.7f,0.7f,0.7f});
 		//当たり判定のイニシャライズ(初期化)
 		m_charaCon[i].Init(15.0f, 85.0f, m_enePos[i]);
+<<<<<<< HEAD
+=======
+
+>>>>>>> remotes/origin/master
 		//300～600の範囲のランダム値でスタート時の敵のDAを遅らせるタイマーの値に代入
 		m_startDelay[i] = (300 + (int)(rand() * (600 - 300 + 1.0) / (1.0 + RAND_MAX)));
 		//120～140の範囲のランダム値でDA後のCTタイマーの値に代入
@@ -79,7 +118,11 @@ bool Enemy::Start()
 Enemy::~Enemy()
 {
 	//全ての敵を削除。
+<<<<<<< HEAD
 	for (int i = Enemy1; i < MaxEnemyNum; i++)
+=======
+	for (int i = ENEMY1; i < ENEMYNUM; i++)
+>>>>>>> remotes/origin/master
 	{
 		DeleteGO(m_enemy[i]);
 	}
@@ -89,7 +132,11 @@ Enemy::~Enemy()
 void Enemy::Update()
 {
 	//全敵分ループ
+<<<<<<< HEAD
 	for (int i = Enemy1; i < MaxEnemyNum; i++)
+=======
+	for (int i = ENEMY1; i < ENEMYNUM; i++)
+>>>>>>> remotes/origin/master
 	{
 		//制限時間が０秒になったらプレイヤーの処理を全て止める
 		if (m_gameScene->GetNowTime() != 0) {
@@ -111,8 +158,47 @@ void Enemy::Update()
 					//回転処理
 					EneTurn(i);
 
+<<<<<<< HEAD
 					//DA攻撃処理
 					EneDA(i);
+=======
+					if (m_isCtFlg[i] == false) {
+
+						//CTをカウントするフラグを立てる
+						m_isCtFlg[i] = true;
+
+						//距離設定
+						Distance(i);
+
+						//移動処理
+						EneMove(i);
+					}
+
+					//CTフラグが立ってるとき、
+					if (m_isCtFlg[i] == true) {
+
+						//CTをカウントする
+						m_cTime[i]++;
+
+						//摩擦力を設定する
+						m_friction[i] = m_moveSpeed[i];
+						m_friction[i] *= -1.5f;
+
+						//摩擦力を加算する
+						m_moveSpeed[i].x += m_friction[i].x * g_gameTime->GetFrameDeltaTime();
+						m_moveSpeed[i].z += m_friction[i].z * g_gameTime->GetFrameDeltaTime();
+					}
+
+					//CTのカウントが120秒～140秒のとき、
+					if (m_cTime[i] == m_eneCTCount[i]) {
+
+						//CTフラグを下ろす
+						m_isCtFlg[i] = false;
+
+						//CTのカウントを0にする
+						m_cTime[i] = 0;
+					}
+>>>>>>> remotes/origin/master
 
 					//キャラクターコントローラーを使った移動処理に変更。
 					m_enePos[i] = m_charaCon[i].Execute(m_moveSpeed[i], 1.0f);
@@ -123,13 +209,19 @@ void Enemy::Update()
 					m_enePos[i] += m_moveSpeed[i];
 				}
 			}
+<<<<<<< HEAD
 			//敵の位置と回転情報を更新
 			EneDataUpdate(i);
+=======
+			m_enemy[i]->SetRotation(m_rot[i]);		//回転情報更新
+			m_enemy[i]->SetPosition(m_enePos[i]);	//位置情報更新
+>>>>>>> remotes/origin/master
 		}
 	}
 }
 
 
+<<<<<<< HEAD
 //敵の位置,回転情報を更新する関数
 void Enemy::EneDataUpdate(int x)
 {
@@ -138,6 +230,8 @@ void Enemy::EneDataUpdate(int x)
 }
 
 
+=======
+>>>>>>> remotes/origin/master
 //敵から最寄りのプレイヤーを検索する関数
 void Enemy::Distance(int x)
 {
@@ -150,7 +244,11 @@ void Enemy::Distance(int x)
 		m_mostShortKyori[i] = m_plaPos[i] - m_enePos[x];
 	}
 
+<<<<<<< HEAD
 	//一番近い距離(m_mostShortKyori[0])のように並び替え(ソート)
+=======
+	//m_mostShortKyori[0].Length()の値が一番小さくなるように並び替え(ソート)
+>>>>>>> remotes/origin/master
 	for (int s = 0; s < m_titleScene->GetTotalPlaNum() - 1; s++) {
 		for (int t = s + 1; t < m_titleScene->GetTotalPlaNum(); t++) {
 			if (m_mostShortKyori[t].Length() < m_mostShortKyori[s].Length()) {
@@ -162,13 +260,22 @@ void Enemy::Distance(int x)
 		}
 	}
 
+<<<<<<< HEAD
 	//一番近いプレイヤーから敵のベクトルを正規化して方向だけの情報にする
+=======
+	//プレイヤーから敵のベクトルを正規化して方向だけの情報にする
+>>>>>>> remotes/origin/master
 	m_mostShortKyori[0].Normalize();
 }
 
 
+<<<<<<< HEAD
 //敵のDA処理関数
 void Enemy::EneDA(int x)
+=======
+//敵の移動処理関数
+void Enemy::EneMove(int x)
+>>>>>>> remotes/origin/master
 {
 	if (m_isCtFlg[x] == false) {
 

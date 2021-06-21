@@ -7,6 +7,7 @@ class Enemy;
 class Player : public IGameObject
 {
 private:
+<<<<<<< HEAD
 
 	/// <summary>
 	/// クラスのポインタ
@@ -21,6 +22,31 @@ private:
 
 	CharacterController m_charaCon[4];		//プレイヤー4人分のキャラクタコントローラークラスを作成
 
+=======
+
+	/// <summary>
+	/// クラスのポインタ
+	/// </summary>
+	TitleScene* m_titleScene = nullptr;
+	GameScene* m_gameScene = nullptr;
+	SkinModelRender* m_player[4] = { nullptr };		//プレイヤー4人分
+	SpriteRender* m_sprite1[4] = { nullptr };		//プレイヤー4人分
+	SpriteRender* m_sprite2[4] = { nullptr };		//プレイヤー4人分
+	Enemy* m_enemy = nullptr;
+
+
+	CharacterController m_charaCon[4];		//プレイヤー4人分のキャラクタコントローラークラスを作成
+
+
+	/// <summary>
+	/// フラグ
+	/// </summary>
+	bool m_isTyazi2Flg = false;
+	bool m_isBPushFlg[4] = { false };		//Bボタンが押されたときのフラグ
+	bool m_isAtack0Flg[4] = { false };		//Bボタンが押されたときのフラグ
+	bool m_isAtack1Flg[4] = { false };		//Bボタンが押されたときのフラグ
+	bool m_isAtack2Flg[4] = { false };		//Bボタンが押されたときのフラグ
+>>>>>>> remotes/origin/master
 
 	/// <summary>
 	/// フラグ
@@ -31,15 +57,23 @@ private:
 	bool m_isAtack1Flg[4] = { false };		//Bボタンが押されたときのフラグ
 	bool m_isAtack2Flg[4] = { false };		//Bボタンが押されたときのフラグ
 
+<<<<<<< HEAD
 
 	/// <summary>
 	/// タイマー
 	/// </summary>
 
+=======
+	/// <summary>
+	/// タイマー
+	/// </summary>
+
+>>>>>>> remotes/origin/master
 
 	Vector3    m_pos[4];		//プレイヤーの位置
 	Quaternion m_rot[4];		//プレイヤーの回転
 	Vector3    m_sca[4];		//プレイヤーの拡大率
+<<<<<<< HEAD
 	unsigned int m_plaNum = 0;			//プレイヤー数をカウントする変数
 	Vector3 m_moveSpeed[4];		//移動速度
 	Vector3 m_enePushSpeed;		//敵から与えられるプッシュパワー
@@ -53,6 +87,21 @@ private:
 	Vector3 m_diff;				//プレイヤーと敵との距離
 	unsigned int m_atackTime[4];			//攻撃のタイマー
 	unsigned int m_pushPlayer[5];
+=======
+	int m_plaNum = 0;	//プレイヤー数をカウントする変数
+	Vector3 m_moveSpeed[4];				//移動速度
+	Vector3 m_enePushSpeed;				//敵から与えられるプッシュパワー
+	Vector3 m_plaDir[4];					//向き
+	float m_leftStick_x[4];				//左スティックのx入力量
+	float m_leftStick_y[4];				//左スティックのy入力量
+	int m_pressTimer[4];				//押したときのタイマー
+	int m_releaseTimer[4];				//離したときのタイマー
+	float m_rotAngle[4];				//回転角度
+	Vector3 m_friction[4];				//摩擦
+	Vector3 m_diff;								//プレイヤーと敵との距離
+	int m_atackTime[4];				    //攻撃のタイマー
+	int m_pushPlayer[5];
+>>>>>>> remotes/origin/master
 
 
 	/// <summary>
@@ -66,6 +115,7 @@ private:
 		PLAYER4,		//4Pの配列での番号
 		MAXPLAYERNUM	//プレイヤーの最大数
 	};
+<<<<<<< HEAD
 
 public:
 
@@ -100,6 +150,30 @@ public:
 	void Gravity(int x);
 
 
+=======
+
+public:
+
+	bool Start() override;
+	~Player() override;
+	void Update() override;
+
+
+	//プレイヤーを初期位置にリスポーンさせる関数
+	void PlaResporn(int x);
+	//プレイヤーの位置,回転の情報を更新する関数
+	void PlaDataUpdate(int x);
+	//プレイヤーの通常移動処理関数
+	void PlaMove(int x);
+	//プレイヤーの回転処理関数
+	void PlaTurn(int x);
+	//プレイヤーのDA(ダッシュアタック)処理関数
+	void PlaAttackBefore(int x);
+	//プレイヤーの現在の状態を伝える関数
+	void PlaNowSpeed(int x);
+
+
+>>>>>>> remotes/origin/master
 	/// <summary>
 	/// ゲット関数
 	/// </summary>

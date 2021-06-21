@@ -31,12 +31,20 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	auto& renderContext = g_graphicsEngine->GetRenderContext();
 
 
+<<<<<<< HEAD
 	//ライトオブジェクト生成
+=======
+	//ライトクラスをロード
+>>>>>>> remotes/origin/master
 	Light* m_light = NewGO<Light>(PRIORITY_0, "light");
 	//ディレクションライトをセット
 	m_light->SetDirectionLightData();
 
+<<<<<<< HEAD
 	//タイトルシーンオブジェクト生成
+=======
+	//タイトルシーンクラスからゲーム開始
+>>>>>>> remotes/origin/master
 	TitleScene* m_titleScene = NewGO<TitleScene>(PRIORITY_0,"titlescene");
 
 

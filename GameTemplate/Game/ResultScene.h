@@ -12,12 +12,21 @@ private:
 	/// </summary>
 	GameScene* m_gameScene = nullptr;
 	SpriteRender* m_resultSprite = nullptr;
+<<<<<<< HEAD
 	SpriteRender* m_plaNum[4] = {nullptr};			//プレイヤー4人分用意
 	SpriteRender* m_rankingSprite[4] = {nullptr};	//プレイヤー4人分用意
 	Player* m_player = nullptr;
 
 
 	unsigned int m_plaScore[4];		//プレイヤー4人分のスコアを入れる配列
+=======
+	SpriteRender* m_plaNum[4] = {nullptr};
+	SpriteRender* m_rankingSprite[4] = {nullptr};
+	Player* m_player = nullptr;
+
+
+	int m_plaScore[4];		//プレイヤーのスコアを入れる配列
+>>>>>>> remotes/origin/master
 
 public:
 
