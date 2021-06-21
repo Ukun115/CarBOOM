@@ -14,12 +14,12 @@ void FontRender::Init
 	/// <summary>
 	/// フォント構造体に初期化で設定したデータを代入
 	/// </summary>
-	swprintf_s(m_fontValue.text, text);
-	m_fontValue.position = position;
-	m_fontValue.color = color;
-	m_fontValue.rotation = rotation;
-	m_fontValue.scale = scale;
-	m_fontValue.pivot = pivot;
+	swprintf_s(m_fontValue.text, text);	//テキスト
+	m_fontValue.position = position;	//位置
+	m_fontValue.color = color;			//色
+	m_fontValue.rotation = rotation;	//回転
+	m_fontValue.scale = scale;			//拡大率
+	m_fontValue.pivot = pivot;			//基点
 }
 
 //描画関数
@@ -29,12 +29,12 @@ void FontRender::Render(RenderContext& rc)
 
 		m_font.Draw
 		(
-			m_fontValue.text,
-			m_fontValue.position,
-			m_fontValue.color,
-			m_fontValue.rotation,
-			m_fontValue.scale,
-			m_fontValue.pivot
+			m_fontValue.text,		//テキスト
+			m_fontValue.position,	//位置
+			m_fontValue.color,		//色
+			m_fontValue.rotation,	//回転
+			m_fontValue.scale,		//拡大率
+			m_fontValue.pivot		//基点
 		);
 
 		m_font.End(rc);

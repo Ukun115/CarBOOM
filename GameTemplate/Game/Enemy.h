@@ -29,10 +29,10 @@ private:
 	/// <summary>
 	/// タイマー
 	/// </summary>
-	int m_startDelayTimer = 0;		//スタートを遅らせるタイマー
-	int m_startDelay[6];			//敵６体分のスタート遅延時間
-	int m_cTime[6];					//敵６体分の攻撃CTタイマー
-	int m_eneCTCount[6];			//敵６体分のCT時間
+	unsigned int m_startDelayTimer = 0;		//スタートを遅らせるタイマー
+	unsigned int m_startDelay[6];			//敵６体分のスタート遅延時間
+	unsigned int m_CTTime[6];					//敵６体分の攻撃CTタイマー
+	unsigned int m_eneCTCount[6];			//敵６体分のCT時間
 
 
 	//敵情報
@@ -43,29 +43,43 @@ private:
 	Vector3 m_friction[6];			//敵６体分の摩擦
 	Vector3    m_plaPos[4];			//プレイヤー4体分のプレイヤーの位置
 	Vector3    m_mostShortKyori[4];	 //プレイヤー4体分と敵の距離
-	Vector3 m_randEneResPos[10];	//敵のリスポーン位置計10か所
+	Vector3 m_ranEneResPos[10];	//敵のリスポーン位置計10か所
 
 
 	/// <summary>
 	/// 列挙型の宣言
 	/// </summary>
-	enum ENEMY
+	enum enumEnemy
 	{
-		ENEMY1,		 //敵１の配列での番号
-		ENEMY2,		 //敵２の配列での番号
-		ENEMY3,		 //敵３の配列での番号
-		ENEMY4,		 //敵４の配列での番号
-		ENEMY5,		 //敵５の配列での番号
-		ENEMY6,		 //敵６の配列での番号
-		ENEMYNUM	 //敵の総数
+		Enemy1,		 //敵１の配列での番号
+		Enemy2,		 //敵２の配列での番号
+		Enemy3,		 //敵３の配列での番号
+		Enemy4,		 //敵４の配列での番号
+		Enemy5,		 //敵５の配列での番号
+		Enemy6,		 //敵６の配列での番号
+		MaxEnemyNum	 //敵の総数
 	};
-	enum PLAYER
+	enum enumPlayer
 	{
-		PLAYER1,		//1Pの配列での番号
-		PLAYER2,		//2Pの配列での番号
-		PLAYER3,		//3Pの配列での番号
-		PLAYER4,		//4Pの配列での番号
-		MAXPLAYERNUM	//プレイヤーの最大数
+		Player1,		//1Pの配列での番号
+		Player2,		//2Pの配列での番号
+		Player3,		//3Pの配列での番号
+		Player4,		//4Pの配列での番号
+		MaxPlaNum	//プレイヤーの最大数
+	};
+	//敵のランダムリスポーン位置
+	enum enumRanEneResPos
+	{
+		ResPos1,	//１つ目
+		ResPos2,	//２つ目
+		ResPos3,	//３つ目
+		ResPos4,	//４つ目
+		ResPos5,	//５つ目
+		ResPos6,	//６つ目
+		ResPos7,	//７つ目
+		ResPos8,	//８つ目
+		ResPos9,	//９つ目
+		ResPos10,	//１０つ目
 	};
 
 public:
@@ -75,6 +89,10 @@ public:
 	void Update()override;
 
 
+	//敵の位置,回転を更新する関数
+	void EneDataUpdate(int x);
+	//敵のDA処理関数
+	void EneDA(int x);
 	//敵の移動処理関数
 	void EneMove(int x);
 	//敵の回転処理関数
@@ -83,6 +101,10 @@ public:
 	void Distance(int x);
 	//敵のリスポーン処理関数
 	void EneResporn(int x);
+	//敵の摩擦処理関数
+	void EneFriction(int x);
+	//敵にかかる重力を設定する関数
+	void Gravity(int x);
 
 
 	/// <summary>

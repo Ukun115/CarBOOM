@@ -17,30 +17,30 @@ private:
 	/// <summary>
 	/// フラグ
 	/// </summary>
-	bool m_isAddPlayerFlg[4] = { false };		//プレイヤーが登録されたかの判別フラグ
-	bool m_isCanGameStartFlg = true;		//trueのときはゲームスタートボタンを押せる
-	bool m_isButtonTimerActiveFlg = true;
+	bool m_isAddPlayerFlg[4] = { false };		//各プレイヤーが登録されているかの判別フラグ
+	bool m_isCanGameStartFlg = true;			//trueのときはゲームスタートボタンを押せる
+	bool m_isFlashingFontTimerActiveFlg = true;		//trueのとき点滅文字の表示タイミング
 
 
 	/// <summary>
 	/// タイマー
 	/// </summary>
-	int m_buttonTimer = 0;
+	unsigned int m_flashingFontTimer = 0;		//点滅文字の表示非表示の切り替えタイマー
 
 
-	int m_totalPlayerNum = 1;			//プレイヤーの合計数を計測
+	unsigned int m_totalPlaNum = 1;			//プレイヤーの合計数を計測
 
 
 	/// <summary>
 	/// 列挙型の宣言
 	/// </summary>
-	enum PLAYER
+	enum enumPlayer
 	{
-		PLAYER1,		//1Pの配列での番号
-		PLAYER2,		//2Pの配列での番号
-		PLAYER3,		//3Pの配列での番号
-		PLAYER4,		//4Pの配列での番号
-		MAXPLAYERNUM	//プレイヤーの最大数
+		Player1,		//1Pの配列での番号
+		Player2,		//2Pの配列での番号
+		Player3,		//3Pの配列での番号
+		Player4,		//4Pの配列での番号
+		MaxPlayerNum	//プレイヤーの最大数
 	};
 
 public:
@@ -50,11 +50,19 @@ public:
 	void Update()override;
 
 
+	//プレイヤーを追加する関数
+	void AddPlayer();
+	//ゲーム画面に遷移する関数
+	void GameSceneTransition();
+	//「PRESS START BUTTON」文字画像の点滅処理関数
+	void FlashingFont();
+
+
 	/// <summary>
 	/// ゲット関数
 	/// </summary>
 	//プレイヤーが追加されているかどうかを取得する関数
 	bool GetPlaFlg(int x) { return m_isAddPlayerFlg[x]; }
 	//登録されたプレイヤーの合計人数を取得する関数
-	int GetTotalPlaNum(){ return m_totalPlayerNum; }
+	int GetTotalPlaNum(){ return m_totalPlaNum; }
 };

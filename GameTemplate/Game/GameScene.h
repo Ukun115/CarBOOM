@@ -39,10 +39,12 @@ private:
 	int m_counttime = 0;
 	int m_timer = 3600;	//60秒
 	int m_plscore[4] = { 0 };
-	int m_countDownTimer = 0;
-	int m_nowNumOnePla = 0;
+	unsigned int m_countDownTimer = 0;
+	unsigned int m_nowNumOnePla = 0;
 	Vector3 m_crownModelPos = {0.0f,0.0f,0.0f};
-	int m_resultsenniTimer = 0;
+	unsigned int m_resultsenniTimer = 0;
+	wchar_t text1[64];	//制限時間フォント
+	wchar_t text2[64];	//プレイヤースコアフォント
 
 
 	/// <summary>
@@ -64,6 +66,12 @@ public:
 	void Update()override;
 
 
+	//制限時間処理関数
+	void TimeLimit();
+	//プレイヤーのスコア描画関数
+	void PlaScoreDraw();
+	//カウントダウン処理関数
+	void CountDown();
 	//プレイヤーごとのスコアの位置を指定する関数
 	Vector2 SetScoreTextPos(int t);
 	//プレイヤーごとの「pt」文字の位置を指定する関数
@@ -75,6 +83,8 @@ public:
 	void GetPlayerAddScore(int x,int y);
 	//１位に王冠画像と王冠モデルを渡す関数
 	void NowCrown();
+	//リザルト画面に遷移する関数
+	void ResultSceneTransition();
 
 
 	/// <summary>
