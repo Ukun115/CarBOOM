@@ -14,26 +14,26 @@ bool Stage::Start()
 	//インスタンスを探す
 	m_stageSelectScene = FindGO<StageSelectScene>("stageselectscene");
 
-	//どひょうステージモデルオブジェクト生成
+	//ステージモデルオブジェクト生成
 	m_stage = NewGO<SkinModelRender>(PRIORITY_0,nullptr);
 
 	//選択されたのがどひょうステージのとき、
 	if (m_stageSelectScene->GetStageNum() == Stage1)
 	{
 		//どひょうステージをロード
-		m_stage->Init("Assets/modelData/bg/stage_00.tkm");
+		m_stage->Init("Assets/modelData/bg/stage_1.tkm");
 	}
 	//選択されたのがドーナツステージのとき、
 	if (m_stageSelectScene->GetStageNum() == Stage2)
 	{
-		//ステージドーナツをロード
-		m_stage->Init("Assets/modelData/bg/stage_00.tkm");
+		//ドーナツステージをロード
+		m_stage->Init("Assets/modelData/bg/stage_2.tkm");
 	}
-	//選択されたのがつるつるステージのとき、
+	//選択されたのがアイスステージのとき、
 	if (m_stageSelectScene->GetStageNum() == Stage3)
 	{
-		//つるつるステージをロード
-		m_stage->Init("Assets/modelData/bg/stage_00.tkm");
+		//アイスステージをロード
+		m_stage->Init("Assets/modelData/bg/stage_3.tkm");
 	}
 
 	//当たり判定を適応

@@ -42,11 +42,15 @@ private:
 	Quaternion m_rot[6];			//敵６体分の敵の回転
 	float m_rotAngle[6];			//敵６体分の回転角度
 	Vector3 m_moveSpeed[6];			//敵６体分の移動速度
+	Vector3 m_samDir[6];			//敵とプレイヤーの向き
 	Vector3 m_friction[6];			//敵６体分の摩擦
 	Vector3    m_plaPos[4];			//プレイヤー4体分のプレイヤーの位置
-	Vector3    m_mostShortKyori[4];	 //プレイヤー4体分と敵の距離
-	Vector3 m_ranEneResPos[10];	//敵のリスポーン位置計10か所
-	float m_randEneResAngle[4];     //敵のリスポーン回転角度4か所
+	Vector3    m_mostShortKyori[4];	//プレイヤー4体分と敵の距離
+	Vector3 m_ranEneResPos[10];		//敵のリスポーン位置計10か所
+	float m_randEneResAngle[4];		//敵のリスポーン回転角度4か所
+	Vector3 m_eneDir[6];			//向き
+	Vector3 m_diff;				//プレイヤーと敵との距離
+	unsigned int m_pushPlayer[5];
 
 
 	/// <summary>
@@ -96,8 +100,6 @@ public:
 	void EneDataUpdate(int x);
 	//敵のDA処理関数
 	void EneDA(int x);
-	//敵の移動処理関数
-	void EneMove(int x);
 	//敵の回転処理関数
 	void EneTurn(int x);
 	//敵から最寄りのプレイヤーを検索する関数
@@ -106,6 +108,8 @@ public:
 	void EneResporn(int x);
 	//敵の摩擦処理関数
 	void EneFriction(int x);
+	//プレイヤーと敵がぶつかったときの処理関数
+	void PlaAndEneClash(int x);
 	//敵にかかる重力を設定する関数
 	void Gravity(int x);
 

@@ -6,7 +6,8 @@ class StageSelectScene : public IGameObject
 {
 private:
 
-	SkinModelRender* m_stage[4] = { nullptr };	//全ステージ分用意
+	SkinModelRender* m_stage[5] = { nullptr };	//全ステージ分用意
+	SpriteRender* m_stageName[5] = { nullptr };	//全ステージ分用意
 	SkinModelRender* m_pla = nullptr;	//プレイヤー
 	TitleScene* m_titleScene = nullptr;
 
@@ -17,16 +18,17 @@ private:
 	bool m_isCanGameStartFlg = true;
 
 
-	int m_stageNum = 1;		//どのステージを選択しているかを格納
-	Vector3 m_stagePos[4];	//ステージの位置
-	Vector3    m_pos;		//プレイヤーの位置
-	Quaternion m_rot;		//プレイヤーの回転
-	Vector3 m_moveSpeed;		//移動速度
-	float m_leftStick_x;		//左スティックのx入力量
-	float m_leftStick_y;		//左スティックのy入力量
-	float m_rotAngle;		//回転角度
-	Vector3 m_friction;		//摩擦
+	int m_stageNum = 1;				//どのステージを選択しているかを格納
+	Vector3 m_stagePos[5];			//ステージの位置
+	Vector3    m_pos;				//プレイヤーの位置
+	Quaternion m_rot;				//プレイヤーの回転
+	Vector3 m_moveSpeed;			//移動速度
+	float m_leftStick_x;			//左スティックのx入力量
+	float m_leftStick_y;			//左スティックのy入力量
+	float m_rotAngle;				//回転角度
+	Vector3 m_friction;				//摩擦
 	Vector3 m_diff = { 0,0,0 };		//ステージとプレイヤーとの距離
+
 
 	/// <summary>
 	/// 列挙型の宣言
@@ -34,6 +36,7 @@ private:
 	//ステージ番号
 	enum StageNum
 	{
+		ehehe,	//Stage1を１番にするためにeheheを入れて調整
 		Stage1,
 		Stage2,
 		Stage3,
@@ -46,7 +49,6 @@ public:
 	bool Start()override;
 	~StageSelectScene()override;
 	void Update()override;
-
 
 
 	//ゲーム画面遷移処理関数
@@ -70,4 +72,3 @@ public:
 	//選択されたステージ番号を得る関数
 	int GetStageNum() { return m_stageNum; };
 };
-

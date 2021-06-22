@@ -22,7 +22,7 @@ private:
 	//ステージ番号
 	enum StageNum
 	{
-		ehehe,
+		ehehe,	//Stage1を１番にするためにeheheを入れて調整
 		Stage1,
 		Stage2,
 		Stage3,

@@ -14,16 +14,16 @@ namespace
 
 	const int RES_POS_NUM = 10;	//リスポーン位置の総数
 	//敵の各リスポーン位置
-	const Vector3 ENE_RES_POS_1 = { -150.0f,0.0f,150.0f };
-	const Vector3 ENE_RES_POS_2 = { 0.0f,0.0f,100.0f };
-	const Vector3 ENE_RES_POS_3 = { 100.0f,0.0f,100.0f };
-	const Vector3 ENE_RES_POS_4 = { -100.0f,0.0f,00.0f };
-	const Vector3 ENE_RES_POS_5 = { 0.0f,0.0f,0.0f };
-	const Vector3 ENE_RES_POS_6 = { 100.0f,0.0f,0.0f };
-	const Vector3 ENE_RES_POS_7 = { -100.0f,0.0f,-100.0f };
-	const Vector3 ENE_RES_POS_8 = { 0.0f,0.0f,-100.0f };
-	const Vector3 ENE_RES_POS_9 = { 100.0f,0.0f,-100.0f };
-	const Vector3 ENE_RES_POS_10 = { 150.0f,0.0f,150.0f };
+	const Vector3 ENE_RES_POS_1 = { -150.0f,200.0f,150.0f };
+	const Vector3 ENE_RES_POS_2 = { 0.0f,200.0f,100.0f };
+	const Vector3 ENE_RES_POS_3 = { 100.0f,200.0f,100.0f };
+	const Vector3 ENE_RES_POS_4 = { -100.0f,200.0f,00.0f };
+	const Vector3 ENE_RES_POS_5 = { 0.0f,200.0f,0.0f };
+	const Vector3 ENE_RES_POS_6 = { 100.0f,200.0f,0.0f };
+	const Vector3 ENE_RES_POS_7 = { -100.0f,200.0f,-100.0f };
+	const Vector3 ENE_RES_POS_8 = { 0.0f,200.0f,-100.0f };
+	const Vector3 ENE_RES_POS_9 = { 100.0f,200.0f,-100.0f };
+	const Vector3 ENE_RES_POS_10 = { 150.0f,200.0f,150.0f };
 
 	const int STAGE3 = 3;		//ステージ番号
 }
@@ -98,11 +98,15 @@ bool Enemy::Start()
 
 		//当たり判定のイニシャライズ(初期化)
 		m_charaCon[i].Init(15.0f, 85.0f, m_enePos[i]);
-
+		//ランダム関数のSEED（種）を設定
+		//（これによりランダム値を本当の意味でランダムにしている）
+		srand((int)time(nullptr));
 		//300～600の範囲のランダム値でスタート時の敵のDAを遅らせるタイマーの値に代入
 		m_startDelay[i] = (300 + (int)(rand() * (600 - 300 + 1.0) / (1.0 + RAND_MAX)));
 		//120～140の範囲のランダム値でDA後のCTタイマーの値に代入
 		m_eneCTCount[i] = (120 + (int)(rand() * (140 - 120 + 1.0) / (1.0 + RAND_MAX)));
+		//４で初期化。４は特にターゲット無し。
+		m_pushPlayer[i] = 4;
 	}
 
 	//Start関数のreturn文
@@ -145,6 +149,9 @@ void Enemy::Update()
 					//回転処理
 					EneTurn(i);
 
+					//プレイヤーが敵とぶつかったとき敵に押される処理
+					PlaAndEneClash(i);
+
 					//DA攻撃処理
 					EneDA(i);
 
@@ -156,6 +163,13 @@ void Enemy::Update()
 
 					m_enePos[i] += m_moveSpeed[i];
 				}
+			}
+			else
+			{
+				//重力の影響を与える
+				m_moveSpeed[i].y -= 0.2f;
+				//キャラクターコントローラーを使った移動処理に変更。
+				m_enePos[i] = m_charaCon[i].Execute(m_moveSpeed[i], 1.0f);
 			}
 
 			//敵の位置と回転情報を更新
@@ -248,6 +262,9 @@ void Enemy::EneTurn(int x)
 	m_rotAngle[x] = atan2(m_moveSpeed[x].x, m_moveSpeed[x].z);
 
 	m_rot[x].SetRotation(Vector3::AxisY, m_rotAngle[x]);
+
+	m_eneDir[x] = m_moveSpeed[x];
+	m_eneDir[x].Normalize();
 }
 
 
@@ -258,6 +275,15 @@ void Enemy::EneResporn(int x)
 	{
 		//ランダムでリスポーン位置を入れる
 		m_enePos[x] = m_ranEneResPos[rand() % RES_POS_NUM];
+		//ランダムでリスポーン回転を入れる
+		m_rotAngle[x] = m_randEneResAngle[rand() % 4];
+
+		//位置をセット
+		m_enemy[x]->SetPosition(m_enePos[x]);
+
+		//回転情報をセットする
+		m_rot[x].SetRotation(Vector3::AxisY, m_rotAngle[x]);
+		m_enemy[x]->SetRotation(m_rot[x]);
 
 		//キャラコンの座標にプレイヤーの座標をいれる
 		m_charaCon[x].SetPosition(m_enePos[x]);
@@ -267,6 +293,10 @@ void Enemy::EneResporn(int x)
 
 		//キャラクターコントローラーを使った移動処理に変更。
 		m_enePos[x] = m_charaCon[x].Execute(m_moveSpeed[x], 1.0f);
+
+		//落下時最後に触れた敵にポイントを与えるm_pushPlayer = 最後に押してきたプレイヤーのナンバー
+		//y=5にして、5の時は落としてきたプレイヤーのスコアを+10ptするようにする。
+		m_gameScene->GetPlayerAddScore(m_pushPlayer[x], 5);
 	}
 }
 
@@ -277,7 +307,7 @@ void Enemy::EneFriction(int x)
 	//摩擦力を設定する
 	m_friction[x] = m_moveSpeed[x];
 	m_friction[x] *= -1.5f;
-	//つるつるステージが選択されているとき、
+	//アイスステージが選択されているとき、
 	if (m_stageSelectScene->GetStageNum() == STAGE3)
 	{
 		//摩擦が一切ない変数を定義
@@ -288,6 +318,37 @@ void Enemy::EneFriction(int x)
 	//摩擦力を加算する
 	m_moveSpeed[x].x += m_friction[x].x * g_gameTime->GetFrameDeltaTime();
 	m_moveSpeed[x].z += m_friction[x].z * g_gameTime->GetFrameDeltaTime();
+}
+
+
+//プレイヤーと敵がぶつかったときの処理関数
+void Enemy::PlaAndEneClash(int x)
+{
+	for (int u = 0; u < m_player->GetPlaNum(); u++)
+	{
+		//プレイヤーと敵との距離を計算
+		m_diff = m_player->GetPlaPos(u) - m_enePos[x];
+
+		//距離の長さが30.0fより小さかったら、
+		if (m_diff.Length() < 40.0f)
+		{
+			if (m_player->GetPlaisTyazi1Flg(u) == true) {
+				m_samDir[x] = m_eneDir[x] * -1.0f + m_player->GetPlaDir(u);
+				m_samDir[x].Normalize();
+				m_moveSpeed[x] = m_samDir[x] * 20.0f;
+
+			}
+			if (m_player->GetPlaisTyazi2Flg(u) == true) {
+
+				m_samDir[x] = m_eneDir[x] * -1.0f + m_player->GetPlaDir(u);
+				m_samDir[x].Normalize();
+				m_moveSpeed[x] = m_samDir[x] * 30.0f;
+
+			}
+			//最後に押してきたプレイヤーを記録
+			m_pushPlayer[x] = u;
+		}
+	}
 }
 
 

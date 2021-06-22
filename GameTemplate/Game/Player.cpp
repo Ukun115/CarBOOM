@@ -99,7 +99,7 @@ bool Player::Start()
 	}
 	for (int i = 0; i < 5; i++)
 	{
-		m_pushPlayer[i] = 4;	//初期値は自滅判定の4。
+		m_pushPlayer[i] = 4;	//初期値は誰にもポイントが入らない4。
 	}
 
 	//Start関数のreturn文
@@ -129,7 +129,7 @@ void Player::Update()
 	//登録されているプレイヤー数ループ
 	for (int i = Player1; i < m_plaNum; i++)
 	{
-		//制限時間が０秒になったらプレイヤーの処理を全て止める
+		//制限時間が0秒になったらプレイヤーの処理を全て止める
 		if (m_gameScene->GetNowTime() != 0) {
 
 			//重力の影響を与える
@@ -196,9 +196,11 @@ void Player::PlaResporn(int x)
 
 		//落下時最後に触れた敵にポイントを与えるm_pushPlayer = 最後に押してきた敵のナンバー
 		m_gameScene->GetPlayerAddScore(m_pushPlayer[x], x);
-		//４で初期化し、４のまま落ちると、
-		//自滅とみなし自身のポイントが減るようにセットしておく
-		m_pushPlayer[x] = 4;
+
+		for (int i = 0; i < 5; i++)
+		{
+			m_pushPlayer[i] = 4;	//誰にもポイントが入らない4にする。
+		}
 	}
 }
 
@@ -297,13 +299,15 @@ void Player::PlaNowState(int x)
 	{
 		//チャージ攻撃1の処理
 		m_moveSpeed[x] = m_plaDir[x] * 10.0f;
+
+		m_isTyazi1Flg[x] = true;
 	}
 	if (m_releaseTimer[x] > 0 && m_pressTimer[x] == 0 && m_isAtack2Flg[x] == true)
 	{
 		//チャージ攻撃2処理
 		m_moveSpeed[x] = m_plaDir[x] * 20.0f;
 
-		m_isTyazi2Flg = true;
+		m_isTyazi2Flg[x] = true;
 	}
 
 	if (m_releaseTimer[x] == 20 && m_pressTimer[x] == 0)
@@ -315,6 +319,8 @@ void Player::PlaNowState(int x)
 		m_isAtack1Flg[x] = false;
 		m_isAtack2Flg[x] = false;
 		m_atackTime[x] = 0;
+		m_isTyazi1Flg[x] = false;
+		m_isTyazi2Flg[x] = false;
 	}
 }
 
@@ -330,13 +336,11 @@ void Player::PlaMove(int x)
 	m_friction[x] = m_moveSpeed[x];
 	m_friction[x] *= -2.0f;
 
-	//つるつるステージが選択されているとき、
+	//アイスステージが選択されているとき、
 	if (m_stageSelectScene->GetStageNum() == STAGE3)
 	{
-		//摩擦が一切ない変数を定義
-		Vector3 m_stage3Friction = {Vector3::Zero};
-		//摩擦を0にする
-		m_friction[x] = m_stage3Friction;
+		//摩擦を減らす
+		m_friction[x] /= 3.0f;
 	}
 
 	//摩擦力を加算する
@@ -375,10 +379,6 @@ void Player::PlaTurn(int x)
 	if (fabsf(m_moveSpeed[x].x) < 0.001f && fabsf(m_moveSpeed[x].z) < 0.001f) {
 		return;
 	}
-	//移動してないときは回転しない
-	if (fabsf(m_moveSpeed[x].x) < 0.001f && fabsf(m_moveSpeed[x].z) < 0.001f) {
-		return;
-	}
 	//回転角度
 	m_rotAngle[x] = atan2(m_moveSpeed[x].x, m_moveSpeed[x].z);
 
@@ -396,7 +396,7 @@ void Player::PlaAttackBefore(int x)
 	m_friction[x] = m_moveSpeed[x];
 	m_friction[x] *= -2.0f;
 
-	//つるつるステージが選択されているとき、
+	//アイスステージが選択されているとき、
 	if (m_stageSelectScene->GetStageNum() == STAGE3)
 	{
 		//摩擦が一切ない変数を定義
@@ -446,7 +446,7 @@ void Player::PlaAttackBefore(int x)
 void Player::PlaDAState(int x)
 {
 	//Bボタンを押しているとき、
-	if (g_pad[x]->IsPress(enButtonB) && m_isBPushFlg[x] == false)
+	if (g_pad[x]->IsPress(enButtonB) && m_isBPushFlg[x] == false && m_isTyazi1Flg[x] == false && m_isTyazi2Flg[x] == false)
 	{
 		//押しているときのタイマーを加算
 		m_pressTimer[x]++;
@@ -515,7 +515,7 @@ void Player::PlaAndPlaClash(int x)
 			//ぶつかってきたプレイヤーはそのままステージ外に落ちないように減速させる
 			m_moveSpeed[u] /= 2.0;
 
-			if (m_isTyazi2Flg == true)
+			if (m_isTyazi2Flg[x] == true)
 			{
 				m_enePushSpeed *= 5.0f;
 				//チャージ２を受けたとき割る２しただけではそのまま落ちちゃうので
@@ -528,9 +528,6 @@ void Player::PlaAndPlaClash(int x)
 
 			//誰が押してきたかを保存
 			m_pushPlayer[x] = u;
-
-			//フラグをfalseに。。。
-			m_isTyazi2Flg = false;
 		}
 	}
 }

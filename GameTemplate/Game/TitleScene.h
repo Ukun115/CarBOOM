@@ -1,4 +1,5 @@
 #pragma once
+class StageSelectScene;
 
 
 class TitleScene : public IGameObject
@@ -12,6 +13,7 @@ private:
 	SpriteRender* m_pushStartButtonSprite = nullptr;
 	SpriteRender* m_plaActiveName[4] = {nullptr};		//プレイヤー4人分用意
 	SpriteRender* m_plaDeactiveName[4] = {nullptr};		//プレイヤー4人分用意
+	StageSelectScene* m_stageSelectScene = nullptr;
 
 
 	/// <summary>

@@ -173,7 +173,7 @@ void TitleScene::AddPlayer()
 void TitleScene::StageSelectSceneTransition()
 {
 	//ステージ選択画面に遷移
-	NewGO<StageSelectScene>(PRIORITY_0, "stageselectscene");
+	m_stageSelectScene = NewGO<StageSelectScene>(PRIORITY_0, "stageselectscene");
 	////このクラスの削除
 	////DeleteGO(this);
 

@@ -27,7 +27,8 @@ private:
 	/// <summary>
 	/// フラグ
 	/// </summary>
-	bool m_isTyazi2Flg = false;
+	bool m_isTyazi1Flg[4] = { false };
+	bool m_isTyazi2Flg[4] = { false };
 	bool m_isBPushFlg[4] = { false };		//Bボタンが押されたときのフラグ
 	bool m_isAtack0Flg[4] = { false };		//Bボタンが押されたときのフラグ
 	bool m_isAtack1Flg[4] = { false };		//Bボタンが押されたときのフラグ
@@ -111,4 +112,9 @@ public:
 	Vector3 GetPlaPos(int x) { return  m_pos[x]; }
 	//プレイヤーの速度を取得する関数
 	Vector3 GetPlaSpeed(int x) { return m_moveSpeed[x]; }
+	//プレイヤーの向きを取得する関数
+	Vector3 GetPlaDir(int x) { return m_plaDir[x]; }
+	//プレイヤーのチャージを取得する関数
+	bool GetPlaisTyazi1Flg(int x) { return m_isTyazi1Flg[x]; }
+	bool GetPlaisTyazi2Flg(int x) { return m_isTyazi2Flg[x]; }
 };

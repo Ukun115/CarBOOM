@@ -38,7 +38,8 @@ private:
 
 	int m_counttime = 0;
 	int m_timer = 3600;	//60秒
-	int m_plscore[4] = { 0 };
+	int m_plaScore[4] = { 0 };
+	Vector2 m_plaScorePos[4];
 	unsigned int m_countDownTimer = 0;
 	unsigned int m_nowNumOnePla = 0;
 	Vector3 m_crownModelPos = {0.0f,0.0f,0.0f};
@@ -73,7 +74,7 @@ public:
 	//カウントダウン処理関数
 	void CountDown();
 	//プレイヤーごとのスコアの位置を指定する関数
-	Vector2 SetScoreTextPos(int t);
+	void SetScoreTextPos(int t);
 	//プレイヤーごとの「pt」文字の位置を指定する関数
 	Vector2 GetScorePos(int x);
 	//プレイヤーごとのスコアの色を指定する関数
@@ -95,5 +96,5 @@ public:
 	//ゲーム開始のカウントダウンを終了したかどうかのフラグを取得する関数
 	bool GetCountDownFlg() { return m_isCountTimeFlg; }
 	//プレイヤーのスコアを取得する関数
-	int GetPlaScore(int x) { return m_plscore[x]; };
+	int GetPlaScore(int x) { return m_plaScore[x]; };
 };

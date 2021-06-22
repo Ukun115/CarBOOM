@@ -17,11 +17,6 @@ namespace
 	const Vector2   TIMELIMIT_POS = { -40.0f,300.0f };			//制限時間フォントの位置
 	const Vector4   TIMELIMIT_COL = { 1.0f,1.0f,1.0f,1.0f };	//制限時間フォントの色
 
-	const Vector2   PLA1SCORE_POS = { -520.0f, 255.0f };	//1Pスコアフォントの位置
-	const Vector2   PLA2SCORE_POS = { 450.0f, 255.0f };		//2Pスコアフォントの位置
-	const Vector2   PLA3SCORE_POS = { -520.0f,-205.0f };	//3Pスコアフォントの位置
-	const Vector2   PLA4SCORE_POS = { 450.0f,-205.0f };		//4Pスコアフォントの位置
-
 	const Vector4	PLAYER1_COL_RED = { 1.0f,0.0f,0.0f,1.0f };		//プレイヤー１のスコアの色
 	const Vector4	PLAYER2_COL_BLUE = { 0.0f,0.0f,1.0f,1.0f };		//プレイヤー２のスコアの色
 	const Vector4	PLAYER3_COL_YELLOW = { 1.0f,1.0f,0.0f,1.0f };		//プレイヤー３のスコアの色
@@ -81,6 +76,12 @@ bool GameScene::Start()
 
 	//制限時間フォントオブジェクト生成（一番上のレイヤーに置きたいのでプライオリティーは最高値）
 	m_timeLimit = NewGO<FontRender>(PRIORITY_1,nullptr);
+	//各プレイヤーのポイント画像の位置を設定
+	m_plaScorePos[0] = { -520.0f, 255.0f };
+	m_plaScorePos[1] = { 450.0f, 255.0f };
+	m_plaScorePos[2] = { -520.0f,-205.0f };
+	m_plaScorePos[3] = { 450.0f,-205.0f };
+
 	for (int i = 0; i < 4; i++) {
 		//プレイヤーごとのptフォントオブジェクト生成
 		m_ScoreFontRender[i] = NewGO<FontRender>(PRIORITY_1, nullptr);
@@ -100,7 +101,7 @@ bool GameScene::Start()
 		m_TextScoreFontRender[i]->Init
 		(
 			L"",					//テキスト
-			SetScoreTextPos(i),		//位置
+			m_plaScorePos[i],		//位置
 			ScoreColor(i),			//色
 			FONT_ROT,				//傾き
 			FONT_SCA,				//拡大率
@@ -277,8 +278,12 @@ void GameScene::TimeLimit()
 void GameScene::PlaScoreDraw()
 {
 	for (int i = 0; i < 4; i++) {
+
+		//表示位置更新
+		SetScoreTextPos(i);
+
 		//プレイヤーごとのスコアの描画
-		swprintf_s(text2, L"%d", m_plscore[i]);
+		swprintf_s(text2, L"%d", m_plaScore[i]);
 		m_TextScoreFontRender[i]->SetText(text2);
 	}
 }
@@ -306,22 +311,77 @@ Vector2 GameScene::GetScorePos(int x)
 
 
 //プレイヤーごとのスコアの位置を指定する関数
-Vector2 GameScene::SetScoreTextPos(int t) {
-	switch (t)
+void GameScene::SetScoreTextPos(int t)
+{
+	//スコアが1桁のとき、
+	m_plaScorePos[0] = { -520.0f, 255.0f };
+	m_plaScorePos[1] = { 450.0f, 255.0f };
+	m_plaScorePos[2] = { -520.0f,-205.0f };
+	m_plaScorePos[3] = { 450.0f,-205.0f };
+
+	//スコアが2桁のとき、
+	if (10 <= m_plaScore[t] && m_plaScore[t] < 100)
 	{
-	case PLAYER1:
-		return PLA1SCORE_POS;
-		break;
-	case PLAYER2:
-		return PLA2SCORE_POS;
-		break;
-	case PLAYER3:
-		return PLA3SCORE_POS;
-		break;
-	case PLAYER4:
-		return  PLA4SCORE_POS;
-		break;
+		//少し左(xを-20)にずらして表示位置を合わせる
+		switch (t)
+		{
+		case PLAYER1:
+			m_plaScorePos[0].x = -540.0f;
+			break;
+		case PLAYER2:
+			m_plaScorePos[1].x = 430.0f;
+			break;
+		case PLAYER3:
+			m_plaScorePos[2].x = -540.0f;
+			break;
+		case PLAYER4:
+			m_plaScorePos[3].x = 430.0f;
+			break;
+		}
 	}
+	//スコアが3桁のとき、
+	if (100 <= m_plaScore[t] && m_plaScore[t] < 1000)
+	{
+		//少し左(xを-20)にずらして表示位置を合わせる
+		switch (t)
+		{
+		case PLAYER1:
+			m_plaScorePos[0].x = -560.0f;
+			break;
+		case PLAYER2:
+			m_plaScorePos[1].x = 410.0f;
+			break;
+		case PLAYER3:
+			m_plaScorePos[2].x = -560.0f;
+			break;
+		case PLAYER4:
+			m_plaScorePos[3].x = 410.0f;
+			break;
+		}
+	}
+	//スコアが4桁のとき、
+	if (1000 <= m_plaScore[t])
+	{
+		//少し左(xを-20)にずらして表示位置を合わせる
+		switch (t)
+		{
+		case PLAYER1:
+			m_plaScorePos[0].x = -580.0f;
+			break;
+		case PLAYER2:
+			m_plaScorePos[1].x = 430.0f;
+			break;
+		case PLAYER3:
+			m_plaScorePos[2].x = -580.0f;
+			break;
+		case PLAYER4:
+			m_plaScorePos[3].x = 430.0f;
+			break;
+		}
+	}
+
+	//位置をセット
+	m_TextScoreFontRender[t]->SetPosition(m_plaScorePos[t]);
 }
 
 
@@ -347,37 +407,31 @@ Vector4 GameScene::ScoreColor(int c)
 
 
 /*プレイヤーの得点変動処理関数
-  (ｘは落としたプレイヤー、yは自滅したプレイヤー)*/
+  (ｘは落としたプレイヤー、yは落とされたプレイヤー)*/
 void GameScene::GetPlayerAddScore(int x,int y)
 {
-	//自滅したとき、
-	if (x == 4)
+	//落としたとき、
+	//30pt増加
+	m_plaScore[x] += 30;
+	//もし落としたプレイヤーが1位だったら、
+	if (y == m_nowNumOnePla)
 	{
-		//20pt減少
-		m_plscore[y] -= 20;
-		//点数が０以下にならないように補正
-		if (m_plscore[y] < 0)
+		//落とされた１位はマイナス20pt。落としたプレイヤーはプラスで20pt
+		//これを入れることで１位が狙われやすい仕様にしている。
+		m_plaScore[y] -= 20;
+		m_plaScore[x] += 20;
+		//点数が0以下にならないように補正
+		if (m_plaScore[y] < 0)
 		{
-			m_plscore[y] = 0;
+			m_plaScore[y] = 0;
 		}
 	}
-	//落としたとき、
-	else
+	//敵を落としたとき、
+	if (y == 5)
 	{
-		//30pt増加
-		m_plscore[x] += 30;
-		//もし落とした敵が1位だったら、
-		if (y == m_nowNumOnePla)
-		{
-			//落とされた１位はマイナス60pt
-			//これを入れることで１位が狙われやすい仕様にしている。
-			m_plscore[y] -= 60;
-			//点数が０以下にならないように補正
-			if (m_plscore[y] < 0)
-			{
-				m_plscore[y] = 0;
-			}
-		}
+		//敵を落としたときptを10ptだけ取るように調整
+		//すでに+30ptしているからマイナス20している。
+		m_plaScore[x] -= 20;
 	}
 }
 
@@ -391,7 +445,7 @@ void GameScene::NowCrown()
 		{
 			//今のプレイヤー(i)と次のプレイヤー(u)を比較
 			//次のプレイヤーのほうがスコアが高いとき、
-			if (m_plscore[i] < m_plscore[u])
+			if (m_plaScore[i] < m_plaScore[u])
 			{
 				//王冠スプライトを表示させる
 				m_crownSprite->Activate();
