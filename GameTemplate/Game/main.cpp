@@ -33,10 +33,6 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	//////////////////////////////////////
 	auto& renderContext = g_graphicsEngine->GetRenderContext();
 
-	//レーザーエフェクトの初期化。
-	Effect laserEffect;
-	laserEffect.Init(u"Assets/effect/laser.efk");
-
 	//ライトオブジェクト生成
 	Light* m_light = NewGO<Light>(PRIORITY_0, "light");
 	//ディレクションライトをセット
@@ -49,23 +45,6 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	// ここからゲームループ。
 	while (DispatchWindowMessage())
 	{
-		if (g_pad[0]->IsTrigger(enButtonA)) {
-			//再生開始。
-			laserEffect.Play();
-		}
-		//エフェクトを動かす。
-		auto pos = laserEffect.GetPosition();
-		pos.x += g_pad[0]->GetLStickXF();
-		pos.z += g_pad[0]->GetLStickYF();
-
-		auto rot = laserEffect.GetRotation();
-		rot.AddRotationY(g_pad[0]->GetRStickXF() * 0.1f);
-
-		laserEffect.SetPosition(pos);
-		laserEffect.SetRotation(rot);
-
-		laserEffect.Update();
-
 		//レンダリング開始。
 		g_engine->BeginFrame();
 

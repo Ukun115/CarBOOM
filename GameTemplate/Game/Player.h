@@ -22,6 +22,7 @@ private:
 
 
 	CharacterController m_charaCon[4];		//プレイヤー4人分のキャラクタコントローラークラスを作成
+	Effect m_shootDownEffect[4];		//プレイヤー4人分の落下したときの撃墜エフェクト
 
 
 	/// <summary>

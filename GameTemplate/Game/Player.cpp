@@ -70,21 +70,29 @@ bool Player::Start()
 			if (i == Player1)
 			{
 				m_player[i]->Init("Assets/modelData/LowPoly_PlayerCar_Red.tkm");	//赤車
+				//落下したときの撃墜エフェクトの初期化。
+				m_shootDownEffect[i].Init(u"Assets/effect/laser.efk");
 			}
 			//2P
 			else if (i == Player2)
 			{
 				m_player[i]->Init("Assets/modelData/LowPoly_PlayerCar_Blue.tkm");	//青車
+				//落下したときの撃墜エフェクトの初期化。
+				m_shootDownEffect[i].Init(u"Assets/effect/laser.efk");
 			}
 			//3P
 			else if (i == Player3)
 			{
 				m_player[i]->Init("Assets/modelData/LowPoly_PlayerCar_Yellow.tkm");	//黄車
+				//落下したときの撃墜エフェクトの初期化。
+				m_shootDownEffect[i].Init(u"Assets/effect/laser.efk");
 			}
 			//4P
 			else if (i == Player4)
 			{
 				m_player[i]->Init("Assets/modelData/LowPoly_PlayerCar_Green.tkm");	//緑車
+				//落下したときの撃墜エフェクトの初期化。
+				m_shootDownEffect[i].Init(u"Assets/effect/laser.efk");
 			}
 			//大きさ調整。元のモデルが小さかったため、モデルの大きさを1.5倍。
 			m_player[i]->SetScale(PlAYER_SCA);
@@ -92,6 +100,14 @@ bool Player::Start()
 			PlaResPos(i);
 
 			m_charaCon[i].Init(15.0f, 85.0f, m_pos[i]);
+
+			//大きさ調整
+			m_shootDownEffect[i].SetScale({ 70.0f,70.0f,70.0f });
+			//通常だと画面の上がエフェクトの上になっているので、ゲーム中のカメラ方向が上になるように調整
+			Quaternion m_shootDownEffectRot = m_shootDownEffect[i].GetRotation();
+			//↓【注意】関数内に入れるのはデグリー単位ではなくラジアン単位です。
+			m_shootDownEffectRot.AddRotationX(-1.5708);	//X軸を基点に、-1.5708rad(-90°)回転
+			m_shootDownEffect[i].SetRotation(m_shootDownEffectRot);
 
 			//プレイヤー数を+1
 			m_plaNum++;
@@ -182,6 +198,13 @@ void Player::PlaResporn(int x)
 {
 	if (m_pos[x].y < -1000.0f)
 	{
+		//撃墜エフェクト再生開始。
+		m_shootDownEffect[x].Play();
+		//撃墜エフェクトの位置をプレイヤーが落ちた位置に設定
+		m_shootDownEffect[x].SetPosition(m_pos[x]);
+		//更新
+		m_shootDownEffect[x].Update();
+
 		//プレイヤーの座標をリスポーン座標にセット
 		PlaResPos(x);
 

@@ -107,6 +107,16 @@ bool Enemy::Start()
 		m_eneCTCount[i] = (120 + (int)(rand() * (140 - 120 + 1.0) / (1.0 + RAND_MAX)));
 		//４で初期化。４は特にターゲット無し。
 		m_pushPlayer[i] = 4;
+
+		//落下したときの撃墜エフェクトの初期化。
+		m_shootDownEffect[i].Init(u"Assets/effect/laser.efk");
+		//大きさ調整
+		m_shootDownEffect[i].SetScale({ 40.0f,40.0f,40.0f });
+		//通常だと画面の上がエフェクトの上になっているので、ゲーム中のカメラ方向が上になるように調整
+		Quaternion m_shootDownEffectRot = m_shootDownEffect[i].GetRotation();
+		//↓【注意】関数内に入れるのはデグリー単位ではなくラジアン単位です。
+		m_shootDownEffectRot.AddRotationX(-1.5708);	//X軸を基点に、-1.5708rad(-90°)回転
+		m_shootDownEffect[i].SetRotation(m_shootDownEffectRot);
 	}
 
 	//Start関数のreturn文
@@ -273,6 +283,13 @@ void Enemy::EneResporn(int x)
 {
 	if (m_enePos[x].y < -1000.0f)
 	{
+		//撃墜エフェクト再生開始。
+		m_shootDownEffect[x].Play();
+		//撃墜エフェクトの位置を敵が落ちた位置に設定
+		m_shootDownEffect[x].SetPosition(m_enePos[x]);
+		//更新
+		m_shootDownEffect[x].Update();
+
 		//ランダムでリスポーン位置を入れる
 		m_enePos[x] = m_ranEneResPos[rand() % RES_POS_NUM];
 		//ランダムでリスポーン回転を入れる

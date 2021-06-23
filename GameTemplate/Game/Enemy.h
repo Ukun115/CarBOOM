@@ -20,6 +20,7 @@ private:
 
 
 	CharacterController m_charaCon[6];		//敵６体分のキャラクタコントローラークラスを作成
+	Effect m_shootDownEffect[6];		//落下したときの撃墜エフェクト
 
 
 	/// <summary>

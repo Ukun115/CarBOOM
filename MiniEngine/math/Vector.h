@@ -786,6 +786,20 @@ public:
 		);
 		DirectX::XMStoreFloat4(&vec, xmv);
 	}
+
+
+
+
+	/// <summary>
+	/// X軸周りの回転を加算。
+	/// </summary>
+	/// <returns>加算する回転角度。ラジアン単位。</returns>
+	void AddRotationX(float angle)
+	{
+		Quaternion addRot;
+		addRot.SetRotation(Vector3::AxisX, angle);
+		*this *= addRot;
+	}
 	/// <summary>
 	/// Y軸周りの回転を加算。
 	/// </summary>
@@ -796,6 +810,20 @@ public:
 		addRot.SetRotation(Vector3::AxisY, angle);
 		*this *= addRot;
 	}
+	/// <summary>
+	/// Z軸周りの回転を加算。
+	/// </summary>
+	/// <returns>加算する回転角度。ラジアン単位。</returns>
+	void AddRotationZ(float angle)
+	{
+		Quaternion addRot;
+		addRot.SetRotation(Vector3::AxisZ, angle);
+		*this *= addRot;
+	}
+
+
+
+
 	/// <summary>
 	/// クォータニオン同士の乗算
 	/// </summary>
