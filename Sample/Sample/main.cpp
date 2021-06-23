@@ -28,7 +28,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	//step-1 エフェクトエンジンのインスタンスを作成する。
 	EffectEngine::CreateInstance();
 
-	
+
 	//////////////////////////////////////
 	// 初期化を行うコードを書くのはここまで！！！
 	//////////////////////////////////////
@@ -53,7 +53,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 			laserEffect2.Play();
 		}
 		//step-3 エフェクトを動かす。
-		
+
 		auto pos = laserEffect.GetPosition();
 		pos.x += g_pad[0]->GetLStickXF();
 		pos.z += g_pad[0]->GetLStickYF();
@@ -76,7 +76,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 
 		//レンダリング開始。
 		g_engine->BeginFrame();
-		
+
 		//登録されているゲームオブジェクトの更新関数を呼び出す。
 		GameObjectManager::GetInstance()->ExecuteUpdate();
 
@@ -91,7 +91,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 
 		//step-6 エフェクトのドロー。
 		EffectEngine::GetInstance()->Draw();
-		
+
 
 		g_engine->EndFrame();
 	}
@@ -99,4 +99,3 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	GameObjectManager::DeleteInstance();
 	return 0;
 }
-

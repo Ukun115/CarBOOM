@@ -61,7 +61,7 @@ public:
 
 
 	/// <summary>
-	/// ゲッター関数
+	/// ゲッター
 	/// </summary>
 	//プレイヤーが追加されているかどうかを取得する関数
 	bool GetPlaFlg(int x) { return m_isAddPlayerFlg[x]; }

@@ -273,7 +273,7 @@ void Player::PlaNowState(int x)
 		m_isAtack0Flg[x] = false;
 		m_isAtack1Flg[x] = false;
 		m_isAtack2Flg[x] = false;
-		m_atackTime[x] = 0;
+		m_atackTimer[x] = 0;
 
 	}
 	if (m_pressTimer[x] > 0 && m_releaseTimer[x] == 0)
@@ -293,7 +293,7 @@ void Player::PlaNowState(int x)
 		m_isAtack0Flg[x] = false;
 		m_isAtack1Flg[x] = false;
 		m_isAtack2Flg[x] = false;
-		m_atackTime[x] = 0;
+		m_atackTimer[x] = 0;
 	}
 	if (m_releaseTimer[x] > 0 && m_pressTimer[x] == 0 && m_isAtack1Flg[x] == true)
 	{
@@ -318,7 +318,7 @@ void Player::PlaNowState(int x)
 		m_isAtack0Flg[x] = false;
 		m_isAtack1Flg[x] = false;
 		m_isAtack2Flg[x] = false;
-		m_atackTime[x] = 0;
+		m_atackTimer[x] = 0;
 		m_isTyazi1Flg[x] = false;
 		m_isTyazi2Flg[x] = false;
 	}
@@ -405,8 +405,8 @@ void Player::PlaAttackBefore(int x)
 		m_friction[x] = m_stage3Friction;
 	}
 
-	m_atackTime[x]++;
-	if (m_atackTime[x] > 0 && m_atackTime[x] < 30)
+	m_atackTimer[x]++;
+	if (m_atackTimer[x] > 0 && m_atackTimer[x] < 30)
 	{
 		m_isAtack0Flg[x] = true;
 		m_isAtack1Flg[x] = false;
@@ -414,23 +414,23 @@ void Player::PlaAttackBefore(int x)
 
 
 	}
-	if (m_atackTime[x] >= 30 && m_atackTime[x] < 90)
+	if (m_atackTimer[x] >= 30 && m_atackTimer[x] < 90)
 	{
 		m_isAtack0Flg[x] = false;
 		m_isAtack1Flg[x] = true;
 		m_isAtack2Flg[x] = false;
 		//「1」表示
-		if (m_atackTime[x] == 30) {
+		if (m_atackTimer[x] == 30) {
 			m_DASpr2[x]->Deactivate();
 			m_DASpr1[x]->Activate();
 		}
 	}
-	if (m_atackTime[x] > 90)
+	if (m_atackTimer[x] > 90)
 	{
 		m_isAtack0Flg[x] = false;
 		m_isAtack1Flg[x] = false;
 		m_isAtack2Flg[x] = true;
-		if (m_atackTime[x] == 91) {
+		if (m_atackTimer[x] == 91) {
 			//「2」表示
 			m_DASpr1[x]->Deactivate();
 			m_DASpr2[x]->Activate();

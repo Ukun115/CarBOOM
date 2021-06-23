@@ -34,16 +34,16 @@ private:
 	/// <summary>
 	/// タイマー
 	/// </summary>
-
-
-	int m_counttime = 0;
+	unsigned int m_resultsenniTimer = 0;
+	unsigned int m_countDownTimer = 0;
 	int m_timer = 3600;	//60秒
+	int m_countTime = 0;
+
+
 	int m_plaScore[4] = { 0 };
 	Vector2 m_plaScorePos[4];
-	unsigned int m_countDownTimer = 0;
 	unsigned int m_nowNumOnePla = 0;
 	Vector3 m_crownModelPos = {0.0f,0.0f,0.0f};
-	unsigned int m_resultsenniTimer = 0;
 	wchar_t text1[64];	//制限時間フォント
 	wchar_t text2[64];	//プレイヤースコアフォント
 
@@ -89,10 +89,10 @@ public:
 
 
 	/// <summary>
-	/// ゲッター関数
+	/// ゲッター
 	/// </summary>
 	//現在の残り制限時間を取得する関数
-	int GetNowTime() { return m_counttime; }
+	int GetNowTime() { return m_countTime; }
 	//ゲーム開始のカウントダウンを終了したかどうかのフラグを取得する関数
 	bool GetCountDownFlg() { return m_isCountTimeFlg; }
 	//プレイヤーのスコアを取得する関数

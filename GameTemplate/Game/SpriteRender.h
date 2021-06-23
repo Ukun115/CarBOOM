@@ -29,7 +29,7 @@ public:
 
 
 	/// <summary>
-	/// セット関数
+	/// セッター
 	/// </summary>
 	//画像の位置を設定する関数
 	void SetPosition(const Vector3& pos) { m_pos = pos; }

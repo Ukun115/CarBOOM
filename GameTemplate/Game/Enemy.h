@@ -46,7 +46,9 @@ private:
 	Vector3 m_friction[6];			//敵６体分の摩擦
 	Vector3    m_plaPos[4];			//プレイヤー4体分のプレイヤーの位置
 	Vector3    m_mostShortKyori[4];	//プレイヤー4体分と敵の距離
+	//↓特に途中で変更しない値なので、const使いたい。
 	Vector3 m_ranEneResPos[10];		//敵のリスポーン位置計10か所
+
 	float m_randEneResAngle[4];		//敵のリスポーン回転角度4か所
 	Vector3 m_eneDir[6];			//向き
 	Vector3 m_diff;				//プレイヤーと敵との距離
@@ -115,7 +117,7 @@ public:
 
 
 	/// <summary>
-	/// ゲッター関数
+	/// ゲッター
 	/// </summary>
 	//敵の位置を取得する関数
 	Vector3 GetEnemyPos(int x) { return m_enePos[x]; }

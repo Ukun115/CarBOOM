@@ -170,7 +170,7 @@ void GameScene::Update()
 	NowCrown();
 
 	//制限時間が0秒になったら、
-	if (m_counttime == 0)
+	if (m_countTime == 0)
 	{
 		//リザルト画面に遷移する
 		ResultSceneTransition();
@@ -259,16 +259,16 @@ void GameScene::TimeLimit()
 		m_timer--;
 	}
 
-	m_counttime = m_timer / 60;
+	m_countTime = m_timer / 60;
 
 	//０秒になってからのカウントがマイナスに行かないように補正
-	if (m_counttime < 0)
+	if (m_countTime < 0)
 	{
-		m_counttime = 0;
+		m_countTime = 0;
 	}
 
 	//制限時間の描画
-	swprintf_s(text1, L"%d", m_counttime);
+	swprintf_s(text1, L"%d", m_countTime);
 	//画面表示
 	m_timeLimit->SetText(text1);
 }

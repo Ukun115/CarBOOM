@@ -17,9 +17,11 @@ private:
 	Model m_model;						//モデルクラスを作成
 
 
+						//↓初期値
 	Vector3    m_pos = Vector3::Zero;			//位置
 	Quaternion m_rot = Quaternion::Identity;	//回転
 	Vector3    m_sca = Vector3::One;			//拡大率
+						//↑初期値
 
 public:
 
@@ -35,7 +37,7 @@ public:
 
 
 	/// <summary>
-	/// セット関数
+	/// セッター
 	/// </summary>
 	//モデルの位置を設定する関数
 	void SetPosition(const Vector3 pos) { m_pos = pos; }
@@ -46,7 +48,7 @@ public:
 
 
 	/// <summary>
-	/// ゲッター関数
+	/// ゲッター
 	/// </summary>
 	//モデルの位置を取得する関数
 	Vector3 GetPosition() { return m_pos; }

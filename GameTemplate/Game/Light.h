@@ -58,7 +58,7 @@ public:
 
 
 	/// <summary>
-	/// セット関数
+	/// セッター
 	/// </summary>
 	//ディレクションライトの方向,色を設定する関数
 	void SetDirectionLightData();
@@ -69,7 +69,7 @@ public:
 
 
 	/// <summary>
-	/// ゲット関数
+	/// ゲッター
 	/// </summary>
 	//ライトのデータを取得する関数
 	ligData GetLight() {return m_ligData ; }

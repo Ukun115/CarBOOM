@@ -23,13 +23,19 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 
 	//ゲームオブジェクトマネージャーのインスタンスを作成する。
 	GameObjectManager::CreateInstance();
+	//フィジクスワールドのインスタンスを作成する。
 	PhysicsWorld::CreateInstance();
+	//エフェクトエンジンのインスタンスを作成する。
+	EffectEngine::CreateInstance();
 
 	//////////////////////////////////////
 	// 初期化を行うコードを書くのはここまで！！！
 	//////////////////////////////////////
 	auto& renderContext = g_graphicsEngine->GetRenderContext();
 
+	//レーザーエフェクトの初期化。
+	Effect laserEffect;
+	laserEffect.Init(u"Assets/effect/laser.efk");
 
 	//ライトオブジェクト生成
 	Light* m_light = NewGO<Light>(PRIORITY_0, "light");
@@ -43,6 +49,23 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	// ここからゲームループ。
 	while (DispatchWindowMessage())
 	{
+		if (g_pad[0]->IsTrigger(enButtonA)) {
+			//再生開始。
+			laserEffect.Play();
+		}
+		//エフェクトを動かす。
+		auto pos = laserEffect.GetPosition();
+		pos.x += g_pad[0]->GetLStickXF();
+		pos.z += g_pad[0]->GetLStickYF();
+
+		auto rot = laserEffect.GetRotation();
+		rot.AddRotationY(g_pad[0]->GetRStickXF() * 0.1f);
+
+		laserEffect.SetPosition(pos);
+		laserEffect.SetRotation(rot);
+
+		laserEffect.Update();
+
 		//レンダリング開始。
 		g_engine->BeginFrame();
 
@@ -50,11 +73,18 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 		//ここから絵を描くコードを記述する。
 		//////////////////////////////////////
 
+		//ゲームオブジェクトマネージャーの更新。
 		GameObjectManager::GetInstance()->ExecuteUpdate();
-		GameObjectManager::GetInstance()->ExecuteRender(renderContext);
-
 		//物理ワールドの更新。
 		PhysicsWorld::GetInstance()->Update(g_gameTime->GetFrameDeltaTime());
+		//エフェクトエンジンの更新。
+		EffectEngine::GetInstance()->Update(g_gameTime->GetFrameDeltaTime());
+
+		//登録されているゲームオブジェクトの描画関数を呼び出す。
+		GameObjectManager::GetInstance()->ExecuteRender(renderContext);
+
+		//エフェクトのドロー。
+		EffectEngine::GetInstance()->Draw();
 
 		//////////////////////////////////////
 		//絵を描くコードを書くのはここまで！！！

@@ -36,7 +36,7 @@ public:
 
 
 	/// <summary>
-	/// セット関数
+	/// セッター
 	/// </summary>
 	//テキストを設定する関数
 	void SetText(const wchar_t* text){swprintf_s(m_fontValue.text, text);}
