@@ -19,7 +19,6 @@ private:
 
 	unsigned int m_plaScore[4];		//プレイヤー4人分のスコアを入れる配列
 
-public:
 
 	bool Start()override;
 	~ResultScene()override;
@@ -28,5 +27,9 @@ public:
 
 	//順位によってソートしプレイヤー名の画像を並び替える関数
 	void RankingSort();
+
+
+public:
+
 };
 

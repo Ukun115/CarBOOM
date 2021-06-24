@@ -109,7 +109,7 @@ bool Enemy::Start()
 		m_pushPlayer[i] = 4;
 
 		//落下したときの撃墜エフェクトの初期化。
-		m_shootDownEffect[i].Init(u"Assets/effect/laser.efk");
+		m_shootDownEffect[i].Init(u"Assets/effect/efk/Enemy_ShootDown.efk");
 		//大きさ調整
 		m_shootDownEffect[i].SetScale({ 40.0f,40.0f,40.0f });
 		//通常だと画面の上がエフェクトの上になっているので、ゲーム中のカメラ方向が上になるように調整

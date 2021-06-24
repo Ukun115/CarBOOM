@@ -25,6 +25,14 @@ namespace
 
 bool Player::Start()
 {
+	Vector3 ehehe1 = {0,30,0};
+	Vector3 ehehe2 = {100,1,1};
+	float ehehe3 = 1000;
+	//ライトオブジェクト生成
+	Light* m_light = NewGO<Light>(PRIORITY_0, "light");
+	//ディレクションライトをセット
+	m_light->SetPointLightData(ehehe1, ehehe2,ehehe3);
+
 	//インスタンスを探す。
 	m_titleScene = FindGO<TitleScene>("titlescene");
 	m_gameScene = FindGO<GameScene>("gamescene");
@@ -36,7 +44,6 @@ bool Player::Start()
 	{
 		//溜め１段階目の「１」画像オブジェクト生成
 		m_DASpr1[i] = NewGO<SpriteRender>(PRIORITY_1,nullptr);
-		m_DASpr1[i]->SetPosition({ -500.0f,0.0f,0.0f });
 		m_DASpr1[i]->Init("Assets/image/DDS/1.dds", 100.0f, 100.0f);
 		//非表示
 		m_DASpr1[i]->Deactivate();
@@ -47,14 +54,14 @@ bool Player::Start()
 		//非表示
 		m_DASpr2[i]->Deactivate();
 	}
-	m_DASpr1[0]->SetPosition({ -550.0f,200.0f,0.0f });
-	m_DASpr1[1]->SetPosition({ 550.0f,200.0f,0.0f });
-	m_DASpr1[2]->SetPosition({ -550.0f,-200.0f,0.0f });
-	m_DASpr1[3]->SetPosition({ 550.0f,-200.0f,0.0f });
-	m_DASpr2[0]->SetPosition({ -550.0f,200.0f,0.0f });
-	m_DASpr2[1]->SetPosition({ 550.0f,200.0f,0.0f });
-	m_DASpr2[2]->SetPosition({ -550.0f,-200.0f,0.0f });
-	m_DASpr2[3]->SetPosition({ 550.0f,-200.0f,0.0f });
+	m_DASpr1[0]->SetPosition({ -500.0f,150.0f,0.0f });
+	m_DASpr1[1]->SetPosition({ 500.0f,150.0f,0.0f });
+	m_DASpr1[2]->SetPosition({ -500.0f,-150.0f,0.0f });
+	m_DASpr1[3]->SetPosition({ 500.0f,-150.0f,0.0f });
+	m_DASpr2[0]->SetPosition({ -500.0f,150.0f,0.0f });
+	m_DASpr2[1]->SetPosition({ 500.0f,150.0f,0.0f });
+	m_DASpr2[2]->SetPosition({ -500.0f,-150.0f,0.0f });
+	m_DASpr2[3]->SetPosition({ 500.0f,-150.0f,0.0f });
 
 	for (int i = Player1; i < MaxPlayerNum; i++)
 	{
@@ -71,28 +78,28 @@ bool Player::Start()
 			{
 				m_player[i]->Init("Assets/modelData/LowPoly_PlayerCar_Red.tkm");	//赤車
 				//落下したときの撃墜エフェクトの初期化。
-				m_shootDownEffect[i].Init(u"Assets/effect/laser.efk");
+				m_shootDownEffect[i].Init(u"Assets/effect/efk/Player1_ShootDown.efk");
 			}
 			//2P
 			else if (i == Player2)
 			{
 				m_player[i]->Init("Assets/modelData/LowPoly_PlayerCar_Blue.tkm");	//青車
 				//落下したときの撃墜エフェクトの初期化。
-				m_shootDownEffect[i].Init(u"Assets/effect/laser.efk");
+				m_shootDownEffect[i].Init(u"Assets/effect/efk/Player2_ShootDown.efk");
 			}
 			//3P
 			else if (i == Player3)
 			{
 				m_player[i]->Init("Assets/modelData/LowPoly_PlayerCar_Yellow.tkm");	//黄車
 				//落下したときの撃墜エフェクトの初期化。
-				m_shootDownEffect[i].Init(u"Assets/effect/laser.efk");
+				m_shootDownEffect[i].Init(u"Assets/effect/efk/Player3_ShootDown.efk");
 			}
 			//4P
 			else if (i == Player4)
 			{
 				m_player[i]->Init("Assets/modelData/LowPoly_PlayerCar_Green.tkm");	//緑車
 				//落下したときの撃墜エフェクトの初期化。
-				m_shootDownEffect[i].Init(u"Assets/effect/laser.efk");
+				m_shootDownEffect[i].Init(u"Assets/effect/efk/Player4_ShootDown.efk");
 			}
 			//大きさ調整。元のモデルが小さかったため、モデルの大きさを1.5倍。
 			m_player[i]->SetScale(PlAYER_SCA);
@@ -101,7 +108,7 @@ bool Player::Start()
 
 			m_charaCon[i].Init(15.0f, 85.0f, m_pos[i]);
 
-			//大きさ調整
+			//エフェクトの大きさ調整
 			m_shootDownEffect[i].SetScale({ 70.0f,70.0f,70.0f });
 			//通常だと画面の上がエフェクトの上になっているので、ゲーム中のカメラ方向が上になるように調整
 			Quaternion m_shootDownEffectRot = m_shootDownEffect[i].GetRotation();
@@ -468,8 +475,8 @@ void Player::PlaAttackBefore(int x)
 //プレイヤーのDAの溜め状態の判別処理関数
 void Player::PlaDAState(int x)
 {
-	//Bボタンを押しているとき、
-	if (g_pad[x]->IsPress(enButtonB) && m_isBPushFlg[x] == false && m_isTyazi1Flg[x] == false && m_isTyazi2Flg[x] == false)
+	//Aボタンを押しているとき、
+	if (g_pad[x]->IsPress(enButtonA) && m_isBPushFlg[x] == false && m_isTyazi1Flg[x] == false && m_isTyazi2Flg[x] == false)
 	{
 		//押しているときのタイマーを加算
 		m_pressTimer[x]++;
@@ -479,8 +486,8 @@ void Player::PlaDAState(int x)
 
 		m_isBPushFlg[x] = true;
 	}
-	//Bボタンを離したとき、
-	if (!g_pad[x]->IsPress(enButtonB) && m_isBPushFlg[x] == true)
+	//Aボタンを離したとき、
+	if (!g_pad[x]->IsPress(enButtonA) && m_isBPushFlg[x] == true)
 	{
 		//離したときのタイマーを加算
 		m_releaseTimer[x]++;

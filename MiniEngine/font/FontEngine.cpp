@@ -21,7 +21,7 @@ void FontEngine::Init()
 	srvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
 	srvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
 	auto hr = d3dDevice->CreateDescriptorHeap(&srvHeapDesc, IID_PPV_ARGS(&m_srvDescriptorHeap));
-	
+
 	ResourceUploadBatch re(d3dDevice);
 	re.Begin();
 	//SpriteBatchのパイプラインステートを作成する。
@@ -33,7 +33,7 @@ void FontEngine::Init()
 	renderTargetState.sampleDesc.Count = 1;
 
 	SpriteBatchPipelineStateDescription sprBatchDesc(renderTargetState);
-	
+
 	D3D12_VIEWPORT viewport;
 	viewport.TopLeftX = 0.0f;
 	viewport.TopLeftY = 0.0f;
@@ -41,7 +41,7 @@ void FontEngine::Init()
 	viewport.Height = g_graphicsEngine->GetFrameBufferHeight();
 	//Spriteバッチを作成。
 	m_spriteBatch = make_unique<SpriteBatch>(
-		d3dDevice, 
+		d3dDevice,
 		re,
 		sprBatchDesc,
 		&viewport);
@@ -49,10 +49,10 @@ void FontEngine::Init()
 	D3D12_CPU_DESCRIPTOR_HANDLE cpuHandle = m_srvDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
 	D3D12_GPU_DESCRIPTOR_HANDLE gpuHandle = m_srvDescriptorHeap->GetGPUDescriptorHandleForHeapStart();
 	m_spriteFont = make_unique<SpriteFont>(
-		d3dDevice, 
+		d3dDevice,
 		re,
-		L"Assets/font/myfile.spritefont", 
-		cpuHandle, 
+		L"Assets/font/ehehe.spritefont",
+		cpuHandle,
 		gpuHandle);
 
 	re.End(g_graphicsEngine->GetCommandQueue());

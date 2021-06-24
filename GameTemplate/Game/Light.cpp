@@ -3,7 +3,7 @@
 
 namespace
 {
-	const Vector3 DIRLIG_DIR = { 1.0f, -1.0f ,-1.0f };	//ディレクションライトの初期方向
+	const Vector3 DIRLIG_DIR = { 0.0f, -1.0f ,0.0f };	//ディレクションライトの初期方向
 	const Vector3 DIRLIG_COL = { 1.0f, 1.0f ,1.0f };	//ディレクションライトの初期色
 
 	const Vector3 SPOLIG_POS = { 0.0f, 0.0f ,0.0f };	//スポットライトの初期位置

@@ -50,12 +50,13 @@ private:
 
 	ligData m_ligData;		//ライト構造体のデータを作成
 
-public:
 
 	bool Start()override;
 	~Light()override;
 	void Update()override;
 
+
+public:
 
 	/// <summary>
 	/// セッター

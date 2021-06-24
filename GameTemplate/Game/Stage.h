@@ -14,6 +14,13 @@ private:
 
 
 	PhysicsStaticObject m_physicsStaticObject;		//静的物理オブジェクトクラスを作成
+	Effect m_fallSnowEffect[2];		//アイスステージの降ってくる雪エフェクト
+
+
+	/// <summary>
+	/// タイマー
+	/// </summary>
+	int m_fallSnowTimer = 0;
 
 
 	/// <summary>
@@ -28,9 +35,12 @@ private:
 		Stage3,
 	};
 
-public:
 
 	bool Start() override;
 	~Stage()override;
 	void Update() override;
+
+
+public:
+
 };

@@ -70,7 +70,6 @@ private:
 		MaxPlayerNum	//プレイヤーの最大数
 	};
 
-public:
 
 	bool Start() override;
 	~Player() override;
@@ -102,6 +101,8 @@ public:
 	//プレイヤーにかかる重力を設定する関数
 	void Gravity(int x);
 
+
+public:
 
 	/// <summary>
 	/// ゲッター

@@ -45,7 +45,6 @@ private:
 		MaxPlayerNum	//プレイヤーの最大数
 	};
 
-public:
 
 	bool Start()override;
 	~TitleScene()override;
@@ -59,6 +58,8 @@ public:
 	//「PRESS START BUTTON」文字画像の点滅処理関数
 	void FlashingFont();
 
+
+public:
 
 	/// <summary>
 	/// ゲッター

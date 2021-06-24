@@ -8,6 +8,7 @@ namespace
 {
 	const int PRIORITY_0 = 0;	//優先度0
 	const int PRIORITY_1 = 1;	//優先度1
+	const int PRIORITY_2 = 2;	//優先度2
 	const int PLAYER1 = 0;		//プレイヤー１
 
 	const Vector3 STAGE_1_POS = { -120, 0, 100 };
@@ -32,11 +33,11 @@ bool StageSelectScene::Start()
 	for (int i = Stage1; i < TotalStageNum; i++)
 	{
 		//全ステージモデルオブジェクト生成
-		m_stage[i] = NewGO<SkinModelRender>(PRIORITY_0, nullptr);
+		m_stage[i] = NewGO<SkinModelRender>(PRIORITY_1, nullptr);
 		//大きさ調整
 		m_stage[i]->SetScale({ 0.3,0.3,0.3 });
 		//全ステージスプライトオブジェクト生成
-		m_stageName[i] = NewGO<SpriteRender>(PRIORITY_0, nullptr);
+		m_stageName[i] = NewGO<SpriteRender>(PRIORITY_1, nullptr);
 	}
 
 	//どひょうステージ&名前画像をロード
@@ -73,12 +74,17 @@ bool StageSelectScene::Start()
 
 	//プレイヤーモデルオブジェクト生成
 	//文字画像の上に乗るようにプライオリティーは１つ文字画像よりも高くする
-	m_pla = NewGO<SkinModelRender>(PRIORITY_1, nullptr);
+	m_pla = NewGO<SkinModelRender>(PRIORITY_2, nullptr);
 	m_pla->Init("Assets/modelData/LowPoly_PlayerCar_Red.tkm");	//赤車
 	//初期位置設定
 	m_pla->SetPosition({ 0.0f,0.0f,0.0f });
 	//拡大
 	m_pla->SetScale({1.5f,1.5f,1.5f});
+
+
+	//オブジェクト生成(背景画像)
+	m_titleSprite = NewGO<SpriteRender>(PRIORITY_0, nullptr);
+	m_titleSprite->Init("Assets/image/DDS/BackScreenImage.dds", 1600.0f, 800.0f);
 
 
 	//Start関数のreturn文
@@ -139,6 +145,8 @@ void StageSelectScene::GameSceneTransition()
 		}
 		//プレイヤーを削除。
 		DeleteGO(m_pla);
+		//背景画像を削除
+		DeleteGO(m_titleSprite);
 
 		//このクラスの処理をゲーム画面に移ったときに実行しなくなるフラグ
 		m_isCanGameStartFlg = false;

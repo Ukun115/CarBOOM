@@ -133,6 +133,9 @@ bool GameScene::Start()
 	//•¶š‚Ì‹«ŠEü•\¦
 	m_timeLimit->SetShadowParam(true, 1.0f, Vector4::Black);
 
+	m_syutyusen = NewGO<SpriteRender>(PRIORITY_0, nullptr);
+	m_syutyusen->Init("Assets/image/DDS/BackScreenImage.dds", 1600.0f, 800.0f);
+
 	//StartŠÖ”‚Ìreturn
 	return true;
 }

@@ -24,6 +24,8 @@ private:
 	Enemy* m_enemy = nullptr;
 	FontRender* m_timeLimit = nullptr;
 
+	SpriteRender* m_syutyusen = nullptr;
+
 
 	/// <summary>
 	/// フラグ
@@ -60,7 +62,6 @@ private:
 		MAXPLAYERNUM	//プレイヤーの最大数
 	};
 
-public:
 
 	bool Start()override;
 	~GameScene()override;
@@ -79,13 +80,17 @@ public:
 	Vector2 GetScorePos(int x);
 	//プレイヤーごとのスコアの色を指定する関数
 	Vector4 ScoreColor(int c);
-	/*プレイヤーの得点変動処理関数
-     (ｘは落としたプレイヤー、yは自滅したプレイヤー)*/
-	void GetPlayerAddScore(int x,int y);
 	//１位に王冠画像と王冠モデルを渡す関数
 	void NowCrown();
 	//リザルト画面に遷移する関数
 	void ResultSceneTransition();
+
+
+public:
+
+	/*プレイヤーの得点変動処理関数
+	(ｘは落としたプレイヤー、yは自滅したプレイヤー)*/
+	void GetPlayerAddScore(int x, int y);
 
 
 	/// <summary>

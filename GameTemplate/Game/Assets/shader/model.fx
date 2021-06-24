@@ -2,6 +2,8 @@
  * @brief	シンプルなモデルシェーダー。
  */
 
+static const int PtNum = 12;
+
  ////////////////////////////////////////////////
  // 構造体
  ////////////////////////////////////////////////
@@ -325,7 +327,7 @@ float4 PSMain(SPSIn psIn) : SV_Target0
 
 
 	//これで途中までの光の当たり具合を返す。デバック用
-	//return float4(dirligdata.dirLigColor, 1.0f);
+	//return float4(dirDiffuseLig + dirSpecularLig, 1.0f);
 
 
 	//最終カラーを返す

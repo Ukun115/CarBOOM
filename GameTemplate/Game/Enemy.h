@@ -92,7 +92,6 @@ private:
 		ResPos10,	//‚P‚O‚Â–Ú
 	};
 
-public:
 
 	bool Start()override;
 	~Enemy()override;
@@ -116,6 +115,8 @@ public:
 	//“G‚É‚©‚©‚éd—Í‚ğİ’è‚·‚éŠÖ”
 	void Gravity(int x);
 
+
+public:
 
 	/// <summary>
 	/// ƒQƒbƒ^[

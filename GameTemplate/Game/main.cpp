@@ -36,7 +36,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	//ライトオブジェクト生成
 	Light* m_light = NewGO<Light>(PRIORITY_0, "light");
 	//ディレクションライトをセット
-	m_light->SetDirectionLightData();
+	//m_light->SetDirectionLightData();
 
 	//タイトルシーンオブジェクト生成
 	TitleScene* m_titleScene = NewGO<TitleScene>(PRIORITY_0,"titlescene");

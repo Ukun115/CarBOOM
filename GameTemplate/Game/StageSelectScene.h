@@ -10,6 +10,7 @@ private:
 	SpriteRender* m_stageName[5] = { nullptr };	//全ステージ分用意
 	SkinModelRender* m_pla = nullptr;	//プレイヤー
 	TitleScene* m_titleScene = nullptr;
+	SpriteRender* m_titleSprite = nullptr;
 
 
 	/// <summary>
@@ -44,7 +45,6 @@ private:
 		TotalStageNum
 	};
 
-public:
 
 	bool Start()override;
 	~StageSelectScene()override;
@@ -65,6 +65,9 @@ public:
 	void TouchStage();
 	//プレイヤーが画面外に行かないようにする関数
 	void AvoidScreenOutSide();
+
+
+public:
 
 	/// <summary>
 	/// ゲッター

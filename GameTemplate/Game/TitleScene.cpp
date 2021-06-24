@@ -12,6 +12,7 @@ namespace
 {
 	const int PRIORITY_0 = 0;	//優先度0
 	const int PRIORITY_1 = 1;	//優先度1
+	const int PRIORITY_2 = 2;	//優先度2
 
 	const Vector3 PLAYER1_NAME_POS = {-480.0f, 310.0f,0.0f};			//プレイヤー1の名前表示位置
 	const Vector3 PLAYER2_NAME_POS = { 480.0f, 310.0f,0.0f};			//プレイヤー2の名前表示位置
@@ -36,7 +37,7 @@ bool TitleScene::Start()
 	m_pushStartButtonSprite->SetScale({ FlashingFont_SCA });
 
 	//1Pは非アクティブときがないため、初めからアクティブ画像オブジェクト生成
-	m_plaActiveName[Player1] = NewGO<SpriteRender>(PRIORITY_1, nullptr);
+	m_plaActiveName[Player1] = NewGO<SpriteRender>(PRIORITY_2, nullptr);
 	m_plaActiveName[Player1]->Init("Assets/image/DDS/Player1_ActiveName.dds", 300.0f, 150.0f);
 	m_plaActiveName[Player1]->SetPosition(PLAYER1_NAME_POS);
 
@@ -45,7 +46,7 @@ bool TitleScene::Start()
 
 	for (int i = Player1; i < MaxPlayerNum; i++) {
 		//2P～4Pの非アクティブ画像オブジェクト生成
-		m_plaDeactiveName[i] = NewGO<SpriteRender>(PRIORITY_1, nullptr);
+		m_plaDeactiveName[i] = NewGO<SpriteRender>(PRIORITY_2, nullptr);
 		//1P
 		if (i == Player1)
 		{

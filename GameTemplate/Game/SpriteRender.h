@@ -15,12 +15,13 @@ private:
 	Vector4    m_mulColor = Vector4::White;		//æZ(Multiply)F(”’)
 							//ªÚ‚µ‚­‚ÍVectorƒNƒ‰ƒX‚ğ‚İ‚Ä‚Ë
 
-public:
 
 	bool Start()override;
 	~SpriteRender()override;
 	void Update()override;
 
+
+public:
 
 	//‰æ‘œ‚ğ‰Šú‰»‚·‚éŠÖ”
 	void Init(const char* filepath, float width, float height, AlphaBlendMode mode = AlphaBlendMode::AlphaBlendMode_Trans);

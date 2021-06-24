@@ -23,12 +23,13 @@ private:
 	Vector3    m_sca = Vector3::One;			//Šg‘å—¦
 						//ª‰Šú’l
 
-public:
 
 	bool Start()override;
 	~SkinModelRender()override;
 	void Update()override;
 
+
+public:
 
 	//ƒ‚ƒfƒ‹‚ğ‰Šú‰»‚·‚éŠÖ”
 	void Init(const char* tkmFilePath);
