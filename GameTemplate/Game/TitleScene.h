@@ -11,8 +11,9 @@ private:
 	/// </summary>
 	SpriteRender* m_titleSprite = nullptr;
 	SpriteRender* m_pushStartButtonSprite = nullptr;
-	SpriteRender* m_plaActiveName[4] = {nullptr};		//プレイヤー4人分用意
-	SpriteRender* m_plaDeactiveName[4] = {nullptr};		//プレイヤー4人分用意
+	SpriteRender* m_plaActiveName[4] = { nullptr };		//プレイヤー4人分用意
+	SpriteRender* m_plaDeactiveName[4] = { nullptr };		//プレイヤー4人分用意
+	SpriteRender* m_pressASpeechBalloon[3] = { nullptr };
 	StageSelectScene* m_stageSelectScene = nullptr;
 
 
@@ -31,6 +32,7 @@ private:
 
 
 	unsigned int m_totalPlaNum = 1;			//プレイヤーの合計数を計測
+	Vector3 m_pressASpeechBalloonPos = Vector3::Zero;		//プレイヤー追加吹き出しの位置
 
 
 	/// <summary>
@@ -65,7 +67,7 @@ public:
 	/// ゲッター
 	/// </summary>
 	//プレイヤーが追加されているかどうかを取得する関数
-	bool GetPlaFlg(int x) { return m_isAddPlayerFlg[x]; }
+	bool GetPlaFlg(int planum) { return m_isAddPlayerFlg[planum]; }
 	//登録されたプレイヤーの合計人数を取得する関数
 	int GetTotalPlaNum(){ return m_totalPlaNum; }
 };

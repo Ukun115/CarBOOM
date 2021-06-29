@@ -10,18 +10,9 @@
 
 namespace
 {
-	//優先度
-	const int PRIORITY_0 = 0;
-	const int PRIORITY_1 = 1;
-
 	const Vector2   TIMELIMIT_POS = { -40.0f,300.0f };			//制限時間フォントの位置
 	const Vector4   TIMELIMIT_COL = { 1.0f,1.0f,1.0f,1.0f };	//制限時間フォントの色
-
-	const Vector4	PLAYER1_COL_RED = { 1.0f,0.0f,0.0f,1.0f };		//プレイヤー１のスコアの色
-	const Vector4	PLAYER2_COL_BLUE = { 0.0f,0.0f,1.0f,1.0f };		//プレイヤー２のスコアの色
-	const Vector4	PLAYER3_COL_YELLOW = { 1.0f,1.0f,0.0f,1.0f };		//プレイヤー３のスコアの色
-	const Vector4	PLAYER4_COL_GREEN = { 0.0f,1.0f,0.0f,1.0f };		//プレイヤー４のスコアの色
-	const Vector4	PLAYER_COL_GRAY = { 0.7f,0.7f,0.7f,1.0f };		//全プレイヤーの非アクティブのスコアの色
+	const Vector4   TIMELIMIT_LAST_COL = { 1.0f,0.0f,0.0f,1.0f };	//制限時間フォントの残り5秒の色
 
 	const float     FONT_ROT = 0.0f;			//フォントの傾き
 	const Vector2   FONT_PIV = { 1.0f,1.0f };	//フォントの基点
@@ -51,12 +42,12 @@ namespace
 bool GameScene::Start()
 {
 	//インスタンスを探す。
-	m_titleScene = FindGO<TitleScene>("titlescene");
+	m_titleScene = FindGO<TitleScene>(TITLESCENE_NAME);
 
 	//敵オブジェクト生成
-	m_enemy = NewGO<Enemy>(PRIORITY_0,"enemy");
+	m_enemy = NewGO<Enemy>(PRIORITY_0, ENEMY_NAME);
 	//プレイヤーオブジェクト生成
-	m_player = NewGO<Player>(PRIORITY_0, "player");
+	m_player = NewGO<Player>(PRIORITY_0, PLAYER_NAME);
 	//ステージオブジェクト生成
 	m_normalStage = NewGO<Stage>(PRIORITY_0, nullptr);
 
@@ -117,8 +108,8 @@ bool GameScene::Start()
 	//登録されていないプレイヤーのスコアはグレー表示にする
 	for (int i = m_titleScene->GetTotalPlaNum() ; i < 4; i++)
 	{
-		m_ScoreFontRender[i]->SetColor(PLAYER_COL_GRAY);
-		m_TextScoreFontRender[i]->SetColor(PLAYER_COL_GRAY);
+		m_ScoreFontRender[i]->SetColor(GRAY);
+		m_TextScoreFontRender[i]->SetColor(GRAY);
 	}
 	//制限時間フォントの初期化
 	m_timeLimit->Init
@@ -265,9 +256,12 @@ void GameScene::TimeLimit()
 	m_countTime = m_timer / 60;
 
 	//０秒になってからのカウントがマイナスに行かないように補正
-	if (m_countTime < 0)
+	m_countTime = max(0,m_countTime);
+
+	//10秒以下のとき、制限時間を赤く表示
+	if(m_countTime < 11)
 	{
-		m_countTime = 0;
+		m_timeLimit->SetColor(TIMELIMIT_LAST_COL);
 	}
 
 	//制限時間の描画
@@ -325,20 +319,20 @@ void GameScene::SetScoreTextPos(int t)
 	//スコアが2桁のとき、
 	if (10 <= m_plaScore[t] && m_plaScore[t] < 100)
 	{
-		//少し左(xを-20)にずらして表示位置を合わせる
+		//少し左(xを-40)にずらして表示位置を合わせる
 		switch (t)
 		{
 		case PLAYER1:
-			m_plaScorePos[0].x = -540.0f;
+			m_plaScorePos[0].x = -560.0f;
 			break;
 		case PLAYER2:
-			m_plaScorePos[1].x = 430.0f;
+			m_plaScorePos[1].x = 450.0f;
 			break;
 		case PLAYER3:
-			m_plaScorePos[2].x = -540.0f;
+			m_plaScorePos[2].x = -560.0f;
 			break;
 		case PLAYER4:
-			m_plaScorePos[3].x = 430.0f;
+			m_plaScorePos[3].x = 450.0f;
 			break;
 		}
 	}
@@ -349,16 +343,16 @@ void GameScene::SetScoreTextPos(int t)
 		switch (t)
 		{
 		case PLAYER1:
-			m_plaScorePos[0].x = -560.0f;
+			m_plaScorePos[0].x = -580.0f;
 			break;
 		case PLAYER2:
-			m_plaScorePos[1].x = 410.0f;
+			m_plaScorePos[1].x = 470.0f;
 			break;
 		case PLAYER3:
-			m_plaScorePos[2].x = -560.0f;
+			m_plaScorePos[2].x = -580.0f;
 			break;
 		case PLAYER4:
-			m_plaScorePos[3].x = 410.0f;
+			m_plaScorePos[3].x = 470.0f;
 			break;
 		}
 	}
@@ -369,16 +363,16 @@ void GameScene::SetScoreTextPos(int t)
 		switch (t)
 		{
 		case PLAYER1:
-			m_plaScorePos[0].x = -580.0f;
+			m_plaScorePos[0].x = -600.0f;
 			break;
 		case PLAYER2:
-			m_plaScorePos[1].x = 430.0f;
+			m_plaScorePos[1].x = 490.0f;
 			break;
 		case PLAYER3:
-			m_plaScorePos[2].x = -580.0f;
+			m_plaScorePos[2].x = -600.0f;
 			break;
 		case PLAYER4:
-			m_plaScorePos[3].x = 430.0f;
+			m_plaScorePos[3].x = 490.0f;
 			break;
 		}
 	}
@@ -394,16 +388,16 @@ Vector4 GameScene::ScoreColor(int c)
 	switch (c)
 	{
 	case PLAYER1:
-		return PLAYER1_COL_RED;
+		return RED;
 		break;
 	case PLAYER2:
-		return PLAYER2_COL_BLUE;
+		return BLUE;
 		break;
 	case PLAYER3:
-		return PLAYER3_COL_YELLOW;
+		return YELLOW;
 		break;
 	case PLAYER4:
-		return PLAYER4_COL_GREEN;
+		return GREEN;
 		break;
 	}
 }
@@ -413,6 +407,11 @@ Vector4 GameScene::ScoreColor(int c)
   (ｘは落としたプレイヤー、yは落とされたプレイヤー)*/
 void GameScene::GetPlayerAddScore(int x,int y)
 {
+	//4のとき何もしない
+	if (x == 4)
+	{
+		return;
+	}
 	//落としたとき、
 	//30pt増加
 	m_plaScore[x] += 30;
@@ -499,7 +498,7 @@ void GameScene::ResultSceneTransition()
 		//タイマーを加算
 		m_resultsenniTimer++;
 		//タイマーが120を超えてからリザルト画面に遷移
-		if (m_resultsenniTimer > 120)
+		if (m_resultsenniTimer == 120)
 		{
 			//リザルト画面オブジェクト生成
 			NewGO<ResultScene>(PRIORITY_0, nullptr);

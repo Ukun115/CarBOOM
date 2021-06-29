@@ -6,9 +6,6 @@
 
 namespace
 {
-	const int PRIORITY_0 = 0;	//優先度0
-	const int PRIORITY_1 = 1;	//優先度1
-	const int PRIORITY_2 = 2;	//優先度2
 	const int PLAYER1 = 0;		//プレイヤー１
 
 	const Vector3 STAGE_1_POS = { -120, 0, 100 };
@@ -28,20 +25,20 @@ namespace
 bool StageSelectScene::Start()
 {
 	//インスタンスを作成
-	m_titleScene = FindGO<TitleScene>("titlescene");
+	m_titleScene = FindGO<TitleScene>(TITLESCENE_NAME);
 
 	for (int i = Stage1; i < TotalStageNum; i++)
 	{
 		//全ステージモデルオブジェクト生成
 		m_stage[i] = NewGO<SkinModelRender>(PRIORITY_1, nullptr);
-		//大きさ調整
-		m_stage[i]->SetScale({ 0.3,0.3,0.3 });
+		////大きさ調整
+		//m_stage[i]->SetScale({ 0.3,0.3,0.3 });
 		//全ステージスプライトオブジェクト生成
 		m_stageName[i] = NewGO<SpriteRender>(PRIORITY_1, nullptr);
 	}
 
 	//どひょうステージ&名前画像をロード
-	m_stage[Stage1]->Init("Assets/modelData/bg/stage_1.tkm");
+	m_stage[Stage1]->Init("Assets/modelData/bg/stage_1_Select.tkm");
 	m_stageName[Stage1]->Init("Assets/Image/DDS/FLAT STAGE.dds", 200, 100);
 	//左上
 	m_stagePos[Stage1] = STAGE_1_POS;
@@ -49,7 +46,7 @@ bool StageSelectScene::Start()
 	m_stageName[Stage1]->SetPosition(STAGE_1_NAME_POS);
 
 	//ドーナツステージ&名前画像をロード
-	m_stage[Stage2]->Init("Assets/modelData/bg/stage_2.tkm");
+	m_stage[Stage2]->Init("Assets/modelData/bg/stage_2_Select.tkm");
 	m_stageName[Stage2]->Init("Assets/Image/DDS/DONUT STAGE.dds", 200, 100);
 	//右上
 	m_stagePos[Stage2] = STAGE_2_POS;
@@ -57,7 +54,7 @@ bool StageSelectScene::Start()
 	m_stageName[Stage2]->SetPosition(STAGE_2_NAME_POS);
 
 	//アイスステージ&名前画像をロード
-	m_stage[Stage3]->Init("Assets/modelData/bg/stage_3.tkm");
+	m_stage[Stage3]->Init("Assets/modelData/bg/stage_3_Select.tkm");
 	m_stageName[Stage3]->Init("Assets/Image/DDS/ICE STAGE.dds", 200, 100);
 	//左下
 	m_stagePos[Stage3] = STAGE_3_POS;
@@ -78,9 +75,18 @@ bool StageSelectScene::Start()
 	m_pla->Init("Assets/modelData/LowPoly_PlayerCar_Red.tkm");	//赤車
 	//初期位置設定
 	m_pla->SetPosition({ 0.0f,0.0f,0.0f });
-	//拡大
-	m_pla->SetScale({1.5f,1.5f,1.5f});
 
+	//プレイヤーの上に表示されるA吹き出し
+	for (int i = 0; i < 4; i++)
+	{
+		m_Ahukidasi[i] = NewGO<SpriteRender>(PRIORITY_2, nullptr);
+		m_Ahukidasi[i]->Init("Assets/Image/DDS/Ahukidasi.dds", 100, 100);
+		m_Ahukidasi[i]->Deactivate();
+	}
+	m_AhukidasiPos[0] = { -140, 170, 0 };
+	m_AhukidasiPos[1] = { 140, 170, 0 };
+	m_AhukidasiPos[2] = { -160, -50, 0 };
+	m_AhukidasiPos[3] = { 160, -50, 0 };
 
 	//オブジェクト生成(背景画像)
 	m_titleSprite = NewGO<SpriteRender>(PRIORITY_0, nullptr);
@@ -135,7 +141,7 @@ void StageSelectScene::GameSceneTransition()
 		}
 
 		//ゲーム画面に遷移
-		NewGO<GameScene>(PRIORITY_0, "gamescene");
+		NewGO<GameScene>(PRIORITY_0, GAMESCENE_NAME);
 
 		//表示されているステージモデルとステージ名画像をすべて削除
 		for (int i = 0; i < TotalStageNum; i++)
@@ -147,6 +153,11 @@ void StageSelectScene::GameSceneTransition()
 		DeleteGO(m_pla);
 		//背景画像を削除
 		DeleteGO(m_titleSprite);
+		//A吹き出し画像を削除
+		for (int i = 0; i < 4; i++)
+		{
+			DeleteGO(m_Ahukidasi[i]);
+		}
 
 		//このクラスの処理をゲーム画面に移ったときに実行しなくなるフラグ
 		m_isCanGameStartFlg = false;
@@ -229,6 +240,8 @@ void StageSelectScene::TouchStage()
 {
 	for (int i = Stage1; i < TotalStageNum; i++)
 	{
+		m_Ahukidasi[i-1]->Deactivate();
+
 		//通常サイズ
 		m_stageName[i]->SetScale(Vector3::One);
 
@@ -237,6 +250,28 @@ void StageSelectScene::TouchStage()
 		//ステージの上に乗っていたら、
 		if (m_diff.Length() < 70.0f)
 		{
+			//A吹き出しを表示
+			if (i == 1)
+			{
+				m_Ahukidasi[0]->SetPosition(m_AhukidasiPos[0]);
+				m_Ahukidasi[0]->Activate();
+			}
+			if (i == 2)
+			{
+				m_Ahukidasi[1]->SetPosition(m_AhukidasiPos[1]);
+				m_Ahukidasi[1]->Activate();
+			}
+			if (i == 3)
+			{
+				m_Ahukidasi[2]->SetPosition(m_AhukidasiPos[2]);
+				m_Ahukidasi[2]->Activate();
+			}
+			if (i == 4)
+			{
+				m_Ahukidasi[3]->SetPosition(m_AhukidasiPos[3]);
+				m_Ahukidasi[3]->Activate();
+			}
+
 			//ステージ名画像を強調拡大
 			m_stageName[i]->SetScale(BIG_STAGE_NAME);
 

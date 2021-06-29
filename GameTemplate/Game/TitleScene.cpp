@@ -10,10 +10,6 @@
 
 namespace
 {
-	const int PRIORITY_0 = 0;	//優先度0
-	const int PRIORITY_1 = 1;	//優先度1
-	const int PRIORITY_2 = 2;	//優先度2
-
 	const Vector3 PLAYER1_NAME_POS = {-480.0f, 310.0f,0.0f};			//プレイヤー1の名前表示位置
 	const Vector3 PLAYER2_NAME_POS = { 480.0f, 310.0f,0.0f};			//プレイヤー2の名前表示位置
 	const Vector3 PLAYER3_NAME_POS = {-480.0f,-310.0f,0.0f};			//プレイヤー3の名前表示位置
@@ -35,6 +31,56 @@ bool TitleScene::Start()
 	m_pushStartButtonSprite->Init("Assets/image/DDS/PRESSSTARTBUTTON.dds", 400.0f, 200.0f);
 	m_pushStartButtonSprite->SetPosition({ FlashingFont_POS });
 	m_pushStartButtonSprite->SetScale({ FlashingFont_SCA });
+
+	//PRESS A !! 吹き出し画像オブジェクト生成
+	for (int i = 0; i < 3; i++)
+	{
+		m_pressASpeechBalloon[i] = NewGO<SpriteRender>(PRIORITY_1, nullptr);
+		//PLAYER３のみ吹き出しの左側にいるので他とは違う吹き出しを使う
+		if (i == 1)
+		{
+			m_pressASpeechBalloon[i]->Init("Assets/image/DDS/PRESS A !!_L.dds", 400.0f, 200.0f);
+		}
+		else
+		{
+			m_pressASpeechBalloon[i]->Init("Assets/image/DDS/PRESS A !!_R.dds", 400.0f, 200.0f);
+		}
+		//PLAYER2以外は初期は非アクティブ
+		if (i != 0)
+		{
+			m_pressASpeechBalloon[i]->Deactivate();
+		}
+		//位置設定
+		switch (i)
+		{
+		//2Pの左側
+		case 0:
+			//2Pの名前画像の位置を代入
+			m_pressASpeechBalloonPos = PLAYER2_NAME_POS;
+			//左にずらす
+			m_pressASpeechBalloonPos.x -= 250.0f;
+			m_pressASpeechBalloon[i]->SetPosition(m_pressASpeechBalloonPos);
+			break;
+		//3Pの右側
+		case 1:
+			//3Pの名前画像の位置を代入
+			m_pressASpeechBalloonPos = PLAYER3_NAME_POS;
+			//右にずらす
+			m_pressASpeechBalloonPos.x += 250.0f;
+			m_pressASpeechBalloon[i]->SetPosition(m_pressASpeechBalloonPos);
+			break;
+		//4Pの左側
+		case 2:
+			//4Pの名前画像の位置を代入
+			m_pressASpeechBalloonPos = PLAYER4_NAME_POS;
+			//左にずらす
+			m_pressASpeechBalloonPos.x -= 250.0f;
+			m_pressASpeechBalloon[i]->SetPosition(m_pressASpeechBalloonPos);
+			break;
+		}
+		//大きさ調整
+		m_pressASpeechBalloon[i]->SetScale({0.5f,0.5f,0.5f});
+	}
 
 	//1Pは非アクティブときがないため、初めからアクティブ画像オブジェクト生成
 	m_plaActiveName[Player1] = NewGO<SpriteRender>(PRIORITY_2, nullptr);
@@ -97,7 +143,7 @@ TitleScene::~TitleScene()
 			break;
 		}
 		//緑の波線は大丈夫です
-		DeleteGO(m_plaDeactiveName[i]);
+		//DeleteGO(m_plaDeactiveName[i]);
 	}
 }
 
@@ -148,6 +194,11 @@ void TitleScene::AddPlayer()
 		m_plaActiveName[Player2]->Init("Assets/image/DDS/Player2_ActiveName.dds", 300.0f, 150.0f);
 		//画像の位置指定
 		m_plaActiveName[Player2]->SetPosition(PLAYER2_NAME_POS);
+
+		//2Pの吹き出しを非表示
+		m_pressASpeechBalloon[0]->Deactivate();
+		//吹き出しを3Pの位置に表示
+		m_pressASpeechBalloon[1]->Activate();
 	}
 	//3Pのアクティブ化+アクティブ画像表示
 	if (m_totalPlaNum == Player3)
@@ -155,6 +206,11 @@ void TitleScene::AddPlayer()
 		m_plaActiveName[Player3]->Init("Assets/image/DDS/Player3_ActiveName.dds", 300.0f, 150.0f);
 		//画像の位置指定
 		m_plaActiveName[Player3]->SetPosition(PLAYER3_NAME_POS);
+
+		//3Pの吹き出しを非表示
+		m_pressASpeechBalloon[1]->Deactivate();
+		//吹き出しを4Pの位置に表示
+		m_pressASpeechBalloon[2]->Activate();
 	}
 	//4Pのアクティブ化+アクティブ画像表示
 	if (m_totalPlaNum == Player4)
@@ -162,6 +218,9 @@ void TitleScene::AddPlayer()
 		m_plaActiveName[Player4]->Init("Assets/image/DDS/Player4_ActiveName.dds", 300.0f, 150.0f);
 		//画像の位置指定
 		m_plaActiveName[Player4]->SetPosition(PLAYER4_NAME_POS);
+
+		//4Pの吹き出しを非表示
+		m_pressASpeechBalloon[2]->Deactivate();
 	}
 	//非アクティブ画像を削除。
 	DeleteGO(m_plaDeactiveName[m_totalPlaNum]);
@@ -174,7 +233,7 @@ void TitleScene::AddPlayer()
 void TitleScene::StageSelectSceneTransition()
 {
 	//ステージ選択画面に遷移
-	m_stageSelectScene = NewGO<StageSelectScene>(PRIORITY_0, "stageselectscene");
+	m_stageSelectScene = NewGO<StageSelectScene>(PRIORITY_0, STAGESELECT_NAME);
 	////このクラスの削除
 	////DeleteGO(this);
 
@@ -182,6 +241,11 @@ void TitleScene::StageSelectSceneTransition()
 	DeleteGO(m_titleSprite);
 	//PUSHSTARTBUTTONを削除。
 	DeleteGO(m_pushStartButtonSprite);
+	//吹き出しを削除。
+	for (int i = 0; i < 3; i++)
+	{
+		DeleteGO(m_pressASpeechBalloon[i]);
+	}
 
 	//ステージ選択画面に遷移後、ボタンとプレイヤー追加ボタンを押せなくするフラグ
 	m_isCanStageSelectSceneFlg = false;

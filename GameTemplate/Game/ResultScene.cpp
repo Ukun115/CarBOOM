@@ -6,8 +6,6 @@
 
 namespace
 {
-	const int PRIORITY_1 = 1;	//優先度1
-
 	const Vector3 NUMBER1_POS = { 150.0f,50.0f,0.0f };		//１位プレイヤーの表示位置
 	const Vector3 NUMBER2_POS = { 150.0f,-50.0f,0.0f };		//２位プレイヤーの表示位置
 	const Vector3 NUMBER3_POS = { 150.0f,-150.0f,0.0f };	//３位プレイヤーの表示位置
@@ -23,8 +21,8 @@ namespace
 bool ResultScene::Start()
 {
 	//インスタンスを探す。
-	m_gameScene = FindGO<GameScene>("gamescene");
-	m_player = FindGO<Player>("player");
+	m_gameScene = FindGO<GameScene>(GAMESCENE_NAME);
+	m_player = FindGO<Player>(PLAYER_NAME);
 
 	//順位文字を初期化し、表示
 	for (int i = 0; i < 4; i++)
@@ -121,6 +119,9 @@ void ResultScene::Update()
 		{
 			//exeを閉じてゲーム終了
 			exit(EXIT_SUCCESS);
+			//メモ//
+			//exit(EXIT_FAILURE);は異常終了		EXIT_FAILURE = 1
+			//exit(EXIT_SUCCESS);は正常終了		EXIT_SUCCESS = 0
 		}
 	}
 }

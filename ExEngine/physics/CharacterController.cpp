@@ -44,7 +44,7 @@ namespace {
 				//衝突している。
 				isHit = true;
 				Vector3 hitPosTmp = *(Vector3*)&convexResult.m_hitPointLocal;
-				//衝突点の距離を求める。。
+				//衝突点の距離を求める。
 				Vector3 vDist;
 				vDist.Subtract(hitPosTmp, startPos);
 				float distTmp = vDist.Length();
@@ -79,7 +79,7 @@ namespace {
 			//衝突点の法線を引っ張ってくる。
 			Vector3 hitNormalTmp;
 			Vector3CopyFrom(hitNormalTmp, convexResult.m_hitNormalLocal);
-			
+
 			//上方向と衝突点の法線のなす角度を求める。
 			float angle = fabsf(acosf(hitNormalTmp.y));
 			if (angle >= Math::PI * 0.3f		//地面の傾斜が54度以上なので壁とみなす。
@@ -88,7 +88,7 @@ namespace {
 				isHit = true;
 				Vector3 hitPosTmp;
 				Vector3CopyFrom(hitPosTmp, convexResult.m_hitPointLocal);
-				
+
 				//交点との距離を調べる。
 				Vector3 vDist;
 				vDist.Subtract(hitPosTmp, startPos);
@@ -243,7 +243,7 @@ const Vector3& CharacterController::Execute( Vector3& moveSpeed, float deltaTime
 		//地面上にいなくて降下中の場合はそのまま落下先を調べる。
 		Vector3 endPos;
 		Vector3CopyFrom(endPos, start.getOrigin());
-		
+
 		if (m_isOnGround == false) {
 			if (addPos.y > 0.0f) {
 				//ジャンプ中とかで上昇中。
@@ -263,7 +263,7 @@ const Vector3& CharacterController::Execute( Vector3& moveSpeed, float deltaTime
 		SweepResultGround callback;
 		callback.me = m_rigidBody.GetBody();
 		Vector3CopyFrom(callback.startPos, start.getOrigin());
-		
+
 		//衝突検出。
 		if(fabsf(endPos.y - callback.startPos.y) > FLT_EPSILON){
 			PhysicsWorld::GetInstance()->ConvexSweepTest((const btConvexShape*)m_collider.GetBody(), start, end, callback);

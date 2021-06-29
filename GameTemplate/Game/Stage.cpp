@@ -5,7 +5,6 @@
 
 namespace
 {
-	const int PRIORITY_0 = 0;	//優先度0
 	const int SNOW1 = 0;
 	const int SNOW2 = 1;
 }
@@ -14,7 +13,7 @@ namespace
 bool Stage::Start()
 {
 	//インスタンスを探す
-	m_stageSelectScene = FindGO<StageSelectScene>("stageselectscene");
+	m_stageSelectScene = FindGO<StageSelectScene>(STAGESELECT_NAME);
 
 	//ステージモデルオブジェクト生成
 	m_stage = NewGO<SkinModelRender>(PRIORITY_0,nullptr);
@@ -69,31 +68,38 @@ Stage::~Stage()
 
 void Stage::Update()
 {
+	//選択されたステージがアイスステージのとき、
 	if (m_stageSelectScene->GetStageNum() == Stage3)
 	{
-		if (m_fallSnowTimer == 0)
-		{
-			//1つ目の降る雪エフェクト再生開始。
-			m_fallSnowEffect[SNOW1].Play();
-			//更新
-			m_fallSnowEffect[SNOW1].Update();
-		}
-		if (m_fallSnowTimer == 200)
-		{
-			//2つ目の降る雪エフェクト再生開始。
-			m_fallSnowEffect[SNOW2].Play();
-			//更新
-			m_fallSnowEffect[SNOW2].Update();
-		}
-		if (m_fallSnowTimer == 400)
-		{
-			//タイマーを戻す
-			m_fallSnowTimer = 0;
-		}
-
-		//タイマー加算
-		m_fallSnowTimer++;
+		//雪エフェクト処理
+		SnowFall();
 	}
 }
 
-//リザルト画面に遷移時降る雪が重い
+
+//雪エフェクト処理関数
+void Stage::SnowFall()
+{
+	if (m_fallSnowTimer == 0)
+	{
+		//1つ目の降る雪エフェクト再生開始。
+		m_fallSnowEffect[SNOW1].Play();
+		//更新
+		m_fallSnowEffect[SNOW1].Update();
+	}
+	if (m_fallSnowTimer == 200)
+	{
+		//2つ目の降る雪エフェクト再生開始。
+		m_fallSnowEffect[SNOW2].Play();
+		//更新
+		m_fallSnowEffect[SNOW2].Update();
+	}
+	if (m_fallSnowTimer == 400)
+	{
+		//タイマーを戻す
+		m_fallSnowTimer = 0;
+	}
+
+	//タイマー加算
+	m_fallSnowTimer++;
+}

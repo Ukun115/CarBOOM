@@ -9,46 +9,33 @@
 
 namespace
 {
-	const int PRIORITY_0 = 0;	//優先度0
-	const int PRIORITY_1 = 1;	//優先度1
-
-	const Vector3 PlAYER_SCA = { 1.4f,1.4f,1.4f };			//プレイヤーの拡大率
-
 	const Vector3 PLAYER1_RESPOS = { -100.0f,150.0f,100.0f };		//リスポーン座標(左上)
 	const Vector3 PLAYER2_RESPOS = { 100.0f,150.0f, 100.0f };		//リスポーン座標(右上)
 	const Vector3 PLAYER3_RESPOS = { -100.0f,150.0f,-100.0f };		//リスポーン座標(左下)
 	const Vector3 PLAYER4_RESPOS = { 100.0f,150.0f,-100.0f };		//リスポーン座標(右下)
 
-	const int STAGE3 = 3;		//ステージ番号
+	const int TIME0 = 0;	//制限時間が0秒
 }
 
 
 bool Player::Start()
 {
-	Vector3 ehehe1 = {0,30,0};
-	Vector3 ehehe2 = {100,1,1};
-	float ehehe3 = 1000;
-	//ライトオブジェクト生成
-	Light* m_light = NewGO<Light>(PRIORITY_0, "light");
-	//ディレクションライトをセット
-	m_light->SetPointLightData(ehehe1, ehehe2,ehehe3);
-
 	//インスタンスを探す。
-	m_titleScene = FindGO<TitleScene>("titlescene");
-	m_gameScene = FindGO<GameScene>("gamescene");
-	m_enemy = FindGO<Enemy>("enemy");
-	m_stageSelectScene = FindGO<StageSelectScene>("stageselectscene");
+	m_titleScene = FindGO<TitleScene>(TITLESCENE_NAME);
+	m_gameScene = FindGO<GameScene>(GAMESCENE_NAME);
+	m_enemy = FindGO<Enemy>(ENEMY_NAME);
+	m_stageSelectScene = FindGO<StageSelectScene>(STAGESELECT_NAME);
 
 	//各プレイヤーの２段階溜め攻撃の可視化
 	for (int i = 0; i < 4; i++)
 	{
 		//溜め１段階目の「１」画像オブジェクト生成
-		m_DASpr1[i] = NewGO<SpriteRender>(PRIORITY_1,nullptr);
+		m_DASpr1[i] = NewGO<SpriteRender>(PRIORITY_1, nullptr);
 		m_DASpr1[i]->Init("Assets/image/DDS/1.dds", 100.0f, 100.0f);
 		//非表示
 		m_DASpr1[i]->Deactivate();
 		//溜め１段階目の「２」画像オブジェクト生成
-		m_DASpr2[i] = NewGO<SpriteRender>(PRIORITY_1,nullptr);
+		m_DASpr2[i] = NewGO<SpriteRender>(PRIORITY_1, nullptr);
 		m_DASpr2[i]->SetPosition({ -500.0f,0.0f,0.0f });
 		m_DASpr2[i]->Init("Assets/image/DDS/2.dds", 100.0f, 100.0f);
 		//非表示
@@ -69,7 +56,7 @@ bool Player::Start()
 		if (m_titleScene->GetPlaFlg(i) == true)
 		{
 			//プレイヤーモデルオブジェクト生成
-			m_player[i] = NewGO<SkinModelRender>(PRIORITY_0,nullptr);
+			m_player[i] = NewGO<SkinModelRender>(PRIORITY_0, nullptr);
 
 			//モデルのファイルパスを設定＆初期座標(リスポーン座標)の設定。
 			//追加されたプレイヤーの名前画像の表示と位置決め
@@ -79,6 +66,7 @@ bool Player::Start()
 				m_player[i]->Init("Assets/modelData/LowPoly_PlayerCar_Red.tkm");	//赤車
 				//落下したときの撃墜エフェクトの初期化。
 				m_shootDownEffect[i].Init(u"Assets/effect/efk/Player1_ShootDown.efk");
+				m_jetEffect[i].Init(u"Assets/effect/efk/JetRed.efk");
 			}
 			//2P
 			else if (i == Player2)
@@ -86,6 +74,7 @@ bool Player::Start()
 				m_player[i]->Init("Assets/modelData/LowPoly_PlayerCar_Blue.tkm");	//青車
 				//落下したときの撃墜エフェクトの初期化。
 				m_shootDownEffect[i].Init(u"Assets/effect/efk/Player2_ShootDown.efk");
+				m_jetEffect[i].Init(u"Assets/effect/efk/JetBlue.efk");
 			}
 			//3P
 			else if (i == Player3)
@@ -93,6 +82,7 @@ bool Player::Start()
 				m_player[i]->Init("Assets/modelData/LowPoly_PlayerCar_Yellow.tkm");	//黄車
 				//落下したときの撃墜エフェクトの初期化。
 				m_shootDownEffect[i].Init(u"Assets/effect/efk/Player3_ShootDown.efk");
+				m_jetEffect[i].Init(u"Assets/effect/efk/JetYellow.efk");
 			}
 			//4P
 			else if (i == Player4)
@@ -100,9 +90,8 @@ bool Player::Start()
 				m_player[i]->Init("Assets/modelData/LowPoly_PlayerCar_Green.tkm");	//緑車
 				//落下したときの撃墜エフェクトの初期化。
 				m_shootDownEffect[i].Init(u"Assets/effect/efk/Player4_ShootDown.efk");
+				m_jetEffect[i].Init(u"Assets/effect/efk/JetGreen.efk");
 			}
-			//大きさ調整。元のモデルが小さかったため、モデルの大きさを1.5倍。
-			m_player[i]->SetScale(PlAYER_SCA);
 			//プレイヤーを初期位置に持っていく。
 			PlaResPos(i);
 
@@ -115,6 +104,14 @@ bool Player::Start()
 			//↓【注意】関数内に入れるのはデグリー単位ではなくラジアン単位です。
 			m_shootDownEffectRot.AddRotationX(-1.5708);	//X軸を基点に、-1.5708rad(-90°)回転
 			m_shootDownEffect[i].SetRotation(m_shootDownEffectRot);
+
+			//エフェクトの大きさ調整
+			m_jetEffect[i].SetScale({ 3.0f,3.0f,3.0f });
+			//通常だと画面の上がエフェクトの上になっているので、ゲーム中のカメラ方向が上になるように調整
+			m_shootDownEffectRot = m_jetEffect[i].GetRotation();
+			//↓【注意】関数内に入れるのはデグリー単位ではなくラジアン単位です。
+			m_shootDownEffectRot.AddRotationX(-1.5708);	//X軸を基点に、-1.5708rad(-90°)回転
+			m_jetEffect[i].SetRotation(m_shootDownEffectRot);
 
 			//プレイヤー数を+1
 			m_plaNum++;
@@ -153,7 +150,7 @@ void Player::Update()
 	for (int i = Player1; i < m_plaNum; i++)
 	{
 		//制限時間が0秒になったらプレイヤーの処理を全て止める
-		if (m_gameScene->GetNowTime() != 0) {
+		if (m_gameScene->GetNowTime() != TIME0) {
 
 			//重力の影響を与える
 			Gravity(i);
@@ -161,28 +158,61 @@ void Player::Update()
 			//ゲーム開始のカウントダウンが終わるまでプレイヤーの処理をすべて止める
 			if (m_gameScene->GetCountDownFlg() == false)
 			{
-				//プレイヤーのDA溜め状態
-				PlaDAState(i);
+				//回転処理
+				PlaTurn(i);
 
 				//プレイヤーの状態
 				PlaNowState(i);
 
+				if (m_charaCon[i].IsOnGround()) {
+
+					if (m_isBPushFlg[i] == false)
+					{
+						if (m_atackTimer[i] == 0)
+						{
+							//移動処理
+							PlaMove(i);
+						}
+						if (m_isTyazi1Flg[i] == true)
+						{
+							//チャージ攻撃1の処理
+							m_moveSpeed[i] = m_plaDir[i] * 8.0f;
+						}
+						if (m_isTyazi2Flg[i] == true)
+						{
+							if (m_isTyaziEffectFlg[i] == true)
+							{
+								//ジェットエフェクト再生
+								m_jetEffect[i].Play();
+
+								m_isTyaziEffectFlg[i] = false;
+							}
+							//チャージ攻撃2処理
+							m_moveSpeed[i] = m_plaDir[i] * 20.0f;
+						}
+
+					}
+					if (m_isBPushFlg[i] == true)
+					{
+						//攻撃準備処理
+						PlaAttackBefore(i);
+
+					}
+				}
+
+				//プレイヤーのリスポーン処理
+				PlaResporn(i);
 				//プレイヤーの移動速度に補正を入れる
 				PlaSpeedCorrection(i);
 
-				//回転処理
-				PlaTurn(i);
-
 				//プレイヤーが敵とぶつかったとき敵に押される処理
 				PlaAndEneClash(i);
+
 				//プレイヤーとプレイヤーがぶつかったときの処理
 				PlaAndPlaClash(i);
 
 				//キャラクターコントローラーを使った移動処理に変更。
 				m_pos[i] = m_charaCon[i].Execute(m_moveSpeed[i], 1.0f);
-
-				//プレイヤーのリスポーン処理
-				PlaResporn(i);
 			}
 
 			if (m_gameScene->GetCountDownFlg() == true)
@@ -201,31 +231,31 @@ void Player::Update()
 
 
 //プレイヤーのリスポーン処理関数
-void Player::PlaResporn(int x)
+void Player::PlaResporn(int planum)
 {
-	if (m_pos[x].y < -1000.0f)
+	if (m_pos[planum].y < -1000.0f)
 	{
 		//撃墜エフェクト再生開始。
-		m_shootDownEffect[x].Play();
+		m_shootDownEffect[planum].Play();
 		//撃墜エフェクトの位置をプレイヤーが落ちた位置に設定
-		m_shootDownEffect[x].SetPosition(m_pos[x]);
+		m_shootDownEffect[planum].SetPosition(m_pos[planum]);
 		//更新
-		m_shootDownEffect[x].Update();
+		m_shootDownEffect[planum].Update();
 
 		//プレイヤーの座標をリスポーン座標にセット
-		PlaResPos(x);
+		PlaResPos(planum);
 
 		//キャラコンの座標にプレイヤーの座標をいれる
-		m_charaCon[x].SetPosition(m_pos[x]);
+		m_charaCon[planum].SetPosition(m_pos[planum]);
 
 		//スピードを初期化
-		m_moveSpeed[x] = { Vector3::Zero };
+		m_moveSpeed[planum] = { Vector3::Zero };
 
 		//キャラクターコントローラーを使った移動処理に変更。
-		m_pos[x] = m_charaCon[x].Execute(m_moveSpeed[x], 1.0f);
+		m_pos[planum] = m_charaCon[planum].Execute(m_moveSpeed[planum], 1.0f);
 
 		//落下時最後に触れた敵にポイントを与えるm_pushPlayer = 最後に押してきた敵のナンバー
-		m_gameScene->GetPlayerAddScore(m_pushPlayer[x], x);
+		m_gameScene->GetPlayerAddScore(m_pushPlayer[planum], planum);
 
 		for (int i = 0; i < 5; i++)
 		{
@@ -236,280 +266,256 @@ void Player::PlaResporn(int x)
 
 
 //落ちたプレイヤーの初期位置をセットさせる関数
-void Player::PlaResPos(int x)
+void Player::PlaResPos(int planum)
 {
-	switch (x)
+	switch (planum)
 	{
 		//1P
-	 case Player1:
-			m_pos[x] = PLAYER1_RESPOS;		//リスポーン座標(左上)
+	case Player1:
+		m_pos[planum] = PLAYER1_RESPOS;		//リスポーン座標(左上)
 
-			//プレイヤーがリスポーンしたときに全プレイヤー統一でステージ中央を向かせておいたほうが
-			//リスポーン時違和感がないので、ステージ中央を向かせておく。
-			m_rotAngle[x] = 2.5f;
-			break;
+		//プレイヤーがリスポーンしたときに全プレイヤー統一でステージ中央を向かせておいたほうが
+		//リスポーン時違和感がないので、ステージ中央を向かせておく。
+		m_rotAngle[planum] = 2.5f;
+		break;
 		//2P
-	 case Player2:
-			m_pos[x] = PLAYER2_RESPOS;		//リスポーン座標(右上)
+	case Player2:
+		m_pos[planum] = PLAYER2_RESPOS;		//リスポーン座標(右上)
 
-			//プレイヤーがリスポーンしたときに全プレイヤー統一でステージ中央を向かせておいたほうが
-			//リスポーン時違和感がないので、ステージ中央を向かせておく。
-			m_rotAngle[x] = 3.7f;
-			break;
+		//プレイヤーがリスポーンしたときに全プレイヤー統一でステージ中央を向かせておいたほうが
+		//リスポーン時違和感がないので、ステージ中央を向かせておく。
+		m_rotAngle[planum] = 3.7f;
+		break;
 		//3P
-	 case Player3:
-			m_pos[x] = PLAYER3_RESPOS;		//リスポーン座標(左下)
+	case Player3:
+		m_pos[planum] = PLAYER3_RESPOS;		//リスポーン座標(左下)
 
-			//プレイヤーがリスポーンしたときに全プレイヤー統一でステージ中央を向かせておいたほうが
-			//リスポーン時違和感がないので、ステージ中央を向かせておく。
-			m_rotAngle[x] = 1.0f;
-			break;
+		//プレイヤーがリスポーンしたときに全プレイヤー統一でステージ中央を向かせておいたほうが
+		//リスポーン時違和感がないので、ステージ中央を向かせておく。
+		m_rotAngle[planum] = 1.0f;
+		break;
 		//4P
-	 case Player4:
-			m_pos[x] = PLAYER4_RESPOS;		//リスポーン座標(右下)
+	case Player4:
+		m_pos[planum] = PLAYER4_RESPOS;		//リスポーン座標(右下)
 
-			//プレイヤーがリスポーンしたときに全プレイヤー統一でステージ中央を向かせておいたほうが
-			//リスポーン時違和感がないので、ステージ中央を向かせておく。
-			m_rotAngle[x] = 5.5f;
-			break;
+		//プレイヤーがリスポーンしたときに全プレイヤー統一でステージ中央を向かせておいたほうが
+		//リスポーン時違和感がないので、ステージ中央を向かせておく。
+		m_rotAngle[planum] = 5.5f;
+		break;
 	}
 
 	//回転情報をセットする
-	m_rot[x].SetRotation(Vector3::AxisY, m_rotAngle[x]);
+	m_rot[planum].SetRotation(Vector3::AxisY, m_rotAngle[planum]);
 
 	//プレイヤーの位置,回転の情報を更新する
-	PlaDataUpdate(x);
+	PlaDataUpdate(planum);
 }
 
 
 //プレイヤーの位置,回転の情報を更新する関数
-void Player::PlaDataUpdate(int x)
+void Player::PlaDataUpdate(int planum)
 {
 	//位置をセット
-	m_player[x]->SetPosition(m_pos[x]);
+	m_player[planum]->SetPosition(m_pos[planum]);
 	//回転をセット
-	m_player[x]->SetRotation(m_rot[x]);
+	m_player[planum]->SetRotation(m_rot[planum]);
+
+	//ブーストエフェクト位置をプレイヤー位置に設定
+	m_jetEffect[planum].SetPosition(m_pos[planum]);
+	m_jetEffect[planum].SetRotation(m_rot[planum]);
+	//更新
+	m_jetEffect[planum].Update();
 }
 
 
 //プレイヤーの現在の状態を伝える関数
-void Player::PlaNowState(int x)
+void Player::PlaNowState(int planum)
 {
-	if (m_pressTimer[x] == 0 && m_releaseTimer[x] == 0)
-	{
-		//移動処理
-		PlaMove(x);
-		m_isBPushFlg[x] = false;
-		m_isAtack0Flg[x] = false;
-		m_isAtack1Flg[x] = false;
-		m_isAtack2Flg[x] = false;
-		m_atackTimer[x] = 0;
 
-	}
-	if (m_pressTimer[x] > 0 && m_releaseTimer[x] == 0)
+	//Aボタンが押されてるとき、
+	if (g_pad[planum]->IsPress(enButtonA))
 	{
-		//攻撃準備処理
-		PlaAttackBefore(x);
+		m_isBPushFlg[planum] = true;
+
+		m_isTyaziEffectFlg[planum] = true;
+
+		//チャージしているときのタイマーを加算
+		m_tyaziTimer[planum]++;
+
+		//チャージ時間によって攻撃フラグを変える
+
+		if (m_tyaziTimer[planum] >= 0 && m_tyaziTimer[planum] < 30)
+		{
+			m_isAtack0Flg[planum] = true;
+		}
+		if (m_tyaziTimer[planum] >= 30 && m_tyaziTimer[planum] < 90)
+		{
+			m_isAtack0Flg[planum] = false;
+			m_isAtack1Flg[planum] = true;
+
+			//「1」表示
+			if (m_tyaziTimer[planum] == 30) {
+				m_DASpr2[planum]->Deactivate();
+				m_DASpr1[planum]->Activate();
+			}
+		}
+		if (m_tyaziTimer[planum] >= 90)
+		{
+			m_isAtack1Flg[planum] = false;
+			m_isAtack2Flg[planum] = true;
+
+			//「2」表示
+			if (m_tyaziTimer[planum] == 90) {
+				m_DASpr1[planum]->Deactivate();
+				m_DASpr2[planum]->Activate();
+			}
+		}
 	}
 
-	if (m_releaseTimer[x] > 0 && m_pressTimer[x] == 0 && m_isAtack0Flg[x] == true)
+	//Aボタンが押されてないとき、
+	if (!g_pad[planum]->IsPress(enButtonA))
 	{
+		m_isBPushFlg[planum] = false;
+
+		m_DASpr1[planum]->Deactivate();
+		m_DASpr2[planum]->Deactivate();
+
 		//押したときのタイマー初期化
-		m_pressTimer[x] = 0;
+		m_tyaziTimer[planum] = 0;
 
-		//離したときのタイマー初期化
-		m_releaseTimer[x] = 0;
-		m_isBPushFlg[x] = false;
-		m_isAtack0Flg[x] = false;
-		m_isAtack1Flg[x] = false;
-		m_isAtack2Flg[x] = false;
-		m_atackTimer[x] = 0;
-	}
-	if (m_releaseTimer[x] > 0 && m_pressTimer[x] == 0 && m_isAtack1Flg[x] == true)
-	{
-		//チャージ攻撃1の処理
-		m_moveSpeed[x] = m_plaDir[x] * 10.0f;
+		//攻撃フラグによって攻撃処理を変える
 
-		m_isTyazi1Flg[x] = true;
-	}
-	if (m_releaseTimer[x] > 0 && m_pressTimer[x] == 0 && m_isAtack2Flg[x] == true)
-	{
-		//チャージ攻撃2処理
-		m_moveSpeed[x] = m_plaDir[x] * 20.0f;
+		//チャージ失敗
+		if (m_isAtack0Flg[planum] == true)
+		{
+			m_isAtack0Flg[planum] = false;
+		}
 
-		m_isTyazi2Flg[x] = true;
-	}
+		//チャージ1
+		if (m_isAtack1Flg[planum] == true)
+		{
+			m_atackTimer[planum]++;
+			m_atackHanteiTimer[planum]++;
 
-	if (m_releaseTimer[x] == 20 && m_pressTimer[x] == 0)
-	{
-		//移動処理
-		PlaMove(x);
-		m_isBPushFlg[x] = false;
-		m_isAtack0Flg[x] = false;
-		m_isAtack1Flg[x] = false;
-		m_isAtack2Flg[x] = false;
-		m_atackTimer[x] = 0;
-		m_isTyazi1Flg[x] = false;
-		m_isTyazi2Flg[x] = false;
+			if (m_atackTimer[planum] > 0 && m_atackTimer[planum] < 20)
+			{
+				m_isTyazi1Flg[planum] = true;
+			}
+			if (m_atackTimer[planum] == 20)
+			{
+				m_atackTimer[planum] = 0;
+				m_isAtack1Flg[planum] = false;
+				m_isTyazi1Flg[planum] = false;
+				////押したときのタイマー初期化
+				//m_tyaziTimer[x] = 0;
+			}
+
+
+		}
+
+		//チャージ2
+		if (m_isAtack2Flg[planum] == true)
+		{
+			m_atackTimer[planum]++;
+			if (0 < m_atackTimer[planum] && m_atackTimer[planum] < 20)
+			{
+				m_isTyazi2Flg[planum] = true;
+			}
+			if (m_atackTimer[planum] == 20)
+			{
+				m_atackTimer[planum] = 0;
+				m_isAtack2Flg[planum] = false;
+				m_isTyazi2Flg[planum] = false;
+				////押したときのタイマー初期化
+				//m_tyaziTimer[x] = 0;
+			}
+		}
 	}
 }
 
 
 //プレイヤーの通常移動処理関数
-void Player::PlaMove(int x)
+void Player::PlaMove(int planum)
 {
 	//左スティックの入力量を加算する
-	m_moveSpeed[x].x += m_leftStick_x[x] * 10.0f * g_gameTime->GetFrameDeltaTime();
-	m_moveSpeed[x].z += m_leftStick_y[x] * 10.0f * g_gameTime->GetFrameDeltaTime();
+	m_moveSpeed[planum].x += m_leftStick_x[planum] * 10.0f * g_gameTime->GetFrameDeltaTime();
+	m_moveSpeed[planum].z += m_leftStick_y[planum] * 10.0f * g_gameTime->GetFrameDeltaTime();
 
 	//摩擦力を設定する
-	m_friction[x] = m_moveSpeed[x];
-	m_friction[x] *= -2.0f;
+	m_friction[planum] = m_moveSpeed[planum];
+	m_friction[planum] *= -2.0f;
 
 	//アイスステージが選択されているとき、
 	if (m_stageSelectScene->GetStageNum() == STAGE3)
 	{
 		//摩擦を減らす
-		m_friction[x] /= 3.0f;
+		m_friction[planum] /= 3.0f;
 	}
 
 	//摩擦力を加算する
-	m_moveSpeed[x].x += m_friction[x].x * g_gameTime->GetFrameDeltaTime();
-	m_moveSpeed[x].z += m_friction[x].z * g_gameTime->GetFrameDeltaTime();
+	m_moveSpeed[planum].x += m_friction[planum].x * g_gameTime->GetFrameDeltaTime();
+	m_moveSpeed[planum].z += m_friction[planum].z * g_gameTime->GetFrameDeltaTime();
 }
 
 
 //プレイヤーの移動速度に補正を入れる関数
-void Player::PlaSpeedCorrection(int x)
+void Player::PlaSpeedCorrection(int planum)
 {
 	//スピードの補正
-	if (m_moveSpeed[x].x > 5.0f) {
-		m_moveSpeed[x].x = 5.0f;	//右方向の最大速度
-	}
-	if (m_moveSpeed[x].x < -5.0f) {
-		m_moveSpeed[x].x = -5.0f;	//左方向の最大速度
-	}
-	if (m_moveSpeed[x].z > 5.0f) {
-		m_moveSpeed[x].z = 5.0f;	//上方向の最大速度
-	}
-	if (m_moveSpeed[x].z < -5.0f) {
-		m_moveSpeed[x].z = -5.0f;	//下方向の最大速度
-	}
+	m_moveSpeed[planum].x = min(m_moveSpeed[planum].x, 5.0f);//右方向の最大速度
+	m_moveSpeed[planum].x = max(m_moveSpeed[planum].x, -5.0f);//左方向の最大速度
+
+	m_moveSpeed[planum].z = min(m_moveSpeed[planum].z, 5.0f);//上方向の最大速度
+	m_moveSpeed[planum].z = max(m_moveSpeed[planum].z, -5.0f);//下方向の最大速度
 }
 
 
 //プレイヤーの回転処理関数
-void Player::PlaTurn(int x)
+void Player::PlaTurn(int planum)
 {
 	//左スティックの入力量を受け取る
-	m_leftStick_x[x] = g_pad[x]->GetLStickXF();
-	m_leftStick_y[x] = g_pad[x]->GetLStickYF();
+	m_leftStick_x[planum] = g_pad[planum]->GetLStickXF();
+	m_leftStick_y[planum] = g_pad[planum]->GetLStickYF();
 
 	//移動してないときは回転しない
-	if (fabsf(m_moveSpeed[x].x) < 0.001f && fabsf(m_moveSpeed[x].z) < 0.001f) {
+	if (fabsf(m_moveSpeed[planum].x) < 0.001f && fabsf(m_moveSpeed[planum].z) < 0.001f) {
 		return;
 	}
 	//回転角度
-	m_rotAngle[x] = atan2(m_moveSpeed[x].x, m_moveSpeed[x].z);
+	m_rotAngle[planum] = atan2(m_moveSpeed[planum].x, m_moveSpeed[planum].z);
 
-	m_rot[x].SetRotation(Vector3::AxisY, m_rotAngle[x]);
+	m_rot[planum].SetRotation(Vector3::AxisY, m_rotAngle[planum]);
 }
 
 
 //プレイヤーのDA(ダッシュアタック)処理関数
-void Player::PlaAttackBefore(int x)
+void Player::PlaAttackBefore(int planum)
 {
-	m_moveSpeed[x].x += m_leftStick_x[x] * 1.5f * g_gameTime->GetFrameDeltaTime();
-	m_moveSpeed[x].z += m_leftStick_y[x] * 1.5f * g_gameTime->GetFrameDeltaTime();
+	m_moveSpeed[planum].x += m_leftStick_x[planum] * 1.5f * g_gameTime->GetFrameDeltaTime();
+	m_moveSpeed[planum].z += m_leftStick_y[planum] * 1.5f * g_gameTime->GetFrameDeltaTime();
 
 	//摩擦力を設定する
-	m_friction[x] = m_moveSpeed[x];
-	m_friction[x] *= -2.0f;
+	m_friction[planum] = m_moveSpeed[planum];
+	m_friction[planum] *= -2.0f;
 
-	//アイスステージが選択されているとき、
-	if (m_stageSelectScene->GetStageNum() == STAGE3)
-	{
-		//摩擦が一切ない変数を定義
-		Vector3 m_stage3Friction = { Vector3::Zero };
-		//摩擦を0にする
-		m_friction[x] = m_stage3Friction;
-	}
+	//摩擦力を加算する
+	m_moveSpeed[planum].x += m_friction[planum].x * g_gameTime->GetFrameDeltaTime();
+	m_moveSpeed[planum].z += m_friction[planum].z * g_gameTime->GetFrameDeltaTime();
 
-	m_atackTimer[x]++;
-	if (m_atackTimer[x] > 0 && m_atackTimer[x] < 30)
-	{
-		m_isAtack0Flg[x] = true;
-		m_isAtack1Flg[x] = false;
-		m_isAtack2Flg[x] = false;
-
-
-	}
-	if (m_atackTimer[x] >= 30 && m_atackTimer[x] < 90)
-	{
-		m_isAtack0Flg[x] = false;
-		m_isAtack1Flg[x] = true;
-		m_isAtack2Flg[x] = false;
-		//「1」表示
-		if (m_atackTimer[x] == 30) {
-			m_DASpr2[x]->Deactivate();
-			m_DASpr1[x]->Activate();
-		}
-	}
-	if (m_atackTimer[x] > 90)
-	{
-		m_isAtack0Flg[x] = false;
-		m_isAtack1Flg[x] = false;
-		m_isAtack2Flg[x] = true;
-		if (m_atackTimer[x] == 91) {
-			//「2」表示
-			m_DASpr1[x]->Deactivate();
-			m_DASpr2[x]->Activate();
-		}
-	}
-
-	m_plaDir[x] = m_moveSpeed[x];
+	m_plaDir[planum] = m_moveSpeed[planum];
 	m_plaDir->Normalize();
 }
 
 
-//プレイヤーのDAの溜め状態の判別処理関数
-void Player::PlaDAState(int x)
-{
-	//Aボタンを押しているとき、
-	if (g_pad[x]->IsPress(enButtonA) && m_isBPushFlg[x] == false && m_isTyazi1Flg[x] == false && m_isTyazi2Flg[x] == false)
-	{
-		//押しているときのタイマーを加算
-		m_pressTimer[x]++;
-
-		//離したときのタイマー初期化
-		m_releaseTimer[x] = 0;
-
-		m_isBPushFlg[x] = true;
-	}
-	//Aボタンを離したとき、
-	if (!g_pad[x]->IsPress(enButtonA) && m_isBPushFlg[x] == true)
-	{
-		//離したときのタイマーを加算
-		m_releaseTimer[x]++;
-
-		//押したときのタイマー初期化
-		m_pressTimer[x] = 0;
-
-		m_DASpr1[x]->Deactivate();
-		m_DASpr2[x]->Deactivate();
-	}
-}
-
-
 //プレイヤーと敵がぶつかったときの処理関数
-void Player::PlaAndEneClash(int x)
+void Player::PlaAndEneClash(int planum)
 {
 	for (int u = 0; u < 6; u++)
 	{
 		//プレイヤーと敵との距離を計算
-		m_diff = m_enemy->GetEnemyPos(u) - m_pos[x];
+		m_diff = m_enemy->GetEnemyPos(u) - m_pos[planum];
 		//距離の長さが30.0fより小さかったら、
-		if (m_diff.Length() < 30.0f)
+		if (m_diff.Length() < 30.0f && m_isTyazi1Flg[planum] == false && m_isTyazi2Flg[planum] == false)
 		{
 			m_enePushSpeed = m_enemy->GetEnemySpeed(u);
 			//これだとプッシュパワーが強すぎるため、威力を弱める
@@ -517,25 +523,36 @@ void Player::PlaAndEneClash(int x)
 			m_enePushSpeed.y /= 5;
 			m_enePushSpeed.z /= 5;
 
+			//チャージ中に敵と衝突したらチャージがキャンセルされる
+			m_isAtack0Flg[planum] = false;
+			m_isAtack1Flg[planum] = false;
+			m_isAtack2Flg[planum] = false;
+
+			m_DASpr1[planum]->Deactivate();
+			m_DASpr2[planum]->Deactivate();
+
+			//押したときのタイマー初期化
+			m_tyaziTimer[planum] = 0;
+
 			//プレイヤーに影響
-			m_moveSpeed[x] += m_enePushSpeed;
+			m_moveSpeed[planum] += m_enePushSpeed;
 		}
 	}
 }
 
 
 //プレイヤーとプレイヤーがぶつかったときの処理関数
-void Player::PlaAndPlaClash(int x)
+void Player::PlaAndPlaClash(int planum)
 {
 	//ほかプレイヤー(u)と自分(i)がぶつかったとき、ほかプレイヤーに押される処理
 	for (int u = Player1; u < m_plaNum; u++) {
-		if (u == x)
+		if (u == planum)
 		{
 			//uとiの値が同じのときは下の処理は行わずスキップする
 			continue;
 		}
 		//プレイヤー同士の距離を計算
-		m_diff = m_pos[u] - m_pos[x];
+		m_diff = m_pos[u] - m_pos[planum];
 		//距離の長さが30.0fより小さかったら、
 		if (m_diff.Length() < 40.0f)
 		{
@@ -545,7 +562,7 @@ void Player::PlaAndPlaClash(int x)
 			//ぶつかってきたプレイヤーはそのままステージ外に落ちないように減速させる
 			m_moveSpeed[u] /= 2.0;
 
-			if (m_isTyazi2Flg[x] == true)
+			if (m_isTyazi2Flg[planum] == true)
 			{
 				m_enePushSpeed *= 5.0f;
 				//チャージ２を受けたとき割る２しただけではそのまま落ちちゃうので
@@ -554,18 +571,18 @@ void Player::PlaAndPlaClash(int x)
 			}
 
 			//プレイヤーに影響
-			m_moveSpeed[x] += m_enePushSpeed;
+			m_moveSpeed[planum] += m_enePushSpeed;
 
 			//誰が押してきたかを保存
-			m_pushPlayer[x] = u;
+			m_pushPlayer[planum] = u;
 		}
 	}
 }
 
 
 //プレイヤーにかかる重力を設定する関数
-void Player::Gravity(int x)
+void Player::Gravity(int planum)
 {
 	//重力の影響を与える
-	m_moveSpeed[x].y -= 0.2f;
+	m_moveSpeed[planum].y -= 0.2f;
 }

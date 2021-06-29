@@ -41,6 +41,10 @@ private:
 	void Update() override;
 
 
+	//雪エフェクト処理関数
+	void SnowFall();
+
+
 public:
 
 };

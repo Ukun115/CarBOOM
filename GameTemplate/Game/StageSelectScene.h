@@ -11,6 +11,7 @@ private:
 	SkinModelRender* m_pla = nullptr;	//プレイヤー
 	TitleScene* m_titleScene = nullptr;
 	SpriteRender* m_titleSprite = nullptr;
+	SpriteRender* m_Ahukidasi[4] = { nullptr };
 
 
 	/// <summary>
@@ -29,6 +30,7 @@ private:
 	float m_rotAngle;				//回転角度
 	Vector3 m_friction;				//摩擦
 	Vector3 m_diff = { 0,0,0 };		//ステージとプレイヤーとの距離
+	Vector3 m_AhukidasiPos[4];
 
 
 	/// <summary>

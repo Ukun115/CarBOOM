@@ -3,12 +3,6 @@
 #include "TitleScene.h"
 
 
-namespace
-{
-	const int PRIORITY_0 = 0;	//優先度0
-}
-
-
 ///////////////////////////////////////////////////////////////////
 // ウィンドウプログラムのメイン関数。
 ///////////////////////////////////////////////////////////////////
@@ -33,13 +27,16 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	//////////////////////////////////////
 	auto& renderContext = g_graphicsEngine->GetRenderContext();
 
+	Light* m_light = nullptr;
 	//ライトオブジェクト生成
-	Light* m_light = NewGO<Light>(PRIORITY_0, "light");
+	m_light = NewGO<Light>(PRIORITY_0, LIGHT_NAME);
 	//ディレクションライトをセット
-	//m_light->SetDirectionLightData();
+	m_light->SetDirectionLightData();
+	//半球ライトをセット
+	m_light->SetHemiSphereLightData();
 
 	//タイトルシーンオブジェクト生成
-	TitleScene* m_titleScene = NewGO<TitleScene>(PRIORITY_0,"titlescene");
+	TitleScene* m_titleScene = NewGO<TitleScene>(PRIORITY_0, TITLESCENE_NAME);
 
 
 	// ここからゲームループ。
