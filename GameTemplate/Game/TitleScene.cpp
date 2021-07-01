@@ -150,6 +150,13 @@ TitleScene::~TitleScene()
 
 void TitleScene::Update()
 {
+	if (g_pad[0]->IsTrigger(enButtonA))
+	{
+		CSoundSource* m_tkSoundSorce = NewGO<CSoundSource>(PRIORITY_0, nullptr);
+		m_tkSoundSorce->Init(L"Assets/sound/ChangeState.wav");
+		m_tkSoundSorce->Play(false);	//偽でワンショット再生
+	}
+
 	//ステージ選択画面に遷移すると抜けるフラグ
 	if (m_isCanStageSelectSceneFlg == true) {
 		//登録されたプレイヤー数が最大数4人になるまで追加できる

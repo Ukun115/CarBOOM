@@ -22,6 +22,10 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	//エフェクトエンジンのインスタンスを作成する。
 	EffectEngine::CreateInstance();
 
+	//サウンドエンジンのインスタンスを作成する。
+	CSoundEngine::CreateInstance();
+	CSoundEngine::GetInstance()->Init();
+
 	//////////////////////////////////////
 	// 初期化を行うコードを書くのはここまで！！！
 	//////////////////////////////////////
@@ -48,6 +52,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 		//////////////////////////////////////
 		//ここから絵を描くコードを記述する。
 		//////////////////////////////////////
+
 
 		//ゲームオブジェクトマネージャーの更新。
 		GameObjectManager::GetInstance()->ExecuteUpdate();

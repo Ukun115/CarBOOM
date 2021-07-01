@@ -116,10 +116,10 @@ float4x4 CalcSkinMatrix(SSkinVSIn skinVert)
 	float4x4 skinning = 0;
 	float w = 0.0f;
 	[unroll]
-    for (int i1 = 0; i1 < 3; i1++)
+    for (int i = 0; i < 3; i++)
     {
-        skinning += g_boneMatrix[skinVert.Indices[i1]] * skinVert.Weights[i1];
-        w += skinVert.Weights[i1];
+        skinning += g_boneMatrix[skinVert.Indices[i]] * skinVert.Weights[i];
+        w += skinVert.Weights[i];
     }
 
     skinning += g_boneMatrix[skinVert.Indices[3]] * (1.0f - w);
@@ -365,7 +365,7 @@ float3 CalculatePhoneSpecular(float3 lightDirection, float3 lightColor, float3 w
 	t = max(0.0f, t);
 
 	//鏡面反射の強さを絞る。
-	t = pow(t,3.0f);
+	t = pow(t,1.5f);
 
 	//鏡面反射光を求める。
 	return directionLight.color * t;
@@ -384,7 +384,7 @@ float CalculateImpactRate(float3 ligPos, float ligRange, float3 worldPos)
 	lAffect = max(0.0, lAffect);
 
 	//影響を指数関数的にする。
-	lAffect = pow(lAffect,1.0f);
+	lAffect = pow(lAffect,1.5f);
 	return lAffect;
 }
 

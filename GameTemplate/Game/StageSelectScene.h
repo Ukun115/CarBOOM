@@ -75,5 +75,5 @@ public:
 	/// ゲッター
 	/// </summary>
 	//選択されたステージ番号を得る関数
-	int GetStageNum() { return m_stageNum; };
+	 int GetStageNum() { return m_stageNum; };
 };

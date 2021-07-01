@@ -41,11 +41,11 @@ public:
 	/// セッター
 	/// </summary>
 	//モデルの位置を設定する関数
-	void SetPosition(const Vector3 pos) { m_pos = pos; }
+	void SetPosition(Vector3 pos) { m_pos = pos; }
 	//モデルの回転を設定する関数
-	void SetRotation(const Quaternion rot) { m_rot = rot; }
+	void SetRotation(Quaternion rot) { m_rot = rot; }
 	//モデルの拡大率を設定する関数
-	void SetScale(const Vector3 sca) { m_sca = sca; }
+	void SetScale(Vector3 sca) { m_sca = sca; }
 
 
 	/// <summary>

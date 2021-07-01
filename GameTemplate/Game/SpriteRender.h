@@ -33,11 +33,11 @@ public:
 	/// セッター
 	/// </summary>
 	//画像の位置を設定する関数
-	void SetPosition(const Vector3& pos) { m_pos = pos; }
+	void SetPosition(Vector3 pos) { m_pos = pos; }
 	//画像の回転を設定する関数
-	void SetRotation(const Quaternion& rot) { m_rot = rot; }
+	void SetRotation(Quaternion rot) { m_rot = rot; }
 	//画像の拡大率を設定する関数
-	void SetScale(const Vector3& sca) { m_sca = sca; }
+	void SetScale(Vector3 sca) { m_sca = sca; }
 	//画像の色を設定する関数
-	void SetMulColor(const Vector4& mulColor) { m_sprite.SetMulColor(mulColor); }
+	void SetMulColor(Vector4 mulColor) { m_sprite.SetMulColor(mulColor); }
 };

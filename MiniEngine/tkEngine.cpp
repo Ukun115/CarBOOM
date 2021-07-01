@@ -25,16 +25,16 @@ void TkEngine::Init(HWND hwnd, UINT frameBufferWidth, UINT frameBufferHeight)
 }
 void TkEngine::BeginFrame()
 {
-	m_gameTime.BeginMeasurement();
+	//m_gameTime.BeginMeasurement();
 	m_graphicsEngine->BeginRender();
 	GamePad::BeginFrame();
 	for (auto& pad : m_pad) {
 		pad.Update();
 	}
-	
+
 }
 void TkEngine::EndFrame()
 {
 	m_graphicsEngine->EndRender();
-	m_gameTime.EndMeasurement();
+	//m_gameTime.EndMeasurement();
 }

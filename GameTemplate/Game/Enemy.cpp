@@ -194,13 +194,13 @@ void Enemy::Update()
 					//赤ポイントライトを設定
 					m_enePoiLigPos = m_enePos[i];
 					m_enePoiLigPos.x -= 10.0f;
-					m_enePoiLigPos.y += 20.0f;
+					m_enePoiLigPos.y += 10.0f;
 					m_light->SetPointLightData(m_enePoiLigPos, RED, POILIG_RANGE, m_poiLigNum);
 					m_poiLigNum++;
 					//青ポイントライトを設定
 					m_enePoiLigPos = m_enePos[i];
 					m_enePoiLigPos.x += 10.0f;
-					m_enePoiLigPos.y += 20.0f;
+					m_enePoiLigPos.y += 10.0f;
 					m_light->SetPointLightData(m_enePoiLigPos, BLUE, POILIG_RANGE, m_poiLigNum);
 					m_poiLigNum++;
 

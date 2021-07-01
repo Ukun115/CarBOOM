@@ -67,7 +67,7 @@ public:
 	/// ゲッター
 	/// </summary>
 	//プレイヤーが追加されているかどうかを取得する関数
-	bool GetPlaFlg(int planum) { return m_isAddPlayerFlg[planum]; }
+	 bool GetPlaFlg(int planum) { return m_isAddPlayerFlg[planum]; }
 	//登録されたプレイヤーの合計人数を取得する関数
 	int GetTotalPlaNum(){ return m_totalPlaNum; }
 };

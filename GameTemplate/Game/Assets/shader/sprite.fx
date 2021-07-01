@@ -19,7 +19,7 @@ struct PSInput{
 Texture2D<float4> colorTexture : register(t0);	//�J���[�e�N�X�`���B
 sampler Sampler : register(s0);
 
-PSInput VSMain(VSInput In) 
+PSInput VSMain(VSInput In)
 {
 	PSInput psIn;
 	psIn.pos = mul( mvp, In.pos );

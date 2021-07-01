@@ -1,6 +1,7 @@
 #pragma once
 
 #include "HID/GamePad.h"
+#include "../GameTemplate/Game/GameTime.h"
 
 class GraphicsEngine;
 
