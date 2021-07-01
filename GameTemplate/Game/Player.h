@@ -61,6 +61,12 @@ private:
 	unsigned int m_pushPlayer[5];
 	Quaternion m_shootDownEffectRot;
 
+	//デバッグ用
+	SkinModelRender* m_skinModelRenderArrow[4] = { nullptr };
+	Vector3 m_arrowPos[4];
+	Quaternion m_arrowRot[4];
+	Vector3 m_arrowSize = Vector3::One;
+
 
 	/// <summary>
 	/// 列挙型の宣言
@@ -94,8 +100,6 @@ private:
 	void PlaTurn(int planum);
 	//プレイヤーのDA(ダッシュアタック)処理関数
 	void PlaAttackBefore(int planum);
-	//プレイヤーのDAの溜め状態の判別処理関数
-	void PlaDAState(int planum);
 	//プレイヤーの現在の状態を伝える関数
 	void PlaNowState(int planum);
 	//プレイヤーと敵がぶつかったときの処理関数
@@ -104,6 +108,9 @@ private:
 	void PlaAndPlaClash(int planum);
 	//プレイヤーにかかる重力を設定する関数
 	void Gravity(int planum);
+
+	//ベクトルを可視化させるデバック関数
+	void PlaMooveSpeedDebug(int planum);
 
 
 public:

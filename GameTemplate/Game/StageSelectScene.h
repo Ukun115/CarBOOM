@@ -33,6 +33,13 @@ private:
 	Vector3 m_AhukidasiPos[4];
 
 
+	//デバッグ用
+	SkinModelRender* m_skinModelRenderArrow = nullptr;
+	Vector3 m_arrowPos;
+	Quaternion m_arrowRot;
+	Vector3 m_arrowSize = Vector3::One;
+
+
 	/// <summary>
 	/// 列挙型の宣言
 	/// </summary>
@@ -67,6 +74,10 @@ private:
 	void TouchStage();
 	//プレイヤーが画面外に行かないようにする関数
 	void AvoidScreenOutSide();
+
+
+	//ベクトルを可視化させるデバック関数
+	void PlaMooveSpeedDebug();
 
 
 public:

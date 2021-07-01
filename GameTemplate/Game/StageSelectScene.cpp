@@ -76,6 +76,11 @@ bool StageSelectScene::Start()
 	//初期位置設定
 	m_pla->SetPosition({ 0.0f,0.0f,0.0f });
 
+	//デバック用のプレイヤースピードの矢印表示
+	m_skinModelRenderArrow = NewGO<SkinModelRender>(PRIORITY_2, nullptr);
+	m_skinModelRenderArrow->Init("Assets/modelData/Arrow.tkm");	//矢印
+
+
 	//プレイヤーの上に表示されるA吹き出し
 	for (int i = 0; i < 4; i++)
 	{
@@ -108,6 +113,9 @@ void StageSelectScene::Update()
 {
 	if (m_isCanGameStartFlg == true)
 	{
+		//ベクトルを可視化させるデバック関数
+		PlaMooveSpeedDebug();
+
 		//プレイヤーの回転処理
 		PlaTurn();
 		//プレイヤーの通常移動処理
@@ -151,6 +159,8 @@ void StageSelectScene::GameSceneTransition()
 		}
 		//プレイヤーを削除。
 		DeleteGO(m_pla);
+		//プレイヤーのスピード可視化矢印を削除。
+		DeleteGO(m_skinModelRenderArrow);
 		//背景画像を削除
 		DeleteGO(m_titleSprite);
 		//A吹き出し画像を削除
@@ -308,4 +318,27 @@ void StageSelectScene::AvoidScreenOutSide()
 	{
 		m_pos.z = -230.0f;
 	}
+}
+
+
+//ベクトルを可視化させるデバック関数
+void StageSelectScene::PlaMooveSpeedDebug()
+{
+	Vector3 Dir = m_moveSpeed;
+	Dir.y = 0;
+	Dir.Normalize();//大きさを位置にする
+	float x = Dir.Dot(Vector3::AxisX);//X軸から何度ずれているかを入れる
+	Dir.z *= -1;
+	float angleX = acosf(x);//アークコサイン
+	if (Dir.z < 0) {
+		angleX *= -1;
+	}
+	//angleX -= 0.5 * PAI;
+	m_arrowRot.SetRotationY(angleX);//ｘ度だけY軸を回す
+	m_skinModelRenderArrow->SetRotation(m_arrowRot);//角度を設定する
+	m_arrowPos = m_pos;
+	m_arrowPos.y += 30.0f;
+	m_skinModelRenderArrow->SetPosition(m_arrowPos);
+	m_arrowSize.x = m_arrowSize.z = m_moveSpeed.Length() / 5;
+	m_skinModelRenderArrow->SetScale(m_arrowSize);
 }

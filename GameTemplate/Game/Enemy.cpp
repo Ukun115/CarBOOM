@@ -28,6 +28,8 @@ namespace
 	const int TIME0 = 0;
 
 	const Vector3 SHOOTDOWNEFFECT_SCALE = { 40.0f,40.0f,40.0f };
+
+	//const float PI = 3.141592;	//円周率
 }
 
 
@@ -79,30 +81,46 @@ bool Enemy::Start()
 		m_enemy[i] = NewGO<SkinModelRender>(PRIORITY_0,nullptr);
 		//モデルのファイルパスを設定
 		m_enemy[i]->Init("Assets/modelData/LowPoly_PoliceCar.tkm");	//敵モデル
+
+		//デバック用の敵スピードの矢印表示
+		m_skinModelRenderArrow[i] = NewGO<SkinModelRender>(PRIORITY_0, nullptr);
+
 		//初期座標(リスポーン座標)の設定。
 		if (i == Enemy1)
 		{
 			m_enePos[Enemy1] = m_ranEneResPos[0];		//敵１の場所
+
+			m_skinModelRenderArrow[i]->Init("Assets/modelData/Arrow.tkm");	//矢印
 		}
 		else if (i == Enemy2)
 		{
 			m_enePos[Enemy2] = m_ranEneResPos[1];		//敵２の場所
+
+			m_skinModelRenderArrow[i]->Init("Assets/modelData/Arrow.tkm");	//矢印
 		}
 		else if (i == Enemy3)
 		{
 			m_enePos[Enemy3] = m_ranEneResPos[3];		//敵3の場所
+
+			m_skinModelRenderArrow[i]->Init("Assets/modelData/Arrow.tkm");	//矢印
 		}
 		else if (i == Enemy4)
 		{
 			m_enePos[Enemy4] = m_ranEneResPos[4];		//敵4の場所
+
+			m_skinModelRenderArrow[i]->Init("Assets/modelData/Arrow.tkm");	//矢印
 		}
 		else if (i == Enemy5)
 		{
 			m_enePos[Enemy5] = m_ranEneResPos[7];		//敵5の場所
+
+			m_skinModelRenderArrow[i]->Init("Assets/modelData/Arrow.tkm");	//矢印
 		}
 		else if (i == Enemy6)
 		{
 			m_enePos[Enemy6] = m_ranEneResPos[8];		//敵6の場所
+
+			m_skinModelRenderArrow[i]->Init("Assets/modelData/Arrow.tkm");	//矢印
 		}
 		//当たり判定のイニシャライズ(初期化)
 		m_charaCon[i].Init(15.0f, 85.0f, m_enePos[i]);
@@ -167,13 +185,15 @@ void Enemy::Update()
 				//重力の影響を与える
 				Gravity(i);
 
+				//ベクトルを可視化させるデバック関数
+				EneMooveSpeedDebug(i);
+
 				//スタートした瞬間に敵がダッシュしてしまうのを回避する処理
 				if (m_startDelayTimer < m_startDelay[i])
 				{
 					//スタート時にDAを遅らせるタイマーを加算
 					m_startDelayTimer++;
 				}
-				//落ちていないときは基本ここの処理が実行される。
 				else
 				{
 					//回転処理
@@ -209,6 +229,9 @@ void Enemy::Update()
 			}
 			else
 			{
+				//ベクトルを可視化させるデバック関数
+				EneMooveSpeedDebug(i);
+
 				//重力の影響を与える
 				Gravity(i);
 				//キャラクターコントローラーを使った移動処理に変更。
@@ -417,4 +440,27 @@ void Enemy::Gravity(int enenum)
 {
 	//重力の影響を与える
 	m_moveSpeed[enenum].y -= GRAVITY;
+}
+
+
+//ベクトルを可視化させるデバック関数
+void Enemy::EneMooveSpeedDebug(int enenum)
+{
+	Vector3 Dir = m_moveSpeed[enenum];
+	Dir.y = 0;
+	Dir.Normalize();//大きさを位置にする
+	float x = Dir.Dot(Vector3::AxisX);//X軸から何度ずれているかを入れる
+	Dir.z *= -1;
+	float angleX = acosf(x);//アークコサイン
+	if (Dir.z < 0) {
+		angleX *= -1;
+	}
+	//angleX -= 0.5 * PAI;
+	m_arrowRot[enenum].SetRotationY(angleX);//ｘ度だけY軸を回す
+	m_skinModelRenderArrow[enenum]->SetRotation(m_arrowRot[enenum]);//角度を設定する
+	m_arrowPos[enenum] = m_enePos[enenum];
+	m_arrowPos[enenum].y += 50.0f;
+	m_skinModelRenderArrow[enenum]->SetPosition(m_arrowPos[enenum]);
+	m_arrowSize.x = m_arrowSize.z = m_moveSpeed[enenum].Length() / 10;
+	m_skinModelRenderArrow[enenum]->SetScale(m_arrowSize);
 }

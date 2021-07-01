@@ -64,6 +64,13 @@ private:
 	int	m_poiLigNum = 0;
 
 
+	//デバッグ用
+	SkinModelRender* m_skinModelRenderArrow[6] = { nullptr };
+	Vector3 m_arrowPos[6];
+	Quaternion m_arrowRot[6];
+	Vector3 m_arrowSize = Vector3::One;
+
+
 	/// <summary>
 	/// 列挙型の宣言
 	/// </summary>
@@ -122,6 +129,8 @@ private:
 	void PlaAndEneClash(int enenum);
 	//敵にかかる重力を設定する関数
 	void Gravity(int enenum);
+	//敵のスピードベクトルを可視化させるデバック関数
+	void EneMooveSpeedDebug(int enenum);
 
 
 public:

@@ -15,6 +15,8 @@ namespace
 	const Vector3 PLAYER4_RESPOS = { 100.0f,150.0f,-100.0f };		//リスポーン座標(右下)
 
 	const int TIME0 = 0;	//制限時間が0秒
+
+	//const float PAI = 3.141592;		//円周率
 }
 
 
@@ -58,6 +60,9 @@ bool Player::Start()
 			//プレイヤーモデルオブジェクト生成
 			m_player[i] = NewGO<SkinModelRender>(PRIORITY_0, nullptr);
 
+			//デバック用のプレイヤースピードの矢印表示
+			m_skinModelRenderArrow[i] = NewGO<SkinModelRender>(PRIORITY_0, nullptr);
+
 			//モデルのファイルパスを設定＆初期座標(リスポーン座標)の設定。
 			//追加されたプレイヤーの名前画像の表示と位置決め
 			//１P
@@ -67,14 +72,18 @@ bool Player::Start()
 				//落下したときの撃墜エフェクトの初期化。
 				m_shootDownEffect[i].Init(u"Assets/effect/efk/Player1_ShootDown.efk");
 				m_jetEffect[i].Init(u"Assets/effect/efk/JetRed.efk");
+
+				m_skinModelRenderArrow[i]->Init("Assets/modelData/Arrow.tkm");	//矢印
 			}
 			//2P
 			else if (i == Player2)
 			{
-				m_player[i]->Init("Assets/modelData/LowPoly_PlayerCar_Blue.tkm");	//青車
+				m_player[i]->Init("Assets/modelData/LowPoly_PlayerCar_Red.tkm");	//青車
 				//落下したときの撃墜エフェクトの初期化。
 				m_shootDownEffect[i].Init(u"Assets/effect/efk/Player2_ShootDown.efk");
 				m_jetEffect[i].Init(u"Assets/effect/efk/JetBlue.efk");
+
+				m_skinModelRenderArrow[i]->Init("Assets/modelData/Arrow.tkm");	//矢印
 			}
 			//3P
 			else if (i == Player3)
@@ -83,6 +92,8 @@ bool Player::Start()
 				//落下したときの撃墜エフェクトの初期化。
 				m_shootDownEffect[i].Init(u"Assets/effect/efk/Player3_ShootDown.efk");
 				m_jetEffect[i].Init(u"Assets/effect/efk/JetYellow.efk");
+
+				m_skinModelRenderArrow[i]->Init("Assets/modelData/Arrow.tkm");	//矢印
 			}
 			//4P
 			else if (i == Player4)
@@ -91,6 +102,8 @@ bool Player::Start()
 				//落下したときの撃墜エフェクトの初期化。
 				m_shootDownEffect[i].Init(u"Assets/effect/efk/Player4_ShootDown.efk");
 				m_jetEffect[i].Init(u"Assets/effect/efk/JetGreen.efk");
+
+				m_skinModelRenderArrow[i]->Init("Assets/modelData/Arrow.tkm");	//矢印
 			}
 			//プレイヤーを初期位置に持っていく。
 			PlaResPos(i);
@@ -164,6 +177,9 @@ void Player::Update()
 				//プレイヤーの状態
 				PlaNowState(i);
 
+				//ベクトルを可視化させるデバック関数
+				PlaMooveSpeedDebug(i);
+
 				if (m_charaCon[i].IsOnGround()) {
 
 					if (m_isBPushFlg[i] == false)
@@ -217,6 +233,9 @@ void Player::Update()
 
 			if (m_gameScene->GetCountDownFlg() == true)
 			{
+				//ベクトルを可視化させるデバック関数
+				PlaMooveSpeedDebug(i);
+
 				//重力の影響を与える
 				Gravity(i);
 
@@ -585,4 +604,27 @@ void Player::Gravity(int planum)
 {
 	//重力の影響を与える
 	m_moveSpeed[planum].y -= 0.2f;
+}
+
+
+//ベクトルを可視化させるデバック関数
+void Player::PlaMooveSpeedDebug(int planum)
+{
+	Vector3 Dir = m_moveSpeed[planum];
+	Dir.y = 0;
+	Dir.Normalize();//大きさを位置にする
+	float x = Dir.Dot(Vector3::AxisX);//X軸から何度ずれているかを入れる
+	Dir.z *= -1;
+	float angleX = acosf(x);//アークコサイン
+	if (Dir.z < 0) {
+		angleX *= -1;
+	}
+	//angleX -= 0.5 * PAI;
+	m_arrowRot[planum].SetRotationY(angleX);//ｘ度だけY軸を回す
+	m_skinModelRenderArrow[planum]->SetRotation(m_arrowRot[planum]);//角度を設定する
+	m_arrowPos[planum] = m_pos[planum];
+	m_arrowPos[planum].y += 30.0f;
+	m_skinModelRenderArrow[planum]->SetPosition(m_arrowPos[planum]);
+	m_arrowSize.x = m_arrowSize.z = m_moveSpeed[planum].Length() / 5;
+	m_skinModelRenderArrow[planum]->SetScale(m_arrowSize);
 }
