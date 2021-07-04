@@ -8,20 +8,23 @@
 		//↑2階層上にディレクトリを移動してからフォルダを潜っている。
 
 
+//TODO: 影を落とせるようにする
+
+
 namespace
 {
 	const int RES_POS_NUM = 10;	//リスポーン位置の総数
 	//敵の各リスポーン位置
-	const Vector3 ENE_RES_POS_1 = { -150.0f,200.0f,150.0f };
-	const Vector3 ENE_RES_POS_2 = { 0.0f,200.0f,100.0f };
-	const Vector3 ENE_RES_POS_3 = { 100.0f,200.0f,100.0f };
-	const Vector3 ENE_RES_POS_4 = { -100.0f,200.0f,00.0f };
-	const Vector3 ENE_RES_POS_5 = { 150.0f,200.0f,150.0f };
-	const Vector3 ENE_RES_POS_6 = { 100.0f,200.0f,0.0f };
-	const Vector3 ENE_RES_POS_7 = { -100.0f,200.0f,-100.0f };
-	const Vector3 ENE_RES_POS_8 = { 0.0f,200.0f,-100.0f };
-	const Vector3 ENE_RES_POS_9 = { 100.0f,200.0f,-100.0f };
-	const Vector3 ENE_RES_POS_10 = { 0.0f,200.0f,0.0f };
+	const Vector3 ENE_RES_POS_1 = { -150.0f,150.0f,150.0f };
+	const Vector3 ENE_RES_POS_2 = { 0.0f,150.0f,100.0f };
+	const Vector3 ENE_RES_POS_3 = { 100.0f,150.0f,100.0f };
+	const Vector3 ENE_RES_POS_4 = { -100.0f,150.0f,00.0f };
+	const Vector3 ENE_RES_POS_5 = { 150.0f,150.0f,150.0f };
+	const Vector3 ENE_RES_POS_6 = { 100.0f,150.0f,0.0f };
+	const Vector3 ENE_RES_POS_7 = { -100.0f,150.0f,-100.0f };
+	const Vector3 ENE_RES_POS_8 = { 0.0f,150.0f,-100.0f };
+	const Vector3 ENE_RES_POS_9 = { 100.0f,150.0f,-100.0f };
+	const Vector3 ENE_RES_POS_10 = { 0.0f,150.0f,0.0f };
 
 	const float POILIG_RANGE = 50.0f;	//ポイントライトの影響範囲
 
@@ -124,14 +127,8 @@ bool Enemy::Start()
 		}
 		//当たり判定のイニシャライズ(初期化)
 		m_charaCon[i].Init(15.0f, 85.0f, m_enePos[i]);
-		//ランダム関数のSEED（種）を設定
-		//（これによりランダム値を本当の意味でランダムにしている）
-		srand((int)time(nullptr));
 		//300～600の範囲のランダム値でスタート時の敵のDAを遅らせるタイマーの値に代入
 		m_startDelay[i] = (300 + (int)(rand() * (600 - 300 + 1.0) / (1.0 + RAND_MAX)));
-		//ランダム関数のSEED（種）を設定
-		//（これによりランダム値を本当の意味でランダムにしている）
-		srand((int)time(nullptr));
 		//120～140の範囲のランダム値でDA後のCTタイマーの値に代入
 		m_eneCTCount[i] = (120 + (int)(rand() * (140 - 120 + 1.0) / (1.0 + RAND_MAX)));
 		//４で初期化。４は特にターゲット無し。
@@ -177,84 +174,88 @@ void Enemy::Update()
 	//全敵分ループ
 	for (int i = Enemy1; i < MaxEnemyNum; i++)
 	{
+		//落ちる時に落下音を鳴らせる処理
+		SoundPlayBack(FallSound,i);
+
 		//制限時間が０秒になったらプレイヤーの処理を全て止める
-		if (m_gameScene->GetNowTime() != TIME0) {
-			//ゲーム開始のカウントダウンが終わるまでプレイヤーの処理をすべて止める
-			if (m_gameScene->GetCountDownFlg() == false)
+		if (m_gameScene->GetNowTime() == TIME0)
+		{
+			continue;
+		}
+		//ゲーム開始のカウントダウンが終わるまでプレイヤーの処理をすべて止める
+		if (!m_gameScene->GetCountDownFlg())
+		{
+			//重力の影響を与える
+			Gravity(i);
+
+			//ベクトルを可視化させるデバック関数
+			EneMooveSpeedDebug(i);
+
+			//スタートした瞬間に敵がダッシュしてしまうのを回避する処理
+			if (m_startDelayTimer < m_startDelay[i])
 			{
-				//重力の影響を与える
-				Gravity(i);
-
-				//ベクトルを可視化させるデバック関数
-				EneMooveSpeedDebug(i);
-
-				//スタートした瞬間に敵がダッシュしてしまうのを回避する処理
-				if (m_startDelayTimer < m_startDelay[i])
-				{
-					//スタート時にDAを遅らせるタイマーを加算
-					m_startDelayTimer++;
-				}
-				else
-				{
-					//回転処理
-					EneTurn(i);
-
-					//プレイヤーが敵とぶつかったとき敵に押される処理
-					PlaAndEneClash(i);
-
-					//DA攻撃処理
-					EneDA(i);
-
-					//キャラクターコントローラーを使った移動処理に変更。
-					m_enePos[i] = m_charaCon[i].Execute(m_moveSpeed[i], 1.0f);
-
-					//プレイヤーの座標をリスポーン座標に移動
-					EneResporn(i);
-
-					//赤ポイントライトを設定
-					m_enePoiLigPos = m_enePos[i];
-					m_enePoiLigPos.x -= 10.0f;
-					m_enePoiLigPos.y += 10.0f;
-					m_light->SetPointLightData(m_enePoiLigPos, RED, POILIG_RANGE, m_poiLigNum);
-					m_poiLigNum++;
-					//青ポイントライトを設定
-					m_enePoiLigPos = m_enePos[i];
-					m_enePoiLigPos.x += 10.0f;
-					m_enePoiLigPos.y += 10.0f;
-					m_light->SetPointLightData(m_enePoiLigPos, BLUE, POILIG_RANGE, m_poiLigNum);
-					m_poiLigNum++;
-
-					m_enePos[i] += m_moveSpeed[i];
-				}
+				//スタート時にDAを遅らせるタイマーを加算
+				m_startDelayTimer++;
 			}
 			else
 			{
-				//ベクトルを可視化させるデバック関数
-				EneMooveSpeedDebug(i);
+				//回転処理
+				EneTurn(i);
 
-				//重力の影響を与える
-				Gravity(i);
+				//プレイヤーが敵とぶつかったとき敵に押される処理
+				PlaAndEneClash(i);
+
+				//DA攻撃処理
+				EneDA(i);
+
 				//キャラクターコントローラーを使った移動処理に変更。
 				m_enePos[i] = m_charaCon[i].Execute(m_moveSpeed[i], 1.0f);
-			}
 
-			//敵の位置と回転情報を更新
-			EneDataUpdate(i);
+				//プレイヤーの座標をリスポーン座標に移動
+				EneResporn(i);
+
+				//赤ポイントライトを設定
+				m_enePoiLigPos = m_enePos[i];
+				m_enePoiLigPos.x -= 10.0f;
+				m_enePoiLigPos.y += 10.0f;
+				m_light->SetPointLightData(m_enePoiLigPos, RED, POILIG_RANGE, m_poiLigNum);
+				m_poiLigNum++;
+				//青ポイントライトを設定
+				m_enePoiLigPos = m_enePos[i];
+				m_enePoiLigPos.x += 10.0f;
+				m_enePoiLigPos.y += 10.0f;
+				m_light->SetPointLightData(m_enePoiLigPos, BLUE, POILIG_RANGE, m_poiLigNum);
+				m_poiLigNum++;
+
+				m_enePos[i] += m_moveSpeed[i];
+			}
 		}
+		else
+		{
+			//ベクトルを可視化させるデバック関数
+			EneMooveSpeedDebug(i);
+
+			//重力の影響を与える
+			Gravity(i);
+			//キャラクターコントローラーを使った移動処理に変更。
+			m_enePos[i] = m_charaCon[i].Execute(m_moveSpeed[i], 1.0f);
+		}
+		//敵の位置と回転情報を更新
+		EneDataUpdate(i);
 	}
 }
 
 
 //敵の位置,回転情報を更新する関数
-void Enemy::EneDataUpdate(int enenum)
+void Enemy::EneDataUpdate(int eneNum)
 {
-	m_enemy[enenum]->SetRotation(m_rot[enenum]);		//回転情報更新
-	m_enemy[enenum]->SetPosition(m_enePos[enenum]);	//位置情報更新
+	m_enemy[eneNum]->SetRotation(m_rot[eneNum]);		//回転情報更新
+	m_enemy[eneNum]->SetPosition(m_enePos[eneNum]);	//位置情報更新
 }
 
 
 //敵から最寄りのプレイヤーを検索する関数
-void Enemy::Distance(int enenum)
+void Enemy::Distance(int eneNum)
 {
 	//登録されているプレイヤーの分処理をする
 	for (int i = 0; i < m_titleScene->GetTotalPlaNum(); i++)
@@ -262,7 +263,7 @@ void Enemy::Distance(int enenum)
 		//プレイヤーの位置を取得
 		m_plaPos[i] = m_player->GetPlaPos(i);
 		//プレイヤーの位置と敵の位置の距離を取得
-		m_mostShortKyori[i] = m_plaPos[i] - m_enePos[enenum];
+		m_mostShortKyori[i] = m_plaPos[i] - m_enePos[eneNum];
 	}
 
 	//一番近い距離(m_mostShortKyori[0])のように並び替え(ソート)
@@ -283,170 +284,186 @@ void Enemy::Distance(int enenum)
 
 
 //敵のDA処理関数
-void Enemy::EneDA(int enenum)
+void Enemy::EneDA(int eneNum)
 {
-	if (m_isCtFlg[enenum] == false) {
+	if (!m_isCtFlg[eneNum]) {
+		//距離設定
+		Distance(eneNum);
+
+		if (m_charaCon[eneNum].IsOnGround()) {
+			//方向だけのm_mostShortKyori[0]に5.0fを掛けて速度にする
+			m_moveSpeed[eneNum] = m_mostShortKyori[0] * 5.0f;
+		}
+		//ダッシュサウンド
+		SoundPlayBack(DashSound,eneNum);
+
+		m_isPlaAndEneClashSoundFlg[eneNum] = true;
 
 		//CTをカウントするフラグを立てる
-		m_isCtFlg[enenum] = true;
-
-		//距離設定
-		Distance(enenum);
-
-		if (m_charaCon[enenum].IsOnGround()) {
-			//方向だけのm_mostShortKyori[0]に5.0fを掛けて速度にする
-			m_moveSpeed[enenum] = m_mostShortKyori[0] * 5.0f;
-		}
+		m_isCtFlg[eneNum] = true;
 	}
 	//CTフラグが立ってるとき、
-	if (m_isCtFlg[enenum] == true) {
+	if (m_isCtFlg[eneNum]) {
 
 		//CTをカウントする
-		m_CTTime[enenum]++;
+		m_CTTime[eneNum]++;
 
 		//摩擦を加えていく
-		EneFriction(enenum);
+		EneFriction(eneNum);
 	}
 	//CTのカウントが120秒～140秒のとき、
-	if (m_CTTime[enenum] == m_eneCTCount[enenum]) {
+	if (m_CTTime[eneNum] == m_eneCTCount[eneNum]) {
 
 		//CTフラグを下ろす
-		m_isCtFlg[enenum] = false;
+		m_isCtFlg[eneNum] = false;
 
 		//CTのカウントを0にする
-		m_CTTime[enenum] = 0;
+		m_CTTime[eneNum] = 0;
 	}
 }
 
 
 //敵の回転処理関数
-void Enemy::EneTurn(int enenum)
+void Enemy::EneTurn(int eneNum)
 {
 	//fabsf()は浮動小数点の絶対値を返す関数
-	if (fabsf(m_moveSpeed[enenum].x) < 0.001f && fabsf(m_moveSpeed[enenum].z) < 0.001f) {
+	if (fabsf(m_moveSpeed[eneNum].x) < 0.001f && fabsf(m_moveSpeed[eneNum].z) < 0.001f) {
 		return;
 	}
 	//回転角度
-	m_rotAngle[enenum] = atan2(m_moveSpeed[enenum].x, m_moveSpeed[enenum].z);
+	m_rotAngle[eneNum] = atan2(m_moveSpeed[eneNum].x, m_moveSpeed[eneNum].z);
 
-	m_rot[enenum].SetRotation(Vector3::AxisY, m_rotAngle[enenum]);
+	m_rot[eneNum].SetRotation(Vector3::AxisY, m_rotAngle[eneNum]);
 
-	m_eneDir[enenum] = m_moveSpeed[enenum];
-	m_eneDir[enenum].Normalize();
+	m_eneDir[eneNum] = m_moveSpeed[eneNum];
+	m_eneDir[eneNum].Normalize();
 }
 
 
 //敵のリスポーン処理関数
-void Enemy::EneResporn(int enenum)
+void Enemy::EneResporn(int eneNum)
 {
-	if (m_enePos[enenum].y < -1000.0f)
+	if (m_enePos[eneNum].y < -1000.0f)
 	{
+		//撃墜サウンド
+		SoundPlayBack(ShootDownSound,eneNum);
+
 		//撃墜エフェクト再生開始。
-		m_shootDownEffect[enenum].Play();
+		m_shootDownEffect[eneNum].Play();
 		//撃墜エフェクトの位置を敵が落ちた位置に設定
-		m_shootDownEffect[enenum].SetPosition(m_enePos[enenum]);
+		m_shootDownEffect[eneNum].SetPosition(m_enePos[eneNum]);
 		//更新
-		m_shootDownEffect[enenum].Update();
+		m_shootDownEffect[eneNum].Update();
 
 		//ランダムでリスポーン位置を入れる
-		m_enePos[enenum] = m_ranEneResPos[rand() % RES_POS_NUM];
+		m_enePos[eneNum] = m_ranEneResPos[rand() % RES_POS_NUM];
 		if (m_stageSelectScene->GetStageNum() == STAGE2)
 		{
 			//ランダム関数のSEED（種）を設定
 			//（これによりランダム値を本当の意味でランダムにしている）
 			srand((int)time(nullptr));
 			//ランダムでリスポーン位置を入れる
-			m_enePos[enenum] = m_ranEneResPos[rand() % 9];
+			m_enePos[eneNum] = m_ranEneResPos[rand() % 9];
 		}
 		//ランダム関数のSEED（種）を設定
 		//（これによりランダム値を本当の意味でランダムにしている）
 		srand((int)time(nullptr));
 		//ランダムでリスポーン回転を入れる
-		m_rotAngle[enenum] = m_randEneResAngle[rand() % 8];
+		m_rotAngle[eneNum] = m_randEneResAngle[rand() % 8];
 
 		//位置をセット
-		m_enemy[enenum]->SetPosition(m_enePos[enenum]);
+		m_enemy[eneNum]->SetPosition(m_enePos[eneNum]);
 
 		//回転情報をセットする
-		m_rot[enenum].SetRotation(Vector3::AxisY, m_rotAngle[enenum]);
-		m_enemy[enenum]->SetRotation(m_rot[enenum]);
+		m_rot[eneNum].SetRotation(Vector3::AxisY, m_rotAngle[eneNum]);
+		m_enemy[eneNum]->SetRotation(m_rot[eneNum]);
 
 		//キャラコンの座標にプレイヤーの座標をいれる
-		m_charaCon[enenum].SetPosition(m_enePos[enenum]);
+		m_charaCon[eneNum].SetPosition(m_enePos[eneNum]);
 
 		//スピードを0にする
-		m_moveSpeed[enenum] = { Vector3::Zero };
+		m_moveSpeed[eneNum] = { Vector3::Zero };
 
 		//キャラクターコントローラーを使った移動処理に変更。
-		m_enePos[enenum] = m_charaCon[enenum].Execute(m_moveSpeed[enenum], 1.0f);
+		m_enePos[eneNum] = m_charaCon[eneNum].Execute(m_moveSpeed[eneNum], 1.0f);
 
 		//落下時最後に触れた敵にポイントを与えるm_pushPlayer = 最後に押してきたプレイヤーのナンバー
 		//y=5にして、5の時は落としてきたプレイヤーのスコアを+10ptするようにする。
-		m_gameScene->GetPlayerAddScore(m_pushPlayer[enenum], 5);
+		m_gameScene->GetPlayerAddScore(m_pushPlayer[eneNum], 5);
 	}
 }
 
 
 //敵の摩擦処理関数
-void Enemy::EneFriction(int enenum)
+void Enemy::EneFriction(int eneNum)
 {
 	//摩擦力を設定する
-	m_friction[enenum] = m_moveSpeed[enenum];
-	m_friction[enenum] *= -1.5f;
+	m_friction[eneNum] = m_moveSpeed[eneNum];
+	m_friction[eneNum] *= -1.5f;
+
+	///下のif文はステージの処理なのでステージクラスに移したい。
 	//アイスステージが選択されているとき、
 	if (m_stageSelectScene->GetStageNum() == STAGE3)
 	{
 		//摩擦を減らす
-		m_friction[enenum] /= 2.0f;
+		m_friction[eneNum] /= 2.0f;
 	}
 	//摩擦力を加算する
-	m_moveSpeed[enenum].x += m_friction[enenum].x * g_gameTime->GetFrameDeltaTime();
-	m_moveSpeed[enenum].z += m_friction[enenum].z * g_gameTime->GetFrameDeltaTime();
+	m_moveSpeed[eneNum].x += m_friction[eneNum].x * g_gameTime->GetFrameDeltaTime();
+	m_moveSpeed[eneNum].z += m_friction[eneNum].z * g_gameTime->GetFrameDeltaTime();
 }
 
 
 //プレイヤーと敵がぶつかったときの処理関数
-void Enemy::PlaAndEneClash(int enenum)
+void Enemy::PlaAndEneClash(int eneNum)
 {
 	for (int u = 0; u < m_player->GetPlaNum(); u++)
 	{
 		//プレイヤーと敵との距離を計算
-		m_diff = m_player->GetPlaPos(u) - m_enePos[enenum];
+		m_diff = m_player->GetPlaPos(u) - m_enePos[eneNum];
 
-		//距離の長さが30.0fより小さかったら、
+		//距離の長さが40.0fより小さかったら、
 		if (m_diff.Length() < 40.0f)
 		{
-			if (m_player->GetPlaisTyazi1Flg(u) == true) {
-				m_samDir[enenum] = m_eneDir[enenum] * -1.0f + m_player->GetPlaDir(u);
-				m_samDir[enenum].Normalize();
-				m_moveSpeed[enenum] = m_samDir[enenum] * 20.0f;
-			}
-			if (m_player->GetPlaisTyazi2Flg(u) == true) {
+			if (m_isPlaAndEneClashSoundFlg[eneNum])
+			{
+				//衝突音4
+				SoundPlayBack(PlaAndEneClashSound, eneNum);
 
-				m_samDir[enenum] = m_eneDir[enenum] * -1.0f + m_player->GetPlaDir(u);
-				m_samDir[enenum].Normalize();
-				m_moveSpeed[enenum] = m_samDir[enenum] * 30.0f;
+				m_isPlaAndEneClashSoundFlg[eneNum] = false;
+			}
+
+			if (m_player->GetPlaisTyazi1Flg(u)) {
+				m_samDir[eneNum] = m_eneDir[eneNum] * -1.0f + m_player->GetPlaDir(u);
+				m_samDir[eneNum].Normalize();
+				m_moveSpeed[eneNum] = m_samDir[eneNum] * 20.0f;
+			}
+			if (m_player->GetPlaisTyazi2Flg(u)) {
+
+				m_samDir[eneNum] = m_eneDir[eneNum] * -1.0f + m_player->GetPlaDir(u);
+				m_samDir[eneNum].Normalize();
+				m_moveSpeed[eneNum] = m_samDir[eneNum] * 30.0f;
 
 			}
 			//最後に押してきたプレイヤーを記録
-			m_pushPlayer[enenum] = u;
+			m_pushPlayer[eneNum] = u;
 		}
 	}
 }
 
 
 //敵にかかる重力を設定する関数
-void Enemy::Gravity(int enenum)
+void Enemy::Gravity(int eneNum)
 {
 	//重力の影響を与える
-	m_moveSpeed[enenum].y -= GRAVITY;
+	m_moveSpeed[eneNum].y -= GRAVITY;
 }
 
 
 //ベクトルを可視化させるデバック関数
-void Enemy::EneMooveSpeedDebug(int enenum)
+void Enemy::EneMooveSpeedDebug(int eneNum)
 {
-	Vector3 Dir = m_moveSpeed[enenum];
+	Vector3 Dir = m_moveSpeed[eneNum];
 	Dir.y = 0;
 	Dir.Normalize();//大きさを位置にする
 	float x = Dir.Dot(Vector3::AxisX);//X軸から何度ずれているかを入れる
@@ -456,11 +473,98 @@ void Enemy::EneMooveSpeedDebug(int enenum)
 		angleX *= -1;
 	}
 	//angleX -= 0.5 * PAI;
-	m_arrowRot[enenum].SetRotationY(angleX);//ｘ度だけY軸を回す
-	m_skinModelRenderArrow[enenum]->SetRotation(m_arrowRot[enenum]);//角度を設定する
-	m_arrowPos[enenum] = m_enePos[enenum];
-	m_arrowPos[enenum].y += 50.0f;
-	m_skinModelRenderArrow[enenum]->SetPosition(m_arrowPos[enenum]);
-	m_arrowSize.x = m_arrowSize.z = m_moveSpeed[enenum].Length() / 10;
-	m_skinModelRenderArrow[enenum]->SetScale(m_arrowSize);
+	m_arrowRot[eneNum].SetRotationY(angleX);//ｘ度だけY軸を回す
+	m_skinModelRenderArrow[eneNum]->SetRotation(m_arrowRot[eneNum]);//角度を設定する
+	m_arrowPos[eneNum] = m_enePos[eneNum];
+	m_arrowPos[eneNum].y += 50.0f;
+	m_skinModelRenderArrow[eneNum]->SetPosition(m_arrowPos[eneNum]);
+	m_arrowSize.x = m_arrowSize.z = m_moveSpeed[eneNum].Length() / 10;
+	m_skinModelRenderArrow[eneNum]->SetScale(m_arrowSize);
+}
+
+//サウンドを一括にまとめる関数
+void Enemy::SoundPlayBack(int soundNum,int eneNum)
+{
+	switch (soundNum)
+	{
+	case ShootDownSound:
+		//撃墜サウンドの初期化
+		m_shootDownSound[eneNum] = NewGO<SoundSource>(PRIORITY_0, nullptr);
+		m_shootDownSound[eneNum]->Init(L"Assets/sound/ShootDown.wav");
+		m_shootDownSound[eneNum]->SetVolume(0.2f);
+		m_shootDownSound[eneNum]->Play(false);	//偽でワンショット再生
+
+		break;
+
+	case FallSound:
+		//高さが-10以下のとき再生
+		if (m_enePos[eneNum].y < -10.0f && m_isFallSoundFlg[eneNum])
+		{
+			//落下サウンドの初期化
+			m_FallSound[eneNum] = NewGO<SoundSource>(PRIORITY_0, nullptr);
+			m_FallSound[eneNum]->Init(L"Assets/sound/Fall.wav");
+			m_FallSound[eneNum]->SetVolume(0.1f);
+			m_FallSound[eneNum]->Play(false);	//偽でワンショット再生
+
+			m_isFallSoundFlg[eneNum] = false;
+		}
+		//リスポーン位置に移動したときにフラグを復活させる
+		if (m_enePos[eneNum].y == 150.0f)
+		{
+			m_isFallSoundFlg[eneNum] = true;
+		}
+
+		break;
+
+	case DashSound:
+		//落下サウンドの初期化
+		m_DashSound[eneNum] = NewGO<SoundSource>(PRIORITY_0, nullptr);
+		//ランダム関数のSEED（種）を設定
+		//（これによりランダム値を本当の意味でランダムにしている）
+		srand((int)time(nullptr));
+		m_randomDashSoundNum = rand() % 9;
+		switch (m_randomDashSoundNum)
+		{
+		case 0:
+			m_DashSound[eneNum]->Init(L"Assets/sound/EneDash1.wav");
+			break;
+		case 1:
+			m_DashSound[eneNum]->Init(L"Assets/sound/EneDash2.wav");
+			break;
+		case 2:
+			m_DashSound[eneNum]->Init(L"Assets/sound/EneDash3.wav");
+			break;
+		case 3:
+			m_DashSound[eneNum]->Init(L"Assets/sound/EneDash4.wav");
+			break;
+		case 4:
+			m_DashSound[eneNum]->Init(L"Assets/sound/EneDash5.wav");
+			break;
+		case 5:
+			m_DashSound[eneNum]->Init(L"Assets/sound/EneDash6.wav");
+			break;
+		case 6:
+			m_DashSound[eneNum]->Init(L"Assets/sound/EneDash7.wav");
+			break;
+		case 7:
+			m_DashSound[eneNum]->Init(L"Assets/sound/EneDash8.wav");
+			break;
+		case 8:
+			m_DashSound[eneNum]->Init(L"Assets/sound/EneDash9.wav");
+			break;
+		}
+		m_DashSound[eneNum]->SetVolume(0.3f);
+		m_DashSound[eneNum]->Play(false);	//偽でワンショット再生
+
+		break;
+
+	case PlaAndEneClashSound:
+		//プレイヤーとプレイヤーがぶつかったときのサウンドの初期化
+		m_PlaAndEneClashSound[eneNum] = NewGO<SoundSource>(PRIORITY_0, nullptr);
+		m_PlaAndEneClashSound[eneNum]->Init(L"Assets/sound/Clash2.wav");
+		m_PlaAndEneClashSound[eneNum]->SetVolume(0.5f);
+		m_PlaAndEneClashSound[eneNum]->Play(false);	//偽でワンショット再生
+
+		break;
+	}
 }

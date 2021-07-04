@@ -21,10 +21,9 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	PhysicsWorld::CreateInstance();
 	//エフェクトエンジンのインスタンスを作成する。
 	EffectEngine::CreateInstance();
-
 	//サウンドエンジンのインスタンスを作成する。
-	CSoundEngine::CreateInstance();
-	CSoundEngine::GetInstance()->Init();
+	SoundEngine::CreateInstance();
+	SoundEngine::GetInstance()->Init();
 
 	//////////////////////////////////////
 	// 初期化を行うコードを書くのはここまで！！！

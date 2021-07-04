@@ -13,10 +13,10 @@
 	 * CWaveFile::Readは同期読み込み、CWaveFile::ReadAsyncは非同期読み込みが行われます。</br>
 	 * ReadAsyncを使用した場合はCWaveFile::IsReadEndを使用して同期をとって下さい。</br>
 	 */
-	class CWaveFile {
+	class WaveFile {
 	public:
-		CWaveFile();
-		~CWaveFile();
+		WaveFile();
+		~WaveFile();
 		/*!
 		 * @brief	waveファイルをオープン。
 		 *@param[in]	fileName		ファイル名。

@@ -30,7 +30,7 @@
 		//初期化
 		void Init()
 		{
-			prefab::CSoundSource* ss = NewGO<prefab::CSoundSource>(0);
+			prefab::SoundSource* ss = NewGO<prefab::SoundSource>(0);
 			ss->Init("test.wave");				//こちらで初期化するとオンメモリ再生。
 			//soundSource.InitStreaming("test.wave");	//こちらで初期化するとストリーミング再生。
 			ss->Play(true);						//これはループ再生。
@@ -38,16 +38,16 @@
 
 	 *@endcode
 	 */
-	class CSoundSource : public IGameObject {
+	class SoundSource : public IGameObject {
 	public:
 		/*!
 		 * @brief	コンストラクタ。
 		 */
-		CSoundSource();
+		SoundSource();
 		/*!
 		 * @brief	デストラクタ。
 		 */
-		~CSoundSource();
+		~SoundSource();
 		/*!
 		 * @brief	初期化。
 		 *@details
@@ -229,7 +229,7 @@
 			enStreamingBuffering,	//バッファリング中。
 			enStreamingQueueing,	//キューイング中。
 		};
-		std::shared_ptr<CWaveFile>	m_waveFile;					//!<波形データ。
+		std::shared_ptr<WaveFile>	m_waveFile;					//!<波形データ。
 		IXAudio2SourceVoice*		m_sourceVoice = nullptr;	//!<ソースボイス。
 		bool						m_isLoop = false;			//!<ループフラグ。
 		bool						m_isPlaying = false;		//!<再生中フラグ。

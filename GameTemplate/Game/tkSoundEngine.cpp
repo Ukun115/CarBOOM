@@ -69,11 +69,11 @@
 			XAUDIO2FX_I3DL2_PRESET_PLATE,
 		};
 	}
-	CSoundEngine* CSoundEngine::m_soundEngine = nullptr;
+	SoundEngine* SoundEngine::m_soundEngine = nullptr;
 	/*!
 	 * @brief	コンストラクタ。
 	 */
-	CSoundEngine::CSoundEngine()
+	SoundEngine::SoundEngine()
 	{
 		if (m_soundEngine != nullptr) {
 			//インスタンスがすでに作られている。
@@ -85,14 +85,14 @@
 	/*!
 	 * @brief	デストラクタ。
 	 */
-	CSoundEngine::~CSoundEngine()
+	SoundEngine::~SoundEngine()
 	{
 		Release();
 	}
 	/*!
 	 * @brief	初期化。
 	 */
-	void CSoundEngine::Init()
+	void SoundEngine::Init()
 	{
 		CoInitializeEx( NULL, COINIT_MULTITHREADED );
 		unsigned int flags = 0;
@@ -164,7 +164,7 @@
 	/*!
 	 * @brief	開放。
 	 */
-	void CSoundEngine::Release()
+	void SoundEngine::Release()
 	{
 		//波形データバンクを解放。
 		m_waveFileBank.ReleaseAll();
@@ -192,7 +192,7 @@
 	/*!
 	* @brief	XAudio2のソースボイスを作成。
 	*/
-	IXAudio2SourceVoice* CSoundEngine::CreateXAudio2SourceVoice(CWaveFile* waveFile, bool is3DSound)
+	IXAudio2SourceVoice* SoundEngine::CreateXAudio2SourceVoice(WaveFile* waveFile, bool is3DSound)
 	{
 
 		//TK_ASSERT(waveFile->GetFormat()->nChannels <= INPUTCHANNELS, "Channel over");
@@ -226,7 +226,7 @@
 	/*!
 	* @brief	更新。
 	*/
-	void CSoundEngine::Update()
+	void SoundEngine::Update()
 	{
 		if (!m_isInited) {
 			return;

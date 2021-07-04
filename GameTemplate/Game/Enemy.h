@@ -20,6 +20,10 @@ private:
 	SkinModelRender* m_enemy[6] = { nullptr };		//敵6体分
 	Player* m_player = nullptr;
 	StageSelectScene* m_stageSelectScene = nullptr;
+	SoundSource* m_shootDownSound[6] = {nullptr};
+	SoundSource* m_FallSound[6];	//落下サウンド
+	SoundSource* m_DashSound[6];	//ダッシュサウンド
+	SoundSource* m_PlaAndEneClashSound[6];	//衝突サウンド
 
 
 	CharacterController m_charaCon[6];		//敵６体分のキャラクタコントローラークラスを作成
@@ -31,6 +35,8 @@ private:
 	/// </summary>
 	bool m_isCtFlg[6] = { false };		//敵６体分のCTのフラグ
 	bool m_stage2Flg = false;
+	bool m_isFallSoundFlg[6] = { false };			//落下音を落下中何回もならないようにするフラグ
+	bool m_isPlaAndEneClashSoundFlg[6] = { false };
 
 
 	/// <summary>
@@ -58,6 +64,7 @@ private:
 	Vector3 m_eneDir[6];			//向き
 	Vector3 m_diff;				//プレイヤーと敵との距離
 	unsigned int m_pushPlayer[6];
+	unsigned int m_randomDashSoundNum;
 
 
 	Vector3 m_enePoiLigPos;
@@ -107,6 +114,14 @@ private:
 		ResPos10,	//１０つ目
 	};
 
+	enum SoundNum
+	{
+		ShootDownSound,
+		FallSound,
+		DashSound,
+		PlaAndEneClashSound
+	};
+
 
 	bool Start()override;
 	~Enemy()override;
@@ -114,23 +129,25 @@ private:
 
 
 	//敵の位置,回転を更新する関数
-	void EneDataUpdate(int enenum);
+	void EneDataUpdate(int eneNum);
 	//敵のDA処理関数
-	void EneDA(int enenum);
+	void EneDA(int eneNum);
 	//敵の回転処理関数
-	void EneTurn(int enenum);
+	void EneTurn(int eneNum);
 	//敵から最寄りのプレイヤーを検索する関数
-	void Distance(int enenum);
+	void Distance(int eneNum);
 	//敵のリスポーン処理関数
-	void EneResporn(int enenum);
+	void EneResporn(int eneNum);
 	//敵の摩擦処理関数
-	void EneFriction(int enenum);
+	void EneFriction(int eneNum);
 	//プレイヤーと敵がぶつかったときの処理関数
-	void PlaAndEneClash(int enenum);
+	void PlaAndEneClash(int eneNum);
 	//敵にかかる重力を設定する関数
-	void Gravity(int enenum);
+	void Gravity(int eneNum);
 	//敵のスピードベクトルを可視化させるデバック関数
-	void EneMooveSpeedDebug(int enenum);
+	void EneMooveSpeedDebug(int eneNum);
+	//サウンドを一括にまとめる関数
+	void SoundPlayBack(int soundNum,int eneNum);
 
 
 public:
@@ -139,7 +156,7 @@ public:
 	/// ゲッター
 	/// </summary>
 	//敵の位置を取得する関数
-	Vector3 GetEnemyPos(int x) { return m_enePos[x]; }
+	Vector3 GetEnemyPos(int eneNum) { return m_enePos[eneNum]; }
 	//敵の速度を取得する関数
-	Vector3 GetEnemySpeed(int x) { return m_moveSpeed[x]; }
+	Vector3 GetEnemySpeed(int eneNum) { return m_moveSpeed[eneNum]; }
 };

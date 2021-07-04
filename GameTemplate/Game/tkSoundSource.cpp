@@ -4,19 +4,19 @@
 //#include "tkEngine/tkEnginePreCompile.h"
 #include "stdafx.h"
 
-	CSoundSource::CSoundSource()
+	SoundSource::SoundSource()
 	{
 		memset(m_emitterAzimuths, 0, sizeof(m_emitterAzimuths));
 		memset(m_matrixCoefficients, 0, sizeof(m_matrixCoefficients));
 	}
-	CSoundSource::~CSoundSource()
+	SoundSource::~SoundSource()
 	{
 		Release();
 	}
-	void CSoundSource::InitCommon()
+	void SoundSource::InitCommon()
 	{
 		m_dspSettings.SrcChannelCount = INPUTCHANNELS;
-		m_dspSettings.DstChannelCount = CSoundEngine::GetInstance()->GetNumChannel();
+		m_dspSettings.DstChannelCount = SoundEngine::GetInstance()->GetNumChannel();
 		m_dspSettings.pMatrixCoefficients = m_matrixCoefficients;
 		m_dspSettings.pDelayTimes = nullptr;
 		m_dspSettings.DopplerFactor = 1.0f;
@@ -28,27 +28,27 @@
 		m_dspSettings.EmitterVelocityComponent = 0.0f;
 		m_dspSettings.ListenerVelocityComponent = 0.0f;
 	}
-	void CSoundSource::Init(wchar_t* filePath, bool is3DSound)
+	void SoundSource::Init(wchar_t* filePath, bool is3DSound)
 	{
 
-		if (CSoundEngine::GetInstance()->IsAvailable() == false) {
+		if (SoundEngine::GetInstance()->IsAvailable() == false) {
 			//サウンドエンジンが利用不可。
 			return;
 		}
 		m_isAvailable = false;
 
-		m_waveFile = CSoundEngine::GetInstance()->GetWaveFileBank().FindWaveFile(0, filePath);
+		m_waveFile = SoundEngine::GetInstance()->GetWaveFileBank().FindWaveFile(0, filePath);
 		if (!m_waveFile) {
-			m_waveFile.reset(new CWaveFile);
+			m_waveFile.reset(new WaveFile);
 			bool result = m_waveFile->Open(filePath);
 			if (result == false) {
 				//waveファイルの読み込みに失敗。
-				CSoundEngine::GetInstance()->GetWaveFileBank().UnregistWaveFile(0, m_waveFile);
+				SoundEngine::GetInstance()->GetWaveFileBank().UnregistWaveFile(0, m_waveFile);
 				m_waveFile.reset();
 				return;
 			}
 			m_waveFile->AllocReadBuffer(m_waveFile->GetSize());	//waveファイルのサイズ分の読み込みバッファを確保する。
-			CSoundEngine::GetInstance()->GetWaveFileBank().RegistWaveFile(0, m_waveFile);
+			SoundEngine::GetInstance()->GetWaveFileBank().RegistWaveFile(0, m_waveFile);
 			unsigned int dummy;
 			m_waveFile->Read(m_waveFile->GetReadBuffer(), m_waveFile->GetSize(), &dummy);
 			m_waveFile->ResetFile();
@@ -56,43 +56,43 @@
 		}
 
 		//サウンドボイスソースを作成。
-		m_sourceVoice = CSoundEngine::GetInstance()->CreateXAudio2SourceVoice(m_waveFile.get(), is3DSound);
+		m_sourceVoice = SoundEngine::GetInstance()->CreateXAudio2SourceVoice(m_waveFile.get(), is3DSound);
 		if (is3DSound) {
-			CSoundEngine::GetInstance()->Add3DSoundSource(this);
+			SoundEngine::GetInstance()->Add3DSoundSource(this);
 		}
 		InitCommon();
 
 		m_is3DSound = is3DSound;
 		m_isAvailable = true;
 	}
-	void CSoundSource::Init(const wchar_t* filename, bool is3DSound)
+	void SoundSource::Init(const wchar_t* filename, bool is3DSound)
 	{
-		if (CSoundEngine::GetInstance()->IsAvailable() == false) {
+		if (SoundEngine::GetInstance()->IsAvailable() == false) {
 			//サウンドエンジンが利用不可。
 			return;
 		}
 		m_isAvailable = false;
-		m_waveFile = CSoundEngine::GetInstance()->GetWaveFileBank().FindWaveFile(0, filename);
+		m_waveFile = SoundEngine::GetInstance()->GetWaveFileBank().FindWaveFile(0, filename);
 		if (!m_waveFile) {
-			m_waveFile.reset(new CWaveFile);
+			m_waveFile.reset(new WaveFile);
 			m_waveFile->Open(filename);
-			CSoundEngine::GetInstance()->GetWaveFileBank().RegistWaveFile(0, m_waveFile);
+			SoundEngine::GetInstance()->GetWaveFileBank().RegistWaveFile(0, m_waveFile);
 			m_waveFile->AllocReadBuffer(m_waveFile->GetSize());	//waveファイルのサイズ分の読み込みバッファを確保する。
-			CSoundEngine::GetInstance()->GetWaveFileBank().RegistWaveFile(0, m_waveFile);
+			SoundEngine::GetInstance()->GetWaveFileBank().RegistWaveFile(0, m_waveFile);
 			unsigned int dummy;
 			m_waveFile->Read(m_waveFile->GetReadBuffer(), m_waveFile->GetSize(), &dummy);
 			m_waveFile->ResetFile();
 		}
 
 		//サウンドボイスソースを作成。
-		m_sourceVoice = CSoundEngine::GetInstance()->CreateXAudio2SourceVoice(m_waveFile.get(), is3DSound);
+		m_sourceVoice = SoundEngine::GetInstance()->CreateXAudio2SourceVoice(m_waveFile.get(), is3DSound);
 
 		if (m_sourceVoice == nullptr) {
-			MessageBoxA(nullptr, "たぶん絶対wavのファイルパスが違うよっ", "たいへん！", MB_OK);
+			MessageBoxA(nullptr, "wavのファイルパスが違います", "ファイルパスを正しくしましょう！", MB_OK);
 			return;
 		}
 		if (is3DSound) {
-			CSoundEngine::GetInstance()->Add3DSoundSource(this);
+			SoundEngine::GetInstance()->Add3DSoundSource(this);
 		}
 		InitCommon();
 
@@ -100,15 +100,15 @@
 		m_isAvailable = true;
 	}
 
-	void CSoundSource::InitStreaming(wchar_t* filePath, bool is3DSound, unsigned int ringBufferSize, unsigned int bufferSize)
+	void SoundSource::InitStreaming(wchar_t* filePath, bool is3DSound, unsigned int ringBufferSize, unsigned int bufferSize)
 	{
-		if (CSoundEngine::GetInstance()->IsAvailable() == false) {
+		if (SoundEngine::GetInstance()->IsAvailable() == false) {
 			//サウンドエンジンが利用不可。
 			return;
 		}
 		m_isAvailable = false;
 		//ストリーミングはCWaveFileの使いまわしはできない。
-		m_waveFile.reset(new CWaveFile);
+		m_waveFile.reset(new WaveFile);
 		m_waveFile->Open(filePath);
 
 		m_isStreaming = true;
@@ -118,16 +118,16 @@
 		m_readStartPos = 0;
 		m_currentBufferingSize = 0;
 		//サウンドボイスソースを作成。
-		m_sourceVoice = CSoundEngine::GetInstance()->CreateXAudio2SourceVoice(m_waveFile.get(), is3DSound);
+		m_sourceVoice = SoundEngine::GetInstance()->CreateXAudio2SourceVoice(m_waveFile.get(), is3DSound);
 		if (is3DSound) {
-			CSoundEngine::GetInstance()->Add3DSoundSource(this);
+			SoundEngine::GetInstance()->Add3DSoundSource(this);
 		}
 		InitCommon();
 
 		m_is3DSound = is3DSound;
 		m_isAvailable = true;
 	}
-	void CSoundSource::Release()
+	void SoundSource::Release()
 	{
 		if (m_isStreaming) {
 			if (m_waveFile) {
@@ -141,7 +141,7 @@
 		Remove3DSound();
 		DeleteGO(this);
 	}
-	void CSoundSource::Play(char* buff, unsigned int bufferSize)
+	void SoundSource::Play(char* buff, unsigned int bufferSize)
 	{
 		XAUDIO2_BUFFER buffer = { 0 };
 		buffer.pAudioData = (BYTE*)buff;
@@ -158,7 +158,7 @@
 		}
 	}
 
-	void CSoundSource::StartStreamingBuffring()
+	void SoundSource::StartStreamingBuffring()
 	{
 		char* readStartBuff = m_waveFile->GetReadBuffer();
 		m_readStartPos += m_currentBufferingSize;
@@ -170,7 +170,7 @@
 		m_waveFile->ReadAsync(&readStartBuff[m_readStartPos], m_streamingBufferSize, &m_currentBufferingSize);
 		m_streamingState = enStreamingBuffering;
 	}
-	void CSoundSource::Play(bool isLoop)
+	void SoundSource::Play(bool isLoop)
 	{
 		if (m_isAvailable == false) {
 			return;
@@ -195,7 +195,7 @@
 		}
 		m_isLoop = isLoop;
 	}
-	void CSoundSource::UpdateStreaming()
+	void SoundSource::UpdateStreaming()
 	{
 		if (!m_isPlaying) {
 			return;
@@ -239,14 +239,14 @@
 			}
 		}
 	}
-	void CSoundSource::Remove3DSound()
+	void SoundSource::Remove3DSound()
 	{
 		if (m_is3DSound) {
-			CSoundEngine::GetInstance()->Remove3DSoundSource(this);
+			SoundEngine::GetInstance()->Remove3DSoundSource(this);
 			m_is3DSound = false;
 		}
 	}
-	void CSoundSource::UpdateOnMemory()
+	void SoundSource::UpdateOnMemory()
 	{
 		if (!m_isPlaying) {
 			return;
@@ -265,7 +265,7 @@
 			}
 		}
 	}
-	void CSoundSource::Update()
+	void SoundSource::Update()
 	{
 		if (m_isAvailable == false) {
 			return;

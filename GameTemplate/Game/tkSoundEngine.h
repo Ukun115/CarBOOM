@@ -9,31 +9,31 @@
 
 #define INPUTCHANNELS 2  // number of source channels
 #define OUTPUTCHANNELS 8	//最大出力チャンネル数。
-class CWaveFile;
-class CSoundSource;
+class WaveFile;
+class SoundSource;
 
 /*!
  * @brief	サウンドエンジン。
  */
-class CSoundEngine{
+class SoundEngine{
 public:
 	/*!
 	 * @brief	コンストラクタ。
 	 */
-	CSoundEngine();
+	SoundEngine();
 	/*!
 	 * @brief	デストラクタ。
 	 */
-	~CSoundEngine();
+	~SoundEngine();
 
 	static void CreateInstance() {
 
-		m_soundEngine = new CSoundEngine;
+		m_soundEngine = new SoundEngine;
 	}
 	/*!
 	* @brief	CSoundEngineのインスタンスを取得。
 	*/
-	static CSoundEngine* GetInstance() {
+	static SoundEngine* GetInstance() {
 
 		return m_soundEngine;
 	}
@@ -52,14 +52,14 @@ public:
 	/*!
 	* @brief	3Dサウンドソースを追加。
 	*/
-	void Add3DSoundSource(CSoundSource* s)
+	void Add3DSoundSource(SoundSource* s)
 	{
 		m_3dSoundSource.push_back(s);
 	}
 	/*!
 	* @brief	3Dサウンドソースを削除。
 	*/
-	void Remove3DSoundSource(CSoundSource* s)
+	void Remove3DSoundSource(SoundSource* s)
 	{
 		auto it = std::find(m_3dSoundSource.begin(), m_3dSoundSource.end(), s);
 		if (it != m_3dSoundSource.end()) {
@@ -100,7 +100,7 @@ public:
 	/*!
 	* @brief	XAudio2のソースボイスを作成。
 	*/
-	IXAudio2SourceVoice* CreateXAudio2SourceVoice(CWaveFile* waveFile, bool is3DSound);
+	IXAudio2SourceVoice* CreateXAudio2SourceVoice(WaveFile* waveFile, bool is3DSound);
 	IXAudio2MasteringVoice* GetMasteringVoice()
 	{
 		return m_masteringVoice;
@@ -132,7 +132,7 @@ public:
 		return m_isInited;
 	}
 private:
-	static CSoundEngine* m_soundEngine;
+	static SoundEngine* m_soundEngine;
 
 	IXAudio2* m_xAudio2 = nullptr;
 	IXAudio2MasteringVoice* m_masteringVoice = nullptr;
@@ -148,7 +148,7 @@ private:
 	bool m_useRedirectToLFE = false;
 	bool m_isInited = false;
 	X3DAUDIO_LISTENER m_listener;					//!<サウンドリスナー。
-	std::list<CSoundSource*>	m_3dSoundSource;	//!<3Dサウンドのサウンドソース。
+	std::list<SoundSource*>	m_3dSoundSource;	//!<3Dサウンドのサウンドソース。
 	X3DAUDIO_CONE	m_emitterCone;
 	CWaveFileBank m_waveFileBank;					//!<波形データのバンク。
 };

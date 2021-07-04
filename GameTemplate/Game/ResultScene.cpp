@@ -55,7 +55,11 @@ bool ResultScene::Start()
 			m_rankingSprite[i]->SetPosition(RANKING4_POS);
 		}
 	}
+	//リザルトジングル
+	SoundPlayBack(ResultGingle);
 
+	//ゲーム中のBGMサウンド
+	SoundPlayBack(GameBGM);
 
 	//リザルト文字画像オブジェクト生成
 	m_resultSprite = NewGO<SpriteRender>(PRIORITY_1, nullptr);
@@ -113,17 +117,8 @@ ResultScene::~ResultScene()
 
 void ResultScene::Update()
 {
-	//プレイヤーの内、誰かのセレクトボタンが押されたら、
-	for (int i = 0; i < 4; i++) {
-		if (g_pad[i]->IsTrigger(enButtonSelect))
-		{
-			//exeを閉じてゲーム終了
-			exit(EXIT_SUCCESS);
-			//メモ//
-			//exit(EXIT_FAILURE);は異常終了		EXIT_FAILURE = 1
-			//exit(EXIT_SUCCESS);は正常終了		EXIT_SUCCESS = 0
-		}
-	}
+	//ゲーム終了処理
+	GameEnd();
 }
 
 
@@ -150,15 +145,88 @@ void ResultScene::RankingSort()
 		}
 	}
 
-	for (int i = 0; i < m_player->GetPlaNum(); i++)
+	//1Pのプレイヤー名の位置を設定
+	if (m_player->GetPlaNum() == 1)
 	{
-		if (i == 0)
-			m_plaNum[0]->SetPosition(NUMBER1_POS);
-		if (i == 1)
-			m_plaNum[1]->SetPosition(NUMBER2_POS);
-		if (i == 2)
-			m_plaNum[2]->SetPosition(NUMBER3_POS);
-		if (i == 3)
-			m_plaNum[3]->SetPosition(NUMBER4_POS);
+		m_plaNum[0]->SetPosition(NUMBER1_POS);
+	}
+	//2P
+	if (m_player->GetPlaNum() == 2)
+	{
+		m_plaNum[1]->SetPosition(NUMBER2_POS);
+	}
+	//3P
+	if (m_player->GetPlaNum() == 3)
+	{
+		m_plaNum[2]->SetPosition(NUMBER3_POS);
+	}
+	//4P
+	if (m_player->GetPlaNum() == 4)
+	{
+		m_plaNum[3]->SetPosition(NUMBER4_POS);
+	}
+}
+
+
+//ゲーム終了関数
+void ResultScene::GameEnd()
+{
+	//プレイヤーの内、誰かのセレクトボタンが押されたら、
+	for (int i = 0; i < 4; i++) {
+		if (g_pad[i]->IsTrigger(enButtonSelect))
+		{
+			//決定サウンド
+			SoundPlayBack(DecideSound);
+
+			m_timerOnFlg = true;
+		}
+	}
+	if (m_timerOnFlg)
+	{
+		m_exitTimer++;
+
+		if (m_exitTimer > 60)
+		{
+			//exeを閉じてゲーム終了
+			exit(EXIT_SUCCESS);
+			//メモ//
+			//exit(EXIT_FAILURE);は異常終了		EXIT_FAILURE = 1
+			//exit(EXIT_SUCCESS);は正常終了		EXIT_SUCCESS = 0
+		}
+	}
+}
+
+
+//サウンドを一括にまとめる関数
+void ResultScene::SoundPlayBack(int soundNum)
+{
+	switch (soundNum)
+	{
+	case ResultGingle:
+		//リザルトジングルの初期化
+		m_resultGingle = NewGO<SoundSource>(PRIORITY_0, nullptr);
+		m_resultGingle->Init(L"Assets/sound/ResultGingle.wav");
+		m_resultGingle->SetVolume(0.5f);
+		m_resultGingle->Play(false);	//偽でワンショット再生
+
+		break;
+
+	case GameBGM:
+		//ゲーム中のBGMサウンドの初期化
+		m_gameBGM = NewGO<SoundSource>(PRIORITY_0, nullptr);
+		m_gameBGM->Init(L"Assets/sound/GameBGM.wav");
+		m_gameBGM->SetVolume(0.01f);
+		m_gameBGM->Play(true);	//真でループ再生
+
+		break;
+
+	case DecideSound:
+		//決定サウンド
+		m_decideSound = NewGO<SoundSource>(PRIORITY_0, nullptr);
+		m_decideSound->Init(L"Assets/sound/Decide.wav");
+		m_decideSound->SetVolume(0.5f);
+		m_decideSound->Play(false);	//偽でワンショット再生
+
+		break;
 	}
 }

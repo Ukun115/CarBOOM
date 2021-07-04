@@ -19,6 +19,13 @@ private:
 	SpriteRender* m_DASpr2[4] = { nullptr };		//プレイヤー4人分
 	Enemy* m_enemy = nullptr;
 	StageSelectScene* m_stageSelectScene = nullptr;
+	SoundSource* m_carHorn[4];	//クラクションサウンド
+	SoundSource* m_shootDownSound[4];	//撃墜サウンド
+	SoundSource* m_FallSound[4];	//落下サウンド
+	SoundSource* m_ChargeSound[4];	//チャージサウンド
+	SoundSource* m_Dash1Sound[4];	//ダッシュ１サウンド
+	SoundSource* m_Dash2Sound[4];	//ダッシュ２サウンド
+	SoundSource* m_PlaAndPlaClashSound[4];	//プレイヤーとプレイヤーがぶつかったときのサウンド
 
 
 	CharacterController m_charaCon[4];		//プレイヤー4人分のキャラクタコントローラークラスを作成
@@ -35,7 +42,9 @@ private:
 	bool m_isAtack0Flg[4] = { false };		//Bボタンが押されたときのフラグ
 	bool m_isAtack1Flg[4] = { false };		//Bボタンが押されたときのフラグ
 	bool m_isAtack2Flg[4] = { false };		//Bボタンが押されたときのフラグ
-	bool m_isTyaziEffectFlg[4] = { false };
+	bool m_isCharge1EffectSoundFlg[4] = { false };
+	bool m_isCharge2EffectSoundFlg[4] = { false };
+	bool m_isFallSoundFlg[4] = { false };			//落下音を落下中何回もならないようにするフラグ
 
 
 	/// <summary>
@@ -80,6 +89,18 @@ private:
 		MaxPlayerNum	//プレイヤーの最大数
 	};
 
+	enum SoundNum
+	{
+		ShootDownSound,
+		CarHornSound,
+		FallSound,
+		ChargeSound,
+		Dash1Sound,
+		Dash2Sound,
+		PlaAndPlaClashSound,
+		PlaAndEneClashSound
+	};
+
 
 	bool Start() override;
 	~Player() override;
@@ -111,6 +132,9 @@ private:
 
 	//ベクトルを可視化させるデバック関数
 	void PlaMooveSpeedDebug(int planum);
+
+	//サウンドを一括にまとめる関数
+	void SoundPlayBack(int soundNum, int plaNum);
 
 
 public:

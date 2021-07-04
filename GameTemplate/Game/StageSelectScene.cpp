@@ -31,8 +31,6 @@ bool StageSelectScene::Start()
 	{
 		//全ステージモデルオブジェクト生成
 		m_stage[i] = NewGO<SkinModelRender>(PRIORITY_1, nullptr);
-		////大きさ調整
-		//m_stage[i]->SetScale({ 0.3,0.3,0.3 });
 		//全ステージスプライトオブジェクト生成
 		m_stageName[i] = NewGO<SpriteRender>(PRIORITY_1, nullptr);
 	}
@@ -97,6 +95,8 @@ bool StageSelectScene::Start()
 	m_titleSprite = NewGO<SpriteRender>(PRIORITY_0, nullptr);
 	m_titleSprite->Init("Assets/image/DDS/BackScreenImage.dds", 1600.0f, 800.0f);
 
+	//タイトルBGMサウンド
+	SoundPlayBack(TitleSceneBGM);
 
 	//Start関数のreturn文
 	return true;
@@ -115,7 +115,8 @@ void StageSelectScene::Update()
 	{
 		//ベクトルを可視化させるデバック関数
 		PlaMooveSpeedDebug();
-
+		//クラクションを鳴らす関数
+		CarHorn();
 		//プレイヤーの回転処理
 		PlaTurn();
 		//プレイヤーの通常移動処理
@@ -138,6 +139,9 @@ void StageSelectScene::GameSceneTransition()
 	//Aボタンが押されたら、
 	if (g_pad[PLAYER1]->IsPress(enButtonA))
 	{
+		//決定サウンド
+		SoundPlayBack(DecideSound);
+
 		//ランダムステージが選ばれていたら、
 		if (m_stageNum == RandomStage)
 		{
@@ -168,6 +172,8 @@ void StageSelectScene::GameSceneTransition()
 		{
 			DeleteGO(m_Ahukidasi[i]);
 		}
+		//タイトルBGMを削除
+		DeleteGO(m_titleBGM);
 
 		//このクラスの処理をゲーム画面に移ったときに実行しなくなるフラグ
 		m_isCanGameStartFlg = false;
@@ -208,18 +214,11 @@ void StageSelectScene::PlaMove()
 void StageSelectScene::PlaSpeedCorrection()
 {
 	//スピードの補正
-	if (m_moveSpeed.x > 5.0f) {
-		m_moveSpeed.x = 5.0f;	//右方向の最大速度
-	}
-	if (m_moveSpeed.x < -5.0f) {
-		m_moveSpeed.x = -5.0f;	//左方向の最大速度
-	}
-	if (m_moveSpeed.z > 5.0f) {
-		m_moveSpeed.z = 5.0f;	//上方向の最大速度
-	}
-	if (m_moveSpeed.z < -5.0f) {
-		m_moveSpeed.z = -5.0f;	//下方向の最大速度
-	}
+	m_moveSpeed.x = min(m_moveSpeed.x, 5.0f);//右方向の最大速度
+	m_moveSpeed.x = max(m_moveSpeed.x, -5.0f);//左方向の最大速度
+
+	m_moveSpeed.z = min(m_moveSpeed.z, 5.0f);//上方向の最大速度
+	m_moveSpeed.z = max(m_moveSpeed.z, -5.0f);//下方向の最大速度
 }
 
 
@@ -230,10 +229,6 @@ void StageSelectScene::PlaTurn()
 	m_leftStick_x = g_pad[0]->GetLStickXF();
 	m_leftStick_y = g_pad[0]->GetLStickYF();
 
-	//移動してないときは回転しない
-	if (fabsf(m_moveSpeed.x) < 0.001f && fabsf(m_moveSpeed.z) < 0.001f) {
-		return;
-	}
 	//移動してないときは回転しない
 	if (fabsf(m_moveSpeed.x) < 0.001f && fabsf(m_moveSpeed.z) < 0.001f) {
 		return;
@@ -256,9 +251,17 @@ void StageSelectScene::TouchStage()
 		m_stageName[i]->SetScale(Vector3::One);
 
 		//プレイヤーと各ステージとの距離を求める
-		m_diff = m_stagePos[i] - m_pos;
-		//ステージの上に乗っていたら、
-		if (m_diff.Length() < 70.0f)
+		m_diff[i] = m_stagePos[i] - m_pos;
+
+		//ステージの上に乗っていなかったら
+		if (m_diff[i].Length() >= 70.0f)
+		{
+			//音を鳴らせる！っていうフラグ復活！
+			m_isOnStageSoundFlg[i] = true;
+		}
+
+		//ステージの上に乗っていたら
+		if (m_diff[i].Length() < 70.0f)
 		{
 			//A吹き出しを表示
 			if (i == 1)
@@ -282,13 +285,21 @@ void StageSelectScene::TouchStage()
 				m_Ahukidasi[3]->Activate();
 			}
 
+			if (m_isOnStageSoundFlg[i])
+			{
+				//ステージを選択できるようになったら鳴らすサウンド
+				SoundPlayBack(OnStageSound);
+
+				m_isOnStageSoundFlg[i] = false;
+			}
+
 			//ステージ名画像を強調拡大
 			m_stageName[i]->SetScale(BIG_STAGE_NAME);
 
 			//選択されているステージの番号を決定。
 			m_stageNum = i;
 
-			//ゲーム画面遷移処理
+			//ゲーム画面遷移処理関数
 			GameSceneTransition();
 		}
 	}
@@ -341,4 +352,60 @@ void StageSelectScene::PlaMooveSpeedDebug()
 	m_skinModelRenderArrow->SetPosition(m_arrowPos);
 	m_arrowSize.x = m_arrowSize.z = m_moveSpeed.Length() / 5;
 	m_skinModelRenderArrow->SetScale(m_arrowSize);
+}
+
+
+//クラクションを鳴らす関数
+void StageSelectScene::CarHorn()
+{
+	//Xボタンが押されたとき再生
+	if (g_pad[0]->IsTrigger(enButtonX))
+	{
+		//クラクションサウンド
+		SoundPlayBack(CarHornSound);
+	}
+}
+
+
+//サウンドを一括にまとめる関数
+void StageSelectScene::SoundPlayBack(int soundNum)
+{
+	switch (soundNum)
+	{
+	case TitleSceneBGM:
+		//タイトルBGMサウンドの初期化
+		m_titleBGM = NewGO<SoundSource>(PRIORITY_0, nullptr);
+		m_titleBGM->Init(L"Assets/sound/TitleSceneBGM.wav");
+		m_titleBGM->SetVolume(0.1f);
+		m_titleBGM->Play(true);	//真でループ再生
+
+		break;
+
+	case DecideSound:
+		//決定サウンド
+		m_decideSound = NewGO<SoundSource>(PRIORITY_0, nullptr);
+		m_decideSound->Init(L"Assets/sound/Decide.wav");
+		m_decideSound->SetVolume(0.5f);
+		m_decideSound->Play(false);	//偽でワンショット再生
+
+		break;
+
+	case OnStageSound:
+		//ステージを選択できるようになったら鳴らすサウンドの初期化
+		m_onStageSound = NewGO<SoundSource>(PRIORITY_0, nullptr);
+		m_onStageSound->Init(L"Assets/sound/OnStage.wav");
+		m_onStageSound->SetVolume(0.5f);
+		m_onStageSound->Play(false);	//偽でワンショット再生
+
+		break;
+
+	case CarHornSound:
+		//クラクションサウンドの初期化
+		m_carHorn = NewGO<SoundSource>(PRIORITY_0, nullptr);
+		m_carHorn->Init(L"Assets/sound/CarHorn.wav");
+		m_carHorn->SetVolume(0.5f);
+		m_carHorn->Play(false);	//偽でワンショット再生
+
+		break;
+	}
 }

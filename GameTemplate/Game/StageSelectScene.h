@@ -12,12 +12,17 @@ private:
 	TitleScene* m_titleScene = nullptr;
 	SpriteRender* m_titleSprite = nullptr;
 	SpriteRender* m_Ahukidasi[4] = { nullptr };
+	SoundSource* m_carHorn;	//クラクションサウンド
+	SoundSource* m_decideSound;	//決定サウンド
+	SoundSource* m_onStageSound;	//ステージに乗ったときのサウンド
+	SoundSource* m_titleBGM;	//タイトルBGMサウンド
 
 
 	/// <summary>
 	/// フラグ
 	/// </summary>
 	bool m_isCanGameStartFlg = true;
+	bool m_isOnStageSoundFlg[4] = { false };
 
 
 	int m_stageNum = 1;				//どのステージを選択しているかを格納
@@ -29,7 +34,7 @@ private:
 	float m_leftStick_y;			//左スティックのy入力量
 	float m_rotAngle;				//回転角度
 	Vector3 m_friction;				//摩擦
-	Vector3 m_diff = { 0,0,0 };		//ステージとプレイヤーとの距離
+	Vector3 m_diff[4];		//ステージとプレイヤーとの距離
 	Vector3 m_AhukidasiPos[4];
 
 
@@ -54,6 +59,14 @@ private:
 		TotalStageNum
 	};
 
+	enum SoundNum
+	{
+		TitleSceneBGM,
+		DecideSound,
+		OnStageSound,
+		CarHornSound
+	};
+
 
 	bool Start()override;
 	~StageSelectScene()override;
@@ -74,10 +87,12 @@ private:
 	void TouchStage();
 	//プレイヤーが画面外に行かないようにする関数
 	void AvoidScreenOutSide();
-
-
 	//ベクトルを可視化させるデバック関数
 	void PlaMooveSpeedDebug();
+	//クラクションを鳴らす関数
+	void CarHorn();
+	//サウンドを一括にまとめる関数
+	void SoundPlayBack(int soundNum);
 
 
 public:

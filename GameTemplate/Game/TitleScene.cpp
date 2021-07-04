@@ -22,6 +22,12 @@ namespace
 
 bool TitleScene::Start()
 {
+	//タイトル名ジングルサウンド
+	SoundPlayBack(TitleSceneGingle);
+
+	//タイトルBGMサウンド
+	SoundPlayBack(TitleSceneBGM);
+
 	//タイトルロゴオブジェクト生成
 	m_titleSprite = NewGO<SpriteRender>(PRIORITY_0,nullptr);
 	m_titleSprite->Init("Assets/image/DDS/TitleRogo.dds", 1600.0f, 800.0f);
@@ -150,15 +156,18 @@ TitleScene::~TitleScene()
 
 void TitleScene::Update()
 {
-	if (g_pad[0]->IsTrigger(enButtonA))
-	{
-		CSoundSource* m_tkSoundSorce = NewGO<CSoundSource>(PRIORITY_0, nullptr);
-		m_tkSoundSorce->Init(L"Assets/sound/ChangeState.wav");
-		m_tkSoundSorce->Play(false);	//偽でワンショット再生
-	}
-
 	//ステージ選択画面に遷移すると抜けるフラグ
 	if (m_isCanStageSelectSceneFlg == true) {
+
+		m_titleCallDelayTimer++;
+		if (m_titleCallDelayTimer == 150 && m_isTitleCallOneShotFlg)
+		{
+			//タイトルコールサウンド
+			SoundPlayBack(TitleCallSound);
+
+			m_isTitleCallOneShotFlg = false;
+		}
+
 		//登録されたプレイヤー数が最大数4人になるまで追加できる
 		if (m_totalPlaNum != MaxPlayerNum)
 		{
@@ -176,11 +185,13 @@ void TitleScene::Update()
 		{
 			if (g_pad[i]->IsTrigger(enButtonStart))
 			{
+				//決定サウンド
+				SoundPlayBack(DecideSound);
+
 				//ステージ選択画面に遷移
 				StageSelectSceneTransition();
 			}
 		}
-
 		//「PRESS START BUTTON」文字画像の点滅処理
 		FlashingFont();
 	}
@@ -190,6 +201,9 @@ void TitleScene::Update()
 //プレイヤーを追加する関数
 void TitleScene::AddPlayer()
 {
+	//エンジンサウンド
+	SoundPlayBack(EngineSound);
+
 	//新規プレイヤーの追加フラグを真に。
 	m_isAddPlayerFlg[m_totalPlaNum] = true;
 
@@ -253,6 +267,14 @@ void TitleScene::StageSelectSceneTransition()
 	{
 		DeleteGO(m_pressASpeechBalloon[i]);
 	}
+	//タイトルBGMを削除
+	DeleteGO(m_titleBGM);
+	//エンジン音を削除
+	DeleteGO(m_addPlayer);
+	//タイトルコールを削除
+	DeleteGO(m_titleCall);
+	//タイトルジングルを削除
+	DeleteGO(m_gameNameGingle);
 
 	//ステージ選択画面に遷移後、ボタンとプレイヤー追加ボタンを押せなくするフラグ
 	m_isCanStageSelectSceneFlg = false;
@@ -287,5 +309,59 @@ void TitleScene::FlashingFont()
 	{
 		//「PRESS START BUTTON」を表示するフラグ
 		m_isFlashingFontTimerActiveFlg = true;
+	}
+}
+
+
+//サウンドを一括にまとめる関数
+void TitleScene::SoundPlayBack(int soundNum)
+{
+	switch (soundNum)
+	{
+	case TitleSceneGingle:
+		//タイトル名ジングルサウンドの初期化
+		m_gameNameGingle = NewGO<SoundSource>(PRIORITY_0, nullptr);
+		m_gameNameGingle->Init(L"Assets/sound/TitleSceneGingle.wav");
+		m_gameNameGingle->SetVolume(0.5f);
+		m_gameNameGingle->Play(false);	//偽でワンショット再生
+
+		break;
+
+	case TitleSceneBGM:
+		//タイトルBGMサウンドの初期化
+		m_titleBGM = NewGO<SoundSource>(PRIORITY_0, nullptr);
+		m_titleBGM->Init(L"Assets/sound/TitleSceneBGM.wav");
+		m_titleBGM->SetVolume(0.01f);
+		m_titleBGM->Play(true);	//真でループ再生
+
+		break;
+
+	case TitleCallSound:
+		//タイトルコールサウンドの初期化
+		m_titleCall = NewGO<SoundSource>(PRIORITY_0, nullptr);
+		m_titleCall->Init(L"Assets/sound/TitleCall.wav");
+		m_titleCall->SetVolume(0.5f);
+		m_titleCall->Play(false);	//偽でワンショット再生
+
+		break;
+
+	case DecideSound:
+		//決定サウンド
+		m_decideSound = NewGO<SoundSource>(PRIORITY_0, nullptr);
+		m_decideSound->Init(L"Assets/sound/Decide.wav");
+		m_decideSound->SetVolume(0.5f);
+		m_decideSound->Play(false);	//偽でワンショット再生
+
+		break;
+
+	case EngineSound:
+
+		//エンジンサウンド
+		m_addPlayer = NewGO<SoundSource>(PRIORITY_0, nullptr);
+		m_addPlayer->Init(L"Assets/sound/AddPlayer.wav");
+		m_addPlayer->SetVolume(0.5f);
+		m_addPlayer->Play(false);	//偽でワンショット再生
+
+		break;
 	}
 }

@@ -3,7 +3,7 @@
 
 #include "MiniEngine.h"
 #include "ExEngine.h"
-#include "tkSoundSource.h"
+#include "tkSoundSource.h"					//サウンド
 
 //ゲーム全体で頻繁に使うのでstdafx.hでhをインクルードする
 #include "SkinModelRender.h"				//モデル

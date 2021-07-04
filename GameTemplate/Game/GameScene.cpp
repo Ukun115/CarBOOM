@@ -180,6 +180,16 @@ void GameScene::CountDown()
 	switch (m_countDownTimer) {
 	//カウントダウンタイマーが0のとき、
 	case 0:
+
+		//ゲームスタートジングルサウンド
+		SoundPlayBack(GameStartGingle);
+
+		break;
+
+	case 300:
+		//カウントダウンサウンド
+		SoundPlayBack(CountDownSound);
+
 		//「３」画像オブジェクト生成
 		m_sprite[ARRAY_NUM_0] = NewGO<SpriteRender>(PRIORITY_1, nullptr);
 		m_sprite[ARRAY_NUM_0]->SetPosition({ 0.0f,0.0f,0.0f });
@@ -189,7 +199,7 @@ void GameScene::CountDown()
 		break;
 
 	//カウントダウンタイマーが60のとき、
-	case 60:
+	case 360:
 		//「3」削除。
 		DeleteGO(m_sprite[ARRAY_NUM_0]);
 
@@ -202,7 +212,7 @@ void GameScene::CountDown()
 		break;
 
 	//カウントダウンタイマーが120のとき、
-	case 120:
+	case 420:
 		//「2」削除。
 		DeleteGO(m_sprite[ARRAY_NUM_1]);
 
@@ -215,7 +225,7 @@ void GameScene::CountDown()
 		break;
 
 		//カウントダウンタイマーが180のとき、
-	case 180:
+	case 480:
 		//「1」削除。
 		DeleteGO(m_sprite[ARRAY_NUM_2]);
 
@@ -229,9 +239,12 @@ void GameScene::CountDown()
 
 		//カウントダウンタイマーが300のとき、
 		//「START」表示は特別少し長くする
-	case 300:
+	case 600:
 		//「START」削除。
 		DeleteGO(m_sprite[ARRAY_NUM_3]);
+
+		//ゲーム中のBGMサウンド
+		SoundPlayBack(GameBGM);
 
 		//カウントダウンの処理を抜ける。
 		m_isCountTimeFlg = false;
@@ -247,7 +260,7 @@ void GameScene::CountDown()
 void GameScene::TimeLimit()
 {
 	//カウントダウンが終わってから制限時間を刻んでいく。
-	if(m_isCountTimeFlg == false)
+	if(!m_isCountTimeFlg)
 	{
 		//制限時間を縮めていく。
 		m_timer--;
@@ -259,7 +272,7 @@ void GameScene::TimeLimit()
 	m_countTime = max(0,m_countTime);
 
 	//10秒以下のとき、制限時間を赤く表示
-	if(m_countTime < 11)
+	if(m_countTime <= 10)
 	{
 		m_timeLimit->SetColor(TIMELIMIT_LAST_COL);
 	}
@@ -287,9 +300,9 @@ void GameScene::PlaScoreDraw()
 
 
 //プレイヤーごとの「pt」文字の位置を指定する関数
-Vector2 GameScene::GetScorePos(int x)
+Vector2 GameScene::GetScorePos(int plaNum)
 {
-	switch (x)
+	switch (plaNum)
 	{
 	case PLAYER1:
 		return PLAYER1_PT_POS;
@@ -308,7 +321,7 @@ Vector2 GameScene::GetScorePos(int x)
 
 
 //プレイヤーごとのスコアの位置を指定する関数
-void GameScene::SetScoreTextPos(int t)
+void GameScene::SetScoreTextPos(int plaNum)
 {
 	//スコアが1桁のとき、
 	m_plaScorePos[0] = { -520.0f, 255.0f };
@@ -317,10 +330,10 @@ void GameScene::SetScoreTextPos(int t)
 	m_plaScorePos[3] = { 450.0f,-205.0f };
 
 	//スコアが2桁のとき、
-	if (10 <= m_plaScore[t] && m_plaScore[t] < 100)
+	if (10 <= m_plaScore[plaNum] && m_plaScore[plaNum] < 100)
 	{
 		//少し左(xを-40)にずらして表示位置を合わせる
-		switch (t)
+		switch (plaNum)
 		{
 		case PLAYER1:
 			m_plaScorePos[0].x = -560.0f;
@@ -337,10 +350,10 @@ void GameScene::SetScoreTextPos(int t)
 		}
 	}
 	//スコアが3桁のとき、
-	if (100 <= m_plaScore[t] && m_plaScore[t] < 1000)
+	if (100 <= m_plaScore[plaNum] && m_plaScore[plaNum] < 1000)
 	{
 		//少し左(xを-20)にずらして表示位置を合わせる
-		switch (t)
+		switch (plaNum)
 		{
 		case PLAYER1:
 			m_plaScorePos[0].x = -580.0f;
@@ -357,10 +370,10 @@ void GameScene::SetScoreTextPos(int t)
 		}
 	}
 	//スコアが4桁のとき、
-	if (1000 <= m_plaScore[t])
+	if (1000 <= m_plaScore[plaNum])
 	{
 		//少し左(xを-20)にずらして表示位置を合わせる
-		switch (t)
+		switch (plaNum)
 		{
 		case PLAYER1:
 			m_plaScorePos[0].x = -600.0f;
@@ -378,14 +391,14 @@ void GameScene::SetScoreTextPos(int t)
 	}
 
 	//位置をセット
-	m_TextScoreFontRender[t]->SetPosition(m_plaScorePos[t]);
+	m_TextScoreFontRender[plaNum]->SetPosition(m_plaScorePos[plaNum]);
 }
 
 
 //プレイヤーごとのスコアの色を指定する関数
-Vector4 GameScene::ScoreColor(int c)
+Vector4 GameScene::ScoreColor(int plaNum)
 {
-	switch (c)
+	switch (plaNum)
 	{
 	case PLAYER1:
 		return RED;
@@ -404,36 +417,36 @@ Vector4 GameScene::ScoreColor(int c)
 
 
 /*プレイヤーの得点変動処理関数
-  (ｘは落としたプレイヤー、yは落とされたプレイヤー)*/
-void GameScene::GetPlayerAddScore(int x,int y)
+  (plaNum1は落としたプレイヤー、plaNum2は落とされたプレイヤー)*/
+void GameScene::GetPlayerAddScore(int plaNum1,int plaNum2)
 {
 	//4のとき何もしない
-	if (x == 4)
+	if (plaNum1 == 4)
 	{
 		return;
 	}
 	//落としたとき、
 	//30pt増加
-	m_plaScore[x] += 30;
+	m_plaScore[plaNum1] += 30;
 	//もし落としたプレイヤーが1位だったら、
-	if (y == m_nowNumOnePla)
+	if (plaNum2 == m_nowNumOnePla)
 	{
 		//落とされた１位はマイナス20pt。落としたプレイヤーはプラスで20pt
 		//これを入れることで１位が狙われやすい仕様にしている。
-		m_plaScore[y] -= 20;
-		m_plaScore[x] += 20;
+		m_plaScore[plaNum2] -= 20;
+		m_plaScore[plaNum1] += 20;
 		//点数が0以下にならないように補正
-		if (m_plaScore[y] < 0)
+		if (m_plaScore[plaNum2] < 0)
 		{
-			m_plaScore[y] = 0;
+			m_plaScore[plaNum2] = 0;
 		}
 	}
 	//敵を落としたとき、
-	if (y == 5)
+	if (plaNum2 == 5)
 	{
 		//敵を落としたときptを10ptだけ取るように調整
 		//すでに+30ptしているからマイナス20している。
-		m_plaScore[x] -= 20;
+		m_plaScore[plaNum1] -= 20;
 	}
 }
 
@@ -494,13 +507,64 @@ void GameScene::NowCrown()
 //リザルト画面に遷移する関数
 void GameScene::ResultSceneTransition()
 {
+	//タイマーを加算
+	m_resultsenniTimer++;
 
-		//タイマーを加算
-		m_resultsenniTimer++;
-		//タイマーが120を超えてからリザルト画面に遷移
-		if (m_resultsenniTimer == 120)
-		{
-			//リザルト画面オブジェクト生成
-			NewGO<ResultScene>(PRIORITY_0, nullptr);
-		}
+	if (m_resultsenniTimer == 1)
+	{
+		//ホイッスルサウンド
+		SoundPlayBack(WhistleSound);
+	}
+	//タイマーが120を超えてからリザルト画面に遷移
+	if (m_resultsenniTimer == 180)
+	{
+		//リザルト画面オブジェクト生成
+		NewGO<ResultScene>(PRIORITY_0, nullptr);
+		//ゲームBGM削除
+		DeleteGO(m_gameBGM);
+	}
+}
+
+
+//サウンドを一括にまとめる関数
+void GameScene::SoundPlayBack(int soundNum)
+{
+	switch (soundNum)
+	{
+	case GameStartGingle:
+		//ゲームスタートジングルサウンドの初期化
+		m_gameBGM = NewGO<SoundSource>(PRIORITY_0, nullptr);
+		m_gameBGM->Init(L"Assets/sound/GameStartGingle.wav");
+		m_gameBGM->SetVolume(1.0f);
+		m_gameBGM->Play(false);	//偽でワンショット再生
+
+		break;
+
+	case CountDownSound:
+		//ゲーム中のBGMサウンドの初期化
+		m_countDown = NewGO<SoundSource>(PRIORITY_0, nullptr);
+		m_countDown->Init(L"Assets/sound/CountDown.wav");
+		m_countDown->SetVolume(1.0f);
+		m_countDown->Play(false);	//真でワンショット再生
+
+		break;
+
+	case GameBGM:
+		//ゲーム中のBGMサウンドの初期化
+		m_gameBGM = NewGO<SoundSource>(PRIORITY_0, nullptr);
+		m_gameBGM->Init(L"Assets/sound/GameBGM.wav");
+		m_gameBGM->SetVolume(0.2f);
+		m_gameBGM->Play(true);	//真でループ再生
+
+		break;
+
+	case WhistleSound:
+		//ホイッスルサウンドの初期化
+		m_whistleSound = NewGO<SoundSource>(PRIORITY_0, nullptr);
+		m_whistleSound->Init(L"Assets/sound/Whistle.wav");
+		m_whistleSound->SetVolume(0.1f);
+		m_whistleSound->Play(false);	//偽でワンショット再生
+
+		break;
+	}
 }

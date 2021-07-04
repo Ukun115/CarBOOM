@@ -7,6 +7,9 @@
 #include "../../ExEngine/physics/CharacterController.h"		//キャラコンを使うためにインクルード
 
 
+//TODO: 影を落とせるようにする
+
+
 namespace
 {
 	const Vector3 PLAYER1_RESPOS = { -100.0f,150.0f,100.0f };		//リスポーン座標(左上)
@@ -55,7 +58,7 @@ bool Player::Start()
 	for (int i = Player1; i < MaxPlayerNum; i++)
 	{
 		//登録されていたら実行
-		if (m_titleScene->GetPlaFlg(i) == true)
+		if (m_titleScene->GetPlaFlg(i))
 		{
 			//プレイヤーモデルオブジェクト生成
 			m_player[i] = NewGO<SkinModelRender>(PRIORITY_0, nullptr);
@@ -78,7 +81,7 @@ bool Player::Start()
 			//2P
 			else if (i == Player2)
 			{
-				m_player[i]->Init("Assets/modelData/LowPoly_PlayerCar_Red.tkm");	//青車
+				m_player[i]->Init("Assets/modelData/LowPoly_PlayerCar_Blue.tkm");	//青車
 				//落下したときの撃墜エフェクトの初期化。
 				m_shootDownEffect[i].Init(u"Assets/effect/efk/Player2_ShootDown.efk");
 				m_jetEffect[i].Init(u"Assets/effect/efk/JetBlue.efk");
@@ -162,6 +165,11 @@ void Player::Update()
 	//登録されているプレイヤー数ループ
 	for (int i = Player1; i < m_plaNum; i++)
 	{
+		//クラクションを鳴らす
+		SoundPlayBack(CarHornSound,i);
+		//落ちるときの落下効果音をならす
+		SoundPlayBack(FallSound,i);
+
 		//制限時間が0秒になったらプレイヤーの処理を全て止める
 		if (m_gameScene->GetNowTime() != TIME0) {
 
@@ -169,7 +177,7 @@ void Player::Update()
 			Gravity(i);
 
 			//ゲーム開始のカウントダウンが終わるまでプレイヤーの処理をすべて止める
-			if (m_gameScene->GetCountDownFlg() == false)
+			if (!m_gameScene->GetCountDownFlg())
 			{
 				//回転処理
 				PlaTurn(i);
@@ -182,33 +190,44 @@ void Player::Update()
 
 				if (m_charaCon[i].IsOnGround()) {
 
-					if (m_isBPushFlg[i] == false)
+					if (!m_isBPushFlg[i])
 					{
 						if (m_atackTimer[i] == 0)
 						{
 							//移動処理
 							PlaMove(i);
 						}
-						if (m_isTyazi1Flg[i] == true)
+						if (m_isTyazi1Flg[i])
 						{
+							if (m_isCharge1EffectSoundFlg[i])
+							{
+								//チャージ１サウンド
+								SoundPlayBack(Dash2Sound, i);
+
+								m_isCharge1EffectSoundFlg[i] = false;
+							}
+
 							//チャージ攻撃1の処理
 							m_moveSpeed[i] = m_plaDir[i] * 8.0f;
 						}
-						if (m_isTyazi2Flg[i] == true)
+						if (m_isTyazi2Flg[i])
 						{
-							if (m_isTyaziEffectFlg[i] == true)
+							if (m_isCharge2EffectSoundFlg[i])
 							{
+								//チャージ２サウンド
+								SoundPlayBack(Dash1Sound,i);
+
 								//ジェットエフェクト再生
 								m_jetEffect[i].Play();
 
-								m_isTyaziEffectFlg[i] = false;
+								m_isCharge2EffectSoundFlg[i] = false;
 							}
 							//チャージ攻撃2処理
 							m_moveSpeed[i] = m_plaDir[i] * 20.0f;
 						}
 
 					}
-					if (m_isBPushFlg[i] == true)
+					if (m_isBPushFlg[i])
 					{
 						//攻撃準備処理
 						PlaAttackBefore(i);
@@ -231,7 +250,7 @@ void Player::Update()
 				m_pos[i] = m_charaCon[i].Execute(m_moveSpeed[i], 1.0f);
 			}
 
-			if (m_gameScene->GetCountDownFlg() == true)
+			if (m_gameScene->GetCountDownFlg())
 			{
 				//ベクトルを可視化させるデバック関数
 				PlaMooveSpeedDebug(i);
@@ -254,6 +273,9 @@ void Player::PlaResporn(int planum)
 {
 	if (m_pos[planum].y < -1000.0f)
 	{
+		//撃墜サウンド
+		SoundPlayBack(ShootDownSound,planum);
+
 		//撃墜エフェクト再生開始。
 		m_shootDownEffect[planum].Play();
 		//撃墜エフェクトの位置をプレイヤーが落ちた位置に設定
@@ -269,6 +291,19 @@ void Player::PlaResporn(int planum)
 
 		//スピードを初期化
 		m_moveSpeed[planum] = { Vector3::Zero };
+
+		m_isBPushFlg[planum] = false;
+		m_isTyazi1Flg[planum] = false;
+		m_isTyazi2Flg[planum] = false;
+		m_isAtack0Flg[planum] = false;
+		m_isAtack1Flg[planum] = false;
+		m_isAtack2Flg[planum] = false;
+		m_DASpr1[planum]->Deactivate();
+		m_DASpr2[planum]->Deactivate();
+
+		//押したときのタイマー初期化
+		m_tyaziTimer[planum] = 0;
+		m_atackTimer[planum] = 0;
 
 		//キャラクターコントローラーを使った移動処理に変更。
 		m_pos[planum] = m_charaCon[planum].Execute(m_moveSpeed[planum], 1.0f);
@@ -354,9 +389,16 @@ void Player::PlaNowState(int planum)
 	//Aボタンが押されてるとき、
 	if (g_pad[planum]->IsPress(enButtonA))
 	{
+		if (m_tyaziTimer[planum] == 0)
+		{
+			//チャージ音を鳴らす
+			SoundPlayBack(ChargeSound,planum);
+		}
+
 		m_isBPushFlg[planum] = true;
 
-		m_isTyaziEffectFlg[planum] = true;
+		m_isCharge1EffectSoundFlg[planum] = true;
+		m_isCharge2EffectSoundFlg[planum] = true;
 
 		//チャージしているときのタイマーを加算
 		m_tyaziTimer[planum]++;
@@ -405,13 +447,13 @@ void Player::PlaNowState(int planum)
 		//攻撃フラグによって攻撃処理を変える
 
 		//チャージ失敗
-		if (m_isAtack0Flg[planum] == true)
+		if (m_isAtack0Flg[planum])
 		{
 			m_isAtack0Flg[planum] = false;
 		}
 
 		//チャージ1
-		if (m_isAtack1Flg[planum] == true)
+		if (m_isAtack1Flg[planum])
 		{
 			m_atackTimer[planum]++;
 			m_atackHanteiTimer[planum]++;
@@ -433,7 +475,7 @@ void Player::PlaNowState(int planum)
 		}
 
 		//チャージ2
-		if (m_isAtack2Flg[planum] == true)
+		if (m_isAtack2Flg[planum])
 		{
 			m_atackTimer[planum]++;
 			if (0 < m_atackTimer[planum] && m_atackTimer[planum] < 20)
@@ -464,6 +506,7 @@ void Player::PlaMove(int planum)
 	m_friction[planum] = m_moveSpeed[planum];
 	m_friction[planum] *= -2.0f;
 
+	///下のifはステージの処理なのでステージクラスに書く。
 	//アイスステージが選択されているとき、
 	if (m_stageSelectScene->GetStageNum() == STAGE3)
 	{
@@ -533,8 +576,9 @@ void Player::PlaAndEneClash(int planum)
 	{
 		//プレイヤーと敵との距離を計算
 		m_diff = m_enemy->GetEnemyPos(u) - m_pos[planum];
+
 		//距離の長さが30.0fより小さかったら、
-		if (m_diff.Length() < 30.0f && m_isTyazi1Flg[planum] == false && m_isTyazi2Flg[planum] == false)
+		if (m_diff.Length() < 30.0f && !m_isTyazi1Flg[planum] && !m_isTyazi2Flg[planum])
 		{
 			m_enePushSpeed = m_enemy->GetEnemySpeed(u);
 			//これだとプッシュパワーが強すぎるため、威力を弱める
@@ -546,6 +590,11 @@ void Player::PlaAndEneClash(int planum)
 			m_isAtack0Flg[planum] = false;
 			m_isAtack1Flg[planum] = false;
 			m_isAtack2Flg[planum] = false;
+			//押されたらチャージサウンドを止める
+			if (m_tyaziTimer[planum] > 0)
+			{
+				m_ChargeSound[planum]->Stop();
+			}
 
 			m_DASpr1[planum]->Deactivate();
 			m_DASpr2[planum]->Deactivate();
@@ -581,13 +630,16 @@ void Player::PlaAndPlaClash(int planum)
 			//ぶつかってきたプレイヤーはそのままステージ外に落ちないように減速させる
 			m_moveSpeed[u] /= 2.0;
 
-			if (m_isTyazi2Flg[planum] == true)
+			if (m_isTyazi2Flg[planum])
 			{
 				m_enePushSpeed *= 5.0f;
 				//チャージ２を受けたとき割る２しただけではそのまま落ちちゃうので
 				//止まるようにする
 				m_moveSpeed[u] = { 0.0f,0.0f,0.0f };
 			}
+
+			//衝突音
+			SoundPlayBack(PlaAndPlaClashSound,planum);
 
 			//プレイヤーに影響
 			m_moveSpeed[planum] += m_enePushSpeed;
@@ -627,4 +679,89 @@ void Player::PlaMooveSpeedDebug(int planum)
 	m_skinModelRenderArrow[planum]->SetPosition(m_arrowPos[planum]);
 	m_arrowSize.x = m_arrowSize.z = m_moveSpeed[planum].Length() / 5;
 	m_skinModelRenderArrow[planum]->SetScale(m_arrowSize);
+}
+
+
+//サウンドを一括にまとめる関数
+void Player::SoundPlayBack(int soundNum, int plaNum)
+{
+	switch (soundNum)
+	{
+	case ShootDownSound:
+		//撃墜サウンドの初期化
+		m_shootDownSound[plaNum] = NewGO<SoundSource>(PRIORITY_0, nullptr);
+		m_shootDownSound[plaNum]->Init(L"Assets/sound/ShootDown.wav");
+		m_shootDownSound[plaNum]->SetVolume(1.0f);
+		m_shootDownSound[plaNum]->Play(false);	//偽でワンショット再生
+
+		break;
+
+	case CarHornSound:
+		//Xボタンが押されたとき再生
+		if (g_pad[plaNum]->IsTrigger(enButtonX))
+		{
+			//クラクションサウンドの初期化
+			m_carHorn[plaNum] = NewGO<SoundSource>(PRIORITY_0, nullptr);
+			m_carHorn[plaNum]->Init(L"Assets/sound/CarHorn.wav");
+			m_carHorn[plaNum]->SetVolume(0.5f);
+			m_carHorn[plaNum]->Play(false);	//偽でワンショット再生
+		}
+
+		break;
+
+	case FallSound:
+		//高さが-10以下のとき再生
+		if (m_pos[plaNum].y < -10.0f && m_isFallSoundFlg[plaNum])
+		{
+			//クラクションサウンドの初期化
+			m_FallSound[plaNum] = NewGO<SoundSource>(PRIORITY_0, nullptr);
+			m_FallSound[plaNum]->Init(L"Assets/sound/Fall.wav");
+			m_FallSound[plaNum]->SetVolume(0.1f);
+			m_FallSound[plaNum]->Play(false);	//偽でワンショット再生
+
+			m_isFallSoundFlg[plaNum] = false;
+		}
+		//リスポーン位置に移動したときにフラグを復活させる
+		if (m_pos[plaNum].y == 150.0f)
+		{
+			m_isFallSoundFlg[plaNum] = true;
+		}
+
+		break;
+
+	case ChargeSound:
+		//チャージサウンドの初期化
+		m_ChargeSound[plaNum] = NewGO<SoundSource>(PRIORITY_0, nullptr);
+		m_ChargeSound[plaNum]->Init(L"Assets/sound/Charge.wav");
+		m_ChargeSound[plaNum]->SetVolume(0.1f);
+		m_ChargeSound[plaNum]->Play(false);	//偽でワンショット再生
+
+		break;
+
+	case Dash1Sound:
+		//ダッシュ１サウンドの初期化
+		m_Dash1Sound[plaNum] = NewGO<SoundSource>(PRIORITY_0, nullptr);
+		m_Dash1Sound[plaNum]->Init(L"Assets/sound/PlaDash1.wav");
+		m_Dash1Sound[plaNum]->SetVolume(0.5f);
+		m_Dash1Sound[plaNum]->Play(false);	//偽でワンショット再生
+
+		break;
+
+	case Dash2Sound:
+		//ダッシュ２サウンドの初期化
+		m_Dash2Sound[plaNum] = NewGO<SoundSource>(PRIORITY_0, nullptr);
+		m_Dash2Sound[plaNum]->Init(L"Assets/sound/PlaDash2.wav");
+		m_Dash2Sound[plaNum]->SetVolume(0.5f);
+		m_Dash2Sound[plaNum]->Play(false);	//偽でワンショット再生
+
+		break;
+	case PlaAndPlaClashSound:
+		//プレイヤーとプレイヤーがぶつかったときのサウンドの初期化
+		m_PlaAndPlaClashSound[plaNum] = NewGO<SoundSource>(PRIORITY_0, nullptr);
+		m_PlaAndPlaClashSound[plaNum]->Init(L"Assets/sound/Clash1.wav");
+		m_PlaAndPlaClashSound[plaNum]->SetVolume(1.0f);
+		m_PlaAndPlaClashSound[plaNum]->Play(false);	//偽でワンショット再生
+
+		break;
+	}
 }

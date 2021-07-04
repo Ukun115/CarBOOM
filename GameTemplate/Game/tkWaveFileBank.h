@@ -4,8 +4,8 @@
 #pragma once
 
 #include <map>
-	class CWaveFile;
-	typedef std::shared_ptr<CWaveFile>	CWaveFilePtr;
+	class WaveFile;
+	typedef std::shared_ptr<WaveFile>	CWaveFilePtr;
 	typedef std::map<unsigned int , CWaveFilePtr>	CWaveFilePtrMap;
 	/*!
 	 *@brief	波形データバンク。

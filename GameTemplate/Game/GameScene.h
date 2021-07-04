@@ -23,8 +23,11 @@ private:
 	Player* m_player = nullptr;
 	Enemy* m_enemy = nullptr;
 	FontRender* m_timeLimit = nullptr;
-
+	SoundSource* m_gameStartGingle;	//クラクションサウンド
+	SoundSource* m_gameBGM;	//ゲーム中のBGMサウンド
+	SoundSource* m_countDown;	//カウントダウンサウンド
 	SpriteRender* m_syutyusen = nullptr;
+	SoundSource* m_whistleSound = nullptr;
 
 
 	/// <summary>
@@ -62,6 +65,14 @@ private:
 		MAXPLAYERNUM	//プレイヤーの最大数
 	};
 
+	enum soundNum
+	{
+		GameStartGingle,	//ゲームスタートジングル
+		CountDownSound,		//カウントダウンサウンド
+		GameBGM,			//ゲーム内BGM
+		WhistleSound,		//ホイッスルサウンド
+	};
+
 
 	bool Start()override;
 	~GameScene()override;
@@ -75,22 +86,24 @@ private:
 	//カウントダウン処理関数
 	void CountDown();
 	//プレイヤーごとのスコアの位置を指定する関数
-	void SetScoreTextPos(int t);
+	void SetScoreTextPos(int plaNum);
 	//プレイヤーごとの「pt」文字の位置を指定する関数
-	Vector2 GetScorePos(int x);
+	Vector2 GetScorePos(int plaNum);
 	//プレイヤーごとのスコアの色を指定する関数
-	Vector4 ScoreColor(int c);
+	Vector4 ScoreColor(int plaNum);
 	//１位に王冠画像と王冠モデルを渡す関数
 	void NowCrown();
 	//リザルト画面に遷移する関数
 	void ResultSceneTransition();
+	//サウンドを一括にまとめる関数
+	void SoundPlayBack(int soundNum);
 
 
 public:
 
 	/*プレイヤーの得点変動処理関数
-	(ｘは落としたプレイヤー、yは自滅したプレイヤー)*/
-	void GetPlayerAddScore(int x, int y);
+	(plaNum1は落としたプレイヤー、plaNum2は自滅したプレイヤー)*/
+	void GetPlayerAddScore(int plaNum1, int plaNum2);
 
 
 	/// <summary>
