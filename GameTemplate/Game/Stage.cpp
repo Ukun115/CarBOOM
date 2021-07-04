@@ -36,19 +36,19 @@ bool Stage::Start()
 		//アイスステージをロード
 		m_stage->Init("Assets/modelData/bg/stage_3.tkm");
 
-		for (int i = 0; i < 2; i++)
+		for (int snowEffectNum = 0; snowEffectNum < 2; snowEffectNum++)
 		{
 			//降る雪エフェクトの初期化。
-			m_fallSnowEffect[i].Init(u"Assets/effect/efk/Snow.efk");
+			m_fallSnowEffect[snowEffectNum].Init(u"Assets/effect/efk/Snow.efk");
 			//エフェクトの大きさ調整
-			m_fallSnowEffect[i].SetScale({ 10.0f,10.0f,10.0f });
+			m_fallSnowEffect[snowEffectNum].SetScale({ 10.0f,10.0f,10.0f });
 			//通常だと画面の上がエフェクトの上になっているので、ゲーム中のカメラ方向が上になるように調整
-			Quaternion m_shootDownEffectRot = m_fallSnowEffect[i].GetRotation();
+			Quaternion m_shootDownEffectRot = m_fallSnowEffect[snowEffectNum].GetRotation();
 			//↓【注意】関数内に入れるのはデグリー単位ではなくラジアン単位です。
 			m_shootDownEffectRot.AddRotationX(-0);	//X軸を基点に、-1.5708rad(-90°)回転
-			m_fallSnowEffect[i].SetRotation(m_shootDownEffectRot);
+			m_fallSnowEffect[snowEffectNum].SetRotation(m_shootDownEffectRot);
 			//降る雪エフェクトの位置をプカメラの上位の位置に設定
-			m_fallSnowEffect[i].SetPosition({ 0,500,0 });
+			m_fallSnowEffect[snowEffectNum].SetPosition({ 0,500,0 });
 		}
 	}
 

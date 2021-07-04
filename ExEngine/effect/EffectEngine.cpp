@@ -16,12 +16,12 @@ EffectEngine::EffectEngine()
 	// レンダラーを作成。
 	m_renderer = ::EffekseerRendererDX12::Create(
 		d3dDevice,
-		commandQueue, 
-		3, 
+		commandQueue,
+		3,
 		&format,
-		1, 
+		1,
 		DXGI_FORMAT_D32_FLOAT,
-		false, 
+		false,
 		8000
 	);
 	//メモリプールの作成。
@@ -73,7 +73,7 @@ void EffectEngine::Stop(int effectHandle)
 
 void EffectEngine::Update(float deltaTime)
 {
-	
+
 	m_memoryPool->NewFrame();
 
 	// Begin a command list

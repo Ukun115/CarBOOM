@@ -39,25 +39,25 @@ bool TitleScene::Start()
 	m_pushStartButtonSprite->SetScale({ FlashingFont_SCA });
 
 	//PRESS A !! 吹き出し画像オブジェクト生成
-	for (int i = 0; i < 3; i++)
+	for (int speechBalloonNum = 0; speechBalloonNum < 3; speechBalloonNum++)
 	{
-		m_pressASpeechBalloon[i] = NewGO<SpriteRender>(PRIORITY_1, nullptr);
+		m_pressASpeechBalloon[speechBalloonNum] = NewGO<SpriteRender>(PRIORITY_1, nullptr);
 		//PLAYER３のみ吹き出しの左側にいるので他とは違う吹き出しを使う
-		if (i == 1)
+		if (speechBalloonNum == 1)
 		{
-			m_pressASpeechBalloon[i]->Init("Assets/image/DDS/PRESS A !!_L.dds", 400.0f, 200.0f);
+			m_pressASpeechBalloon[speechBalloonNum]->Init("Assets/image/DDS/PRESS A !!_L.dds", 400.0f, 200.0f);
 		}
 		else
 		{
-			m_pressASpeechBalloon[i]->Init("Assets/image/DDS/PRESS A !!_R.dds", 400.0f, 200.0f);
+			m_pressASpeechBalloon[speechBalloonNum]->Init("Assets/image/DDS/PRESS A !!_R.dds", 400.0f, 200.0f);
 		}
 		//PLAYER2以外は初期は非アクティブ
-		if (i != 0)
+		if (speechBalloonNum != 0)
 		{
-			m_pressASpeechBalloon[i]->Deactivate();
+			m_pressASpeechBalloon[speechBalloonNum]->Deactivate();
 		}
 		//位置設定
-		switch (i)
+		switch (speechBalloonNum)
 		{
 		//2Pの左側
 		case 0:
@@ -65,7 +65,7 @@ bool TitleScene::Start()
 			m_pressASpeechBalloonPos = PLAYER2_NAME_POS;
 			//左にずらす
 			m_pressASpeechBalloonPos.x -= 250.0f;
-			m_pressASpeechBalloon[i]->SetPosition(m_pressASpeechBalloonPos);
+			m_pressASpeechBalloon[speechBalloonNum]->SetPosition(m_pressASpeechBalloonPos);
 			break;
 		//3Pの右側
 		case 1:
@@ -73,7 +73,7 @@ bool TitleScene::Start()
 			m_pressASpeechBalloonPos = PLAYER3_NAME_POS;
 			//右にずらす
 			m_pressASpeechBalloonPos.x += 250.0f;
-			m_pressASpeechBalloon[i]->SetPosition(m_pressASpeechBalloonPos);
+			m_pressASpeechBalloon[speechBalloonNum]->SetPosition(m_pressASpeechBalloonPos);
 			break;
 		//4Pの左側
 		case 2:
@@ -81,11 +81,11 @@ bool TitleScene::Start()
 			m_pressASpeechBalloonPos = PLAYER4_NAME_POS;
 			//左にずらす
 			m_pressASpeechBalloonPos.x -= 250.0f;
-			m_pressASpeechBalloon[i]->SetPosition(m_pressASpeechBalloonPos);
+			m_pressASpeechBalloon[speechBalloonNum]->SetPosition(m_pressASpeechBalloonPos);
 			break;
 		}
 		//大きさ調整
-		m_pressASpeechBalloon[i]->SetScale({0.5f,0.5f,0.5f});
+		m_pressASpeechBalloon[speechBalloonNum]->SetScale({0.5f,0.5f,0.5f});
 	}
 
 	//1Pは非アクティブときがないため、初めからアクティブ画像オブジェクト生成
@@ -96,34 +96,34 @@ bool TitleScene::Start()
 	//１Pの追加フラグを真に。
 	m_isAddPlayerFlg[Player1] = true;
 
-	for (int i = Player1; i < MaxPlayerNum; i++) {
+	for (int plaNum = Player1; plaNum < MaxPlayerNum; plaNum++) {
 		//2P～4Pの非アクティブ画像オブジェクト生成
-		m_plaDeactiveName[i] = NewGO<SpriteRender>(PRIORITY_2, nullptr);
+		m_plaDeactiveName[plaNum] = NewGO<SpriteRender>(PRIORITY_2, nullptr);
 		//1P
-		if (i == Player1)
+		if (plaNum == Player1)
 		{
-			m_plaDeactiveName[i]->Init("Assets/image/DDS/Player1_DeactiveName.dds", 300.0f, 150.0f);
-			m_plaDeactiveName[i]->SetPosition(PLAYER1_NAME_POS);
+			m_plaDeactiveName[plaNum]->Init("Assets/image/DDS/Player1_DeactiveName.dds", 300.0f, 150.0f);
+			m_plaDeactiveName[plaNum]->SetPosition(PLAYER1_NAME_POS);
 			//非アクティブ時はないため、非表示にしておく。
-			m_plaDeactiveName[i]->Deactivate();
+			m_plaDeactiveName[plaNum]->Deactivate();
 		}
 		//2P
-		if (i == Player2)
+		if (plaNum == Player2)
 		{
-			m_plaDeactiveName[i]->Init("Assets/image/DDS/Player2_DeactiveName.dds", 300.0f, 150.0f);
-			m_plaDeactiveName[i]->SetPosition(PLAYER2_NAME_POS);
+			m_plaDeactiveName[plaNum]->Init("Assets/image/DDS/Player2_DeactiveName.dds", 300.0f, 150.0f);
+			m_plaDeactiveName[plaNum]->SetPosition(PLAYER2_NAME_POS);
 		}
 		//3P
-		if (i == Player3)
+		if (plaNum == Player3)
 		{
-			m_plaDeactiveName[i]->Init("Assets/image/DDS/Player3_DeactiveName.dds", 300.0f, 150.0f);
-			m_plaDeactiveName[i]->SetPosition(PLAYER3_NAME_POS);
+			m_plaDeactiveName[plaNum]->Init("Assets/image/DDS/Player3_DeactiveName.dds", 300.0f, 150.0f);
+			m_plaDeactiveName[plaNum]->SetPosition(PLAYER3_NAME_POS);
 		}
 		//4P
-		if (i == Player4)
+		if (plaNum == Player4)
 		{
-			m_plaDeactiveName[i]->Init("Assets/image/DDS/Player4_DeactiveName.dds", 300.0f, 150.0f);
-			m_plaDeactiveName[i]->SetPosition(PLAYER4_NAME_POS);
+			m_plaDeactiveName[plaNum]->Init("Assets/image/DDS/Player4_DeactiveName.dds", 300.0f, 150.0f);
+			m_plaDeactiveName[plaNum]->SetPosition(PLAYER4_NAME_POS);
 		}
 	}
 
@@ -135,12 +135,12 @@ bool TitleScene::Start()
 TitleScene::~TitleScene()
 {
 	//登録されたプレイヤーのアクティブ画像を削除
-	for (int i = Player1; i < m_totalPlaNum; i++)
+	for (int plaNum = Player1; plaNum < m_totalPlaNum; plaNum++)
 	{
-		DeleteGO(m_plaActiveName[i]);
+		DeleteGO(m_plaActiveName[plaNum]);
 	}
 	//登録されていないプレイヤーの非アクティブ画像を削除
-	for (int i = m_totalPlaNum; i < (MaxPlayerNum+1); i++)
+	for (int plaNum = m_totalPlaNum; plaNum < (MaxPlayerNum+1); plaNum++)
 	{
 		//4Pまで登録されていたらm_plaDeactiveName[4]と、
 		//添え字がオーバーしてしまうのでここでfor文を抜けさせる
@@ -181,9 +181,9 @@ void TitleScene::Update()
 		}
 
 		//登録されている誰かのスタートボタンが押されたら、
-		for (int i = Player1; i < m_totalPlaNum; i++)
+		for (int plaNum = Player1; plaNum < m_totalPlaNum; plaNum++)
 		{
-			if (g_pad[i]->IsTrigger(enButtonStart))
+			if (g_pad[plaNum]->IsTrigger(enButtonStart))
 			{
 				//決定サウンド
 				SoundPlayBack(DecideSound);
@@ -263,9 +263,9 @@ void TitleScene::StageSelectSceneTransition()
 	//PUSHSTARTBUTTONを削除。
 	DeleteGO(m_pushStartButtonSprite);
 	//吹き出しを削除。
-	for (int i = 0; i < 3; i++)
+	for (int speechBalloonNum = 0; speechBalloonNum < 3; speechBalloonNum++)
 	{
-		DeleteGO(m_pressASpeechBalloon[i]);
+		DeleteGO(m_pressASpeechBalloon[speechBalloonNum]);
 	}
 	//タイトルBGMを削除
 	DeleteGO(m_titleBGM);

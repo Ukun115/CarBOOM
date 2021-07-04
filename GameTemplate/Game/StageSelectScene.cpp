@@ -27,12 +27,12 @@ bool StageSelectScene::Start()
 	//インスタンスを作成
 	m_titleScene = FindGO<TitleScene>(TITLESCENE_NAME);
 
-	for (int i = Stage1; i < TotalStageNum; i++)
+	for (int stageNum = Stage1; stageNum < TotalStageNum; stageNum++)
 	{
 		//全ステージモデルオブジェクト生成
-		m_stage[i] = NewGO<SkinModelRender>(PRIORITY_1, nullptr);
+		m_stage[stageNum] = NewGO<SkinModelRender>(PRIORITY_1, nullptr);
 		//全ステージスプライトオブジェクト生成
-		m_stageName[i] = NewGO<SpriteRender>(PRIORITY_1, nullptr);
+		m_stageName[stageNum] = NewGO<SpriteRender>(PRIORITY_1, nullptr);
 	}
 
 	//どひょうステージ&名前画像をロード
@@ -75,16 +75,16 @@ bool StageSelectScene::Start()
 	m_pla->SetPosition({ 0.0f,0.0f,0.0f });
 
 	//デバック用のプレイヤースピードの矢印表示
-	m_skinModelRenderArrow = NewGO<SkinModelRender>(PRIORITY_2, nullptr);
-	m_skinModelRenderArrow->Init("Assets/modelData/Arrow.tkm");	//矢印
+	//m_skinModelRenderArrow = NewGO<SkinModelRender>(PRIORITY_2, nullptr);
+	//m_skinModelRenderArrow->Init("Assets/modelData/Arrow.tkm");	//矢印
 
 
 	//プレイヤーの上に表示されるA吹き出し
-	for (int i = 0; i < 4; i++)
+	for (int plaNum = 0; plaNum < 4; plaNum++)
 	{
-		m_Ahukidasi[i] = NewGO<SpriteRender>(PRIORITY_2, nullptr);
-		m_Ahukidasi[i]->Init("Assets/Image/DDS/Ahukidasi.dds", 100, 100);
-		m_Ahukidasi[i]->Deactivate();
+		m_Ahukidasi[plaNum] = NewGO<SpriteRender>(PRIORITY_2, nullptr);
+		m_Ahukidasi[plaNum]->Init("Assets/Image/DDS/Ahukidasi.dds", 100, 100);
+		m_Ahukidasi[plaNum]->Deactivate();
 	}
 	m_AhukidasiPos[0] = { -140, 170, 0 };
 	m_AhukidasiPos[1] = { 140, 170, 0 };
@@ -114,7 +114,7 @@ void StageSelectScene::Update()
 	if (m_isCanGameStartFlg == true)
 	{
 		//ベクトルを可視化させるデバック関数
-		PlaMooveSpeedDebug();
+		//PlaMooveSpeedDebug();
 		//クラクションを鳴らす関数
 		CarHorn();
 		//プレイヤーの回転処理
@@ -156,21 +156,21 @@ void StageSelectScene::GameSceneTransition()
 		NewGO<GameScene>(PRIORITY_0, GAMESCENE_NAME);
 
 		//表示されているステージモデルとステージ名画像をすべて削除
-		for (int i = 0; i < TotalStageNum; i++)
+		for (int stageNum = 0; stageNum < TotalStageNum; stageNum++)
 		{
-			DeleteGO(m_stage[i]);
-			DeleteGO(m_stageName[i]);
+			DeleteGO(m_stage[stageNum]);
+			DeleteGO(m_stageName[stageNum]);
 		}
 		//プレイヤーを削除。
 		DeleteGO(m_pla);
 		//プレイヤーのスピード可視化矢印を削除。
-		DeleteGO(m_skinModelRenderArrow);
+		//DeleteGO(m_skinModelRenderArrow);
 		//背景画像を削除
 		DeleteGO(m_titleSprite);
 		//A吹き出し画像を削除
-		for (int i = 0; i < 4; i++)
+		for (int plaNum = 0; plaNum < 4; plaNum++)
 		{
-			DeleteGO(m_Ahukidasi[i]);
+			DeleteGO(m_Ahukidasi[plaNum]);
 		}
 		//タイトルBGMを削除
 		DeleteGO(m_titleBGM);
@@ -243,61 +243,61 @@ void StageSelectScene::PlaTurn()
 //ステージの上にいるときそのステージを選択できる関数
 void StageSelectScene::TouchStage()
 {
-	for (int i = Stage1; i < TotalStageNum; i++)
+	for (int stageNum = Stage1; stageNum < TotalStageNum; stageNum++)
 	{
-		m_Ahukidasi[i-1]->Deactivate();
+		m_Ahukidasi[stageNum-1]->Deactivate();
 
 		//通常サイズ
-		m_stageName[i]->SetScale(Vector3::One);
+		m_stageName[stageNum]->SetScale(Vector3::One);
 
 		//プレイヤーと各ステージとの距離を求める
-		m_diff[i] = m_stagePos[i] - m_pos;
+		m_diff[stageNum] = m_stagePos[stageNum] - m_pos;
 
 		//ステージの上に乗っていなかったら
-		if (m_diff[i].Length() >= 70.0f)
+		if (m_diff[stageNum].Length() >= 70.0f)
 		{
 			//音を鳴らせる！っていうフラグ復活！
-			m_isOnStageSoundFlg[i] = true;
+			m_isOnStageSoundFlg[stageNum] = true;
 		}
 
 		//ステージの上に乗っていたら
-		if (m_diff[i].Length() < 70.0f)
+		if (m_diff[stageNum].Length() < 70.0f)
 		{
 			//A吹き出しを表示
-			if (i == 1)
+			if (stageNum == 1)
 			{
 				m_Ahukidasi[0]->SetPosition(m_AhukidasiPos[0]);
 				m_Ahukidasi[0]->Activate();
 			}
-			if (i == 2)
+			if (stageNum == 2)
 			{
 				m_Ahukidasi[1]->SetPosition(m_AhukidasiPos[1]);
 				m_Ahukidasi[1]->Activate();
 			}
-			if (i == 3)
+			if (stageNum == 3)
 			{
 				m_Ahukidasi[2]->SetPosition(m_AhukidasiPos[2]);
 				m_Ahukidasi[2]->Activate();
 			}
-			if (i == 4)
+			if (stageNum == 4)
 			{
 				m_Ahukidasi[3]->SetPosition(m_AhukidasiPos[3]);
 				m_Ahukidasi[3]->Activate();
 			}
 
-			if (m_isOnStageSoundFlg[i])
+			if (m_isOnStageSoundFlg[stageNum])
 			{
 				//ステージを選択できるようになったら鳴らすサウンド
 				SoundPlayBack(OnStageSound);
 
-				m_isOnStageSoundFlg[i] = false;
+				m_isOnStageSoundFlg[stageNum] = false;
 			}
 
 			//ステージ名画像を強調拡大
-			m_stageName[i]->SetScale(BIG_STAGE_NAME);
+			m_stageName[stageNum]->SetScale(BIG_STAGE_NAME);
 
 			//選択されているステージの番号を決定。
-			m_stageNum = i;
+			m_stageNum = stageNum;
 
 			//ゲーム画面遷移処理関数
 			GameSceneTransition();

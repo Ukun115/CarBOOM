@@ -25,34 +25,34 @@ bool ResultScene::Start()
 	m_player = FindGO<Player>(PLAYER_NAME);
 
 	//順位文字を初期化し、表示
-	for (int i = 0; i < 4; i++)
+	for (int plaNum = 0; plaNum < 4; plaNum++)
 	{
 		//順位画像オブジェクト生成
-		m_rankingSprite[i] = NewGO<SpriteRender>(PRIORITY_1, nullptr);
+		m_rankingSprite[plaNum] = NewGO<SpriteRender>(PRIORITY_1, nullptr);
 
 		//１位画像
-		if (i == 0)
+		if (plaNum == 0)
 		{
-			m_rankingSprite[i]->Init("Assets/image/DDS/1st.dds", 150.0f, 150.0f);
-			m_rankingSprite[i]->SetPosition(RANKING1_POS);
+			m_rankingSprite[plaNum]->Init("Assets/image/DDS/1st.dds", 150.0f, 150.0f);
+			m_rankingSprite[plaNum]->SetPosition(RANKING1_POS);
 		}
 		//2位画像
-		if (i == 1)
+		if (plaNum == 1)
 		{
-			m_rankingSprite[i]->Init("Assets/image/DDS/2nd.dds", 150.0f, 150.0f);
-			m_rankingSprite[i]->SetPosition(RANKING2_POS);
+			m_rankingSprite[plaNum]->Init("Assets/image/DDS/2nd.dds", 150.0f, 150.0f);
+			m_rankingSprite[plaNum]->SetPosition(RANKING2_POS);
 		}
 		//3位画像
-		if (i == 2)
+		if (plaNum == 2)
 		{
-			m_rankingSprite[i]->Init("Assets/image/DDS/3rd.dds", 150.0f, 150.0f);
-			m_rankingSprite[i]->SetPosition(RANKING3_POS);
+			m_rankingSprite[plaNum]->Init("Assets/image/DDS/3rd.dds", 150.0f, 150.0f);
+			m_rankingSprite[plaNum]->SetPosition(RANKING3_POS);
 		}
 		//4位画像
-		if (i == 3)
+		if (plaNum == 3)
 		{
-			m_rankingSprite[i]->Init("Assets/image/DDS/4th.dds", 150.0f, 150.0f);
-			m_rankingSprite[i]->SetPosition(RANKING4_POS);
+			m_rankingSprite[plaNum]->Init("Assets/image/DDS/4th.dds", 150.0f, 150.0f);
+			m_rankingSprite[plaNum]->SetPosition(RANKING4_POS);
 		}
 	}
 	//リザルトジングル
@@ -68,29 +68,29 @@ bool ResultScene::Start()
 	m_resultSprite->SetPosition(m_resSprPos);
 
 
-	for (int i = 0; i < m_player->GetPlaNum(); i++)
+	for (int plaNum = 0; plaNum < m_player->GetPlaNum(); plaNum++)
 	{
 		//プレイヤー文字画像オブジェクト生成
-		m_plaNum[i] = NewGO<SpriteRender>(PRIORITY_1, nullptr);
+		m_plaNum[plaNum] = NewGO<SpriteRender>(PRIORITY_1, nullptr);
 		//1P
-		if (i == 0)
+		if (plaNum == 0)
 		{
-			m_plaNum[i]->Init("Assets/image/DDS/Player1_ActiveName.dds", 340.0f, 170.0f);
+			m_plaNum[plaNum]->Init("Assets/image/DDS/Player1_ActiveName.dds", 340.0f, 170.0f);
 		}
 		//2P
-		if (i == 1)
+		if (plaNum == 1)
 		{
-			m_plaNum[i]->Init("Assets/image/DDS/Player2_ActiveName.dds", 340.0f, 170.0f);
+			m_plaNum[plaNum]->Init("Assets/image/DDS/Player2_ActiveName.dds", 340.0f, 170.0f);
 		}
 		//3P
-		if (i == 2)
+		if (plaNum == 2)
 		{
-			m_plaNum[i]->Init("Assets/image/DDS/Player3_ActiveName.dds", 340.0f, 170.0f);
+			m_plaNum[plaNum]->Init("Assets/image/DDS/Player3_ActiveName.dds", 340.0f, 170.0f);
 		}
 		//4P
-		if (i == 3)
+		if (plaNum == 3)
 		{
-			m_plaNum[i]->Init("Assets/image/DDS/Player4_ActiveName.dds", 340.0f, 170.0f);
+			m_plaNum[plaNum]->Init("Assets/image/DDS/Player4_ActiveName.dds", 340.0f, 170.0f);
 		}
 	}
 
@@ -108,9 +108,9 @@ ResultScene::~ResultScene()
 	DeleteGO(m_resultSprite);
 
 	//プレイヤー名画像の削除。
-	for (int i = 0; i < 4; i++)
+	for (int plaNum = 0; plaNum < 4; plaNum++)
 	{
-		DeleteGO(m_plaNum[i]);
+		DeleteGO(m_plaNum[plaNum]);
 	}
 }
 
@@ -126,21 +126,21 @@ void ResultScene::Update()
 void ResultScene::RankingSort()
 {
 	//プレイヤーの人数分スコアをゲット
-	for (int i = 0; i < m_player->GetPlaNum(); i++)
+	for (int plaNum = 0; plaNum < m_player->GetPlaNum(); plaNum++)
 	{
-		m_plaScore[i] = m_gameScene->GetPlaScore(i);
+		m_plaScore[plaNum] = m_gameScene->GetPlaScore(plaNum);
 
 	}
 	//ソート
-	for (int k = 0; k < m_player->GetPlaNum(); k++)
+	for (int plaNum = 0; plaNum < m_player->GetPlaNum(); plaNum++)
 	{
-		for (int u = k + 1; u < m_player->GetPlaNum(); u++)
+		for (int nextPlaNum = plaNum + 1; nextPlaNum < m_player->GetPlaNum(); nextPlaNum++)
 		{
-			if (m_plaScore[k] < m_plaScore[u])
+			if (m_plaScore[plaNum] < m_plaScore[nextPlaNum])
 			{
-				SpriteRender *tmp = m_plaNum[k];
-				m_plaNum[k] = m_plaNum[u];
-				m_plaNum[u] = tmp;
+				SpriteRender *tmp = m_plaNum[plaNum];
+				m_plaNum[plaNum] = m_plaNum[nextPlaNum];
+				m_plaNum[nextPlaNum] = tmp;
 			}
 		}
 	}
@@ -172,8 +172,8 @@ void ResultScene::RankingSort()
 void ResultScene::GameEnd()
 {
 	//プレイヤーの内、誰かのセレクトボタンが押されたら、
-	for (int i = 0; i < 4; i++) {
-		if (g_pad[i]->IsTrigger(enButtonSelect))
+	for (int plaNum = 0; plaNum < 4; plaNum++) {
+		if (g_pad[plaNum]->IsTrigger(enButtonSelect))
 		{
 			//決定サウンド
 			SoundPlayBack(DecideSound);

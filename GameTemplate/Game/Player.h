@@ -31,6 +31,7 @@ private:
 	CharacterController m_charaCon[4];		//プレイヤー4人分のキャラクタコントローラークラスを作成
 	Effect m_shootDownEffect[4];		//プレイヤー4人分の落下したときの撃墜エフェクト
 	Effect m_jetEffect[4];		//プレイヤー4人分のジェットエフェクト
+	Effect m_landingEffect[4];		//プレイヤー4人分の着地エフェクト
 
 
 	/// <summary>
@@ -45,6 +46,7 @@ private:
 	bool m_isCharge1EffectSoundFlg[4] = { false };
 	bool m_isCharge2EffectSoundFlg[4] = { false };
 	bool m_isFallSoundFlg[4] = { false };			//落下音を落下中何回もならないようにするフラグ
+	bool m_isLandingOKFlg[4] = { false };
 
 
 	/// <summary>
@@ -54,6 +56,7 @@ private:
 	unsigned int m_releaseTimer[4];		//離したときのタイマー
 	unsigned int m_atackTimer[4];			//攻撃のタイマー
 	unsigned int m_atackHanteiTimer[4] = { 0 };			//攻撃判定のタイマー
+	unsigned int m_landingEffectDelayTimer[4] = { 0 };			//着地エフェクトをプレイヤーが着地したときに再生させるためのタイマー
 
 
 	Vector3    m_pos[4];		//プレイヤーの位置
@@ -108,30 +111,30 @@ private:
 
 
 	//プレイヤーのリスポーン処理関数
-	void PlaResporn(int planum);
+	void PlaResporn(int plaNum);
 	//落ちたプレイヤーの初期位置をセットさせる関数
-	void PlaResPos(int planum);
+	void PlaResPos(int plaNum);
 	//プレイヤーの位置,回転の情報を更新する関数
-	void PlaDataUpdate(int planum);
+	void PlaDataUpdate(int plaNum);
 	//プレイヤーの通常移動処理関数
-	void PlaMove(int planum);
+	void PlaMove(int plaNum);
 	//プレイヤーの移動速度に補正を入れる関数
-	void PlaSpeedCorrection(int planum);
+	void PlaSpeedCorrection(int plaNum);
 	//プレイヤーの回転処理関数
-	void PlaTurn(int planum);
+	void PlaTurn(int plaNum);
 	//プレイヤーのDA(ダッシュアタック)処理関数
-	void PlaAttackBefore(int planum);
+	void PlaAttackBefore(int plaNum);
 	//プレイヤーの現在の状態を伝える関数
-	void PlaNowState(int planum);
+	void PlaNowState(int plaNum);
 	//プレイヤーと敵がぶつかったときの処理関数
-	void PlaAndEneClash(int planum);
+	void PlaAndEneClash(int plaNum);
 	//プレイヤーとプレイヤーがぶつかったときの処理関数
-	void PlaAndPlaClash(int planum);
+	void PlaAndPlaClash(int plaNum);
 	//プレイヤーにかかる重力を設定する関数
-	void Gravity(int planum);
+	void Gravity(int plaNum);
 
 	//ベクトルを可視化させるデバック関数
-	void PlaMooveSpeedDebug(int planum);
+	void PlaMooveSpeedDebug(int plaNum);
 
 	//サウンドを一括にまとめる関数
 	void SoundPlayBack(int soundNum, int plaNum);
@@ -145,12 +148,12 @@ public:
 	//プレイヤーの人数を取得する関数
 	int GetPlaNum() { return m_plaNum; }
 	//プレイヤーの位置を取得する関数
-	Vector3 GetPlaPos(int planum) { return  m_pos[planum]; }
+	Vector3 GetPlaPos(int plaNum) { return  m_pos[plaNum]; }
 	//プレイヤーの速度を取得する関数
-	Vector3 GetPlaSpeed(int planum) { return m_moveSpeed[planum]; }
+	Vector3 GetPlaSpeed(int plaNum) { return m_moveSpeed[plaNum]; }
 	//プレイヤーの向きを取得する関数
-	Vector3 GetPlaDir(int planum) { return m_plaDir[planum]; }
+	Vector3 GetPlaDir(int plaNum) { return m_plaDir[plaNum]; }
 	//プレイヤーのチャージを取得する関数
-	bool GetPlaisTyazi1Flg(int planum) { return m_isTyazi1Flg[planum]; }
-	bool GetPlaisTyazi2Flg(int planum) { return m_isTyazi2Flg[planum]; }
+	bool GetPlaisTyazi1Flg(int plaNum) { return m_isTyazi1Flg[plaNum]; }
+	bool GetPlaisTyazi2Flg(int plaNum) { return m_isTyazi2Flg[plaNum]; }
 };

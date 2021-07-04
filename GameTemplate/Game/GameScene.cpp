@@ -73,27 +73,27 @@ bool GameScene::Start()
 	m_plaScorePos[2] = { -520.0f,-205.0f };
 	m_plaScorePos[3] = { 450.0f,-205.0f };
 
-	for (int i = 0; i < 4; i++) {
+	for (int plaNum = 0; plaNum < 4; plaNum++) {
 		//プレイヤーごとのptフォントオブジェクト生成
-		m_ScoreFontRender[i] = NewGO<FontRender>(PRIORITY_1, nullptr);
+		m_ScoreFontRender[plaNum] = NewGO<FontRender>(PRIORITY_1, nullptr);
 		//初期化
-		m_ScoreFontRender[i]->Init
+		m_ScoreFontRender[plaNum]->Init
 		(
 			L"pt",				//テキスト
-			GetScorePos(i),		//位置
-			ScoreColor(i),		//色
+			GetScorePos(plaNum),		//位置
+			ScoreColor(plaNum),		//色
 			FONT_ROT,			//傾き
 			PT_SCA,				//拡大率
 			FONT_PIV			//基点
 		);
 		//プレイヤーごとのポイントフォントオブジェクト生成
-		m_TextScoreFontRender[i] = NewGO<FontRender>(PRIORITY_1, nullptr);
+		m_TextScoreFontRender[plaNum] = NewGO<FontRender>(PRIORITY_1, nullptr);
 		//初期化
-		m_TextScoreFontRender[i]->Init
+		m_TextScoreFontRender[plaNum]->Init
 		(
 			L"",					//テキスト
-			m_plaScorePos[i],		//位置
-			ScoreColor(i),			//色
+			m_plaScorePos[plaNum],		//位置
+			ScoreColor(plaNum),			//色
 			FONT_ROT,				//傾き
 			FONT_SCA,				//拡大率
 			FONT_PIV				//基点
@@ -101,15 +101,15 @@ bool GameScene::Start()
 
 
 		//文字の境界線表示
-		m_ScoreFontRender[i]->SetShadowParam(true, 1.0f, Vector4::Black);
+		m_ScoreFontRender[plaNum]->SetShadowParam(true, 1.0f, Vector4::Black);
 		//文字の境界線表示
-		m_TextScoreFontRender[i]->SetShadowParam(true, 1.0f, Vector4::Black);
+		m_TextScoreFontRender[plaNum]->SetShadowParam(true, 1.0f, Vector4::Black);
 	}
 	//登録されていないプレイヤーのスコアはグレー表示にする
-	for (int i = m_titleScene->GetTotalPlaNum() ; i < 4; i++)
+	for (int plaNum = m_titleScene->GetTotalPlaNum() ; plaNum < 4; plaNum++)
 	{
-		m_ScoreFontRender[i]->SetColor(GRAY);
-		m_TextScoreFontRender[i]->SetColor(GRAY);
+		m_ScoreFontRender[plaNum]->SetColor(GRAY);
+		m_TextScoreFontRender[plaNum]->SetColor(GRAY);
 	}
 	//制限時間フォントの初期化
 	m_timeLimit->Init
@@ -287,14 +287,14 @@ void GameScene::TimeLimit()
 //プレイヤーのスコア描画関数
 void GameScene::PlaScoreDraw()
 {
-	for (int i = 0; i < 4; i++) {
+	for (int plaNum = 0; plaNum < 4; plaNum++) {
 
 		//表示位置更新
-		SetScoreTextPos(i);
+		SetScoreTextPos(plaNum);
 
 		//プレイヤーごとのスコアの描画
-		swprintf_s(text2, L"%d", m_plaScore[i]);
-		m_TextScoreFontRender[i]->SetText(text2);
+		swprintf_s(text2, L"%d", m_plaScore[plaNum]);
+		m_TextScoreFontRender[plaNum]->SetText(text2);
 	}
 }
 
@@ -454,20 +454,20 @@ void GameScene::GetPlayerAddScore(int plaNum1,int plaNum2)
 //１位に王冠画像と王冠モデルを渡す関数
 void GameScene::NowCrown()
 {
-	for (int i = PLAYER1; i < m_titleScene->GetTotalPlaNum(); i++)
+	for (int plaNum = PLAYER1; plaNum < m_titleScene->GetTotalPlaNum(); plaNum++)
 	{
-		for (int u = PLAYER1; u < m_titleScene->GetTotalPlaNum(); u++)
+		for (int nextPlaNum = PLAYER1; nextPlaNum < m_titleScene->GetTotalPlaNum(); nextPlaNum++)
 		{
 			//今のプレイヤー(i)と次のプレイヤー(u)を比較
 			//次のプレイヤーのほうがスコアが高いとき、
-			if (m_plaScore[i] < m_plaScore[u])
+			if (m_plaScore[plaNum] < m_plaScore[nextPlaNum])
 			{
 				//王冠スプライトを表示させる
 				m_crownSprite->Activate();
 				//王冠モデルを表示させる
 				m_crownModel->SetScale(CROWN_MODEL_SCA);
 
-				m_nowNumOnePla = u;
+				m_nowNumOnePla = nextPlaNum;
 			}
 		}
 	}
