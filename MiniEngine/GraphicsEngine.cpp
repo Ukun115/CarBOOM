@@ -483,7 +483,20 @@ void GraphicsEngine::EndRender()
 	m_swapChain->Present(0, 0);
 #else
 	// Present the frame.
-	m_swapChain->Present(1, 0);
+
+		//if (g_engine->GetRate() > 100)
+		//{
+
+		//m_swapChain->Present(2, 0);
+		//m_graphicTime = 2;
+		//}
+		//else
+		//{
+		//	m_swapChain->Present(1, 0);
+		//	m_graphicTime = 1;
+		//}
+
+	m_swapChain->Present(0, 0);
 #endif
 	m_directXTKGfxMemroy->GarbageCollect();
 	//•`‰æŠ®—¹‘Ò‚¿B

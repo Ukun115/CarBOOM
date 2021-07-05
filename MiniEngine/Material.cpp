@@ -1,7 +1,7 @@
-#include "stdafx.h"
+ï»¿#include "stdafx.h"
 #include "Material.h"
 
-//ƒ‹[ƒgƒVƒOƒlƒ`ƒƒ‚ÆƒpƒCƒvƒ‰ƒCƒ“ƒXƒe[ƒgü‚è‚ÍƒJƒŠƒJƒŠƒJƒŠ
+//ãƒ«ãƒ¼ãƒˆã‚·ã‚°ãƒãƒãƒ£ã¨ãƒ‘ã‚¤ãƒ—ãƒ©ã‚¤ãƒ³ã‚¹ãƒ†ãƒ¼ãƒˆå‘¨ã‚Šã¯ã‚«ãƒªã‚«ãƒªã‚«ãƒª
 enum {
 	enDescriptorHeap_CB,
 	enDescriptorHeap_SRV,
@@ -61,16 +61,16 @@ void Material::InitFromTkmMaterila(
 	const char* vsSkinEntryPointFunc,
 	const char* psEntryPointFunc)
 {
-	//ƒeƒNƒXƒ`ƒƒ‚ğƒ[ƒhB
+	//ãƒ†ã‚¯ã‚¹ãƒãƒ£ã‚’ãƒ­ãƒ¼ãƒ‰ã€‚
 	InitTexture(tkmMat);
 	
-	//’è”ƒoƒbƒtƒ@‚ğì¬B
+	//å®šæ•°ãƒãƒƒãƒ•ã‚¡ã‚’ä½œæˆã€‚
 	SMaterialParam matParam;
 	matParam.hasNormalMap = m_normalMap.IsValid() ? 1 : 0;
 	matParam.hasSpecMap = m_specularMap.IsValid() ? 1 : 0;
 	m_constantBuffer.Init(sizeof(SMaterialParam), &matParam);
 
-	//ƒ‹[ƒgƒVƒOƒlƒ`ƒƒ‚ğ‰Šú‰»B
+	//ãƒ«ãƒ¼ãƒˆã‚·ã‚°ãƒãƒãƒ£ã‚’åˆæœŸåŒ–ã€‚
 	m_rootSignature.Init(
 		D3D12_FILTER_MIN_MAG_MIP_LINEAR,
 		D3D12_TEXTURE_ADDRESS_MODE_WRAP,
@@ -78,15 +78,15 @@ void Material::InitFromTkmMaterila(
 		D3D12_TEXTURE_ADDRESS_MODE_WRAP);
 
 	if (wcslen(fxFilePath) > 0) {
-		//ƒVƒF[ƒ_[‚ğ‰Šú‰»B
+		//ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼ã‚’åˆæœŸåŒ–ã€‚
 		InitShaders(fxFilePath, vsEntryPointFunc, vsSkinEntryPointFunc, psEntryPointFunc);
-		//ƒpƒCƒvƒ‰ƒCƒ“ƒXƒe[ƒg‚ğ‰Šú‰»B
+		//ãƒ‘ã‚¤ãƒ—ãƒ©ã‚¤ãƒ³ã‚¹ãƒ†ãƒ¼ãƒˆã‚’åˆæœŸåŒ–ã€‚
 		InitPipelineState();
 	}
 }
 void Material::InitPipelineState()
 {
-	// ’¸“_ƒŒƒCƒAƒEƒg‚ğ’è‹`‚·‚éB
+	// é ‚ç‚¹ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆã‚’å®šç¾©ã™ã‚‹ã€‚
 	D3D12_INPUT_ELEMENT_DESC inputElementDescs[] =
 	{
 		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
@@ -98,12 +98,12 @@ void Material::InitPipelineState()
 		{ "BLENDWEIGHT", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 72, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
 	};
 
-	//ƒpƒCƒvƒ‰ƒCƒ“ƒXƒe[ƒg‚ğì¬B
+	//ãƒ‘ã‚¤ãƒ—ãƒ©ã‚¤ãƒ³ã‚¹ãƒ†ãƒ¼ãƒˆã‚’ä½œæˆã€‚
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC psoDesc = { 0 };
 	psoDesc.InputLayout = { inputElementDescs, _countof(inputElementDescs) };
 	psoDesc.pRootSignature = m_rootSignature.Get();
-	psoDesc.VS = CD3DX12_SHADER_BYTECODE(m_vsSkinModel.GetCompiledBlob());
-	psoDesc.PS = CD3DX12_SHADER_BYTECODE(m_psModel.GetCompiledBlob());
+	psoDesc.VS = CD3DX12_SHADER_BYTECODE(m_vsSkinModel->GetCompiledBlob());
+	psoDesc.PS = CD3DX12_SHADER_BYTECODE(m_psModel->GetCompiledBlob());
 	psoDesc.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
 	psoDesc.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
 	psoDesc.DepthStencilState.DepthEnable = TRUE;
@@ -113,25 +113,25 @@ void Material::InitPipelineState()
 	psoDesc.SampleMask = UINT_MAX;
 	psoDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
 	psoDesc.NumRenderTargets = 3;
-	psoDesc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;		//ƒAƒ‹ƒxƒhƒJƒ‰[o—Í—pB
+	psoDesc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;		//ã‚¢ãƒ«ãƒ™ãƒ‰ã‚«ãƒ©ãƒ¼å‡ºåŠ›ç”¨ã€‚
 #ifdef SAMPE_16_02
-	psoDesc.RTVFormats[1] = DXGI_FORMAT_R16G16B16A16_FLOAT;	//–@üo—Í—pB	
-	psoDesc.RTVFormats[2] = DXGI_FORMAT_R32_FLOAT;						//Z’lB
+	psoDesc.RTVFormats[1] = DXGI_FORMAT_R16G16B16A16_FLOAT;	//æ³•ç·šå‡ºåŠ›ç”¨ã€‚	
+	psoDesc.RTVFormats[2] = DXGI_FORMAT_R32_FLOAT;						//Zå€¤ã€‚
 #else
-	psoDesc.RTVFormats[1] = DXGI_FORMAT_R8G8B8A8_UNORM;			//–@üo—Í—pB	
-	psoDesc.RTVFormats[2] = DXGI_FORMAT_R32G32B32A32_FLOAT;	//Z’lB
+	psoDesc.RTVFormats[1] = DXGI_FORMAT_R8G8B8A8_UNORM;			//æ³•ç·šå‡ºåŠ›ç”¨ã€‚	
+	psoDesc.RTVFormats[2] = DXGI_FORMAT_R32G32B32A32_FLOAT;	//Zå€¤ã€‚
 #endif
 	psoDesc.DSVFormat = DXGI_FORMAT_D32_FLOAT;
 	psoDesc.SampleDesc.Count = 1;
 
 	m_skinModelPipelineState.Init(psoDesc);
 
-	//‘±‚¢‚ÄƒXƒLƒ“‚È‚µƒ‚ƒfƒ‹—p‚ğì¬B
-	psoDesc.VS = CD3DX12_SHADER_BYTECODE(m_vsNonSkinModel.GetCompiledBlob());
+	//ç¶šã„ã¦ã‚¹ã‚­ãƒ³ãªã—ãƒ¢ãƒ‡ãƒ«ç”¨ã‚’ä½œæˆã€‚
+	psoDesc.VS = CD3DX12_SHADER_BYTECODE(m_vsNonSkinModel->GetCompiledBlob());
 	m_nonSkinModelPipelineState.Init(psoDesc);
 
-	//‘±‚¢‚Ä”¼“§–¾ƒ}ƒeƒŠƒAƒ‹—pB
-	psoDesc.VS = CD3DX12_SHADER_BYTECODE(m_vsSkinModel.GetCompiledBlob());
+	//ç¶šã„ã¦åŠé€æ˜ãƒãƒ†ãƒªã‚¢ãƒ«ç”¨ã€‚
+	psoDesc.VS = CD3DX12_SHADER_BYTECODE(m_vsSkinModel->GetCompiledBlob());
 	psoDesc.BlendState.IndependentBlendEnable = TRUE;
 	psoDesc.BlendState.RenderTarget[0].BlendEnable = TRUE;
 	psoDesc.BlendState.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA;
@@ -141,7 +141,7 @@ void Material::InitPipelineState()
 	
 	m_transSkinModelPipelineState.Init(psoDesc);
 
-	psoDesc.VS = CD3DX12_SHADER_BYTECODE(m_vsNonSkinModel.GetCompiledBlob());
+	psoDesc.VS = CD3DX12_SHADER_BYTECODE(m_vsNonSkinModel->GetCompiledBlob());
 	m_transNonSkinModelPipelineState.Init(psoDesc);
 
 }
@@ -152,13 +152,41 @@ void Material::InitShaders(
 	const char* psEntryPointFunc
 )
 {
-	//ƒXƒLƒ“‚È‚µƒ‚ƒfƒ‹—p‚ÌƒVƒF[ƒ_[‚ğƒ[ƒh‚·‚éB
-	m_vsNonSkinModel.LoadVS(fxFilePath, vsEntryPointFunc);
-	//ƒXƒLƒ“‚ ‚èƒ‚ƒfƒ‹—p‚ÌƒVƒF[ƒ_[‚ğƒ[ƒh‚·‚éB
-	m_vsSkinModel.LoadVS(fxFilePath, vsSkinEntriyPointFunc);
-	
-	m_psModel.LoadPS(fxFilePath, psEntryPointFunc);
+	//wcharã‚’charã«å¤‰æ›
+	char filePath[256];
+	wcstombs(filePath, fxFilePath, 256);
+
+	//ï¿½Xï¿½Lï¿½ï¿½ï¿½È‚ï¿½ï¿½ï¿½ï¿½fï¿½ï¿½ï¿½pï¿½ÌƒVï¿½Fï¿½[ï¿½_ï¿½[ï¿½ï¿½ï¿½ï¿½ï¿½[ï¿½hï¿½ï¿½ï¿½ï¿½B
+	m_vsNonSkinModel = g_engine->GetShaderFromBank(filePath, vsEntryPointFunc);
+	if (m_vsNonSkinModel == nullptr) {
+		m_vsNonSkinModel = new Shader;
+		m_vsNonSkinModel->LoadVS(fxFilePath, vsEntryPointFunc);
+		g_engine->RegistShaderToBank(filePath, vsEntryPointFunc, m_vsNonSkinModel);
+	}
+	//ï¿½Xï¿½Lï¿½ï¿½ï¿½ï¿½ï¿½èƒ‚ï¿½fï¿½ï¿½ï¿½pï¿½ÌƒVï¿½Fï¿½[ï¿½_ï¿½[ï¿½ï¿½ï¿½ï¿½ï¿½[ï¿½hï¿½ï¿½ï¿½ï¿½B
+	m_vsSkinModel = g_engine->GetShaderFromBank(filePath, vsSkinEntriyPointFunc);
+	if (m_vsSkinModel == nullptr) {
+		m_vsSkinModel = new Shader;
+		m_vsSkinModel->LoadVS(fxFilePath, vsSkinEntriyPointFunc);
+		g_engine->RegistShaderToBank(filePath, vsSkinEntriyPointFunc, m_vsSkinModel);
+	}
+
+	m_psModel = g_engine->GetShaderFromBank(filePath, psEntryPointFunc);
+	if (m_psModel == nullptr) {
+		m_psModel = new Shader;
+		m_psModel->LoadPS(fxFilePath, psEntryPointFunc);
+		g_engine->RegistShaderToBank(filePath, psEntryPointFunc, m_psModel);
+	}
+
+	////ã‚¹ã‚­ãƒ³ãªã—ãƒ¢ãƒ‡ãƒ«ç”¨ã®ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼ã‚’ãƒ­ãƒ¼ãƒ‰ã™ã‚‹ã€‚
+	//m_vsNonSkinModel.LoadVS(fxFilePath, vsEntryPointFunc);
+	////ã‚¹ã‚­ãƒ³ã‚ã‚Šãƒ¢ãƒ‡ãƒ«ç”¨ã®ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼ã‚’ãƒ­ãƒ¼ãƒ‰ã™ã‚‹ã€‚
+	//m_vsSkinModel.LoadVS(fxFilePath, vsSkinEntriyPointFunc);
+	//
+	//m_psModel.LoadPS(fxFilePath, psEntryPointFunc);
 }
+
+
 void Material::BeginRender(RenderContext& rc, int hasSkin)
 {
 	rc.SetRootSignature(m_rootSignature);

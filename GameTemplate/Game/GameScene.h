@@ -15,7 +15,6 @@ private:
 	/// </summary>
 	TitleScene* m_titleScene = nullptr;
 	Stage* m_normalStage = nullptr;
-	SkinModelRender* m_crownModel = nullptr;
 	SpriteRender* m_sprite[4] = { nullptr };
 	SpriteRender* m_crownSprite = nullptr;
 	FontRender* m_ScoreFontRender[4] = { nullptr };
@@ -48,7 +47,6 @@ private:
 	int m_plaScore[4] = { 0 };
 	Vector2 m_plaScorePos[4];
 	unsigned int m_nowNumOnePla = 0;
-	Vector3 m_crownModelPos = {0.0f,0.0f,0.0f};
 	wchar_t text1[64];	//制限時間フォント
 	wchar_t text2[64];	//プレイヤースコアフォント
 

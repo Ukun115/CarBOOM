@@ -18,6 +18,10 @@ void TkEngine::Init(HWND hwnd, UINT frameBufferWidth, UINT frameBufferHeight)
 	m_graphicsEngine->Init(hwnd, frameBufferWidth, frameBufferHeight);
 	g_gameTime = &m_gameTime;
 
+	//グラフィックエンジンの初期化。
+	auto hdc = GetDC(hwnd);
+	m_rate = GetDeviceCaps(hdc, VREFRESH);
+
 	//ゲームパッドの初期化。
 	for (int i = 0; i < GamePad::CONNECT_PAD_MAX; i++) {
 		g_pad[i] = &m_pad[i];

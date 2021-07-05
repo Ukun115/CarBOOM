@@ -64,7 +64,7 @@ public:
 	/// メッシュに対して問い合わせを行う。
 	/// </summary>
 	/// <param name="queryFunc">問い合わせ関数</param>
-	void QueryMeshs(std::function<void(const SMesh& mesh)> queryFunc) 
+	void QueryMeshs(std::function<void(const SMesh& mesh)> queryFunc)
 	{
 		m_meshParts.QueryMeshs(queryFunc);
 	}
@@ -88,12 +88,12 @@ public:
 	/// <returns></returns>
 	const TkmFile& GetTkmFile() const
 	{
-		return m_tkmFile;
+		return *m_tkmFile;
 	}
 private:
 
 	Matrix m_world;														//ワールド行列。
-	TkmFile m_tkmFile;													//tkmファイル。
+	TkmFile* m_tkmFile;													//tkmファイル。
 	Skeleton m_skeleton;												//スケルトン。
 	MeshParts m_meshParts;											//メッシュパーツ。
 	EnModelUpAxis m_modelUpAxis = enModelUpAxisY;		//モデルの上方向。

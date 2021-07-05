@@ -3,6 +3,8 @@
 #include "HID/GamePad.h"
 #include "../GameTemplate/Game/GameTime.h"
 
+class TkmFile;
+class Shader;
 class GraphicsEngine;
 
 class TkEngine {
@@ -24,11 +26,42 @@ public:
 	/// </summary>
 	void Init(HWND hwnd, UINT frameBufferWidth, UINT frameBufferHeight);
 
+	const int GetRate()const {
+		return m_rate;
+	}
+
+	TkmFile* GetTkmFileFromBank(const char* filePath)
+	{
+		return m_tkmFileBank.Get(filePath);
+	}
+
+	void RegistTkmFileToBank(const char* filePath, TkmFile* tkmFile)
+	{
+		m_tkmFileBank.Regist(filePath, tkmFile);
+	}
+
+	Shader* GetShaderFromBank(const char* filePath, const char* entryPointFuncName)
+	{
+		std::string programName = filePath;
+		programName += entryPointFuncName;
+		return m_shaderBank.Get(programName.c_str());
+	}
+
+	void RegistShaderToBank(const char* filePath, const char* entryPointFuncName, Shader* shader)
+	{
+		std::string programName = filePath;
+		programName += entryPointFuncName;
+		m_shaderBank.Regist(programName.c_str(), shader);
+	}
+
 private:
+	TResourceBank<TkmFile> m_tkmFileBank;
+	TResourceBank<Shader> m_shaderBank;
+
 	GraphicsEngine* m_graphicsEngine = nullptr;		//グラフィックエンジン。
 	GamePad m_pad[GamePad::CONNECT_PAD_MAX];		//ゲームパッド。
 	GameTime m_gameTime;							//ゲームタイム。
-
+	int m_rate = 0;
 };
 
 extern TkEngine* g_engine;	//TKエンジン。

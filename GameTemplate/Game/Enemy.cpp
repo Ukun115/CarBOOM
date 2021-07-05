@@ -432,12 +432,12 @@ void Enemy::PlaAndEneClash(int eneNum)
 				m_isPlaAndEneClashSoundFlg[eneNum] = false;
 			}
 
-			if (m_player->GetPlaisTyazi1Flg(plaNum)) {
+			if (m_player->GetPlaisTyazi1HanteiFlg(plaNum)) {
 				m_samDir[eneNum] = m_eneDir[eneNum] * -1.0f + m_player->GetPlaDir(plaNum);
 				m_samDir[eneNum].Normalize();
 				m_moveSpeed[eneNum] = m_samDir[eneNum] * 20.0f;
 			}
-			if (m_player->GetPlaisTyazi2Flg(plaNum)) {
+			if (m_player->GetPlaisTyazi2HanteiFlg(plaNum)) {
 
 				m_samDir[eneNum] = m_eneDir[eneNum] * -1.0f + m_player->GetPlaDir(plaNum);
 				m_samDir[eneNum].Normalize();

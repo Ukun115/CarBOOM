@@ -39,10 +39,14 @@ private:
 	/// </summary>
 	bool m_isTyazi1Flg[4] = { false };
 	bool m_isTyazi2Flg[4] = { false };
+	bool m_isTyazi1HanteiFlg[4] = { false };
+	bool m_isTyazi2HanteiFlg[4] = { false };
 	bool m_isBPushFlg[4] = { false };		//Bボタンが押されたときのフラグ
 	bool m_isAtack0Flg[4] = { false };		//Bボタンが押されたときのフラグ
 	bool m_isAtack1Flg[4] = { false };		//Bボタンが押されたときのフラグ
 	bool m_isAtack2Flg[4] = { false };		//Bボタンが押されたときのフラグ
+	bool m_isAtack1HanteiFlg[4] = { false };		//攻撃1の判定フラグ
+	bool m_isAtack2HanteiFlg[4] = { false };		//攻撃2の判定フラグ
 	bool m_isCharge1EffectSoundFlg[4] = { false };
 	bool m_isCharge2EffectSoundFlg[4] = { false };
 	bool m_isFallSoundFlg[4] = { false };			//落下音を落下中何回もならないようにするフラグ
@@ -154,6 +158,6 @@ public:
 	//プレイヤーの向きを取得する関数
 	Vector3 GetPlaDir(int plaNum) { return m_plaDir[plaNum]; }
 	//プレイヤーのチャージを取得する関数
-	bool GetPlaisTyazi1Flg(int plaNum) { return m_isTyazi1Flg[plaNum]; }
-	bool GetPlaisTyazi2Flg(int plaNum) { return m_isTyazi2Flg[plaNum]; }
+	bool GetPlaisTyazi1HanteiFlg(int plaNum) { return m_isTyazi1HanteiFlg[plaNum]; }
+	bool GetPlaisTyazi2HanteiFlg(int plaNum) { return m_isTyazi2HanteiFlg[plaNum]; }
 };

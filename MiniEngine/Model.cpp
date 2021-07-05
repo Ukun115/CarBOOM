@@ -1,37 +1,45 @@
-#include "stdafx.h"
+ï»¿#include "stdafx.h"
 #include "Model.h"
 #include "Material.h"
 
 void Model::Init(const ModelInitData& initData)
 {
 	MY_ASSERT(
-		initData.m_fxFilePath, 
-		"error : initData.m_fxFilePath‚ªŽw’è‚³‚ê‚Ä‚¢‚Ü‚¹‚ñB"
+		initData.m_fxFilePath,
+		"error : initData.m_fxFilePathãŒæŒ‡å®šã•ã‚Œã¦ã„ã¾ã›ã‚“ã€‚"
 	);
 	MY_ASSERT(
 		initData.m_tkmFilePath,
-		"error : initData.m_tkmFilePath‚ªŽw’è‚³‚ê‚Ä‚¢‚Ü‚¹‚ñB"
+		"error : initData.m_tkmFilePathãŒæŒ‡å®šã•ã‚Œã¦ã„ã¾ã›ã‚“ã€‚"
 	);
-	//“à•”‚ÌƒVƒF[ƒ_[‚ðƒ[ƒh‚·‚éˆ—‚ª‹‚ß‚Ä‚¢‚é‚Ì‚ª
-	//wchar_tŒ^‚Ì•¶Žš—ñ‚È‚Ì‚ÅA‚±‚±‚Å•ÏŠ·‚µ‚Ä‚¨‚­B
+	//å†…éƒ¨ã®ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼ã‚’ãƒ­ãƒ¼ãƒ‰ã™ã‚‹å‡¦ç†ãŒæ±‚ã‚ã¦ã„ã‚‹ã®ãŒ
+	//wchar_tåž‹ã®æ–‡å­—åˆ—ãªã®ã§ã€ã“ã“ã§å¤‰æ›ã—ã¦ãŠãã€‚
 	wchar_t wfxFilePath[256] = {L""};
 	if (initData.m_fxFilePath != nullptr) {
-		//MessageBoxA(nullptr, "fxƒtƒ@ƒCƒ‹ƒpƒX‚ªŽw’è‚³‚ê‚Ä‚¢‚Ü‚¹‚ñB", "ƒGƒ‰[", MB_OK);
+		//MessageBoxA(nullptr, "fxãƒ•ã‚¡ã‚¤ãƒ«ãƒ‘ã‚¹ãŒæŒ‡å®šã•ã‚Œã¦ã„ã¾ã›ã‚“ã€‚", "ã‚¨ãƒ©ãƒ¼", MB_OK);
 		//std::abort();
 		mbstowcs(wfxFilePath, initData.m_fxFilePath, 256);
 	}
-	
+
 	if (initData.m_skeleton != nullptr) {
-		//ƒXƒPƒ‹ƒgƒ“‚ªŽw’è‚³‚ê‚Ä‚¢‚éB
+		//ã‚¹ã‚±ãƒ«ãƒˆãƒ³ãŒæŒ‡å®šã•ã‚Œã¦ã„ã‚‹ã€‚
 		m_meshParts.BindSkeleton(*initData.m_skeleton);
 	}
-	
+
 	m_modelUpAxis = initData.m_modelUpAxis;
 
-	m_tkmFile.Load(initData.m_tkmFilePath);
+	auto tkmFile = g_engine->GetTkmFileFromBank(initData.m_tkmFilePath);
+	if (tkmFile == nullptr) {
+		//ï¿½ï¿½ï¿½oï¿½^
+		tkmFile = new TkmFile;
+		tkmFile->Load(initData.m_tkmFilePath);
+		g_engine->RegistTkmFileToBank(initData.m_tkmFilePath, tkmFile);
+	}
+	m_tkmFile = tkmFile;
+
 	m_meshParts.InitFromTkmFile(
-		m_tkmFile, 
-		wfxFilePath, 
+		*m_tkmFile,
+		wfxFilePath,
 		initData.m_vsEntryPointFunc,
 		initData.m_vsSkinEntryPointFunc,
 		initData.m_psEntryPointFunc,
@@ -41,7 +49,6 @@ void Model::Init(const ModelInitData& initData)
 	);
 
 	UpdateWorldMatrix(g_vec3Zero, g_quatIdentity, g_vec3One);
-	
 }
 
 void Model::UpdateWorldMatrix(Vector3 pos, Quaternion rot, Vector3 scale)
@@ -61,22 +68,22 @@ void Model::UpdateWorldMatrix(Vector3 pos, Quaternion rot, Vector3 scale)
 void Model::ChangeAlbedoMap(const char* materialName, Texture& albedoMap)
 {
 	m_meshParts.QueryMeshs([&](const SMesh& mesh) {
-		//todo ƒ}ƒeƒŠƒAƒ‹–¼‚ðtkmƒtƒ@ƒCƒ‹‚Éo—Í‚µ‚½‚È‚©‚Á‚½EEEB
-		//todo ¡‚Í‘Sƒ}ƒeƒŠƒAƒ‹·‚µ‘Ö‚¦‚Ü‚·
+		//todo ãƒžãƒ†ãƒªã‚¢ãƒ«åã‚’tkmãƒ•ã‚¡ã‚¤ãƒ«ã«å‡ºåŠ›ã—ãŸãªã‹ã£ãŸãƒ»ãƒ»ãƒ»ã€‚
+		//todo ä»Šã¯å…¨ãƒžãƒ†ãƒªã‚¢ãƒ«å·®ã—æ›¿ãˆã¾ã™
 		for (Material* material : mesh.m_materials) {
 			material->GetAlbedoMap().InitFromD3DResource(albedoMap.Get());
 		}
 	});
-	//ƒfƒBƒXƒNƒŠƒvƒ^ƒq[ƒv‚ÌÄì¬B
+	//ãƒ‡ã‚£ã‚¹ã‚¯ãƒªãƒ—ã‚¿ãƒ’ãƒ¼ãƒ—ã®å†ä½œæˆã€‚
 	m_meshParts.CreateDescriptorHeaps();
-	
+
 }
 void Model::Draw(RenderContext& rc)
 {
 	m_meshParts.Draw(
-		rc, 
-		m_world, 
-		g_camera3D->GetViewMatrix(), 
+		rc,
+		m_world,
+		g_camera3D->GetViewMatrix(),
 		g_camera3D->GetProjectionMatrix()
 	);
 }

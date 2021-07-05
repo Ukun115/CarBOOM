@@ -59,12 +59,6 @@ bool GameScene::Start()
 	m_crownSprite->SetScale({ CROWN_SCA });									//拡大率を設定
 	m_crownSprite->Deactivate();					//はじめは誰も一位じゃないので隠しておく。
 
-	//王冠モデルオブジェクト生成
-	m_crownModel = NewGO<SkinModelRender>(PRIORITY_1, nullptr);
-	//王冠モデルを初期化
-	m_crownModel->Init("Assets/modelData/Crown.tkm");
-	m_crownModel->SetScale({ Vector3::Zero });	//はじめは誰も１位じゃないので大きさを0にして隠しておく
-
 	//制限時間フォントオブジェクト生成（一番上のレイヤーに置きたいのでプライオリティーは最高値）
 	m_timeLimit = NewGO<FontRender>(PRIORITY_1,nullptr);
 	//各プレイヤーのポイント画像の位置を設定
@@ -464,8 +458,6 @@ void GameScene::NowCrown()
 			{
 				//王冠スプライトを表示させる
 				m_crownSprite->Activate();
-				//王冠モデルを表示させる
-				m_crownModel->SetScale(CROWN_MODEL_SCA);
 
 				m_nowNumOnePla = nextPlaNum;
 			}
@@ -476,30 +468,18 @@ void GameScene::NowCrown()
 	if (m_nowNumOnePla == 0)
 	{
 		m_crownSprite->SetPosition({ PLAYER1_CROWN_POS });
-		//王冠モデルをそのプレイヤーの頭上に置く
-		m_crownModelPos = m_player->GetPlaPos(0);
-		m_crownModel->SetPosition({ m_crownModelPos.x,m_crownModelPos.y + 30.0f,m_crownModelPos.z });
 	}
 	if (m_nowNumOnePla == 1)
 	{
 		m_crownSprite->SetPosition({ PLAYER2_CROWN_POS });
-		//王冠モデルをそのプレイヤーの頭上に置く
-		m_crownModelPos = m_player->GetPlaPos(1);
-		m_crownModel->SetPosition({ m_crownModelPos.x,m_crownModelPos.y + 30.0f,m_crownModelPos.z });
 	}
 	if (m_nowNumOnePla == 2)
 	{
 		m_crownSprite->SetPosition({ PLAYER3_CROWN_POS });
-		//王冠モデルをそのプレイヤーの頭上に置く
-		m_crownModelPos = m_player->GetPlaPos(2);
-		m_crownModel->SetPosition({ m_crownModelPos.x,m_crownModelPos.y + 30.0f,m_crownModelPos.z });
 	}
 	if (m_nowNumOnePla == 3)
 	{
 		m_crownSprite->SetPosition({ PLAYER4_CROWN_POS });
-		//王冠モデルをそのプレイヤーの頭上に置く
-		m_crownModelPos = m_player->GetPlaPos(3);
-		m_crownModel->SetPosition({ m_crownModelPos.x,m_crownModelPos.y + 30.0f,m_crownModelPos.z });
 	}
 }
 

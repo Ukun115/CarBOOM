@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "system/system.h"
 #include "TitleScene.h"
+#include "StopWatch.h"
 
 
 ///////////////////////////////////////////////////////////////////
@@ -25,6 +26,9 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	SoundEngine::CreateInstance();
 	SoundEngine::GetInstance()->Init();
 
+	//ストップウォッチを生成する
+	StopWatch stopWatch;
+
 	//////////////////////////////////////
 	// 初期化を行うコードを書くのはここまで！！！
 	//////////////////////////////////////
@@ -45,6 +49,9 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	// ここからゲームループ。
 	while (DispatchWindowMessage())
 	{
+		//ストップウォッチの計測開始
+		stopWatch.Start();
+
 		//レンダリング開始。
 		g_engine->BeginFrame();
 
@@ -70,6 +77,18 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 		//絵を描くコードを書くのはここまで！！！
 		//////////////////////////////////////
 		g_engine->EndFrame();
+
+		//スピンロックを行う。
+		int restTime = 0;
+		do {
+			stopWatch.Stop();
+			restTime = 16 - (int)stopWatch.GetElapsedMillisecond();
+		} while (restTime > 0);
+
+		//ストップウォッチの計測終了
+		stopWatch.Stop();
+		//デルタタイムをストップウォッチの計測時間から、計算する
+		GameTime().PushFrameDeltaTime((float)stopWatch.GetElapsed());
 	}
 	//ゲームオブジェクトマネージャーを削除。
 	GameObjectManager::DeleteInstance();

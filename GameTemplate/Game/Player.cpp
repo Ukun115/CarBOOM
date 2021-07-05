@@ -315,12 +315,15 @@ void Player::PlaResporn(int plaNum)
 		m_isAtack0Flg[plaNum] = false;
 		m_isAtack1Flg[plaNum] = false;
 		m_isAtack2Flg[plaNum] = false;
+		m_isAtack1HanteiFlg[plaNum] = false;
+		m_isAtack2HanteiFlg[plaNum] = false;
 		m_DASpr1[plaNum]->Deactivate();
 		m_DASpr2[plaNum]->Deactivate();
 
 		//押したときのタイマー初期化
 		m_tyaziTimer[plaNum] = 0;
 		m_atackTimer[plaNum] = 0;
+		m_atackHanteiTimer[plaNum] = 0;
 
 		//キャラクターコントローラーを使った移動処理に変更。
 		m_pos[plaNum] = m_charaCon[plaNum].Execute(m_moveSpeed[plaNum], 1.0f);
@@ -449,6 +452,7 @@ void Player::PlaNowState(int plaNum)
 		{
 			m_isAtack0Flg[plaNum] = false;
 			m_isAtack1Flg[plaNum] = true;
+			m_isAtack1HanteiFlg[plaNum] = true;
 
 			//「1」表示
 			if (m_tyaziTimer[plaNum] == 30) {
@@ -459,7 +463,9 @@ void Player::PlaNowState(int plaNum)
 		if (m_tyaziTimer[plaNum] >= 90)
 		{
 			m_isAtack1Flg[plaNum] = false;
+			m_isAtack1HanteiFlg[plaNum] = false;
 			m_isAtack2Flg[plaNum] = true;
+			m_isAtack2HanteiFlg[plaNum] = true;
 
 			//「2」表示
 			if (m_tyaziTimer[plaNum] == 90) {
@@ -474,9 +480,6 @@ void Player::PlaNowState(int plaNum)
 	{
 		m_isBPushFlg[plaNum] = false;
 
-		m_DASpr1[plaNum]->Deactivate();
-		m_DASpr2[plaNum]->Deactivate();
-
 		//押したときのタイマー初期化
 		m_tyaziTimer[plaNum] = 0;
 
@@ -489,10 +492,11 @@ void Player::PlaNowState(int plaNum)
 		}
 
 		//チャージ1
+		//攻撃の動きのフラグ
 		if (m_isAtack1Flg[plaNum])
 		{
 			m_atackTimer[plaNum]++;
-			m_atackHanteiTimer[plaNum]++;
+
 
 			if (m_atackTimer[plaNum] > 0 && m_atackTimer[plaNum] < 20)
 			{
@@ -501,30 +505,68 @@ void Player::PlaNowState(int plaNum)
 			if (m_atackTimer[plaNum] == 20)
 			{
 				m_atackTimer[plaNum] = 0;
-				m_isAtack1Flg[plaNum] = false;
 				m_isTyazi1Flg[plaNum] = false;
-				////押したときのタイマー初期化
-				//m_tyaziTimer[x] = 0;
+				m_isAtack1Flg[plaNum] = false;
+			}
+
+		}
+
+		//チャージ1
+		//攻撃の判定のフラグ
+		if (m_isAtack1HanteiFlg[plaNum])
+		{
+			m_atackHanteiTimer[plaNum]++;
+
+			if (m_atackHanteiTimer[plaNum] > 0 && m_atackHanteiTimer[plaNum] < 25)
+			{
+				m_isTyazi1HanteiFlg[plaNum] = true;
+			}
+			if (m_atackHanteiTimer[plaNum] == 25)
+			{
+				m_atackHanteiTimer[plaNum] = 0;
+				m_isTyazi1HanteiFlg[plaNum] = false;
+				m_isAtack1HanteiFlg[plaNum] = false;
+				m_DASpr1[plaNum]->Deactivate();
+			}
+		}
+
+		//チャージ2
+		//攻撃の動きのフラグ
+		if (m_isAtack2Flg[plaNum])
+		{
+			m_atackTimer[plaNum]++;
+
+			if (0 < m_atackTimer[plaNum] && m_atackTimer[plaNum] < 25)
+			{
+				m_isTyazi2Flg[plaNum] = true;
+			}
+			if (m_atackTimer[plaNum] == 25)
+			{
+				m_atackTimer[plaNum] = 0;
+				m_isTyazi2Flg[plaNum] = false;
+				m_isAtack2Flg[plaNum] = false;
+
 			}
 
 
 		}
 
 		//チャージ2
-		if (m_isAtack2Flg[plaNum])
+		//攻撃の判定のフラグ
+		if (m_isAtack2HanteiFlg[plaNum])
 		{
-			m_atackTimer[plaNum]++;
-			if (0 < m_atackTimer[plaNum] && m_atackTimer[plaNum] < 20)
+			m_atackHanteiTimer[plaNum]++;
+
+			if (m_atackHanteiTimer[plaNum] > 0 && m_atackHanteiTimer[plaNum] < 30)
 			{
-				m_isTyazi2Flg[plaNum] = true;
+				m_isTyazi2HanteiFlg[plaNum] = true;
 			}
-			if (m_atackTimer[plaNum] == 20)
+			if (m_atackHanteiTimer[plaNum] == 30)
 			{
-				m_atackTimer[plaNum] = 0;
-				m_isAtack2Flg[plaNum] = false;
-				m_isTyazi2Flg[plaNum] = false;
-				////押したときのタイマー初期化
-				//m_tyaziTimer[x] = 0;
+				m_atackHanteiTimer[plaNum] = 0;
+				m_isTyazi2HanteiFlg[plaNum] = false;
+				m_isAtack2HanteiFlg[plaNum] = false;
+				m_DASpr2[plaNum]->Deactivate();
 			}
 		}
 	}
@@ -614,7 +656,7 @@ void Player::PlaAndEneClash(int plaNum)
 		m_diff = m_enemy->GetEnemyPos(eneNum) - m_pos[plaNum];
 
 		//距離の長さが30.0fより小さかったら、
-		if (m_diff.Length() < 30.0f && !m_isTyazi1Flg[plaNum] && !m_isTyazi2Flg[plaNum])
+		if (m_diff.Length() < 30.0f && m_isTyazi1HanteiFlg[plaNum] == false && m_isTyazi2HanteiFlg[plaNum] == false)
 		{
 			m_enePushSpeed = m_enemy->GetEnemySpeed(eneNum);
 			//これだとプッシュパワーが強すぎるため、威力を弱める
@@ -666,12 +708,38 @@ void Player::PlaAndPlaClash(int plaNum)
 			//ぶつかってきたプレイヤーはそのままステージ外に落ちないように減速させる
 			m_moveSpeed[otherPlaNum] /= 2.0;
 
-			if (m_isTyazi2Flg[plaNum])
+			//相手がチャージ1のとき
+			if (m_isTyazi1HanteiFlg[otherPlaNum] == true && m_isTyazi2HanteiFlg[plaNum] == false)
+			{
+				m_enePushSpeed *= 2.0f;
+				//チャージ２を受けたとき割る２しただけではそのまま落ちちゃうので
+				//止まるようにする
+				m_moveSpeed[otherPlaNum] = { 0.0f,0.0f,0.0f };
+				//自分がチャージ1のとき
+				if (m_isTyazi1HanteiFlg[plaNum] == true)
+				{
+					m_isTyazi1HanteiFlg[plaNum] = false;
+				}
+			}
+
+			//相手がチャージ2のとき
+			if (m_isTyazi2HanteiFlg[otherPlaNum] == true)
 			{
 				m_enePushSpeed *= 5.0f;
 				//チャージ２を受けたとき割る２しただけではそのまま落ちちゃうので
 				//止まるようにする
 				m_moveSpeed[otherPlaNum] = { 0.0f,0.0f,0.0f };
+
+				//自分がチャージ1のとき
+				if (m_isTyazi1HanteiFlg[plaNum] == true)
+				{
+					m_isTyazi1HanteiFlg[plaNum] = false;
+				}
+				//自分がチャージ2のとき
+				if (m_isTyazi2HanteiFlg[plaNum] == true)
+				{
+					m_isTyazi2HanteiFlg[plaNum] = false;
+				}
 			}
 
 			//衝突音

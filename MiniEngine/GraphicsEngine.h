@@ -200,6 +200,8 @@ public:
 		return m_fontEngine;
 	}
 private:
+	int m_graphicTime = 0;
+
 	/// <summary>
 	/// D3Dデバイスの作成。
 	/// </summary>
@@ -229,7 +231,7 @@ private:
 	/// </summary>
 	/// <remarks>
 	/// DirectX グラフィックス インフラストラクチャーは
-	/// カーネル モード ドライバーおよびシステム ハードウェアと通信するためのインターフェースです。 
+	/// カーネル モード ドライバーおよびシステム ハードウェアと通信するためのインターフェースです。
 	/// </remarks>
 	/// <returns>作成されたDXGI</returns>
 	IDXGIFactory4* CreateDXGIFactory();
@@ -264,7 +266,7 @@ private:
 	/// 描画の完了待ち。
 	/// </summary>
 	void WaitDraw();
-	
+
 public:
 	enum { FRAME_BUFFER_COUNT = 2 };						//フレームバッファの数。
 private:
@@ -275,7 +277,7 @@ private:
 		GPU_VenderIntel,	//AMD
 		Num_GPUVender,
 	};
-	
+
 	ID3D12Device5* m_d3dDevice = nullptr;					//D3Dデバイス。
 	ID3D12CommandQueue* m_commandQueue = nullptr;			//コマンドキュー。
 	IDXGISwapChain3* m_swapChain = nullptr;					//スワップチェイン。
@@ -288,7 +290,7 @@ private:
 	UINT m_rtvDescriptorSize = 0;							//フレームバッファのディスクリプタのサイズ。
 	UINT m_dsvDescriptorSize = 0;							//深度ステンシルバッファのディスクリプタのサイズ。
 	UINT m_cbrSrvDescriptorSize = 0;						//CBR_SRVのディスクリプタのサイズ。
-	UINT m_samplerDescriptorSize = 0;					//サンプラのディスクリプタのサイズ。			
+	UINT m_samplerDescriptorSize = 0;					//サンプラのディスクリプタのサイズ。
 	ID3D12Resource* m_renderTargets[FRAME_BUFFER_COUNT] = { nullptr };	//フレームバッファ用のレンダリングターゲット。
 	ID3D12Resource* m_depthStencilBuffer = nullptr;	//深度ステンシルバッファ。
 	D3D12_VIEWPORT m_viewport;			//ビューポート。
