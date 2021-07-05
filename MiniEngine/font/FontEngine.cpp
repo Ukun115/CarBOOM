@@ -51,7 +51,8 @@ void FontEngine::Init()
 	m_spriteFont = make_unique<SpriteFont>(
 		d3dDevice,
 		re,
-		L"Assets/font/ehehe.spritefont",
+		//どのフォントを使うかを選択
+		L"Assets/font/Group.spritefont",
 		cpuHandle,
 		gpuHandle);
 

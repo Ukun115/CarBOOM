@@ -257,12 +257,12 @@ void Enemy::EneDataUpdate(int eneNum)
 void Enemy::Distance(int eneNum)
 {
 	//登録されているプレイヤーの分処理をする
-	for (int eneNum = 0; eneNum < m_titleScene->GetTotalPlaNum(); eneNum++)
+	for (int plaNum = 0; plaNum < m_titleScene->GetTotalPlaNum(); plaNum++)
 	{
 		//プレイヤーの位置を取得
-		m_plaPos[eneNum] = m_player->GetPlaPos(eneNum);
+		m_plaPos[plaNum] = m_player->GetPlaPos(plaNum);
 		//プレイヤーの位置と敵の位置の距離を取得
-		m_mostShortKyori[eneNum] = m_plaPos[eneNum] - m_enePos[eneNum];
+		m_mostShortKyori[plaNum] = m_plaPos[plaNum] - m_enePos[eneNum];
 	}
 
 	//一番近い距離(m_mostShortKyori[0])のように並び替え(ソート)
