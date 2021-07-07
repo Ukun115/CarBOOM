@@ -1,3 +1,8 @@
+///<<summary>
+///ライトをまとめているクラス
+///</summary>
+
+
 #include "stdafx.h"
 
 

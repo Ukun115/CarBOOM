@@ -12,70 +12,67 @@ private:
 	/// <summary>
 	/// クラスのポインタ
 	/// </summary>
-	TitleScene* m_titleScene = nullptr;
-	GameScene* m_gameScene = nullptr;
-
-	Light* m_light = { nullptr };
-
-	SkinModelRender* m_enemy[6] = { nullptr };		//敵6体分
-	Player* m_player = nullptr;
-	StageSelectScene* m_stageSelectScene = nullptr;
-	SoundSource* m_shootDownSound[6] = {nullptr};
-	SoundSource* m_FallSound[6];	//落下サウンド
-	SoundSource* m_DashSound[6];	//ダッシュサウンド
-	SoundSource* m_PlaAndEneClashSound[6];	//衝突サウンド
+	TitleScene* m_titleScene{ nullptr };
+	GameScene* m_gameScene{ nullptr };
+	Light* m_light{ nullptr };
+	SkinModelRender* m_enemy[ENEMY_MAX_NUM]{ nullptr };		//敵6体分
+	Player* m_player{ nullptr };
+	StageSelectScene* m_stageSelectScene{ nullptr };
+	SoundSource* m_shootDownSound[ENEMY_MAX_NUM]{ nullptr };
+	SoundSource* m_FallSound[ENEMY_MAX_NUM]{ nullptr };	//落下サウンド
+	SoundSource* m_DashSound[ENEMY_MAX_NUM]{ nullptr };	//ダッシュサウンド
+	SoundSource* m_PlaAndEneClashSound[ENEMY_MAX_NUM]{ nullptr };	//衝突サウンド
 
 
-	CharacterController m_charaCon[6];		//敵６体分のキャラクタコントローラークラスを作成
-	Effect m_shootDownEffect[6];		//落下したときの撃墜エフェクト
+	CharacterController m_charaCon[ENEMY_MAX_NUM];		//敵６体分のキャラクタコントローラークラスを作成
+	Effect m_shootDownEffect[ENEMY_MAX_NUM];		//落下したときの撃墜エフェクト
 
 
 	/// <summary>
 	/// フラグ
 	/// </summary>
-	bool m_isCtFlg[6] = { false };		//敵６体分のCTのフラグ
-	bool m_stage2Flg = false;
-	bool m_isFallSoundFlg[6] = { false };			//落下音を落下中何回もならないようにするフラグ
-	bool m_isPlaAndEneClashSoundFlg[6] = { false };
+	bool m_canCtCountFlg[ENEMY_MAX_NUM]{ false };		//敵６体分のCTのフラグ
+	bool m_canFallSoundPlayFlg[ENEMY_MAX_NUM]{ false };			//落下音を落下中何回もならないようにするフラグ
+	bool m_canPlaAndEneClashSoundPlayFlg[ENEMY_MAX_NUM]{ false };
 
 
 	/// <summary>
 	/// タイマー
 	/// </summary>
-	unsigned int m_startDelayTimer = 0;		//スタートを遅らせるタイマー
-	unsigned int m_startDelay[6];			//敵６体分のスタート遅延時間
-	unsigned int m_CTTime[6];					//敵６体分の攻撃CTタイマー
-	unsigned int m_eneCTCount[6];			//敵６体分のCT時間
+	unsigned int m_startDelayTimer{ 0 };		//スタートを遅らせるタイマー
+	unsigned int m_startDelay[ENEMY_MAX_NUM]{ 0 };			//敵６体分のスタート遅延時間
+	unsigned int m_CTTime[ENEMY_MAX_NUM]{ 0 };					//敵６体分の攻撃CTタイマー
+	unsigned int m_eneCTCount[ENEMY_MAX_NUM]{ 0 };			//敵６体分のCT時間
 
 
 	//敵情報
-	Vector3    m_enePos[6];			//敵６体分の敵の位置
-	Quaternion m_rot[6];			//敵６体分の敵の回転
-	float m_rotAngle[6];			//敵６体分の回転角度
-	Vector3 m_moveSpeed[6];			//敵６体分の移動速度
-	Vector3 m_samDir[6];			//敵とプレイヤーの向き
-	Vector3 m_friction[6];			//敵６体分の摩擦
-	Vector3    m_plaPos[4];			//プレイヤー4体分のプレイヤーの位置
-	Vector3    m_mostShortKyori[4];	//プレイヤー4体分と敵の距離
+	Vector3    m_enePos[ENEMY_MAX_NUM]{ Vector3::Zero };			//敵６体分の敵の位置
+	Quaternion m_rot[ENEMY_MAX_NUM]{ Quaternion::Identity };			//敵６体分の敵の回転
+	float m_rotAngle[ENEMY_MAX_NUM]{ 0.0f };			//敵６体分の回転角度
+	Vector3 m_moveSpeed[ENEMY_MAX_NUM]{ Vector3::Zero };			//敵６体分の移動速度
+	Vector3 m_samDir[ENEMY_MAX_NUM]{ Vector3::Zero };			//敵とプレイヤーの向き
+	Vector3 m_friction[ENEMY_MAX_NUM]{ Vector3::Zero };			//敵６体分の摩擦
+	Vector3    m_plaPos[PLAYER_MAX_NUM]{ Vector3::Zero };			//プレイヤー4体分のプレイヤーの位置
+	Vector3    m_mostShortKyori[PLAYER_MAX_NUM]{ Vector3::Zero };	//プレイヤー4体分と敵の距離
 	//↓特に途中で変更しない値なので、const使いたい。
-	Vector3 m_ranEneResPos[10];		//敵のリスポーン位置計10か所
+	Vector3 m_ranEneResPos[10]{ Vector3::Zero };		//敵のリスポーン位置計10か所
 
-	float m_randEneResAngle[8];		//敵のリスポーン回転角度4か所
-	Vector3 m_eneDir[6];			//向き
-	Vector3 m_diff;				//プレイヤーと敵との距離
-	unsigned int m_pushPlayer[6];
-	unsigned int m_randomDashSoundNum;
-
-
-	Vector3 m_enePoiLigPos;
-	int	m_poiLigNum = 0;
+	float m_randEneResAngle[8]{ 0.0f };		//敵のリスポーン回転角度4か所
+	Vector3 m_eneDir[6]{ Vector3::Zero };			//向き
+	Vector3 m_diff{ Vector3::Zero };				//プレイヤーと敵との距離
+	unsigned int m_pushPlayer[ENEMY_MAX_NUM]{ 0 };
+	unsigned int m_randomDashSoundNum{ 0 };
 
 
-	//デバッグ用
-	SkinModelRender* m_skinModelRenderArrow[6] = { nullptr };
-	Vector3 m_arrowPos[6];
-	Quaternion m_arrowRot[6];
-	Vector3 m_arrowSize = Vector3::One;
+	Vector3 m_enePoiLigPos{ Vector3::Zero };
+	int	m_poiLigNum{ 0 };
+
+
+	//デバッグ用矢印
+	SkinModelRender* m_skinModelRenderArrow[ENEMY_MAX_NUM]{ nullptr };
+	Vector3 m_arrowPos[ENEMY_MAX_NUM]{ Vector3::Zero };
+	Quaternion m_arrowRot[ENEMY_MAX_NUM]{ Quaternion::Identity };
+	Vector3 m_arrowSize{ Vector3::One };
 
 
 	/// <summary>

@@ -9,8 +9,8 @@ private:
 	/// <summary>
 	/// クラスのポインタ
 	/// </summary>
-	SkinModelRender* m_stage = { nullptr };
-	StageSelectScene* m_stageSelectScene;
+	SkinModelRender* m_stage{ nullptr };
+	StageSelectScene* m_stageSelectScene{ nullptr };
 
 
 	PhysicsStaticObject m_physicsStaticObject;		//静的物理オブジェクトクラスを作成
@@ -20,7 +20,7 @@ private:
 	/// <summary>
 	/// タイマー
 	/// </summary>
-	int m_fallSnowTimer = 0;
+	int m_fallSnowTimer{ 0 };
 
 
 	/// <summary>

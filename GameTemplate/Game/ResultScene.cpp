@@ -1,3 +1,8 @@
+///<<summary>
+///リザルト画面時の処理クラス
+///</summary>
+
+
 #include "stdafx.h"
 #include "ResultScene.h"
 #include "GameScene.h"
@@ -178,10 +183,10 @@ void ResultScene::GameEnd()
 			//決定サウンド
 			SoundPlayBack(DecideSound);
 
-			m_timerOnFlg = true;
+			m_enableTimerCountFlg = true;
 		}
 	}
-	if (m_timerOnFlg)
+	if (m_enableTimerCountFlg)
 	{
 		m_exitTimer++;
 

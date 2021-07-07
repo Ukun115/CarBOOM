@@ -1,3 +1,8 @@
+///<<summary>
+///ステージ選択画面クラス
+///</summary>
+
+
 #include "stdafx.h"
 #include "StageSelectScene.h"
 #include "GameScene.h"
@@ -72,7 +77,7 @@ bool StageSelectScene::Start()
 	m_pla = NewGO<SkinModelRender>(PRIORITY_2, nullptr);
 	m_pla->Init("Assets/modelData/LowPoly_PlayerCar_Red.tkm");	//赤車
 	//初期位置設定
-	m_pla->SetPosition({ 0.0f,0.0f,0.0f });
+	m_pla->SetPosition(Vector3::Zero);
 
 	//デバック用のプレイヤースピードの矢印表示
 	//m_skinModelRenderArrow = NewGO<SkinModelRender>(PRIORITY_2, nullptr);
@@ -111,7 +116,7 @@ StageSelectScene::~StageSelectScene()
 
 void StageSelectScene::Update()
 {
-	if (m_isCanGameStartFlg == true)
+	if (m_enableUpdateFlg == true)
 	{
 		//ベクトルを可視化させるデバック関数
 		//PlaMooveSpeedDebug();
@@ -176,7 +181,7 @@ void StageSelectScene::GameSceneTransition()
 		DeleteGO(m_titleBGM);
 
 		//このクラスの処理をゲーム画面に移ったときに実行しなくなるフラグ
-		m_isCanGameStartFlg = false;
+		m_enableUpdateFlg = false;
 	}
 }
 
@@ -257,7 +262,7 @@ void StageSelectScene::TouchStage()
 		if (m_diff[stageNum].Length() >= 70.0f)
 		{
 			//音を鳴らせる！っていうフラグ復活！
-			m_isOnStageSoundFlg[stageNum] = true;
+			m_canOnStageSoundPlayFlg[stageNum] = true;
 		}
 
 		//ステージの上に乗っていたら
@@ -285,12 +290,12 @@ void StageSelectScene::TouchStage()
 				m_Ahukidasi[3]->Activate();
 			}
 
-			if (m_isOnStageSoundFlg[stageNum])
+			if (m_canOnStageSoundPlayFlg[stageNum])
 			{
 				//ステージを選択できるようになったら鳴らすサウンド
 				SoundPlayBack(OnStageSound);
 
-				m_isOnStageSoundFlg[stageNum] = false;
+				m_canOnStageSoundPlayFlg[stageNum] = false;
 			}
 
 			//ステージ名画像を強調拡大

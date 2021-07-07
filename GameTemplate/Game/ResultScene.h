@@ -10,23 +10,34 @@ private:
 	/// <summary>
 	/// クラスのポインタ
 	/// </summary>
-	GameScene* m_gameScene = nullptr;
-	SpriteRender* m_resultSprite = nullptr;
-	SpriteRender* m_plaNum[4] = {nullptr};			//プレイヤー4人分用意
-	SpriteRender* m_rankingSprite[4] = {nullptr};	//プレイヤー4人分用意
-	Player* m_player = nullptr;
-	SoundSource* m_resultGingle = nullptr;
-	SoundSource* m_gameBGM;	//ゲーム中のBGMサウンド
-	SoundSource* m_decideSound;	//決定サウンド
+	GameScene* m_gameScene{ nullptr };
+	SpriteRender* m_resultSprite{ nullptr };
+	SpriteRender* m_plaNum[4]{ nullptr };			//プレイヤー4人分用意
+	SpriteRender* m_rankingSprite[4]{ nullptr };	//プレイヤー4人分用意
+	Player* m_player{ nullptr };
+	SoundSource* m_resultGingle{ nullptr };
+	SoundSource* m_gameBGM{ nullptr };	//ゲーム中のBGMサウンド
+	SoundSource* m_decideSound{ nullptr };	//決定サウンド
 
 
-	bool m_timerOnFlg = false;
+	/// <summary>
+	/// フラグ
+	/// </summary>
+	bool m_enableTimerCountFlg{ false };
 
 
-	unsigned int m_plaScore[4];		//プレイヤー4人分のスコアを入れる配列
-	unsigned int m_exitTimer;
+	/// <summary>
+	/// タイマー
+	/// </summary>
+	unsigned int m_exitTimer{ 0 };
 
 
+	unsigned int m_plaScore[4]{ 0 };		//プレイヤー4人分のスコアを入れる配列
+
+
+	/// <summary>
+	/// 列挙型の宣言
+	/// </summary>
 	enum SoundNum
 	{
 		ResultGingle,

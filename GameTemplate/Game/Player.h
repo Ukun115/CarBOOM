@@ -12,76 +12,76 @@ private:
 	/// <summary>
 	/// クラスのポインタ
 	/// </summary>
-	TitleScene* m_titleScene = nullptr;
-	GameScene* m_gameScene = nullptr;
-	SkinModelRender* m_player[4] = { nullptr };		//プレイヤー4人分
-	SpriteRender* m_DASpr1[4] = { nullptr };		//プレイヤー4人分
-	SpriteRender* m_DASpr2[4] = { nullptr };		//プレイヤー4人分
-	Enemy* m_enemy = nullptr;
-	StageSelectScene* m_stageSelectScene = nullptr;
-	SoundSource* m_carHorn[4];	//クラクションサウンド
-	SoundSource* m_shootDownSound[4];	//撃墜サウンド
-	SoundSource* m_FallSound[4];	//落下サウンド
-	SoundSource* m_ChargeSound[4];	//チャージサウンド
-	SoundSource* m_Dash1Sound[4];	//ダッシュ１サウンド
-	SoundSource* m_Dash2Sound[4];	//ダッシュ２サウンド
-	SoundSource* m_PlaAndPlaClashSound[4];	//プレイヤーとプレイヤーがぶつかったときのサウンド
+	TitleScene* m_titleScene{ nullptr };
+	GameScene* m_gameScene{ nullptr };
+	SkinModelRender* m_player[PLAYER_MAX_NUM]{ nullptr };		//プレイヤー4人分
+	SpriteRender* m_DASpr1[PLAYER_MAX_NUM]{ nullptr };		//プレイヤー4人分
+	SpriteRender* m_DASpr2[PLAYER_MAX_NUM]{ nullptr };		//プレイヤー4人分
+	Enemy* m_enemy{ nullptr };
+	StageSelectScene* m_stageSelectScene{ nullptr };
+	SoundSource* m_carHorn[PLAYER_MAX_NUM]{ nullptr };	//クラクションサウンド
+	SoundSource* m_shootDownSound[PLAYER_MAX_NUM]{ nullptr };	//撃墜サウンド
+	SoundSource* m_FallSound[PLAYER_MAX_NUM]{ nullptr };	//落下サウンド
+	SoundSource* m_ChargeSound[PLAYER_MAX_NUM]{ nullptr };	//チャージサウンド
+	SoundSource* m_Dash1Sound[PLAYER_MAX_NUM]{ nullptr };	//ダッシュ１サウンド
+	SoundSource* m_Dash2Sound[PLAYER_MAX_NUM]{ nullptr };	//ダッシュ２サウンド
+	SoundSource* m_PlaAndPlaClashSound[PLAYER_MAX_NUM]{ nullptr };	//プレイヤーとプレイヤーがぶつかったときのサウンド
 
 
-	CharacterController m_charaCon[4];		//プレイヤー4人分のキャラクタコントローラークラスを作成
-	Effect m_shootDownEffect[4];		//プレイヤー4人分の落下したときの撃墜エフェクト
-	Effect m_jetEffect[4];		//プレイヤー4人分のジェットエフェクト
-	Effect m_landingEffect[4];		//プレイヤー4人分の着地エフェクト
+	CharacterController m_charaCon[PLAYER_MAX_NUM];		//プレイヤー4人分のキャラクタコントローラークラスを作成
+	Effect m_shootDownEffect[PLAYER_MAX_NUM];		//プレイヤー4人分の落下したときの撃墜エフェクト
+	Effect m_jetEffect[PLAYER_MAX_NUM];		//プレイヤー4人分のジェットエフェクト
+	Effect m_landingEffect[PLAYER_MAX_NUM];		//プレイヤー4人分の着地エフェクト
 
 
 	/// <summary>
 	/// フラグ
 	/// </summary>
-	bool m_isTyazi1Flg[4] = { false };
-	bool m_isTyazi2Flg[4] = { false };
-	bool m_isTyazi1HanteiFlg[4] = { false };
-	bool m_isTyazi2HanteiFlg[4] = { false };
-	bool m_isBPushFlg[4] = { false };		//Bボタンが押されたときのフラグ
-	bool m_isAtack0Flg[4] = { false };		//Bボタンが押されたときのフラグ
-	bool m_isAtack1Flg[4] = { false };		//Bボタンが押されたときのフラグ
-	bool m_isAtack2Flg[4] = { false };		//Bボタンが押されたときのフラグ
-	bool m_isAtack1HanteiFlg[4] = { false };		//攻撃1の判定フラグ
-	bool m_isAtack2HanteiFlg[4] = { false };		//攻撃2の判定フラグ
-	bool m_isCharge1EffectSoundFlg[4] = { false };
-	bool m_isCharge2EffectSoundFlg[4] = { false };
-	bool m_isFallSoundFlg[4] = { false };			//落下音を落下中何回もならないようにするフラグ
-	bool m_isLandingOKFlg[4] = { false };
+	bool m_isCharge1Flg[PLAYER_MAX_NUM]{ false };
+	bool m_isCharge2Flg[PLAYER_MAX_NUM]{ false };
+	bool m_isCharge1HanteiFlg[PLAYER_MAX_NUM]{ false };
+	bool m_isCharge2HanteiFlg[PLAYER_MAX_NUM]{ false };
+	bool m_isBPushFlg[PLAYER_MAX_NUM]{ false };		//Bボタンが押されたときのフラグ
+	bool m_isAttack0Flg[PLAYER_MAX_NUM]{ false };		//Bボタンが押されたときのフラグ
+	bool m_isAttack1Flg[PLAYER_MAX_NUM]{ false };		//Bボタンが押されたときのフラグ
+	bool m_isAttack2Flg[PLAYER_MAX_NUM]{ false };		//Bボタンが押されたときのフラグ
+	bool m_isAttack1HanteiFlg[PLAYER_MAX_NUM]{ false };		//攻撃1の判定フラグ
+	bool m_isAttack2HanteiFlg[PLAYER_MAX_NUM]{ false };		//攻撃2の判定フラグ
+	bool m_isCharge1EffectSoundFlg[PLAYER_MAX_NUM]{ false };
+	bool m_isCharge2EffectSoundFlg[PLAYER_MAX_NUM]{ false };
+	bool m_isFallSoundFlg[PLAYER_MAX_NUM]{ false };			//落下音を落下中何回もならないようにするフラグ
+	bool m_isLandingOKFlg[PLAYER_MAX_NUM]{ false };
 
 
 	/// <summary>
 	/// タイマー
 	/// </summary>
-	unsigned int m_tyaziTimer[4];		//押したときのタイマー
-	unsigned int m_releaseTimer[4];		//離したときのタイマー
-	unsigned int m_atackTimer[4];			//攻撃のタイマー
-	unsigned int m_atackHanteiTimer[4] = { 0 };			//攻撃判定のタイマー
-	unsigned int m_landingEffectDelayTimer[4] = { 0 };			//着地エフェクトをプレイヤーが着地したときに再生させるためのタイマー
+	unsigned int m_chargeTimer[PLAYER_MAX_NUM]{ 0 };		//押したときのタイマー
+	unsigned int m_releaseTimer[PLAYER_MAX_NUM]{ 0 };		//離したときのタイマー
+	unsigned int m_attackTimer[PLAYER_MAX_NUM]{ 0 };			//攻撃のタイマー
+	unsigned int m_attackHanteiTimer[PLAYER_MAX_NUM]{ 0 };			//攻撃判定のタイマー
+	unsigned int m_landingEffectDelayTimer[PLAYER_MAX_NUM]{ 0 };			//着地エフェクトをプレイヤーが着地したときに再生させるためのタイマー
 
 
-	Vector3    m_pos[4];		//プレイヤーの位置
-	Quaternion m_rot[4];		//プレイヤーの回転
-	unsigned int m_plaNum = 0;	//プレイヤー数をカウントする変数
-	Vector3 m_moveSpeed[4];		//移動速度
-	Vector3 m_enePushSpeed;		//敵から与えられるプッシュパワー
-	Vector3 m_plaDir[4];		//向き
-	float m_leftStick_x[4];		//左スティックのx入力量
-	float m_leftStick_y[4];		//左スティックのy入力量
-	float m_rotAngle[4];		//回転角度
-	Vector3 m_friction[4];		//摩擦
-	Vector3 m_diff;				//プレイヤーと敵との距離
-	unsigned int m_pushPlayer[5];
-	Quaternion m_shootDownEffectRot;
+	Vector3    m_pos[PLAYER_MAX_NUM]{ Vector3::Zero };		//プレイヤーの位置
+	Quaternion m_rot[PLAYER_MAX_NUM]{ Quaternion::Identity };		//プレイヤーの回転
+	unsigned int m_plaNum{ 0 };	//プレイヤー数をカウントする変数
+	Vector3 m_moveSpeed[PLAYER_MAX_NUM]{ Vector3::Zero };		//移動速度
+	Vector3 m_enePushSpeed{ Vector3::Zero };		//敵から与えられるプッシュパワー
+	Vector3 m_plaDir[PLAYER_MAX_NUM]{ Vector3::Zero };		//向き
+	float m_leftStick_x[PLAYER_MAX_NUM]{ 0.0f };		//左スティックのx入力量
+	float m_leftStick_y[PLAYER_MAX_NUM]{ 0.0f };		//左スティックのy入力量
+	float m_rotAngle[PLAYER_MAX_NUM]{ 0.0f };		//回転角度
+	Vector3 m_friction[PLAYER_MAX_NUM]{ Vector3::Zero };		//摩擦
+	Vector3 m_diff{ Vector3::Zero };				//プレイヤーと敵との距離
+	unsigned int m_pushPlayer[5]{ 0 };
+	Quaternion m_shootDownEffectRot{ Quaternion::Identity };
 
 	//デバッグ用
-	SkinModelRender* m_skinModelRenderArrow[4] = { nullptr };
-	Vector3 m_arrowPos[4];
-	Quaternion m_arrowRot[4];
-	Vector3 m_arrowSize = Vector3::One;
+	SkinModelRender* m_skinModelRenderArrow[PLAYER_MAX_NUM]{ nullptr };
+	Vector3 m_arrowPos[PLAYER_MAX_NUM]{ Vector3::Zero };
+	Quaternion m_arrowRot[PLAYER_MAX_NUM]{ Quaternion::Identity };
+	Vector3 m_arrowSize{ Vector3::One };
 
 
 	/// <summary>
@@ -158,6 +158,6 @@ public:
 	//プレイヤーの向きを取得する関数
 	Vector3 GetPlaDir(int plaNum) { return m_plaDir[plaNum]; }
 	//プレイヤーのチャージを取得する関数
-	bool GetPlaisTyazi1HanteiFlg(int plaNum) { return m_isTyazi1HanteiFlg[plaNum]; }
-	bool GetPlaisTyazi2HanteiFlg(int plaNum) { return m_isTyazi2HanteiFlg[plaNum]; }
+	bool GetPlaisTyazi1HanteiFlg(int plaNum) { return m_isCharge1HanteiFlg[plaNum]; }
+	bool GetPlaisTyazi2HanteiFlg(int plaNum) { return m_isCharge2HanteiFlg[plaNum]; }
 };

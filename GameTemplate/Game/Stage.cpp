@@ -1,3 +1,8 @@
+///<<summary>
+///ステージ表示とステージごとの処理クラス
+///</summary>
+
+
 #include "stdafx.h"
 #include "Stage.h"
 #include "StageSelectScene.h"

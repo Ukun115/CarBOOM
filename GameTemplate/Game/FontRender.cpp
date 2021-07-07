@@ -1,3 +1,8 @@
+///<<summary>
+///フォント表示のためのクラス
+///</summary>
+
+
 #include "stdafx.h"
 
 

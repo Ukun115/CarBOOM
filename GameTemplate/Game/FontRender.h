@@ -25,8 +25,8 @@ public:
 	//フォントの初期化関数
 	void Init(
 		const wchar_t* text,						//テキスト
-		const Vector2 position = { 0.0f,0.0f },		//位置
-		Vector4 color = { 0.0f,0.0f,0.0f,1.0f },	//色
+		const Vector2 position = Vector2::Zero,		//位置
+		Vector4 color = Vector4::Black,				//色
 		float rotation = 0.0f,						//回転
 		float scale = 1.0f,							//拡大率
 		Vector2 pivot = { 0.5f,0.5f }				//基点

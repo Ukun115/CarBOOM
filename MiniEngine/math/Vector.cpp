@@ -6,7 +6,6 @@
 #include "math/Vector.h"
 
 
-
 const Vector4 Vector4::White = {1.0f, 1.0f, 1.0f, 1.0f};
 const Vector4 Vector4::Black = { 0.0f, 0.0f, 0.0f, 1.0f };
 const Vector4 Vector4::Yellow = { 1.0f, 1.0f, 0.0f, 1.0f };

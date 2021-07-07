@@ -1,3 +1,8 @@
+///<<summary>
+///‰æ‘œ•\Ž¦‚ð‚·‚éƒNƒ‰ƒX
+///</summary>
+
+
 #include "stdafx.h"
 
 

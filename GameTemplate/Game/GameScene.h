@@ -13,40 +13,40 @@ private:
 	/// <summary>
 	/// クラスのポインタ
 	/// </summary>
-	TitleScene* m_titleScene = nullptr;
-	Stage* m_normalStage = nullptr;
-	SpriteRender* m_sprite[4] = { nullptr };
-	SpriteRender* m_crownSprite = nullptr;
-	FontRender* m_ScoreFontRender[4] = { nullptr };
-	FontRender* m_TextScoreFontRender[4] = { nullptr };
-	Player* m_player = nullptr;
-	Enemy* m_enemy = nullptr;
-	FontRender* m_timeLimit = nullptr;
-	SoundSource* m_gameStartGingle;	//クラクションサウンド
-	SoundSource* m_gameBGM;	//ゲーム中のBGMサウンド
-	SoundSource* m_countDown;	//カウントダウンサウンド
-	SpriteRender* m_syutyusen = nullptr;
-	SoundSource* m_whistleSound = nullptr;
+	TitleScene* m_titleScene{ nullptr };
+	Stage* m_normalStage{ nullptr };
+	SpriteRender* m_sprite[4]{ nullptr };
+	SpriteRender* m_crownSprite{ nullptr };
+	FontRender* m_ScoreFontRender[4]{ nullptr };
+	FontRender* m_TextScoreFontRender[4]{ nullptr };
+	Player* m_player{ nullptr };
+	Enemy* m_enemy{ nullptr };
+	FontRender* m_timeLimit{ nullptr };
+	SoundSource* m_gameStartGingle{ nullptr };	//クラクションサウンド
+	SoundSource* m_gameBGM{ nullptr };	//ゲーム中のBGMサウンド
+	SoundSource* m_countDown{ nullptr };	//カウントダウンサウンド
+	SpriteRender* m_syutyusen{ nullptr };
+	SoundSource* m_whistleSound{ nullptr };
 
 
 	/// <summary>
 	/// フラグ
 	/// </summary>
-	bool m_isCountTimeFlg = true;
+	bool m_isFinishCountDownFlg{ true };
 
 
 	/// <summary>
 	/// タイマー
 	/// </summary>
-	unsigned int m_resultsenniTimer = 0;
-	unsigned int m_countDownTimer = 0;
-	int m_timer = 3600;	//60秒
-	int m_countTime = 0;
+	unsigned int m_resultsenniTimer{ 0 };
+	unsigned int m_countDownTimer{ 0 };
+	int m_timer{ 3600 };	//3600/60 = 60秒
+	int m_countTime{ 0 };
 
 
 	int m_plaScore[4] = { 0 };
 	Vector2 m_plaScorePos[4];
-	unsigned int m_nowNumOnePla = 0;
+	unsigned int m_nowNumOnePla{ 0 };
 	wchar_t text1[64];	//制限時間フォント
 	wchar_t text2[64];	//プレイヤースコアフォント
 
@@ -110,7 +110,7 @@ public:
 	//現在の残り制限時間を取得する関数
 	int GetNowTime() { return m_countTime; }
 	//ゲーム開始のカウントダウンを終了したかどうかのフラグを取得する関数
-	bool GetCountDownFlg() { return m_isCountTimeFlg; }
+	bool GetCountDownFlg() { return m_isFinishCountDownFlg; }
 	//プレイヤーのスコアを取得する関数
 	int GetPlaScore(int x) { return m_plaScore[x]; };
 };

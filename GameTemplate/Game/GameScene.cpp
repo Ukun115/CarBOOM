@@ -1,7 +1,11 @@
+///<<summary>
+///ゲーム画面中の処理を行うクラス
+///</summary>
+
+
 #include "stdafx.h"
 #include "GameScene.h"
 #include "ResultScene.h"
-
 #include "Enemy.h"
 #include "Player.h"
 #include "Stage.h"
@@ -141,13 +145,6 @@ GameScene::~GameScene()
 
 void GameScene::Update()
 {
-	//ゲームシーンに遷移したら、
-	if (m_isCountTimeFlg)
-	{
-		//カウントダウン処理を開始
-		CountDown();
-	}
-
 	//制限時間のカウント&描画処理
 	TimeLimit();
 
@@ -162,6 +159,13 @@ void GameScene::Update()
 	{
 		//リザルト画面に遷移する
 		ResultSceneTransition();
+	}
+
+	//ゲームシーンに遷移したら、
+	if (m_isFinishCountDownFlg)
+	{
+		//カウントダウン処理を開始
+		CountDown();
 	}
 }
 
@@ -186,7 +190,7 @@ void GameScene::CountDown()
 
 		//「３」画像オブジェクト生成
 		m_sprite[ARRAY_NUM_0] = NewGO<SpriteRender>(PRIORITY_1, nullptr);
-		m_sprite[ARRAY_NUM_0]->SetPosition({ 0.0f,0.0f,0.0f });
+		m_sprite[ARRAY_NUM_0]->SetPosition(Vector3::Zero);
 		//初期化
 		m_sprite[ARRAY_NUM_0]->Init("Assets/image/DDS/3.dds", 200.0f, 200.0f);
 
@@ -199,7 +203,7 @@ void GameScene::CountDown()
 
 		//「２」画像オブジェクト生成
 		m_sprite[ARRAY_NUM_1] = NewGO<SpriteRender>(PRIORITY_1, nullptr);
-		m_sprite[ARRAY_NUM_1]->SetPosition({ 0.0f,0.0f,0.0f });
+		m_sprite[ARRAY_NUM_1]->SetPosition(Vector3::Zero);
 		//初期化
 		m_sprite[ARRAY_NUM_1]->Init("Assets/image/DDS/2.dds", 200.0f, 200.0f);
 
@@ -212,7 +216,7 @@ void GameScene::CountDown()
 
 		//「１」画像オブジェクト生成
 		m_sprite[ARRAY_NUM_2] = NewGO<SpriteRender>(PRIORITY_1, nullptr);
-		m_sprite[ARRAY_NUM_2]->SetPosition({ 0.0f,0.0f,0.0f });
+		m_sprite[ARRAY_NUM_2]->SetPosition(Vector3::Zero);
 		//初期化
 		m_sprite[ARRAY_NUM_2]->Init("Assets/image/DDS/1.dds", 200.0f, 200.0f);
 
@@ -225,7 +229,7 @@ void GameScene::CountDown()
 
 		//「START」画像オブジェクト生成
 		m_sprite[ARRAY_NUM_3] = NewGO<SpriteRender>(PRIORITY_1, nullptr);
-		m_sprite[ARRAY_NUM_3]->SetPosition({ 0.0f,0.0f,0.0f });
+		m_sprite[ARRAY_NUM_3]->SetPosition(Vector3::Zero);
 		//初期化
 		m_sprite[ARRAY_NUM_3]->Init("Assets/image/DDS/START!!.dds", 400.0f, 200.0f);
 
@@ -241,7 +245,7 @@ void GameScene::CountDown()
 		SoundPlayBack(GameBGM);
 
 		//カウントダウンの処理を抜ける。
-		m_isCountTimeFlg = false;
+		m_isFinishCountDownFlg = false;
 
 		break;
 	}
@@ -254,7 +258,7 @@ void GameScene::CountDown()
 void GameScene::TimeLimit()
 {
 	//カウントダウンが終わってから制限時間を刻んでいく。
-	if(!m_isCountTimeFlg)
+	if(!m_isFinishCountDownFlg)
 	{
 		//制限時間を縮めていく。
 		m_timer--;

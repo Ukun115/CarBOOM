@@ -1,3 +1,8 @@
+///<<summary>
+///プレイヤーが操作する車の情報をまとめているクラス
+///</summary>
+
+
 #include "stdafx.h"
 #include "Player.h"
 #include "TitleScene.h"
@@ -207,12 +212,12 @@ void Player::Update()
 
 					if (!m_isBPushFlg[plaNum])
 					{
-						if (m_atackTimer[plaNum] == 0)
+						if (m_attackTimer[plaNum] == 0)
 						{
 							//移動処理
 							PlaMove(plaNum);
 						}
-						if (m_isTyazi1Flg[plaNum])
+						if (m_isCharge1Flg[plaNum])
 						{
 							if (m_isCharge1EffectSoundFlg[plaNum])
 							{
@@ -225,7 +230,7 @@ void Player::Update()
 							//チャージ攻撃1の処理
 							m_moveSpeed[plaNum] = m_plaDir[plaNum] * 8.0f;
 						}
-						if (m_isTyazi2Flg[plaNum])
+						if (m_isCharge2Flg[plaNum])
 						{
 							if (m_isCharge2EffectSoundFlg[plaNum])
 							{
@@ -310,20 +315,20 @@ void Player::PlaResporn(int plaNum)
 		m_moveSpeed[plaNum] = { Vector3::Zero };
 
 		m_isBPushFlg[plaNum] = false;
-		m_isTyazi1Flg[plaNum] = false;
-		m_isTyazi2Flg[plaNum] = false;
-		m_isAtack0Flg[plaNum] = false;
-		m_isAtack1Flg[plaNum] = false;
-		m_isAtack2Flg[plaNum] = false;
-		m_isAtack1HanteiFlg[plaNum] = false;
-		m_isAtack2HanteiFlg[plaNum] = false;
+		m_isCharge1Flg[plaNum] = false;
+		m_isCharge2Flg[plaNum] = false;
+		m_isAttack0Flg[plaNum] = false;
+		m_isAttack1Flg[plaNum] = false;
+		m_isAttack2Flg[plaNum] = false;
+		m_isAttack1HanteiFlg[plaNum] = false;
+		m_isAttack2HanteiFlg[plaNum] = false;
 		m_DASpr1[plaNum]->Deactivate();
 		m_DASpr2[plaNum]->Deactivate();
 
 		//押したときのタイマー初期化
-		m_tyaziTimer[plaNum] = 0;
-		m_atackTimer[plaNum] = 0;
-		m_atackHanteiTimer[plaNum] = 0;
+		m_chargeTimer[plaNum] = 0;
+		m_attackTimer[plaNum] = 0;
+		m_attackHanteiTimer[plaNum] = 0;
 
 		//キャラクターコントローラーを使った移動処理に変更。
 		m_pos[plaNum] = m_charaCon[plaNum].Execute(m_moveSpeed[plaNum], 1.0f);
@@ -428,7 +433,7 @@ void Player::PlaNowState(int plaNum)
 	//Aボタンが押されてるとき、
 	if (g_pad[plaNum]->IsPress(enButtonA))
 	{
-		if (m_tyaziTimer[plaNum] == 0)
+		if (m_chargeTimer[plaNum] == 0)
 		{
 			//チャージ音を鳴らす
 			SoundPlayBack(ChargeSound,plaNum);
@@ -440,35 +445,35 @@ void Player::PlaNowState(int plaNum)
 		m_isCharge2EffectSoundFlg[plaNum] = true;
 
 		//チャージしているときのタイマーを加算
-		m_tyaziTimer[plaNum]++;
+		m_chargeTimer[plaNum]++;
 
 		//チャージ時間によって攻撃フラグを変える
 
-		if (m_tyaziTimer[plaNum] >= 0 && m_tyaziTimer[plaNum] < 30)
+		if (m_chargeTimer[plaNum] >= 0 && m_chargeTimer[plaNum] < 30)
 		{
-			m_isAtack0Flg[plaNum] = true;
+			m_isAttack0Flg[plaNum] = true;
 		}
-		if (m_tyaziTimer[plaNum] >= 30 && m_tyaziTimer[plaNum] < 90)
+		if (m_chargeTimer[plaNum] >= 30 && m_chargeTimer[plaNum] < 90)
 		{
-			m_isAtack0Flg[plaNum] = false;
-			m_isAtack1Flg[plaNum] = true;
-			m_isAtack1HanteiFlg[plaNum] = true;
+			m_isAttack0Flg[plaNum] = false;
+			m_isAttack1Flg[plaNum] = true;
+			m_isAttack1HanteiFlg[plaNum] = true;
 
 			//「1」表示
-			if (m_tyaziTimer[plaNum] == 30) {
+			if (m_chargeTimer[plaNum] == 30) {
 				m_DASpr2[plaNum]->Deactivate();
 				m_DASpr1[plaNum]->Activate();
 			}
 		}
-		if (m_tyaziTimer[plaNum] >= 90)
+		if (m_chargeTimer[plaNum] >= 90)
 		{
-			m_isAtack1Flg[plaNum] = false;
-			m_isAtack1HanteiFlg[plaNum] = false;
-			m_isAtack2Flg[plaNum] = true;
-			m_isAtack2HanteiFlg[plaNum] = true;
+			m_isAttack1Flg[plaNum] = false;
+			m_isAttack1HanteiFlg[plaNum] = false;
+			m_isAttack2Flg[plaNum] = true;
+			m_isAttack2HanteiFlg[plaNum] = true;
 
 			//「2」表示
-			if (m_tyaziTimer[plaNum] == 90) {
+			if (m_chargeTimer[plaNum] == 90) {
 				m_DASpr1[plaNum]->Deactivate();
 				m_DASpr2[plaNum]->Activate();
 			}
@@ -481,70 +486,70 @@ void Player::PlaNowState(int plaNum)
 		m_isBPushFlg[plaNum] = false;
 
 		//押したときのタイマー初期化
-		m_tyaziTimer[plaNum] = 0;
+		m_chargeTimer[plaNum] = 0;
 
 		//攻撃フラグによって攻撃処理を変える
 
 		//チャージ失敗
-		if (m_isAtack0Flg[plaNum])
+		if (m_isAttack0Flg[plaNum])
 		{
-			m_isAtack0Flg[plaNum] = false;
+			m_isAttack0Flg[plaNum] = false;
 		}
 
 		//チャージ1
 		//攻撃の動きのフラグ
-		if (m_isAtack1Flg[plaNum])
+		if (m_isAttack1Flg[plaNum])
 		{
-			m_atackTimer[plaNum]++;
+			m_attackTimer[plaNum]++;
 
 
-			if (m_atackTimer[plaNum] > 0 && m_atackTimer[plaNum] < 20)
+			if (m_attackTimer[plaNum] > 0 && m_attackTimer[plaNum] < 20)
 			{
-				m_isTyazi1Flg[plaNum] = true;
+				m_isCharge1Flg[plaNum] = true;
 			}
-			if (m_atackTimer[plaNum] == 20)
+			if (m_attackTimer[plaNum] == 20)
 			{
-				m_atackTimer[plaNum] = 0;
-				m_isTyazi1Flg[plaNum] = false;
-				m_isAtack1Flg[plaNum] = false;
+				m_attackTimer[plaNum] = 0;
+				m_isCharge1Flg[plaNum] = false;
+				m_isAttack1Flg[plaNum] = false;
 			}
 
 		}
 
 		//チャージ1
 		//攻撃の判定のフラグ
-		if (m_isAtack1HanteiFlg[plaNum])
+		if (m_isAttack1HanteiFlg[plaNum])
 		{
-			m_atackHanteiTimer[plaNum]++;
+			m_attackHanteiTimer[plaNum]++;
 
-			if (m_atackHanteiTimer[plaNum] > 0 && m_atackHanteiTimer[plaNum] < 25)
+			if (m_attackHanteiTimer[plaNum] > 0 && m_attackHanteiTimer[plaNum] < 25)
 			{
-				m_isTyazi1HanteiFlg[plaNum] = true;
+				m_isCharge1HanteiFlg[plaNum] = true;
 			}
-			if (m_atackHanteiTimer[plaNum] == 25)
+			if (m_attackHanteiTimer[plaNum] == 25)
 			{
-				m_atackHanteiTimer[plaNum] = 0;
-				m_isTyazi1HanteiFlg[plaNum] = false;
-				m_isAtack1HanteiFlg[plaNum] = false;
+				m_attackHanteiTimer[plaNum] = 0;
+				m_isCharge1HanteiFlg[plaNum] = false;
+				m_isAttack1HanteiFlg[plaNum] = false;
 				m_DASpr1[plaNum]->Deactivate();
 			}
 		}
 
 		//チャージ2
 		//攻撃の動きのフラグ
-		if (m_isAtack2Flg[plaNum])
+		if (m_isAttack2Flg[plaNum])
 		{
-			m_atackTimer[plaNum]++;
+			m_attackTimer[plaNum]++;
 
-			if (0 < m_atackTimer[plaNum] && m_atackTimer[plaNum] < 25)
+			if (0 < m_attackTimer[plaNum] && m_attackTimer[plaNum] < 25)
 			{
-				m_isTyazi2Flg[plaNum] = true;
+				m_isCharge2Flg[plaNum] = true;
 			}
-			if (m_atackTimer[plaNum] == 25)
+			if (m_attackTimer[plaNum] == 25)
 			{
-				m_atackTimer[plaNum] = 0;
-				m_isTyazi2Flg[plaNum] = false;
-				m_isAtack2Flg[plaNum] = false;
+				m_attackTimer[plaNum] = 0;
+				m_isCharge2Flg[plaNum] = false;
+				m_isAttack2Flg[plaNum] = false;
 
 			}
 
@@ -553,19 +558,19 @@ void Player::PlaNowState(int plaNum)
 
 		//チャージ2
 		//攻撃の判定のフラグ
-		if (m_isAtack2HanteiFlg[plaNum])
+		if (m_isAttack2HanteiFlg[plaNum])
 		{
-			m_atackHanteiTimer[plaNum]++;
+			m_attackHanteiTimer[plaNum]++;
 
-			if (m_atackHanteiTimer[plaNum] > 0 && m_atackHanteiTimer[plaNum] < 30)
+			if (m_attackHanteiTimer[plaNum] > 0 && m_attackHanteiTimer[plaNum] < 30)
 			{
-				m_isTyazi2HanteiFlg[plaNum] = true;
+				m_isCharge2HanteiFlg[plaNum] = true;
 			}
-			if (m_atackHanteiTimer[plaNum] == 30)
+			if (m_attackHanteiTimer[plaNum] == 30)
 			{
-				m_atackHanteiTimer[plaNum] = 0;
-				m_isTyazi2HanteiFlg[plaNum] = false;
-				m_isAtack2HanteiFlg[plaNum] = false;
+				m_attackHanteiTimer[plaNum] = 0;
+				m_isCharge2HanteiFlg[plaNum] = false;
+				m_isAttack2HanteiFlg[plaNum] = false;
 				m_DASpr2[plaNum]->Deactivate();
 			}
 		}
@@ -656,7 +661,7 @@ void Player::PlaAndEneClash(int plaNum)
 		m_diff = m_enemy->GetEnemyPos(eneNum) - m_pos[plaNum];
 
 		//距離の長さが30.0fより小さかったら、
-		if (m_diff.Length() < 30.0f && m_isTyazi1HanteiFlg[plaNum] == false && m_isTyazi2HanteiFlg[plaNum] == false)
+		if (m_diff.Length() < 30.0f && m_isCharge1HanteiFlg[plaNum] == false && m_isCharge2HanteiFlg[plaNum] == false)
 		{
 			m_enePushSpeed = m_enemy->GetEnemySpeed(eneNum);
 			//これだとプッシュパワーが強すぎるため、威力を弱める
@@ -665,11 +670,11 @@ void Player::PlaAndEneClash(int plaNum)
 			m_enePushSpeed.z /= 5;
 
 			//チャージ中に敵と衝突したらチャージがキャンセルされる
-			m_isAtack0Flg[plaNum] = false;
-			m_isAtack1Flg[plaNum] = false;
-			m_isAtack2Flg[plaNum] = false;
+			m_isAttack0Flg[plaNum] = false;
+			m_isAttack1Flg[plaNum] = false;
+			m_isAttack2Flg[plaNum] = false;
 			//押されたらチャージサウンドを止める
-			if (m_tyaziTimer[plaNum] > 0)
+			if (m_chargeTimer[plaNum] > 0)
 			{
 				m_ChargeSound[plaNum]->Stop();
 			}
@@ -678,7 +683,7 @@ void Player::PlaAndEneClash(int plaNum)
 			m_DASpr2[plaNum]->Deactivate();
 
 			//押したときのタイマー初期化
-			m_tyaziTimer[plaNum] = 0;
+			m_chargeTimer[plaNum] = 0;
 
 			//プレイヤーに影響
 			m_moveSpeed[plaNum] += m_enePushSpeed;
@@ -709,36 +714,36 @@ void Player::PlaAndPlaClash(int plaNum)
 			m_moveSpeed[otherPlaNum] /= 2.0;
 
 			//相手がチャージ1のとき
-			if (m_isTyazi1HanteiFlg[otherPlaNum] == true && m_isTyazi2HanteiFlg[plaNum] == false)
+			if (m_isCharge1HanteiFlg[otherPlaNum] == true && m_isCharge2HanteiFlg[plaNum] == false)
 			{
 				m_enePushSpeed *= 2.0f;
 				//チャージ２を受けたとき割る２しただけではそのまま落ちちゃうので
 				//止まるようにする
-				m_moveSpeed[otherPlaNum] = { 0.0f,0.0f,0.0f };
+				m_moveSpeed[otherPlaNum] = Vector3::Zero;
 				//自分がチャージ1のとき
-				if (m_isTyazi1HanteiFlg[plaNum] == true)
+				if (m_isCharge1HanteiFlg[plaNum] == true)
 				{
-					m_isTyazi1HanteiFlg[plaNum] = false;
+					m_isCharge1HanteiFlg[plaNum] = false;
 				}
 			}
 
 			//相手がチャージ2のとき
-			if (m_isTyazi2HanteiFlg[otherPlaNum] == true)
+			if (m_isCharge2HanteiFlg[otherPlaNum] == true)
 			{
 				m_enePushSpeed *= 5.0f;
 				//チャージ２を受けたとき割る２しただけではそのまま落ちちゃうので
 				//止まるようにする
-				m_moveSpeed[otherPlaNum] = { 0.0f,0.0f,0.0f };
+				m_moveSpeed[otherPlaNum] = Vector3::Zero;
 
 				//自分がチャージ1のとき
-				if (m_isTyazi1HanteiFlg[plaNum] == true)
+				if (m_isCharge1HanteiFlg[plaNum] == true)
 				{
-					m_isTyazi1HanteiFlg[plaNum] = false;
+					m_isCharge1HanteiFlg[plaNum] = false;
 				}
 				//自分がチャージ2のとき
-				if (m_isTyazi2HanteiFlg[plaNum] == true)
+				if (m_isCharge2HanteiFlg[plaNum] == true)
 				{
-					m_isTyazi2HanteiFlg[plaNum] = false;
+					m_isCharge2HanteiFlg[plaNum] = false;
 				}
 			}
 

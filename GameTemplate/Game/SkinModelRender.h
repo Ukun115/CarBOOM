@@ -10,18 +10,16 @@ private:
 	/// <summary>
 	/// クラスのポインタ
 	/// </summary>
-	Light* m_light = nullptr;
+	Light* m_light{ nullptr };
 
 
 	ModelInitData m_modelInitData;		//モデルイニットデータ構造体のデータを作成
 	Model m_model;						//モデルクラスを作成
 
 
-						//↓初期値
-	Vector3    m_pos = Vector3::Zero;			//位置
-	Quaternion m_rot = Quaternion::Identity;	//回転
-	Vector3    m_sca = Vector3::One;			//拡大率
-						//↑初期値
+	Vector3    m_pos{ Vector3::Zero };			//位置
+	Quaternion m_rot{ Quaternion::Identity };	//回転
+	Vector3    m_sca{ Vector3::One };			//拡大率
 
 
 	bool Start()override;

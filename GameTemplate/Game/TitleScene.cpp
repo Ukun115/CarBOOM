@@ -1,11 +1,12 @@
+/// <summary>
+/// タイトル画面クラス
+/// (注意！ゲームパッドの登録する順番は、ゲームパッドがPCに接続された順番！！)
+/// </summary>
+
+
 #include "stdafx.h"
 #include "TitleScene.h"
 #include "StageSelectScene.h"
-
-
-/// <summary>
-/// 注意！ゲームパッドの登録する順番は、ゲームパッドがPCに接続された順番！！
-/// </summary>
 
 
 namespace
@@ -157,16 +158,7 @@ TitleScene::~TitleScene()
 void TitleScene::Update()
 {
 	//ステージ選択画面に遷移すると抜けるフラグ
-	if (m_isCanStageSelectSceneFlg == true) {
-
-		m_titleCallDelayTimer++;
-		if (m_titleCallDelayTimer == 150 && m_isTitleCallOneShotFlg)
-		{
-			//タイトルコールサウンド
-			SoundPlayBack(TitleCallSound);
-
-			m_isTitleCallOneShotFlg = false;
-		}
+	if (m_enableUpdateFlg == true) {
 
 		//登録されたプレイヤー数が最大数4人になるまで追加できる
 		if (m_totalPlaNum != MaxPlayerNum)
@@ -183,6 +175,7 @@ void TitleScene::Update()
 		//登録されている誰かのスタートボタンが押されたら、
 		for (int plaNum = Player1; plaNum < m_totalPlaNum; plaNum++)
 		{
+			//スタートボタンが押されたら、
 			if (g_pad[plaNum]->IsTrigger(enButtonStart))
 			{
 				//決定サウンド
@@ -190,6 +183,15 @@ void TitleScene::Update()
 
 				//ステージ選択画面に遷移
 				StageSelectSceneTransition();
+			}
+			//セレクトボタンが押されたら、、
+			if (g_pad[plaNum]->IsTrigger(enButtonSelect))
+			{
+				//exeを閉じてゲーム終了
+				exit(EXIT_SUCCESS);
+				//メモ//
+				//exit(EXIT_FAILURE);は異常終了		EXIT_FAILURE = 1
+				//exit(EXIT_SUCCESS);は正常終了		EXIT_SUCCESS = 0
 			}
 		}
 		//「PRESS START BUTTON」文字画像の点滅処理
@@ -271,20 +273,18 @@ void TitleScene::StageSelectSceneTransition()
 	DeleteGO(m_titleBGM);
 	//エンジン音を削除
 	DeleteGO(m_addPlayer);
-	//タイトルコールを削除
-	DeleteGO(m_titleCall);
 	//タイトルジングルを削除
 	DeleteGO(m_gameNameGingle);
 
 	//ステージ選択画面に遷移後、ボタンとプレイヤー追加ボタンを押せなくするフラグ
-	m_isCanStageSelectSceneFlg = false;
+	m_enableUpdateFlg = false;
 }
 
 
 //「PRESS START BUTTON」文字画像の点滅処理関数
 void TitleScene::FlashingFont()
 {
-	if (m_isFlashingFontTimerActiveFlg)
+	if (m_isFlashingFontActiveFlg)
 	{
 		//タイマー加算
 		m_flashingFontTimer++;
@@ -302,13 +302,13 @@ void TitleScene::FlashingFont()
 	if (m_flashingFontTimer > 60)
 	{
 		//「PRESS START BUTTON」を非表示にするフラグ
-		m_isFlashingFontTimerActiveFlg = false;
+		m_isFlashingFontActiveFlg = false;
 	}
 	//タイマーが0より小さい値になると、
 	if (m_flashingFontTimer < 10)
 	{
 		//「PRESS START BUTTON」を表示するフラグ
-		m_isFlashingFontTimerActiveFlg = true;
+		m_isFlashingFontActiveFlg = true;
 	}
 }
 
@@ -333,15 +333,6 @@ void TitleScene::SoundPlayBack(int soundNum)
 		m_titleBGM->Init(L"Assets/sound/TitleSceneBGM.wav");
 		m_titleBGM->SetVolume(0.01f);
 		m_titleBGM->Play(true);	//真でループ再生
-
-		break;
-
-	case TitleCallSound:
-		//タイトルコールサウンドの初期化
-		m_titleCall = NewGO<SoundSource>(PRIORITY_0, nullptr);
-		m_titleCall->Init(L"Assets/sound/TitleCall.wav");
-		m_titleCall->SetVolume(0.5f);
-		m_titleCall->Play(false);	//偽でワンショット再生
 
 		break;
 

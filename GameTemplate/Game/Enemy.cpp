@@ -1,3 +1,8 @@
+///<<summary>
+///敵NPC（パトカー）クラス
+///</summary>
+
+
 #include "stdafx.h"
 #include "Enemy.h"
 #include "Player.h"
@@ -285,7 +290,7 @@ void Enemy::Distance(int eneNum)
 //敵のDA処理関数
 void Enemy::EneDA(int eneNum)
 {
-	if (!m_isCtFlg[eneNum]) {
+	if (!m_canCtCountFlg[eneNum]) {
 		//距離設定
 		Distance(eneNum);
 
@@ -296,13 +301,13 @@ void Enemy::EneDA(int eneNum)
 		//ダッシュサウンド
 		SoundPlayBack(DashSound,eneNum);
 
-		m_isPlaAndEneClashSoundFlg[eneNum] = true;
+		m_canPlaAndEneClashSoundPlayFlg[eneNum] = true;
 
 		//CTをカウントするフラグを立てる
-		m_isCtFlg[eneNum] = true;
+		m_canCtCountFlg[eneNum] = true;
 	}
 	//CTフラグが立ってるとき、
-	if (m_isCtFlg[eneNum]) {
+	if (m_canCtCountFlg[eneNum]) {
 
 		//CTをカウントする
 		m_CTTime[eneNum]++;
@@ -314,7 +319,7 @@ void Enemy::EneDA(int eneNum)
 	if (m_CTTime[eneNum] == m_eneCTCount[eneNum]) {
 
 		//CTフラグを下ろす
-		m_isCtFlg[eneNum] = false;
+		m_canCtCountFlg[eneNum] = false;
 
 		//CTのカウントを0にする
 		m_CTTime[eneNum] = 0;
@@ -424,12 +429,12 @@ void Enemy::PlaAndEneClash(int eneNum)
 		//距離の長さが40.0fより小さかったら、
 		if (m_diff.Length() < 40.0f)
 		{
-			if (m_isPlaAndEneClashSoundFlg[eneNum])
+			if (m_canPlaAndEneClashSoundPlayFlg[eneNum])
 			{
 				//衝突音4
 				SoundPlayBack(PlaAndEneClashSound, eneNum);
 
-				m_isPlaAndEneClashSoundFlg[eneNum] = false;
+				m_canPlaAndEneClashSoundPlayFlg[eneNum] = false;
 			}
 
 			if (m_player->GetPlaisTyazi1HanteiFlg(plaNum)) {
@@ -497,7 +502,7 @@ void Enemy::SoundPlayBack(int soundNum,int eneNum)
 
 	case FallSound:
 		//高さが-10以下のとき再生
-		if (m_enePos[eneNum].y < -10.0f && m_isFallSoundFlg[eneNum])
+		if (m_enePos[eneNum].y < -10.0f && m_canFallSoundPlayFlg[eneNum])
 		{
 			//落下サウンドの初期化
 			m_FallSound[eneNum] = NewGO<SoundSource>(PRIORITY_0, nullptr);
@@ -505,12 +510,12 @@ void Enemy::SoundPlayBack(int soundNum,int eneNum)
 			m_FallSound[eneNum]->SetVolume(0.1f);
 			m_FallSound[eneNum]->Play(false);	//偽でワンショット再生
 
-			m_isFallSoundFlg[eneNum] = false;
+			m_canFallSoundPlayFlg[eneNum] = false;
 		}
 		//リスポーン位置に移動したときにフラグを復活させる
 		if (m_enePos[eneNum].y == 150.0f)
 		{
-			m_isFallSoundFlg[eneNum] = true;
+			m_canFallSoundPlayFlg[eneNum] = true;
 		}
 
 		break;

@@ -1,3 +1,8 @@
+///<<summary>
+///モデルデータを表示させるクラス
+///</summary>
+
+
 #include "stdafx.h"
 
 
