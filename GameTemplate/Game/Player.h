@@ -3,9 +3,10 @@ class TitleScene;
 class GameScene;
 class Enemy;
 class StageSelectScene;
+class Stage;
 
 
-class Player : public IGameObject
+class Player : public IGameObject		// コピー禁止ポリシーを継承する。
 {
 private:
 
@@ -26,7 +27,7 @@ private:
 	SoundSource* m_Dash1Sound[PLAYER_MAX_NUM]{ nullptr };	//ダッシュ１サウンド
 	SoundSource* m_Dash2Sound[PLAYER_MAX_NUM]{ nullptr };	//ダッシュ２サウンド
 	SoundSource* m_PlaAndPlaClashSound[PLAYER_MAX_NUM]{ nullptr };	//プレイヤーとプレイヤーがぶつかったときのサウンド
-
+	Stage* m_stage = nullptr;
 
 	CharacterController m_charaCon[PLAYER_MAX_NUM];		//プレイヤー4人分のキャラクタコントローラークラスを作成
 	Effect m_shootDownEffect[PLAYER_MAX_NUM];		//プレイヤー4人分の落下したときの撃墜エフェクト
@@ -63,25 +64,25 @@ private:
 	unsigned int m_landingEffectDelayTimer[PLAYER_MAX_NUM]{ 0 };			//着地エフェクトをプレイヤーが着地したときに再生させるためのタイマー
 
 
-	Vector3    m_pos[PLAYER_MAX_NUM]{ Vector3::Zero };		//プレイヤーの位置
-	Quaternion m_rot[PLAYER_MAX_NUM]{ Quaternion::Identity };		//プレイヤーの回転
+	Vector3    m_pos[PLAYER_MAX_NUM];		//プレイヤーの位置
+	Quaternion m_rot[PLAYER_MAX_NUM];		//プレイヤーの回転
 	unsigned int m_plaNum{ 0 };	//プレイヤー数をカウントする変数
-	Vector3 m_moveSpeed[PLAYER_MAX_NUM]{ Vector3::Zero };		//移動速度
-	Vector3 m_enePushSpeed{ Vector3::Zero };		//敵から与えられるプッシュパワー
-	Vector3 m_plaDir[PLAYER_MAX_NUM]{ Vector3::Zero };		//向き
+	Vector3 m_moveSpeed[PLAYER_MAX_NUM];		//移動速度
+	Vector3 m_enePushSpeed;		//敵から与えられるプッシュパワー
+	Vector3 m_plaDir[PLAYER_MAX_NUM];		//向き
 	float m_leftStick_x[PLAYER_MAX_NUM]{ 0.0f };		//左スティックのx入力量
 	float m_leftStick_y[PLAYER_MAX_NUM]{ 0.0f };		//左スティックのy入力量
 	float m_rotAngle[PLAYER_MAX_NUM]{ 0.0f };		//回転角度
-	Vector3 m_friction[PLAYER_MAX_NUM]{ Vector3::Zero };		//摩擦
-	Vector3 m_diff{ Vector3::Zero };				//プレイヤーと敵との距離
+	Vector3 m_friction[PLAYER_MAX_NUM];		//摩擦
+	Vector3 m_diff;				//プレイヤーと敵との距離
 	unsigned int m_pushPlayer[5]{ 0 };
-	Quaternion m_shootDownEffectRot{ Quaternion::Identity };
+	Quaternion m_shootDownEffectRot;
 
 	//デバッグ用
 	SkinModelRender* m_skinModelRenderArrow[PLAYER_MAX_NUM]{ nullptr };
-	Vector3 m_arrowPos[PLAYER_MAX_NUM]{ Vector3::Zero };
-	Quaternion m_arrowRot[PLAYER_MAX_NUM]{ Quaternion::Identity };
-	Vector3 m_arrowSize{ Vector3::One };
+	Vector3 m_arrowPos[PLAYER_MAX_NUM];
+	Quaternion m_arrowRot[PLAYER_MAX_NUM];
+	Vector3 m_arrowSize;
 
 
 	/// <summary>
@@ -106,6 +107,15 @@ private:
 		Dash2Sound,
 		PlaAndPlaClashSound,
 		PlaAndEneClashSound
+	};
+
+	enum Wind
+	{
+		Up,		//下から上への風
+		Down,	//上から下への風
+		Left,	//右から左への風
+		Right,	//左から右への風
+		Max		//最大数
 	};
 
 
@@ -136,12 +146,12 @@ private:
 	void PlaAndPlaClash(int plaNum);
 	//プレイヤーにかかる重力を設定する関数
 	void Gravity(int plaNum);
-
 	//ベクトルを可視化させるデバック関数
 	void PlaMooveSpeedDebug(int plaNum);
-
 	//サウンドを一括にまとめる関数
 	void SoundPlayBack(int soundNum, int plaNum);
+	//プレイヤーに影響を及ぼす風力
+	void WindPower(int planum);
 
 
 public:

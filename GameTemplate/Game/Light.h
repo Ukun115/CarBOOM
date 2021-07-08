@@ -58,7 +58,7 @@ struct ligData {
 };
 
 
-class Light : public IGameObject
+class Light : public IGameObject		// コピー禁止ポリシーを継承する。
 {
 private:
 

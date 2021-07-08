@@ -4,6 +4,10 @@
 
 
 #include "stdafx.h"
+#include "Stage.h"
+
+#include<random>
+
 #include "Enemy.h"
 #include "Player.h"
 #include "TitleScene.h"
@@ -49,6 +53,7 @@ bool Enemy::Start()
 	m_player	 = FindGO<Player>(PLAYER_NAME);
 	m_stageSelectScene = FindGO<StageSelectScene>(STAGESELECT_NAME);
 	m_light = FindGO<Light>(LIGHT_NAME);
+	m_stage = FindGO<Stage>("stage");
 
 	//敵のリスポーン位置１～１０
 	m_ranEneResPos[ResPos1] = ENE_RES_POS_1;
@@ -205,6 +210,9 @@ void Enemy::Update()
 			{
 				//回転処理
 				EneTurn(eneNum);
+
+				//風ステージの時風の影響を受ける処理
+				WindPower(eneNum);
 
 				//プレイヤーが敵とぶつかったとき敵に押される処理
 				PlaAndEneClash(eneNum);
@@ -570,5 +578,32 @@ void Enemy::SoundPlayBack(int soundNum,int eneNum)
 		m_PlaAndEneClashSound[eneNum]->Play(false);	//偽でワンショット再生
 
 		break;
+	}
+}
+
+
+void Enemy::WindPower(int enenum)
+{
+	//風ステージが選択されている場合、風の影響を与える
+	if (m_stageSelectScene->GetStageNum() == STAGE4)
+	{
+
+
+		//現在の風の向きに応じた処理
+		switch (m_stage->GetWindDirection()) { //ここの()の中には、今どの向きの風なのかを保存している変数を入れる。
+		case Up://下から上への風
+			m_moveSpeed[enenum].z += 0.02f;
+			break;
+		case Down:
+			m_moveSpeed[enenum].z -= 0.02f;
+			break;
+		case Left:
+			m_moveSpeed[enenum].x -= 0.02f;
+			break;
+		case Right:
+			m_moveSpeed[enenum].x += 0.02f;
+			break;
+		}
+
 	}
 }

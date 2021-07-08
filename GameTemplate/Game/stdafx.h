@@ -5,7 +5,9 @@
 #include "ExEngine.h"
 #include "tkSoundSource.h"					//サウンド
 
+
 //ゲーム全体で頻繁に使うのでstdafx.hでhをインクルードする
+#include "Noncopyable.h"					// コピー禁止ポリシーを提供するためのクラス。
 #include "SkinModelRender.h"				//モデル
 #include "SpriteRender.h"					//画像
 #include "FontRender.h"						//文字
@@ -32,6 +34,7 @@ namespace
 	const Vector3 YELLOW{ 0.0f, 0.0f ,1.0f };//黄色
 	const Vector3 GREEN{ 1.0f, 1.0f ,0.0f };	//緑色
 	const Vector3 GRAY{ 0.7f,0.7f,0.7f };	//灰色
+	const Vector3 BLACK{ 0.0f,0.0f,0.0f };	//黒色
 	/// <summary>
 	/// 名前
 	/// </summary>
@@ -47,6 +50,7 @@ namespace
 	const int STAGE1{ 1 };
 	const int STAGE2{ 2 };
 	const int STAGE3{ 3 };
+	const int STAGE4 = 5;
 
 	const float GRAVITY{ 0.3f };		//重力
 	const int PLAYER_MAX_NUM{ 4 };

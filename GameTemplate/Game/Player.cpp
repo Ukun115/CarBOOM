@@ -6,6 +6,7 @@
 #include "stdafx.h"
 #include "Player.h"
 #include "TitleScene.h"
+#include "Stage.h"
 #include "GameScene.h"
 #include "Enemy.h"
 #include "StageSelectScene.h"
@@ -24,6 +25,8 @@ namespace
 
 	const int TIME0 = 0;	//制限時間が0秒
 
+	const double  PLAWIND = 0.05; //プレイヤーが影響を受ける風力
+
 	//const float PAI = 3.141592;		//円周率
 }
 
@@ -35,6 +38,8 @@ bool Player::Start()
 	m_gameScene = FindGO<GameScene>(GAMESCENE_NAME);
 	m_enemy = FindGO<Enemy>(ENEMY_NAME);
 	m_stageSelectScene = FindGO<StageSelectScene>(STAGESELECT_NAME);
+
+	m_stage = FindGO<Stage>("stage");
 
 	//各プレイヤーの２段階溜め攻撃の可視化
 	for (int plaNum = 0; plaNum < 4; plaNum++)
@@ -262,6 +267,9 @@ void Player::Update()
 
 				//プレイヤーが敵とぶつかったとき敵に押される処理
 				PlaAndEneClash(plaNum);
+
+				//プレイヤーに影響を及ぼす風力
+				WindPower(plaNum);
 
 				//プレイヤーとプレイヤーがぶつかったときの処理
 				PlaAndPlaClash(plaNum);
@@ -872,5 +880,30 @@ void Player::SoundPlayBack(int soundNum, int plaNum)
 		m_PlaAndPlaClashSound[plaNum]->Play(false);	//偽でワンショット再生
 
 		break;
+	}
+}
+
+
+void Player::WindPower(int planum)
+{
+	if (m_stageSelectScene->GetStageNum() == STAGE4) {
+
+		//現在の風の向きに応じた処理
+		switch (m_stage->GetWindDirection()) { //ここの()の中には、今どの向きの風なのかを保存している変数を入れる。
+		case Up://下から上への風
+			m_moveSpeed[planum].z += PLAWIND;
+
+			break;
+		case Down:
+			m_moveSpeed[planum].z -= PLAWIND;
+			break;
+		case Left:
+			m_moveSpeed[planum].x -= PLAWIND;
+			break;
+		case Right:
+			m_moveSpeed[planum].x += PLAWIND;
+			break;
+		}
+
 	}
 }

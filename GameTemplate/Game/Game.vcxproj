@@ -297,6 +297,7 @@
     <ClCompile Include="GameTime.cpp" />
     <ClCompile Include="Light.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Noncopyable.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="ResultScene.cpp" />
     <ClCompile Include="SkinModelRender.cpp" />
@@ -387,6 +388,7 @@
     <ClInclude Include="GameScene.h" />
     <ClInclude Include="GameTime.h" />
     <ClInclude Include="Light.h" />
+    <ClInclude Include="Noncopyable.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="ResultScene.h" />
     <ClInclude Include="SkinModelRender.h" />

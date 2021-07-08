@@ -53,7 +53,7 @@ bool GameScene::Start()
 	//プレイヤーオブジェクト生成
 	m_player = NewGO<Player>(PRIORITY_0, PLAYER_NAME);
 	//ステージオブジェクト生成
-	m_normalStage = NewGO<Stage>(PRIORITY_0, nullptr);
+	m_normalStage = NewGO<Stage>(PRIORITY_0, "stage");
 
 	//王冠画像オブジェクト生成
 	m_crownSprite = NewGO<SpriteRender>(PRIORITY_1, nullptr);
@@ -99,9 +99,9 @@ bool GameScene::Start()
 
 
 		//文字の境界線表示
-		m_ScoreFontRender[plaNum]->SetShadowParam(true, 1.0f, Vector4::Black);
+		m_ScoreFontRender[plaNum]->SetShadowParam(true, 2.0f, Vector4::Black);
 		//文字の境界線表示
-		m_TextScoreFontRender[plaNum]->SetShadowParam(true, 1.0f, Vector4::Black);
+		m_TextScoreFontRender[plaNum]->SetShadowParam(true, 2.0f, Vector4::Black);
 	}
 	//登録されていないプレイヤーのスコアはグレー表示にする
 	for (int plaNum = m_titleScene->GetTotalPlaNum() ; plaNum < 4; plaNum++)

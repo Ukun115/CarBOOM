@@ -2,16 +2,16 @@
 class TitleScene;
 
 
-class StageSelectScene : public IGameObject
+class StageSelectScene : public IGameObject		// コピー禁止ポリシーを継承する。
 {
 private:
 
-	SkinModelRender* m_stage[5]{ nullptr };	//全ステージ分用意
-	SpriteRender* m_stageName[5]{ nullptr };	//全ステージ分用意
+	SkinModelRender* m_stage[7]{ nullptr };	//全ステージ分用意
+	SpriteRender* m_stageName[7]{ nullptr };	//全ステージ分用意
 	SkinModelRender* m_pla{ nullptr };	//プレイヤー
 	TitleScene* m_titleScene{ nullptr };
 	SpriteRender* m_titleSprite{ nullptr };
-	SpriteRender* m_Ahukidasi[4]{ nullptr };
+	SpriteRender* m_Ahukidasi[6]{ nullptr };
 	SoundSource* m_carHorn{ nullptr };	//クラクションサウンド
 	SoundSource* m_decideSound{ nullptr };	//決定サウンド
 	SoundSource* m_onStageSound{ nullptr };	//ステージに乗ったときのサウンド
@@ -26,23 +26,23 @@ private:
 
 
 	int m_stageNum{ 1 };				//どのステージを選択しているかを格納
-	Vector3 m_stagePos[5]{ Vector3::Zero };			//ステージの位置
-	Vector3    m_pos{ Vector3::Zero };				//プレイヤーの位置
-	Quaternion m_rot{ Quaternion::Identity };				//プレイヤーの回転
-	Vector3 m_moveSpeed{ Vector3::Zero };			//移動速度
+	Vector3 m_stagePos[7];			//ステージの位置
+	Vector3    m_pos;				//プレイヤーの位置
+	Quaternion m_rot;				//プレイヤーの回転
+	Vector3 m_moveSpeed;			//移動速度
 	float m_leftStick_x{ 0.0f };			//左スティックのx入力量
 	float m_leftStick_y{ 0.0f };			//左スティックのy入力量
 	float m_rotAngle{ 0.0f };				//回転角度
-	Vector3 m_friction{ Vector3::Zero };				//摩擦
-	Vector3 m_diff[4]{ Vector3::Zero };		//ステージとプレイヤーとの距離
-	Vector3 m_AhukidasiPos[4]{ Vector3::Zero };
+	Vector3 m_friction;				//摩擦
+	Vector3 m_diff[4];		//ステージとプレイヤーとの距離
+	Vector3 m_AhukidasiPos[6];
 
 
 	//デバッグ用
 	SkinModelRender* m_skinModelRenderArrow{ nullptr };
-	Vector3 m_arrowPos{ Vector3::Zero };
-	Quaternion m_arrowRot{ Quaternion::Identity };
-	Vector3 m_arrowSize{ Vector3::One };
+	Vector3 m_arrowPos;
+	Quaternion m_arrowRot;
+	Vector3 m_arrowSize;
 
 
 	/// <summary>
@@ -55,6 +55,8 @@ private:
 		Stage1,
 		Stage2,
 		Stage3,
+		Stage4,
+		Stage5,
 		RandomStage,
 		TotalStageNum
 	};

@@ -3,7 +3,7 @@ class GameScene;
 class Player;
 
 
-class ResultScene : public IGameObject
+class ResultScene : public IGameObject		// コピー禁止ポリシーを継承する。
 {
 private:
 

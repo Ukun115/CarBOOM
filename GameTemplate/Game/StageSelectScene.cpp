@@ -16,11 +16,15 @@ namespace
 	const Vector3 STAGE_1_POS = { -120, 0, 100 };
 	const Vector3 STAGE_2_POS = { 120, 0, 100 };
 	const Vector3 STAGE_3_POS = { -120, 0, -100 };
+	const Vector3 STAGE_4_POS = { 300, 0, -100 };
+	const Vector3 STAGE_5_POS = { 300, 0, 100 };
 	const Vector3 STAGE_RANDOM_POS = { 120, 0, -100 };
 
 	const Vector3 STAGE_1_NAME_POS = { -170, 0, 0 };
 	const Vector3 STAGE_2_NAME_POS = { 170, 0, 0 };
 	const Vector3 STAGE_3_NAME_POS = { -170, -280, 0 };
+	const Vector3 STAGE_4_NAME_POS = { 420, -280, 0 };
+	const Vector3 STAGE_5_NAME_POS = { 420, 0, 0 };
 	const Vector3 STAGE_RANDOM_NAME_POS = { 170, -280, 0 };
 
 	const Vector3 BIG_STAGE_NAME = { 1.5f,1.5f,1.5f };	//拡大したときのサイズ
@@ -64,6 +68,22 @@ bool StageSelectScene::Start()
 	m_stage[Stage3]->SetPosition(m_stagePos[Stage3]);
 	m_stageName[Stage3]->SetPosition(STAGE_3_NAME_POS);
 
+	//風ステージ&名前画像をロード
+	m_stage[Stage4]->Init("Assets/modelData/bg/stage_4_Select.tkm");
+	m_stageName[Stage4]->Init("Assets/Image/DDS/RANDOM.dds", 200, 100);
+	//右下
+	m_stagePos[Stage4] = STAGE_4_POS;
+	m_stage[Stage4]->SetPosition(m_stagePos[Stage4]);
+	m_stageName[Stage4]->SetPosition(STAGE_4_NAME_POS);
+
+	//かたむきステージ&名前画像をロード
+	m_stage[Stage5]->Init("Assets/modelData/bg/stage_5_Select.tkm");
+	m_stageName[Stage5]->Init("Assets/Image/DDS/RANDOM.dds", 200, 100);
+	//右真ん中
+	m_stagePos[Stage5] = STAGE_5_POS;
+	m_stage[Stage5]->SetPosition(m_stagePos[Stage5]);
+	m_stageName[Stage5]->SetPosition(STAGE_5_NAME_POS);
+
 	//ランダムステージ&名前画像をロード
 	m_stage[RandomStage]->Init("Assets/modelData/bg/stage_random.tkm");
 	m_stageName[RandomStage]->Init("Assets/Image/DDS/RANDOM.dds", 200, 100);
@@ -85,7 +105,7 @@ bool StageSelectScene::Start()
 
 
 	//プレイヤーの上に表示されるA吹き出し
-	for (int plaNum = 0; plaNum < 4; plaNum++)
+	for (int plaNum = 0; plaNum < 6; plaNum++)
 	{
 		m_Ahukidasi[plaNum] = NewGO<SpriteRender>(PRIORITY_2, nullptr);
 		m_Ahukidasi[plaNum]->Init("Assets/Image/DDS/Ahukidasi.dds", 100, 100);
@@ -95,6 +115,8 @@ bool StageSelectScene::Start()
 	m_AhukidasiPos[1] = { 140, 170, 0 };
 	m_AhukidasiPos[2] = { -160, -50, 0 };
 	m_AhukidasiPos[3] = { 160, -50, 0 };
+	//m_AhukidasiPos[4] = { -140, -60, 0 };
+	//m_AhukidasiPos[5] = { 0, 0, 0 };
 
 	//オブジェクト生成(背景画像)
 	m_titleSprite = NewGO<SpriteRender>(PRIORITY_0, nullptr);
@@ -154,7 +176,7 @@ void StageSelectScene::GameSceneTransition()
 			//（これによりランダム値を本当の意味でランダムにしている）
 			srand((int)time(nullptr));
 			//現在存在するステージの中からランダムで選ぶ
-			m_stageNum = ((rand() % 3)+Stage1);
+			m_stageNum = ((rand() % 5)+Stage1);
 		}
 
 		//ゲーム画面に遷移
@@ -173,7 +195,7 @@ void StageSelectScene::GameSceneTransition()
 		//背景画像を削除
 		DeleteGO(m_titleSprite);
 		//A吹き出し画像を削除
-		for (int plaNum = 0; plaNum < 4; plaNum++)
+		for (int plaNum = 0; plaNum < 6; plaNum++)
 		{
 			DeleteGO(m_Ahukidasi[plaNum]);
 		}
@@ -288,6 +310,16 @@ void StageSelectScene::TouchStage()
 			{
 				m_Ahukidasi[3]->SetPosition(m_AhukidasiPos[3]);
 				m_Ahukidasi[3]->Activate();
+			}
+			if (stageNum == 5)
+			{
+				m_Ahukidasi[4]->SetPosition(m_AhukidasiPos[4]);
+				m_Ahukidasi[4]->Activate();
+			}
+			if (stageNum == 6)
+			{
+				m_Ahukidasi[5]->SetPosition(m_AhukidasiPos[5]);
+				m_Ahukidasi[5]->Activate();
 			}
 
 			if (m_canOnStageSoundPlayFlg[stageNum])

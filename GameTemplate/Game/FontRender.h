@@ -13,7 +13,7 @@ struct FontValue {
 };
 
 
-class FontRender : public IGameObject
+class FontRender : public IGameObject	// コピー禁止ポリシーを継承する。
 {
 private:
 

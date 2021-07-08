@@ -2,7 +2,7 @@
 class StageSelectScene;
 
 
-class TitleScene : public IGameObject
+class TitleScene : public IGameObject		// コピー禁止ポリシーを継承する。
 {
 private:
 
@@ -37,7 +37,7 @@ private:
 
 
 	unsigned int m_totalPlaNum{ 1 };			//プレイヤーの合計数を計測
-	Vector3 m_pressASpeechBalloonPos{ Vector3::Zero };		//プレイヤー追加吹き出しの位置
+	Vector3 m_pressASpeechBalloonPos;		//プレイヤー追加吹き出しの位置
 
 
 	/// <summary>
@@ -74,6 +74,9 @@ private:
 	void FlashingFont();
 	//サウンドを一括にまとめる関数
 	void SoundPlayBack(int soundNum);
+
+
+	FontRender* m_PlaNameFont[4] = { nullptr };
 
 
 public:

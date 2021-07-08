@@ -6,15 +6,15 @@ class Stage;
 class TitleScene;
 
 
-class GameScene :public IGameObject
+class GameScene :public IGameObject		// コピー禁止ポリシーを継承する。
 {
 private:
 
 	/// <summary>
 	/// クラスのポインタ
 	/// </summary>
-	TitleScene* m_titleScene{ nullptr };
-	Stage* m_normalStage{ nullptr };
+	TitleScene* m_titleScene = { nullptr };
+	Stage* m_normalStage = { nullptr };
 	SpriteRender* m_sprite[4]{ nullptr };
 	SpriteRender* m_crownSprite{ nullptr };
 	FontRender* m_ScoreFontRender[4]{ nullptr };

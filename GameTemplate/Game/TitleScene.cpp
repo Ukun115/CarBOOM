@@ -11,13 +11,37 @@
 
 namespace
 {
-	const Vector3 PLAYER1_NAME_POS = {-480.0f, 310.0f,0.0f};			//プレイヤー1の名前表示位置
-	const Vector3 PLAYER2_NAME_POS = { 480.0f, 310.0f,0.0f};			//プレイヤー2の名前表示位置
-	const Vector3 PLAYER3_NAME_POS = {-480.0f,-310.0f,0.0f};			//プレイヤー3の名前表示位置
-	const Vector3 PLAYER4_NAME_POS = { 480.0f,-310.0f,0.0f};			//プレイヤー4の名前表示位置
+	const Vector2 PLANAME1POS = { -600.0f, 310.0f };			//プレイヤー1の名前表示位置
+	const Vector2 PLANAME2POS = { 400.0f, 310.0f };				//プレイヤー2の名前表示位置
+	const Vector2 PLANAME3POS = { -600.0f,-290.0f };			//プレイヤー3の名前表示位置
+	const Vector2 PLANAME4POS = { 400.0f,-290.0f, };			//プレイヤー4の名前表示位置
 
 	const Vector3 FlashingFont_POS = { 0.0f, -200.0f,0.0f };				//点滅文字の表示位置
 	const Vector3 FlashingFont_SCA = { 1.2f, 1.2f,1.2f };					//点滅文字の大きさ
+
+	const Vector3 PLAYER2_NAME_POS;
+	const Vector3 PLAYER3_NAME_POS;
+	const Vector3 PLAYER4_NAME_POS;
+
+	const Vector3 PressASpeechBalloonPos2 = { 300.0f,280.0f,0 };
+	const Vector3 PressASpeechBalloonPos3 = { -300.0f,-315,0 };
+	const Vector3 PressASpeechBalloonPos4 = { 300.0f,-315.0f,0 };
+
+	const Vector4 PLANAME1COL = { 1.0f,0.0f,0.0f,1.0f };		//プレイヤー1の表示は常にあるので赤て固定
+	const Vector4 PLANAME234COL = { 0.7f,0.7f,0.7f,1.0f };	//プレイヤー2からはアクティブする前は灰色
+
+	const float PLA1234_SCA = { 1.0f, };					//拡大率
+
+	const Vector4 PLANAME2COL = { 0.0f,0.0f,1.0f,1.0f };			//アクティブ時、青
+	const Vector4 PLANAME3COL = { 1.0f,1.0f,0.0f,1.0f };			//アクティブ時、黄色
+	const Vector4 PLANAME4COL = { 0.0f,1.0f,0.0f,1.0f };			//アクティブ時、緑
+
+
+	const float     FONT_ROT = 0.0f;			//フォントの傾き
+	const Vector2   FONT_PIV = { 1.0f,1.0f };	//フォントの基点
+	const float     FONT_SCA = 1.4f;			//フォントの拡大率
+
+	const float PLA_SCA = 0.85f;
 }
 
 
@@ -62,37 +86,32 @@ bool TitleScene::Start()
 		{
 		//2Pの左側
 		case 0:
-			//2Pの名前画像の位置を代入
-			m_pressASpeechBalloonPos = PLAYER2_NAME_POS;
-			//左にずらす
-			m_pressASpeechBalloonPos.x -= 250.0f;
 			m_pressASpeechBalloon[speechBalloonNum]->SetPosition(m_pressASpeechBalloonPos);
+			m_pressASpeechBalloonPos = PressASpeechBalloonPos2;
 			break;
 		//3Pの右側
 		case 1:
-			//3Pの名前画像の位置を代入
-			m_pressASpeechBalloonPos = PLAYER3_NAME_POS;
-			//右にずらす
-			m_pressASpeechBalloonPos.x += 250.0f;
 			m_pressASpeechBalloon[speechBalloonNum]->SetPosition(m_pressASpeechBalloonPos);
+			m_pressASpeechBalloonPos = PressASpeechBalloonPos3;
 			break;
 		//4Pの左側
 		case 2:
 			//4Pの名前画像の位置を代入
-			m_pressASpeechBalloonPos = PLAYER4_NAME_POS;
-			//左にずらす
-			m_pressASpeechBalloonPos.x -= 250.0f;
 			m_pressASpeechBalloon[speechBalloonNum]->SetPosition(m_pressASpeechBalloonPos);
+			m_pressASpeechBalloonPos = PressASpeechBalloonPos4;
 			break;
 		}
 		//大きさ調整
 		m_pressASpeechBalloon[speechBalloonNum]->SetScale({0.5f,0.5f,0.5f});
+
+		//位置設定
+		m_pressASpeechBalloon[speechBalloonNum]->SetPosition(m_pressASpeechBalloonPos);
 	}
 
-	//1Pは非アクティブときがないため、初めからアクティブ画像オブジェクト生成
-	m_plaActiveName[Player1] = NewGO<SpriteRender>(PRIORITY_2, nullptr);
-	m_plaActiveName[Player1]->Init("Assets/image/DDS/Player1_ActiveName.dds", 300.0f, 150.0f);
-	m_plaActiveName[Player1]->SetPosition(PLAYER1_NAME_POS);
+	////1Pは非アクティブときがないため、初めからアクティブ画像オブジェクト生成
+	//m_plaActiveName[Player1] = NewGO<SpriteRender>(PRIORITY_2, nullptr);
+	//m_plaActiveName[Player1]->Init("Assets/image/DDS/Player1_ActiveName.dds", 300.0f, 150.0f);
+	//m_plaActiveName[Player1]->SetPosition(PLAYER1_NAME_POS);
 
 	//１Pの追加フラグを真に。
 	m_isAddPlayerFlg[Player1] = true;
@@ -100,32 +119,67 @@ bool TitleScene::Start()
 	for (int plaNum = Player1; plaNum < MaxPlayerNum; plaNum++) {
 		//2P～4Pの非アクティブ画像オブジェクト生成
 		m_plaDeactiveName[plaNum] = NewGO<SpriteRender>(PRIORITY_2, nullptr);
-		//1P
+		m_PlaNameFont[plaNum] = NewGO<FontRender>(1);		//1P
 		if (plaNum == Player1)
 		{
-			m_plaDeactiveName[plaNum]->Init("Assets/image/DDS/Player1_DeactiveName.dds", 300.0f, 150.0f);
-			m_plaDeactiveName[plaNum]->SetPosition(PLAYER1_NAME_POS);
-			//非アクティブ時はないため、非表示にしておく。
-			m_plaDeactiveName[plaNum]->Deactivate();
-		}
+			m_PlaNameFont[0]->Init(
+				/*m_plaDeactiveName[i]->Init("Assets/image/DDS/Player1_DeactiveName.dds", 300.0f, 150.0f);
+				m_plaDeactiveName[i]->SetPosition(PLAYER1_NAME_POS);
+				//非アクティブ時はないため、非表示にしておく。
+				m_plaDeactiveName[i]->Deactivate();*/
+
+				L"PLAYER1",					//テキスト
+				PLANAME1POS,		//位置
+				PLANAME1COL,		//色
+				FONT_ROT,			//傾き
+				PLA1234_SCA,		//拡大率
+				FONT_PIV			//基点
+			);
+		};
 		//2P
 		if (plaNum == Player2)
 		{
-			m_plaDeactiveName[plaNum]->Init("Assets/image/DDS/Player2_DeactiveName.dds", 300.0f, 150.0f);
 			m_plaDeactiveName[plaNum]->SetPosition(PLAYER2_NAME_POS);
+
+			m_PlaNameFont[1]->Init(
+				L"PLAYER2",					//テキスト
+				PLANAME2POS,		//位置
+				PLANAME234COL,		//色
+				FONT_ROT,			//傾き
+				PLA1234_SCA,		//拡大率
+				FONT_PIV			//基点
+			);
 		}
 		//3P
 		if (plaNum == Player3)
 		{
-			m_plaDeactiveName[plaNum]->Init("Assets/image/DDS/Player3_DeactiveName.dds", 300.0f, 150.0f);
 			m_plaDeactiveName[plaNum]->SetPosition(PLAYER3_NAME_POS);
+
+			m_PlaNameFont[2]->Init(
+				L"PLAYER3",					//テキスト
+				PLANAME3POS,		//位置
+				PLANAME234COL,		//色
+				FONT_ROT,			//傾き
+				PLA1234_SCA,		//拡大率
+				FONT_PIV			//基点
+			);
 		}
 		//4P
 		if (plaNum == Player4)
 		{
-			m_plaDeactiveName[plaNum]->Init("Assets/image/DDS/Player4_DeactiveName.dds", 300.0f, 150.0f);
 			m_plaDeactiveName[plaNum]->SetPosition(PLAYER4_NAME_POS);
+
+			m_PlaNameFont[3]->Init(
+				L"PLAYER4",					//テキスト
+				PLANAME4POS,		//位置
+				PLANAME234COL,		//色
+				FONT_ROT,			//傾き
+				PLA1234_SCA,		//拡大率
+				FONT_PIV			//基点
+			);
 		}
+		//文字の境界線表示
+		m_PlaNameFont[plaNum]->SetShadowParam(true, 2.0f, Vector4::Black);
 	}
 
 	//Start関数のreturn文
@@ -214,9 +268,7 @@ void TitleScene::AddPlayer()
 	//2Pのアクティブ化+アクティブ画像表示
 	if (m_totalPlaNum == Player2)
 	{
-		m_plaActiveName[Player2]->Init("Assets/image/DDS/Player2_ActiveName.dds", 300.0f, 150.0f);
-		//画像の位置指定
-		m_plaActiveName[Player2]->SetPosition(PLAYER2_NAME_POS);
+		m_PlaNameFont[1]->SetColor(PLANAME2COL);
 
 		//2Pの吹き出しを非表示
 		m_pressASpeechBalloon[0]->Deactivate();
@@ -226,9 +278,7 @@ void TitleScene::AddPlayer()
 	//3Pのアクティブ化+アクティブ画像表示
 	if (m_totalPlaNum == Player3)
 	{
-		m_plaActiveName[Player3]->Init("Assets/image/DDS/Player3_ActiveName.dds", 300.0f, 150.0f);
-		//画像の位置指定
-		m_plaActiveName[Player3]->SetPosition(PLAYER3_NAME_POS);
+		m_PlaNameFont[2]->SetColor(PLANAME3COL);
 
 		//3Pの吹き出しを非表示
 		m_pressASpeechBalloon[1]->Deactivate();
@@ -238,9 +288,7 @@ void TitleScene::AddPlayer()
 	//4Pのアクティブ化+アクティブ画像表示
 	if (m_totalPlaNum == Player4)
 	{
-		m_plaActiveName[Player4]->Init("Assets/image/DDS/Player4_ActiveName.dds", 300.0f, 150.0f);
-		//画像の位置指定
-		m_plaActiveName[Player4]->SetPosition(PLAYER4_NAME_POS);
+		m_PlaNameFont[3]->SetColor(PLANAME4COL);
 
 		//4Pの吹き出しを非表示
 		m_pressASpeechBalloon[2]->Deactivate();

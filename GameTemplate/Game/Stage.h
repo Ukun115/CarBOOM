@@ -1,16 +1,25 @@
 #pragma once
 class StageSelectScene;
+class GameScene;
+class StageSelectcene;
+class Player;
+class TitleScene;
+class Enemy;
 
 
-class Stage : public IGameObject
+class Stage : public IGameObject		// コピー禁止ポリシーを継承する。
 {
 private:
 
 	/// <summary>
 	/// クラスのポインタ
 	/// </summary>
-	SkinModelRender* m_stage{ nullptr };
-	StageSelectScene* m_stageSelectScene{ nullptr };
+	SkinModelRender* m_stage = nullptr;
+	StageSelectScene* m_stageSelectScene= nullptr;
+	GameScene* m_gameScene = nullptr;
+	Player* m_player = nullptr;
+	TitleScene* m_titleScene = nullptr;
+	Enemy* m_enemy = nullptr;
 
 
 	PhysicsStaticObject m_physicsStaticObject;		//静的物理オブジェクトクラスを作成
@@ -20,7 +29,12 @@ private:
 	/// <summary>
 	/// タイマー
 	/// </summary>
-	int m_fallSnowTimer{ 0 };
+	int m_fallSnowTimer = 0;
+	int m_windDirection = 0;	//現在の風
+
+
+	Vector3 m_plaPos[4];			//プレイヤー4体分のプレイヤーの位置
+	Vector3 m_LengthFromStaPivToPla[4];	//ステージの基点からプレイヤーまでの距離
 
 
 	/// <summary>
@@ -33,6 +47,8 @@ private:
 		Stage1,
 		Stage2,
 		Stage3,
+		Stage4,
+		Stage5
 	};
 
 
@@ -43,8 +59,11 @@ private:
 
 	//雪エフェクト処理関数
 	void SnowFall();
-
+	//風の影響を与える処理
+	void WindStage();
+	//傾かせる処理
+	void Tilt();
 
 public:
-
+	int GetWindDirection() { return m_windDirection; }
 };

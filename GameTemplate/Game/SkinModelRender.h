@@ -3,7 +3,7 @@ class Model;
 class Light;
 
 
-class SkinModelRender : public IGameObject
+class SkinModelRender : public IGameObject		// コピー禁止ポリシーを継承する。
 {
 private:
 
@@ -17,9 +17,9 @@ private:
 	Model m_model;						//モデルクラスを作成
 
 
-	Vector3    m_pos{ Vector3::Zero };			//位置
-	Quaternion m_rot{ Quaternion::Identity };	//回転
-	Vector3    m_sca{ Vector3::One };			//拡大率
+	Vector3    m_pos = { Vector3::Zero };			//位置
+	Quaternion m_rot = { Quaternion::Identity };	//回転
+	Vector3    m_sca = { Vector3::One };			//拡大率
 
 
 	bool Start()override;
