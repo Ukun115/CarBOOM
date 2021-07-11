@@ -34,6 +34,8 @@ private:
 
 	unsigned int m_plaScore[4]{ 0 };		//プレイヤー4人分のスコアを入れる配列
 
+	unsigned int m_select = 0;
+
 
 	/// <summary>
 	/// 列挙型の宣言
@@ -53,8 +55,8 @@ private:
 
 	//順位によってソートしプレイヤー名の画像を並び替える関数
 	void RankingSort();
-	//ゲーム終了関数
-	void GameEnd();
+	//次どのシーンに行くか切り替える関数
+	void SelectScene();
 	//サウンドを一括にまとめる関数
 	void SoundPlayBack(int soundNum);
 

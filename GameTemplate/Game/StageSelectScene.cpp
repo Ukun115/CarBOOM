@@ -13,19 +13,19 @@ namespace
 {
 	const int PLAYER1 = 0;		//プレイヤー１
 
-	const Vector3 STAGE_1_POS = { -120, 0, 100 };
-	const Vector3 STAGE_2_POS = { 120, 0, 100 };
-	const Vector3 STAGE_3_POS = { -120, 0, -100 };
-	const Vector3 STAGE_4_POS = { 300, 0, -100 };
-	const Vector3 STAGE_5_POS = { 300, 0, 100 };
-	const Vector3 STAGE_RANDOM_POS = { 120, 0, -100 };
+	const Vector3 STAGE_1_POS = { 0, 0, 90 };
+	const Vector3 STAGE_2_POS = { 170, 0, 90 };
+	const Vector3 STAGE_3_POS = { 0, 0, -90 };
+	const Vector3 STAGE_4_POS = { 350, 0, 90 };
+	const Vector3 STAGE_5_POS = { 170, 0, -90 };
+	const Vector3 STAGE_RANDOM_POS = { 350, 0, -90 };
 
-	const Vector3 STAGE_1_NAME_POS = { -170, 0, 0 };
-	const Vector3 STAGE_2_NAME_POS = { 170, 0, 0 };
-	const Vector3 STAGE_3_NAME_POS = { -170, -280, 0 };
-	const Vector3 STAGE_4_NAME_POS = { 420, -280, 0 };
-	const Vector3 STAGE_5_NAME_POS = { 420, 0, 0 };
-	const Vector3 STAGE_RANDOM_NAME_POS = { 170, -280, 0 };
+	const Vector3 STAGE_1_NAME_POS = { 0, 0, 0 };
+	const Vector3 STAGE_2_NAME_POS = { 240, 0, 0 };
+	const Vector3 STAGE_3_NAME_POS = { 0, -250, 0 };
+	const Vector3 STAGE_4_NAME_POS = { 490, 0, 0 };
+	const Vector3 STAGE_5_NAME_POS = { 240, -250, 0 };
+	const Vector3 STAGE_RANDOM_NAME_POS = { 490, -250, 0 };
 
 	const Vector3 BIG_STAGE_NAME = { 1.5f,1.5f,1.5f };	//拡大したときのサイズ
 }
@@ -36,12 +36,54 @@ bool StageSelectScene::Start()
 	//インスタンスを作成
 	m_titleScene = FindGO<TitleScene>(TITLESCENE_NAME);
 
+	//ステージ説明の背景画像オブジェクト生成
+	m_stageDiscription[0] = NewGO<SpriteRender>(PRIORITY_1, nullptr);
+
+	//ステージセレクト文字画像オブジェクト生成
+	m_stageSelectSprite = NewGO<SpriteRender>(PRIORITY_1, nullptr);
+
 	for (int stageNum = Stage1; stageNum < TotalStageNum; stageNum++)
 	{
+		//操作説明の画像オブジェクト生成
+		m_operatorDiscription[stageNum] = NewGO<SpriteRender>(PRIORITY_2, nullptr);
+		m_operatorDiscription[stageNum]->Init("Assets/Image/DDS/OperationDiscription.dds", 550, 550);
+		//説明文字の表示位置を指定
+		m_operatorDiscription[stageNum]->SetPosition(m_stageDiscriptionLetterPos);
+
+		//ステージ説明の背景画像オブジェクト生成
+		m_stageDiscription[stageNum] = NewGO<SpriteRender>(PRIORITY_2, nullptr);
 		//全ステージモデルオブジェクト生成
 		m_stage[stageNum] = NewGO<SkinModelRender>(PRIORITY_1, nullptr);
 		//全ステージスプライトオブジェクト生成
 		m_stageName[stageNum] = NewGO<SpriteRender>(PRIORITY_1, nullptr);
+	}
+
+	m_stageSelectSprite->Init("Assets/Image/DDS/STAGESELECT.dds", 750, 375);
+	Vector3 m_stageSelectSpritePos = {0.0f,310.0f,0.0f};
+	m_stageSelectSprite->SetPosition(m_stageSelectSpritePos);
+
+	//ステージ説明のバックスクリーン画像
+	m_stageDiscription[0]->Init("Assets/Image/DDS/StageDescriptionBackScreen.dds", 500, 600);
+	Vector3 m_stageDiscriptionPos = {-400.0f,-20.0f,0.0f};
+	m_stageDiscription[0]->SetPosition(m_stageDiscriptionPos);
+	//フラットステージ説明文字
+	m_stageDiscription[Stage1]->Init("Assets/Image/DDS/FlatStageDiscription.dds", 550, 550);
+	//ドーナツステージ説明文字
+	m_stageDiscription[Stage2]->Init("Assets/Image/DDS/DonutStageDescription.dds", 550, 550);
+	//アイスステージ説明文字
+	m_stageDiscription[Stage3]->Init("Assets/Image/DDS/IceStageDiscription.dds", 550, 550);
+	//ウィンドステージ説明文字
+	m_stageDiscription[Stage4]->Init("Assets/Image/DDS/WindStageDiscription.dds", 550, 550);
+	//ティルトステージ説明文字
+	m_stageDiscription[Stage5]->Init("Assets/Image/DDS/TiltStageDiscription.dds", 550, 550);
+	//ランダムステージ説明文字
+	m_stageDiscription[RandomStage]->Init("Assets/Image/DDS/RandomStageDiscription.dds", 550, 550);
+
+	for (int stageNum = Stage1; stageNum < TotalStageNum; stageNum++)
+	{
+		//位置を指定
+		m_stageDiscription[stageNum]->SetPosition(m_stageDiscriptionLetterPos);
+		m_stageDiscription[stageNum]->Deactivate();
 	}
 
 	//どひょうステージ&名前画像をロード
@@ -68,17 +110,17 @@ bool StageSelectScene::Start()
 	m_stage[Stage3]->SetPosition(m_stagePos[Stage3]);
 	m_stageName[Stage3]->SetPosition(STAGE_3_NAME_POS);
 
-	//風ステージ&名前画像をロード
-	m_stage[Stage4]->Init("Assets/modelData/bg/stage_4_Select.tkm");
-	m_stageName[Stage4]->Init("Assets/Image/DDS/RANDOM.dds", 200, 100);
+	//ウィンドステージ&名前画像をロード
+	m_stage[Stage4]->Init("Assets/modelData/bg/stage_5_Select.tkm");
+	m_stageName[Stage4]->Init("Assets/Image/DDS/WIND STAGE.dds", 200, 100);
 	//右下
 	m_stagePos[Stage4] = STAGE_4_POS;
 	m_stage[Stage4]->SetPosition(m_stagePos[Stage4]);
 	m_stageName[Stage4]->SetPosition(STAGE_4_NAME_POS);
 
-	//かたむきステージ&名前画像をロード
-	m_stage[Stage5]->Init("Assets/modelData/bg/stage_5_Select.tkm");
-	m_stageName[Stage5]->Init("Assets/Image/DDS/RANDOM.dds", 200, 100);
+	//ティルトステージ&名前画像をロード
+	m_stage[Stage5]->Init("Assets/modelData/bg/stage_4_Select.tkm");
+	m_stageName[Stage5]->Init("Assets/Image/DDS/TILT STAGE.dds", 200, 100);
 	//右真ん中
 	m_stagePos[Stage5] = STAGE_5_POS;
 	m_stage[Stage5]->SetPosition(m_stagePos[Stage5]);
@@ -104,19 +146,20 @@ bool StageSelectScene::Start()
 	//m_skinModelRenderArrow->Init("Assets/modelData/Arrow.tkm");	//矢印
 
 
+	m_AhukidasiPos[0] = { 0, 200, 0 };//フラット
+	m_AhukidasiPos[1] = { 235, 200, 0 };//ドーナツ
+	m_AhukidasiPos[2] = { 0, -50, 0 };//アイス
+	m_AhukidasiPos[3] = { 490, 200, 0 };//ウィンド
+	m_AhukidasiPos[4] = { 235, -50, 0 };//ティルト
+	m_AhukidasiPos[5] = { 490, -50, 0 };//ランダム
 	//プレイヤーの上に表示されるA吹き出し
-	for (int plaNum = 0; plaNum < 6; plaNum++)
+	for (int stageNum = 0; stageNum < 6; stageNum++)
 	{
-		m_Ahukidasi[plaNum] = NewGO<SpriteRender>(PRIORITY_2, nullptr);
-		m_Ahukidasi[plaNum]->Init("Assets/Image/DDS/Ahukidasi.dds", 100, 100);
-		m_Ahukidasi[plaNum]->Deactivate();
+		m_Ahukidasi[stageNum] = NewGO<SpriteRender>(PRIORITY_2, nullptr);
+		m_Ahukidasi[stageNum]->Init("Assets/Image/DDS/Ahukidasi.dds", 100, 100);
+		m_Ahukidasi[stageNum]->Deactivate();
+		m_Ahukidasi[stageNum]->SetPosition(m_AhukidasiPos[stageNum]);
 	}
-	m_AhukidasiPos[0] = { -140, 170, 0 };
-	m_AhukidasiPos[1] = { 140, 170, 0 };
-	m_AhukidasiPos[2] = { -160, -50, 0 };
-	m_AhukidasiPos[3] = { 160, -50, 0 };
-	//m_AhukidasiPos[4] = { -140, -60, 0 };
-	//m_AhukidasiPos[5] = { 0, 0, 0 };
 
 	//オブジェクト生成(背景画像)
 	m_titleSprite = NewGO<SpriteRender>(PRIORITY_0, nullptr);
@@ -132,7 +175,35 @@ bool StageSelectScene::Start()
 
 StageSelectScene::~StageSelectScene()
 {
+	//表示されているステージモデルとステージ名画像をすべて削除
+	for (int stageNum = 0; stageNum < TotalStageNum; stageNum++)
+	{
+		DeleteGO(m_stage[stageNum]);
+		DeleteGO(m_stageName[stageNum]);
+	}
+	//プレイヤーを削除。
+	DeleteGO(m_pla);
+	//プレイヤーのスピード可視化矢印を削除。
+	//DeleteGO(m_skinModelRenderArrow);
+	//背景画像を削除
+	DeleteGO(m_titleSprite);
+	//A吹き出し画像を削除
+	for (int plaNum = 0; plaNum < 6; plaNum++)
+	{
+		DeleteGO(m_Ahukidasi[plaNum]);
+	}
+	//タイトルBGMを削除
+	DeleteGO(m_titleBGM);
+	//ステージ選択文字画像
+	DeleteGO(m_stageSelectSprite);
 
+	for (int i = 0; i < 6; i++)
+	{
+		//ステージ説明の画像を削除
+		DeleteGO(m_stageDiscription[i]);
+		//操作説明がぞうを削除
+		DeleteGO(m_operatorDiscription[i]);
+	}
 }
 
 
@@ -201,6 +272,16 @@ void StageSelectScene::GameSceneTransition()
 		}
 		//タイトルBGMを削除
 		DeleteGO(m_titleBGM);
+		//ステージ選択文字画像
+		DeleteGO(m_stageSelectSprite);
+
+		for (int i = 0; i < 6; i++)
+		{
+			//ステージ説明の画像を削除
+			DeleteGO(m_stageDiscription[i]);
+			//操作説明がぞうを削除
+			DeleteGO(m_operatorDiscription[i]);
+		}
 
 		//このクラスの処理をゲーム画面に移ったときに実行しなくなるフラグ
 		m_enableUpdateFlg = false;
@@ -272,17 +353,28 @@ void StageSelectScene::TouchStage()
 {
 	for (int stageNum = Stage1; stageNum < TotalStageNum; stageNum++)
 	{
-		m_Ahukidasi[stageNum-1]->Deactivate();
-
-		//通常サイズ
-		m_stageName[stageNum]->SetScale(Vector3::One);
-
 		//プレイヤーと各ステージとの距離を求める
 		m_diff[stageNum] = m_stagePos[stageNum] - m_pos;
 
 		//ステージの上に乗っていなかったら
 		if (m_diff[stageNum].Length() >= 70.0f)
 		{
+			//全ての吹き出しを非表示
+			m_Ahukidasi[stageNum-1]->Deactivate();
+			//全てのステージ説明文字を非表示
+			m_stageDiscription[stageNum]->Deactivate();
+
+
+			if (m_isOperatorFlg[stageNum] == true)
+			{
+				//操作説明文表示
+				m_operatorDiscription[stageNum]->Activate();
+			}
+			m_isOperatorFlg[stageNum] = false;
+
+			//通常サイズ
+			m_stageName[stageNum]->SetScale(Vector3::One);
+
 			//音を鳴らせる！っていうフラグ復活！
 			m_canOnStageSoundPlayFlg[stageNum] = true;
 		}
@@ -290,36 +382,53 @@ void StageSelectScene::TouchStage()
 		//ステージの上に乗っていたら
 		if (m_diff[stageNum].Length() < 70.0f)
 		{
-			//A吹き出しを表示
 			if (stageNum == 1)
 			{
-				m_Ahukidasi[0]->SetPosition(m_AhukidasiPos[0]);
+				//A吹き出しを表示
 				m_Ahukidasi[0]->Activate();
+
+				//ステージ説明文を表示
+				m_stageDiscription[Stage1]->Activate();
 			}
 			if (stageNum == 2)
 			{
-				m_Ahukidasi[1]->SetPosition(m_AhukidasiPos[1]);
+				//A吹き出しを表示
 				m_Ahukidasi[1]->Activate();
+
+				//ステージ説明文を表示
+				m_stageDiscription[Stage2]->Activate();
 			}
 			if (stageNum == 3)
 			{
-				m_Ahukidasi[2]->SetPosition(m_AhukidasiPos[2]);
+				//A吹き出しを表示
 				m_Ahukidasi[2]->Activate();
+
+				//ステージ説明文を表示
+				m_stageDiscription[Stage3]->Activate();
 			}
 			if (stageNum == 4)
 			{
-				m_Ahukidasi[3]->SetPosition(m_AhukidasiPos[3]);
+				//A吹き出しを表示
 				m_Ahukidasi[3]->Activate();
+
+				//ステージ説明文を表示
+				m_stageDiscription[Stage4]->Activate();
 			}
 			if (stageNum == 5)
 			{
-				m_Ahukidasi[4]->SetPosition(m_AhukidasiPos[4]);
+				//A吹き出しを表示
 				m_Ahukidasi[4]->Activate();
+
+				//ステージ説明文を表示
+				m_stageDiscription[Stage5]->Activate();
 			}
 			if (stageNum == 6)
 			{
-				m_Ahukidasi[5]->SetPosition(m_AhukidasiPos[5]);
+				//A吹き出しを表示
 				m_Ahukidasi[5]->Activate();
+
+				//ステージ説明文を表示
+				m_stageDiscription[RandomStage]->Activate();
 			}
 
 			if (m_canOnStageSoundPlayFlg[stageNum])
@@ -330,8 +439,16 @@ void StageSelectScene::TouchStage()
 				m_canOnStageSoundPlayFlg[stageNum] = false;
 			}
 
+			for (int i = 1; i < 7; i++)
+			{
+				//操作説明文非表示
+				m_operatorDiscription[i]->Deactivate();
+			}
+
 			//ステージ名画像を強調拡大
 			m_stageName[stageNum]->SetScale(BIG_STAGE_NAME);
+
+			m_isOperatorFlg[stageNum] = true;
 
 			//選択されているステージの番号を決定。
 			m_stageNum = stageNum;

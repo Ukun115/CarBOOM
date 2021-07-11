@@ -24,7 +24,7 @@ namespace
 	const Vector3 PLAYER4_NAME_POS;
 
 	const Vector3 PressASpeechBalloonPos2 = { 300.0f,280.0f,0 };
-	const Vector3 PressASpeechBalloonPos3 = { -300.0f,-315,0 };
+	const Vector3 PressASpeechBalloonPos3 = { -270.0f,-315,0 };
 	const Vector3 PressASpeechBalloonPos4 = { 300.0f,-315.0f,0 };
 
 	const Vector4 PLANAME1COL = { 1.0f,0.0f,0.0f,1.0f };		//プレイヤー1の表示は常にあるので赤て固定
@@ -56,6 +56,47 @@ bool TitleScene::Start()
 	//タイトルロゴオブジェクト生成
 	m_titleSprite = NewGO<SpriteRender>(PRIORITY_0,nullptr);
 	m_titleSprite->Init("Assets/image/DDS/TitleRogo.dds", 1600.0f, 800.0f);
+	//タイトル名オブジェクト生成
+	m_titleNameSprite = NewGO<SpriteRender>(PRIORITY_1, nullptr);
+	m_titleNameSprite->Init("Assets/image/DDS/TitleName.dds", 1600.0f, 800.0f);
+	m_titleNameSca.x = 0.0f;
+	m_titleNameSprite->SetScale(m_titleNameSca);
+	for (int i = 0; i < 9; i++)
+	{
+		m_titleBaraBaraSprite[i] = NewGO<SpriteRender>(PRIORITY_0, nullptr);
+		switch (i)
+		{
+		case 0:
+			m_titleBaraBaraSprite[i]->Init("Assets/image/DDS/TitleName_1.dds", 1600.0f, 800.0f);
+			break;
+		case 1:
+			m_titleBaraBaraSprite[i]->Init("Assets/image/DDS/TitleName_2.dds", 1600.0f, 800.0f);
+			break;
+		case 2:
+			m_titleBaraBaraSprite[i]->Init("Assets/image/DDS/TitleName_3.dds", 1600.0f, 800.0f);
+			break;
+		case 3:
+			m_titleBaraBaraSprite[i]->Init("Assets/image/DDS/TitleName_4.dds", 1600.0f, 800.0f);
+			break;
+		case 4:
+			m_titleBaraBaraSprite[i]->Init("Assets/image/DDS/TitleName_5.dds", 1600.0f, 800.0f);
+			break;
+		case 5:
+			m_titleBaraBaraSprite[i]->Init("Assets/image/DDS/TitleName_6.dds", 1600.0f, 800.0f);
+			break;
+		case 6:
+			m_titleBaraBaraSprite[i]->Init("Assets/image/DDS/TitleName_7.dds", 1600.0f, 800.0f);
+			break;
+		case 7:
+			m_titleBaraBaraSprite[i]->Init("Assets/image/DDS/TitleName_8.dds", 1600.0f, 800.0f);
+			break;
+		case 8:
+			m_titleBaraBaraSprite[i]->Init("Assets/image/DDS/TitleName_9.dds", 1600.0f, 800.0f);
+			break;
+		}
+		//初めは非表示
+		m_titleBaraBaraSprite[i]->Deactivate();
+	}
 
 	//PUSH START BUTTONオブジェクト生成
 	m_pushStartButtonSprite = NewGO<SpriteRender>(PRIORITY_1, nullptr);
@@ -64,54 +105,19 @@ bool TitleScene::Start()
 	m_pushStartButtonSprite->SetScale({ FlashingFont_SCA });
 
 	//PRESS A !! 吹き出し画像オブジェクト生成
-	for (int speechBalloonNum = 0; speechBalloonNum < 3; speechBalloonNum++)
-	{
-		m_pressASpeechBalloon[speechBalloonNum] = NewGO<SpriteRender>(PRIORITY_1, nullptr);
-		//PLAYER３のみ吹き出しの左側にいるので他とは違う吹き出しを使う
-		if (speechBalloonNum == 1)
-		{
-			m_pressASpeechBalloon[speechBalloonNum]->Init("Assets/image/DDS/PRESS A !!_L.dds", 400.0f, 200.0f);
-		}
-		else
-		{
-			m_pressASpeechBalloon[speechBalloonNum]->Init("Assets/image/DDS/PRESS A !!_R.dds", 400.0f, 200.0f);
-		}
-		//PLAYER2以外は初期は非アクティブ
-		if (speechBalloonNum != 0)
-		{
-			m_pressASpeechBalloon[speechBalloonNum]->Deactivate();
-		}
-		//位置設定
-		switch (speechBalloonNum)
-		{
-		//2Pの左側
-		case 0:
-			m_pressASpeechBalloon[speechBalloonNum]->SetPosition(m_pressASpeechBalloonPos);
-			m_pressASpeechBalloonPos = PressASpeechBalloonPos2;
-			break;
-		//3Pの右側
-		case 1:
-			m_pressASpeechBalloon[speechBalloonNum]->SetPosition(m_pressASpeechBalloonPos);
-			m_pressASpeechBalloonPos = PressASpeechBalloonPos3;
-			break;
-		//4Pの左側
-		case 2:
-			//4Pの名前画像の位置を代入
-			m_pressASpeechBalloon[speechBalloonNum]->SetPosition(m_pressASpeechBalloonPos);
-			m_pressASpeechBalloonPos = PressASpeechBalloonPos4;
-			break;
-		}
-		//大きさ調整
-		m_pressASpeechBalloon[speechBalloonNum]->SetScale({0.5f,0.5f,0.5f});
+	m_pressASpeechBalloon = NewGO<SpriteRender>(PRIORITY_1, nullptr);
+	m_pressASpeechBalloonArrow = NewGO<SpriteRender>(PRIORITY_1, nullptr);
+	m_pressASpeechBalloon->Init("Assets/image/DDS/PRESS A !!.dds", 400.0f, 200.0f);
+	m_pressASpeechBalloonArrow->Init("Assets/image/DDS/PRESS A !!Arrow.dds", 200.0f, 100.0f);
+	//初期位置設定
+	//2Pの左側
+	m_pressASpeechBalloonPos = PressASpeechBalloonPos2;
+	m_pressASpeechBalloon->SetPosition(m_pressASpeechBalloonPos);
+	m_pressASpeechBalloonPos.x += 75.0f;
+	m_pressASpeechBalloonArrow->SetPosition(m_pressASpeechBalloonPos);
 
-		//位置設定
-		m_pressASpeechBalloon[speechBalloonNum]->SetPosition(m_pressASpeechBalloonPos);
-	}
-
-	////1Pは非アクティブときがないため、初めからアクティブ画像オブジェクト生成
-	//m_plaActiveName[Player1] = NewGO<SpriteRender>(PRIORITY_2, nullptr);
-	//m_plaActiveName[Player1]->Init("Assets/image/DDS/Player1_ActiveName.dds", 300.0f, 150.0f);
-	//m_plaActiveName[Player1]->SetPosition(PLAYER1_NAME_POS);
+	//大きさ調整
+	m_pressASpeechBalloon->SetScale({0.5f,0.5f,0.5f});
 
 	//１Pの追加フラグを真に。
 	m_isAddPlayerFlg[Player1] = true;
@@ -179,7 +185,7 @@ bool TitleScene::Start()
 			);
 		}
 		//文字の境界線表示
-		m_PlaNameFont[plaNum]->SetShadowParam(true, 2.0f, Vector4::Black);
+		m_PlaNameFont[plaNum]->SetShadowParam(true, 3.0f, Vector4::Black);
 	}
 
 	//Start関数のreturn文
@@ -189,28 +195,42 @@ bool TitleScene::Start()
 
 TitleScene::~TitleScene()
 {
-	//登録されたプレイヤーのアクティブ画像を削除
-	for (int plaNum = Player1; plaNum < m_totalPlaNum; plaNum++)
+	//タイトルロゴを削除。
+	DeleteGO(m_titleSprite);
+	DeleteGO(m_titleNameSprite);
+	for (int i = 0; i < 9; i++)
 	{
-		DeleteGO(m_plaActiveName[plaNum]);
+		DeleteGO(m_titleBaraBaraSprite[i]);
 	}
-	//登録されていないプレイヤーの非アクティブ画像を削除
-	for (int plaNum = m_totalPlaNum; plaNum < (MaxPlayerNum+1); plaNum++)
-	{
-		//4Pまで登録されていたらm_plaDeactiveName[4]と、
-		//添え字がオーバーしてしまうのでここでfor文を抜けさせる
-		if (m_totalPlaNum == MaxPlayerNum)
-		{
-			break;
-		}
-		//緑の波線は大丈夫です
-		//DeleteGO(m_plaDeactiveName[i]);
-	}
+	//PUSHSTARTBUTTONを削除。
+	DeleteGO(m_pushStartButtonSprite);
+	//吹き出しを削除。
+	DeleteGO(m_pressASpeechBalloon);
+	DeleteGO(m_pressASpeechBalloonArrow);
+
+	//サウンドを削除
+	//タイトルBGMを削除
+	DeleteGO(m_titleBGM);
+	//エンジン音を削除
+	DeleteGO(m_addPlayer);
+	//タイトルジングルを削除
+	DeleteGO(m_gameNameGingle);
 }
 
 
 void TitleScene::Update()
 {
+	if (m_titleNameSca.x != 1.0f)
+	{
+		//タイトル名を拡大する関数
+		TitleNameScaUp();
+	}
+	else
+	{
+		//タイトル名をウェーブさせる関数
+		TitleNameWave();
+	}
+
 	//ステージ選択画面に遷移すると抜けるフラグ
 	if (m_enableUpdateFlg == true) {
 
@@ -250,6 +270,8 @@ void TitleScene::Update()
 		}
 		//「PRESS START BUTTON」文字画像の点滅処理
 		FlashingFont();
+		//吹き出しの矢印画像が横移動する関数
+		SideMove(60, 0.2f);
 	}
 }
 
@@ -263,35 +285,43 @@ void TitleScene::AddPlayer()
 	//新規プレイヤーの追加フラグを真に。
 	m_isAddPlayerFlg[m_totalPlaNum] = true;
 
-	//プレイヤーのアクティブ画像オブジェクト生成（一番上のレイヤーに置きたいのでプライオリティーは最高値）
-	m_plaActiveName[m_totalPlaNum] = NewGO<SpriteRender>(PRIORITY_1, nullptr);
 	//2Pのアクティブ化+アクティブ画像表示
 	if (m_totalPlaNum == Player2)
 	{
 		m_PlaNameFont[1]->SetColor(PLANAME2COL);
 
-		//2Pの吹き出しを非表示
-		m_pressASpeechBalloon[0]->Deactivate();
-		//吹き出しを3Pの位置に表示
-		m_pressASpeechBalloon[1]->Activate();
+		//3Pの右側
+		m_pressASpeechBalloonPos = PressASpeechBalloonPos3;
+		m_pressASpeechBalloon->SetPosition(m_pressASpeechBalloonPos);
+		m_pressASpeechBalloonPos.x -= 110.0f;
+		m_pressASpeechBalloonArrow->SetPosition(m_pressASpeechBalloonPos);
+
+		//反転させる
+		m_arrowSca = { -1.0f,-1.0f,-1.0f };
+		m_pressASpeechBalloonArrow->SetScale(m_arrowSca);
 	}
 	//3Pのアクティブ化+アクティブ画像表示
 	if (m_totalPlaNum == Player3)
 	{
 		m_PlaNameFont[2]->SetColor(PLANAME3COL);
 
-		//3Pの吹き出しを非表示
-		m_pressASpeechBalloon[1]->Deactivate();
-		//吹き出しを4Pの位置に表示
-		m_pressASpeechBalloon[2]->Activate();
+		//4Pの左側
+		m_pressASpeechBalloonPos = PressASpeechBalloonPos4;
+		m_pressASpeechBalloon->SetPosition(m_pressASpeechBalloonPos);
+		m_pressASpeechBalloonPos.x += 85.0f;
+		m_pressASpeechBalloonArrow->SetPosition(m_pressASpeechBalloonPos);
+
+		//元に戻す
+		m_pressASpeechBalloonArrow->SetScale(Vector3::One);
 	}
 	//4Pのアクティブ化+アクティブ画像表示
 	if (m_totalPlaNum == Player4)
 	{
 		m_PlaNameFont[3]->SetColor(PLANAME4COL);
 
-		//4Pの吹き出しを非表示
-		m_pressASpeechBalloon[2]->Deactivate();
+		//非表示
+		m_pressASpeechBalloon->Deactivate();
+		m_pressASpeechBalloonArrow->Deactivate();
 	}
 	//非アクティブ画像を削除。
 	DeleteGO(m_plaDeactiveName[m_totalPlaNum]);
@@ -310,19 +340,23 @@ void TitleScene::StageSelectSceneTransition()
 
 	//タイトルロゴを削除。
 	DeleteGO(m_titleSprite);
+	DeleteGO(m_titleNameSprite);
 	//PUSHSTARTBUTTONを削除。
 	DeleteGO(m_pushStartButtonSprite);
 	//吹き出しを削除。
-	for (int speechBalloonNum = 0; speechBalloonNum < 3; speechBalloonNum++)
-	{
-		DeleteGO(m_pressASpeechBalloon[speechBalloonNum]);
-	}
+	DeleteGO(m_pressASpeechBalloon);
+	DeleteGO(m_pressASpeechBalloonArrow);
 	//タイトルBGMを削除
 	DeleteGO(m_titleBGM);
 	//エンジン音を削除
 	DeleteGO(m_addPlayer);
 	//タイトルジングルを削除
 	DeleteGO(m_gameNameGingle);
+
+	for (int i = 0; i < 9; i++)
+	{
+		DeleteGO(m_titleBaraBaraSprite[i]);
+	}
 
 	//ステージ選択画面に遷移後、ボタンとプレイヤー追加ボタンを押せなくするフラグ
 	m_enableUpdateFlg = false;
@@ -358,6 +392,143 @@ void TitleScene::FlashingFont()
 		//「PRESS START BUTTON」を表示するフラグ
 		m_isFlashingFontActiveFlg = true;
 	}
+}
+
+
+//画像が横移動する関数
+void TitleScene::SideMove(int width,float speed)
+{
+	if (m_sideMoveTimer < width)
+	{
+		m_pressASpeechBalloonPos.x += speed;
+	}
+	else if(m_sideMoveTimer < width*2)
+	{
+		m_pressASpeechBalloonPos.x -= speed;
+	}
+	else
+	{
+		//初期化
+		m_sideMoveTimer = 0;
+	}
+
+	m_sideMoveTimer++;
+
+	m_pressASpeechBalloonArrow->SetPosition(m_pressASpeechBalloonPos);
+}
+
+
+//画像が縦移動する関数
+void TitleScene::VerticalMove(int width, float speed,int spriteNum)
+{
+	if (m_verticalMoveTimer[spriteNum] < width)
+	{
+		m_titleBaraBaraSpritePos[spriteNum].y += speed;
+	}
+	else if (m_verticalMoveTimer[spriteNum] < (width * 2))
+	{
+		m_titleBaraBaraSpritePos[spriteNum].y -= speed;
+	}
+	else if(m_verticalMoveTimer[spriteNum] > (width * 2))
+	{
+		//初期化
+		m_verticalMoveTimer[spriteNum] = 100;
+		m_titleBaraBaraSprite[spriteNum]->SetPosition(Vector3::Zero);
+	}
+
+	m_verticalMoveTimer[spriteNum]++;
+
+	m_titleBaraBaraSprite[spriteNum]->SetPosition(m_titleBaraBaraSpritePos[spriteNum]);
+}
+
+
+//タイトル名を拡大する関数
+void TitleScene::TitleNameScaUp()
+{
+	if (m_titleNameSca.x < 1.0f)
+	{
+		m_scaUpValue += 0.001;
+		if (m_titleNameSca.x > 0.5f)
+		{
+			m_scaUpValue += 0.005;
+		}
+		m_titleNameSca.x += m_scaUpValue;
+
+		//1.0fで終わるように補正
+		if (m_titleNameSca.x > 1.0f)
+		{
+			m_titleNameSca.x = 1.0f;
+		}
+
+		m_titleNameSprite->SetScale(m_titleNameSca);
+
+		if (m_titleNameSca.x == 1.0f)
+		{
+			//タイトル拡大用のタイトル名画像を削除。
+			DeleteGO(m_titleNameSprite);
+		}
+	}
+}
+
+
+//タイトル名をウェーブさせる関数
+void TitleScene::TitleNameWave()
+{
+	for (int i = 0; i < 9; i++)
+	{
+		//表示
+		m_titleBaraBaraSprite[i]->Activate();
+	}
+
+	if (m_waveTimer < 30)
+	{
+		VerticalMove(10, 4.0f, 0);
+	}
+	if (5 < m_waveTimer && m_waveTimer < 35)
+	{
+		VerticalMove(10, 4.0f, 1);
+	}
+	if (15 < m_waveTimer && m_waveTimer < 45)
+	{
+		VerticalMove(10, 4.0f, 2);
+	}
+	if (25 < m_waveTimer && m_waveTimer < 55)
+	{
+		VerticalMove(10, 4.0f, 3);
+	}
+	if (35 < m_waveTimer && m_waveTimer < 65)
+	{
+		VerticalMove(10, 4.0f, 4);
+	}
+	if (45 < m_waveTimer && m_waveTimer < 75)
+	{
+		VerticalMove(10, 4.0f, 5);
+	}
+	if (55 < m_waveTimer && m_waveTimer < 85)
+	{
+		VerticalMove(10, 4.0f, 6);
+	}
+	if (65 < m_waveTimer && m_waveTimer < 95)
+	{
+		VerticalMove(10, 4.0f, 7);
+	}
+	if (75 < m_waveTimer && m_waveTimer < 105)
+	{
+		VerticalMove(10, 4.0f, 8);
+	}
+
+	//タイマーを初期化
+	if (m_waveTimer > 170)
+	{
+		for (int spriteNum = 0; spriteNum < 9; spriteNum++)
+		{
+			//初期化
+			m_verticalMoveTimer[spriteNum] = 0;
+		}
+		m_waveTimer = 0;
+	}
+
+	m_waveTimer++;
 }
 
 

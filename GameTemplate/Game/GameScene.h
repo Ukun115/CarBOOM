@@ -40,7 +40,7 @@ private:
 	/// </summary>
 	unsigned int m_resultsenniTimer{ 0 };
 	unsigned int m_countDownTimer{ 0 };
-	int m_timer{ 3600 };	//3600/60 = 60•b
+	int m_timer{ 360 };	//3600/60 = 60•b
 	int m_countTime{ 0 };
 
 

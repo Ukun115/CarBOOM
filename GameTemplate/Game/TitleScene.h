@@ -10,10 +10,13 @@ private:
 	/// クラスのポインタ
 	/// </summary>
 	SpriteRender* m_titleSprite{ nullptr };
+	SpriteRender* m_titleBaraBaraSprite[9]{ nullptr };
+	SpriteRender* m_titleNameSprite{ nullptr };
 	SpriteRender* m_pushStartButtonSprite{ nullptr };
 	SpriteRender* m_plaActiveName[4]{ nullptr };		//プレイヤー4人分用意
 	SpriteRender* m_plaDeactiveName[4]{ nullptr };		//プレイヤー4人分用意
-	SpriteRender* m_pressASpeechBalloon[3]{ nullptr };
+	SpriteRender* m_pressASpeechBalloon{ nullptr };
+	SpriteRender* m_pressASpeechBalloonArrow{ nullptr };
 	StageSelectScene* m_stageSelectScene{ nullptr };
 	SoundSource* m_addPlayer{ nullptr };
 	SoundSource* m_gameNameGingle{ nullptr };	//ゲーム名ジングルサウンド
@@ -34,10 +37,17 @@ private:
 	/// タイマー
 	/// </summary>
 	unsigned int m_flashingFontTimer{ 0 };		//点滅文字の表示非表示の切り替えタイマー
+	int m_sideMoveTimer = 0;
+	int m_waveTimer = 0;
+	int m_verticalMoveTimer[9];
 
 
+	float m_scaUpValue = 0;
+	Vector3 m_titleNameSca = Vector3::One;
 	unsigned int m_totalPlaNum{ 1 };			//プレイヤーの合計数を計測
 	Vector3 m_pressASpeechBalloonPos;		//プレイヤー追加吹き出しの位置
+	Vector3 m_arrowSca;
+	Vector3 m_titleBaraBaraSpritePos[9];
 
 
 	/// <summary>
@@ -72,8 +82,16 @@ private:
 	void StageSelectSceneTransition();
 	//「PRESS START BUTTON」文字画像の点滅処理関数
 	void FlashingFont();
+	//画像が横移動する関数
+	void SideMove(int width, float speed);
+	//画像が縦移動する関数
+	void VerticalMove(int width, float speed, int spriteNum);
 	//サウンドを一括にまとめる関数
 	void SoundPlayBack(int soundNum);
+	//タイトル名を拡大する関数
+	void TitleNameScaUp();
+	//タイトル名をウェーブさせる関数
+	void TitleNameWave();
 
 
 	FontRender* m_PlaNameFont[4] = { nullptr };

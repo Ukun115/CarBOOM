@@ -7,6 +7,8 @@
 #include "ResultScene.h"
 #include "GameScene.h"
 #include "Player.h"
+#include "TitleScene.h"
+#include "StageSelectScene.h"
 
 
 namespace
@@ -116,14 +118,21 @@ ResultScene::~ResultScene()
 	for (int plaNum = 0; plaNum < 4; plaNum++)
 	{
 		DeleteGO(m_plaNum[plaNum]);
+
+		DeleteGO(m_rankingSprite[plaNum]);
 	}
+
+	//サウンドを削除
+	DeleteGO(m_resultGingle);
+	DeleteGO(m_gameBGM);
+	DeleteGO(m_decideSound);
 }
 
 
 void ResultScene::Update()
 {
 	//ゲーム終了処理
-	GameEnd();
+	SelectScene();
 }
 
 
@@ -173,15 +182,38 @@ void ResultScene::RankingSort()
 }
 
 
-//ゲーム終了関数
-void ResultScene::GameEnd()
+//次どのシーンに行くか切り替える関数
+void ResultScene::SelectScene()
 {
 	//プレイヤーの内、誰かのセレクトボタンが押されたら、
 	for (int plaNum = 0; plaNum < 4; plaNum++) {
+		//セレクトボタンが押されたら、
 		if (g_pad[plaNum]->IsTrigger(enButtonSelect))
 		{
 			//決定サウンド
 			SoundPlayBack(DecideSound);
+
+			m_select = 0;
+
+			m_enableTimerCountFlg = true;
+		}
+		//スタートボタンが押されたら、
+		if (g_pad[plaNum]->IsTrigger(enButtonStart))
+		{
+			//決定サウンド
+			SoundPlayBack(DecideSound);
+
+			m_select = 1;
+
+			m_enableTimerCountFlg = true;
+		}
+		//Yボタンが押されたら、
+		if (g_pad[plaNum]->IsTrigger(enButtonY))
+		{
+			//決定サウンド
+			SoundPlayBack(DecideSound);
+
+			m_select = 2;
 
 			m_enableTimerCountFlg = true;
 		}
@@ -190,13 +222,31 @@ void ResultScene::GameEnd()
 	{
 		m_exitTimer++;
 
-		if (m_exitTimer > 60)
+		if (m_exitTimer > 50)
 		{
-			//exeを閉じてゲーム終了
-			exit(EXIT_SUCCESS);
-			//メモ//
-			//exit(EXIT_FAILURE);は異常終了		EXIT_FAILURE = 1
-			//exit(EXIT_SUCCESS);は正常終了		EXIT_SUCCESS = 0
+			switch (m_select)
+			{
+			case 0:
+				//exeを閉じてゲーム終了
+				exit(EXIT_SUCCESS);
+				//メモ//
+				//exit(EXIT_FAILURE);は異常終了		EXIT_FAILURE = 1
+				//exit(EXIT_SUCCESS);は正常終了		EXIT_SUCCESS = 0
+				break;
+			case 1:
+				//タイトル画面に戻る
+				NewGO<TitleScene>(0, TITLESCENE_NAME);
+				//クラスを削除
+				DeleteGO(this);
+				break;
+			case 2:
+				//ステージ選択画面に戻る
+				NewGO<StageSelectScene>(0, STAGESELECT_NAME);
+				//クラスを削除
+				DeleteGO(this);
+				break;
+
+			}
 		}
 	}
 }

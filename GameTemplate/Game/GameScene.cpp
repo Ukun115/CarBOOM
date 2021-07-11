@@ -99,9 +99,9 @@ bool GameScene::Start()
 
 
 		//文字の境界線表示
-		m_ScoreFontRender[plaNum]->SetShadowParam(true, 2.0f, Vector4::Black);
+		m_ScoreFontRender[plaNum]->SetShadowParam(true, 3.0f, Vector4::Black);
 		//文字の境界線表示
-		m_TextScoreFontRender[plaNum]->SetShadowParam(true, 2.0f, Vector4::Black);
+		m_TextScoreFontRender[plaNum]->SetShadowParam(true, 3.0f, Vector4::Black);
 	}
 	//登録されていないプレイヤーのスコアはグレー表示にする
 	for (int plaNum = m_titleScene->GetTotalPlaNum() ; plaNum < 4; plaNum++)
@@ -120,7 +120,7 @@ bool GameScene::Start()
 		FONT_PIV		//基点
 	);
 	//文字の境界線表示
-	m_timeLimit->SetShadowParam(true, 1.0f, Vector4::Black);
+	m_timeLimit->SetShadowParam(true, 3.0f, Vector4::Black);
 
 	m_syutyusen = NewGO<SpriteRender>(PRIORITY_0, nullptr);
 	m_syutyusen->Init("Assets/image/DDS/BackScreenImage.dds", 1600.0f, 800.0f);
@@ -134,12 +134,33 @@ GameScene::~GameScene()
 {
 	//ステージを削除。
 	DeleteGO(m_normalStage);
+
+	for (int i = 0; i < 4; i++)
+	{
+		//カウントダウンスプライトを削除
+		DeleteGO(m_sprite[i]);
+		//pt文字を削除
+		DeleteGO(m_ScoreFontRender[i]);
+		//
+		DeleteGO(m_TextScoreFontRender[i]);
+	}
 	//プレイヤークラスを削除。
 	DeleteGO(m_player);
 	//敵クラスを削除。
 	DeleteGO(m_enemy);
 	//タイムを削除
 	DeleteGO(m_timeLimit);
+	//王冠画像を削除
+	DeleteGO(m_crownSprite);
+	//ゲーム画面背景を削除
+	DeleteGO(m_syutyusen);
+
+
+	//サウンドを削除
+	DeleteGO(m_gameStartGingle);
+	DeleteGO(m_gameBGM);
+	DeleteGO(m_countDown);
+	DeleteGO(m_whistleSound);
 }
 
 
@@ -517,10 +538,10 @@ void GameScene::SoundPlayBack(int soundNum)
 	{
 	case GameStartGingle:
 		//ゲームスタートジングルサウンドの初期化
-		m_gameBGM = NewGO<SoundSource>(PRIORITY_0, nullptr);
-		m_gameBGM->Init(L"Assets/sound/GameStartGingle.wav");
-		m_gameBGM->SetVolume(1.0f);
-		m_gameBGM->Play(false);	//偽でワンショット再生
+		m_gameStartGingle = NewGO<SoundSource>(PRIORITY_0, nullptr);
+		m_gameStartGingle->Init(L"Assets/sound/GameStartGingle.wav");
+		m_gameStartGingle->SetVolume(1.0f);
+		m_gameStartGingle->Play(false);	//偽でワンショット再生
 
 		break;
 

@@ -8,6 +8,9 @@ private:
 
 	SkinModelRender* m_stage[7]{ nullptr };	//全ステージ分用意
 	SpriteRender* m_stageName[7]{ nullptr };	//全ステージ分用意
+	SpriteRender* m_stageDiscription[7]{ nullptr };	//説明背景画像＋全ステージ分用意
+	SpriteRender* m_operatorDiscription[7] = { nullptr };	//操作説明文画像
+	SpriteRender* m_stageSelectSprite{ nullptr };
 	SkinModelRender* m_pla{ nullptr };	//プレイヤー
 	TitleScene* m_titleScene{ nullptr };
 	SpriteRender* m_titleSprite{ nullptr };
@@ -37,6 +40,8 @@ private:
 	Vector3 m_diff[4];		//ステージとプレイヤーとの距離
 	Vector3 m_AhukidasiPos[6];
 
+	Vector3 m_stageDiscriptionLetterPos = { -370.0f,-20.0f,0.0f };
+	bool m_isOperatorFlg[7] = { false };
 
 	//デバッグ用
 	SkinModelRender* m_skinModelRenderArrow{ nullptr };

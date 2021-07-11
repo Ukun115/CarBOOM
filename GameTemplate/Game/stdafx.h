@@ -31,8 +31,8 @@ namespace
 	const Vector3 WHITE{ 1.0f, 1.0f ,1.0f };	//白色
 	const Vector3 RED{ 1.0f, 0.0f ,0.0f };	//赤色
 	const Vector3 BLUE{ 0.0f, 0.0f ,1.0f };	//青色
-	const Vector3 YELLOW{ 0.0f, 0.0f ,1.0f };//黄色
-	const Vector3 GREEN{ 1.0f, 1.0f ,0.0f };	//緑色
+	const Vector3 YELLOW{ 1.0f, 1.0f ,0.0f };//黄色
+	const Vector3 GREEN{ 0.0f, 1.0f ,0.0f };	//緑色
 	const Vector3 GRAY{ 0.7f,0.7f,0.7f };	//灰色
 	const Vector3 BLACK{ 0.0f,0.0f,0.0f };	//黒色
 	/// <summary>
@@ -50,7 +50,7 @@ namespace
 	const int STAGE1{ 1 };
 	const int STAGE2{ 2 };
 	const int STAGE3{ 3 };
-	const int STAGE4 = 5;
+	const int STAGE4 = 4;
 
 	const float GRAVITY{ 0.3f };		//重力
 	const int PLAYER_MAX_NUM{ 4 };

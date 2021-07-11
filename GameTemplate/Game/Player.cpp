@@ -175,12 +175,17 @@ Player::~Player()
 	{
 		//プレイヤーを削除
 		DeleteGO(m_player[plaNum]);
-	}
-	//ため攻撃の際の段階文字表示の削除。
-	for (int plaNum = 0; plaNum < 4; plaNum++)
-	{
+		//ため攻撃の際の段階文字表示の削除。
 		DeleteGO(m_DASpr1[plaNum]);
 		DeleteGO(m_DASpr2[plaNum]);
+		//サウンドを削除
+		DeleteGO(m_shootDownSound[plaNum]);
+		DeleteGO(m_carHorn[plaNum]);
+		DeleteGO(m_FallSound[plaNum]);
+		DeleteGO(m_ChargeSound[plaNum]);
+		DeleteGO(m_Dash1Sound[plaNum]);
+		DeleteGO(m_Dash2Sound[plaNum]);
+		DeleteGO(m_PlaAndPlaClashSound[plaNum]);
 	}
 }
 
