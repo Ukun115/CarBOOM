@@ -111,7 +111,7 @@ bool StageSelectScene::Start()
 	m_stageName[Stage3]->SetPosition(STAGE_3_NAME_POS);
 
 	//ウィンドステージ&名前画像をロード
-	m_stage[Stage4]->Init("Assets/modelData/bg/stage_5_Select.tkm");
+	m_stage[Stage4]->Init("Assets/modelData/bg/stage_4_Select.tkm");
 	m_stageName[Stage4]->Init("Assets/Image/DDS/WIND STAGE.dds", 200, 100);
 	//右下
 	m_stagePos[Stage4] = STAGE_4_POS;
@@ -119,7 +119,7 @@ bool StageSelectScene::Start()
 	m_stageName[Stage4]->SetPosition(STAGE_4_NAME_POS);
 
 	//ティルトステージ&名前画像をロード
-	m_stage[Stage5]->Init("Assets/modelData/bg/stage_4_Select.tkm");
+	m_stage[Stage5]->Init("Assets/modelData/bg/stage_5_Select.tkm");
 	m_stageName[Stage5]->Init("Assets/Image/DDS/TILT STAGE.dds", 200, 100);
 	//右真ん中
 	m_stagePos[Stage5] = STAGE_5_POS;

@@ -68,7 +68,7 @@ bool Stage::Start()
 	if (m_stageSelectScene->GetStageNum() == Stage4)
 	{
 		//風ステージをロード
-		m_stage->Init("Assets/modelData/bg/stage_5.tkm");
+		m_stage->Init("Assets/modelData/bg/stage_4.tkm");
 
 		std::mt19937 mt{ std::random_device{}() };
 		std::uniform_int_distribution<int> windNum(0, 3);		//最初の風の向きもランダムにする
@@ -80,7 +80,7 @@ bool Stage::Start()
 	if (m_stageSelectScene->GetStageNum() == Stage5) {
 
 		//かたむきステージをロード
-		m_stage->Init("Assets/modelData/bg/stage_4.tkm");
+		m_stage->Init("Assets/modelData/bg/stage_5.tkm");
 	}
 
 	//当たり判定を適応

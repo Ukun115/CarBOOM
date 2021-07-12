@@ -220,19 +220,19 @@ TitleScene::~TitleScene()
 
 void TitleScene::Update()
 {
-	if (m_titleNameSca.x != 1.0f)
-	{
-		//タイトル名を拡大する関数
-		TitleNameScaUp();
-	}
-	else
-	{
-		//タイトル名をウェーブさせる関数
-		TitleNameWave();
-	}
-
 	//ステージ選択画面に遷移すると抜けるフラグ
 	if (m_enableUpdateFlg == true) {
+
+		if (m_titleNameSca.x != 1.0f)
+		{
+			//タイトル名を拡大する関数
+			TitleNameScaUp();
+		}
+		else
+		{
+			//タイトル名をウェーブさせる関数
+			TitleNameWave();
+		}
 
 		//登録されたプレイヤー数が最大数4人になるまで追加できる
 		if (m_totalPlaNum != MaxPlayerNum)

@@ -24,6 +24,8 @@ namespace
 	const int PRIORITY_0{ 0 };
 	const int PRIORITY_1{ 1 };
 	const int PRIORITY_2{ 2 };
+	const int PRIORITY_3{ 3 };
+	const int PRIORITY_4{ 4 };
 
 	/// <summary>
 	/// êF

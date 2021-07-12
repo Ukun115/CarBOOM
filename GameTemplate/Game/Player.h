@@ -18,6 +18,11 @@ private:
 	SkinModelRender* m_player[PLAYER_MAX_NUM]{ nullptr };		//プレイヤー4人分
 	SpriteRender* m_DASpr1[PLAYER_MAX_NUM]{ nullptr };		//プレイヤー4人分
 	SpriteRender* m_DASpr2[PLAYER_MAX_NUM]{ nullptr };		//プレイヤー4人分
+	SpriteRender* m_chargeUI1_1[PLAYER_MAX_NUM];		//チャージ画像
+	SpriteRender* m_chargeUI1_2[PLAYER_MAX_NUM];		//チャージ画像
+	SpriteRender* m_chargeUI2_1[PLAYER_MAX_NUM];		//チャージ画像
+	SpriteRender* m_chargeUI2_1_1[PLAYER_MAX_NUM];		//チャージ画像
+	SpriteRender* m_chargeUI2_2[PLAYER_MAX_NUM];		//チャージ画像
 	Enemy* m_enemy{ nullptr };
 	StageSelectScene* m_stageSelectScene{ nullptr };
 	SoundSource* m_carHorn[PLAYER_MAX_NUM]{ nullptr };	//クラクションサウンド
@@ -66,6 +71,8 @@ private:
 
 	Vector3    m_pos[PLAYER_MAX_NUM];		//プレイヤーの位置
 	Quaternion m_rot[PLAYER_MAX_NUM];		//プレイヤーの回転
+	Quaternion m_charge1_1Rot[PLAYER_MAX_NUM];		//プレイヤーの回転
+	Quaternion m_charge1_2Rot[PLAYER_MAX_NUM];		//プレイヤーの回転
 	unsigned int m_plaNum{ 0 };	//プレイヤー数をカウントする変数
 	Vector3 m_moveSpeed[PLAYER_MAX_NUM];		//移動速度
 	Vector3 m_enePushSpeed;		//敵から与えられるプッシュパワー

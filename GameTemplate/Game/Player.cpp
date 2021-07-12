@@ -41,9 +41,37 @@ bool Player::Start()
 
 	m_stage = FindGO<Stage>("stage");
 
-	//各プレイヤーの２段階溜め攻撃の可視化
+	//各プレイヤーの２段階溜め攻撃のUI
 	for (int plaNum = 0; plaNum < 4; plaNum++)
 	{
+		//1-1
+		m_chargeUI1_1[plaNum] = NewGO<SpriteRender>(PRIORITY_2, nullptr);
+		m_chargeUI1_1[plaNum]->Init("Assets/image/DDS/Charge1-1.dds", 50.0f, 50.0f);
+		//非表示
+		m_chargeUI1_1[plaNum]->Deactivate();
+		//1-2
+		m_chargeUI1_2[plaNum] = NewGO<SpriteRender>(PRIORITY_3, nullptr);
+		m_chargeUI1_2[plaNum]->Init("Assets/image/DDS/Charge1-2.dds", 50.0f, 50.0f);
+		//非表示
+		m_chargeUI1_2[plaNum]->Deactivate();
+		//2-1
+		m_chargeUI2_1[plaNum] = NewGO<SpriteRender>(PRIORITY_1, nullptr);
+		m_chargeUI2_1[plaNum]->Init("Assets/image/DDS/Charge2-1.dds", 50.0f, 50.0f);
+		//非表示
+		m_chargeUI2_1[plaNum]->Deactivate();
+		//2-1-1
+		m_chargeUI2_1_1[plaNum] = NewGO<SpriteRender>(PRIORITY_4, nullptr);
+		m_chargeUI2_1_1[plaNum]->Init("Assets/image/DDS/Charge2-1.dds", 50.0f, 50.0f);
+		//非表示
+		m_chargeUI2_1_1[plaNum]->Deactivate();
+		//2-2
+		m_chargeUI2_2[plaNum] = NewGO<SpriteRender>(PRIORITY_2, nullptr);
+		m_chargeUI2_2[plaNum]->Init("Assets/image/DDS/Charge2-2.dds", 50.0f, 50.0f);
+		//非表示
+		m_chargeUI2_2[plaNum]->Deactivate();
+
+
+
 		//溜め１段階目の「１」画像オブジェクト生成
 		m_DASpr1[plaNum] = NewGO<SpriteRender>(PRIORITY_1, nullptr);
 		m_DASpr1[plaNum]->Init("Assets/image/DDS/1.dds", 100.0f, 100.0f);
@@ -175,9 +203,15 @@ Player::~Player()
 	{
 		//プレイヤーを削除
 		DeleteGO(m_player[plaNum]);
-		//ため攻撃の際の段階文字表示の削除。
+		//チャージ攻撃の際の段階文字表示の削除。
 		DeleteGO(m_DASpr1[plaNum]);
 		DeleteGO(m_DASpr2[plaNum]);
+		DeleteGO(m_DASpr2[plaNum]);
+		DeleteGO(m_chargeUI1_1[plaNum]);
+		DeleteGO(m_chargeUI1_2[plaNum]);
+		DeleteGO(m_chargeUI2_1[plaNum]);
+		DeleteGO(m_chargeUI2_1_1[plaNum]);
+		DeleteGO(m_chargeUI2_2[plaNum]);
 		//サウンドを削除
 		DeleteGO(m_shootDownSound[plaNum]);
 		DeleteGO(m_carHorn[plaNum]);
@@ -338,6 +372,20 @@ void Player::PlaResporn(int plaNum)
 		m_DASpr1[plaNum]->Deactivate();
 		m_DASpr2[plaNum]->Deactivate();
 
+		m_chargeUI1_1[plaNum]->Deactivate();
+		m_chargeUI1_1[plaNum]->SetRotation(Quaternion::Identity);
+		m_chargeUI1_2[plaNum]->Deactivate();
+		m_chargeUI1_2[plaNum]->SetRotation(Quaternion::Identity);
+		m_chargeUI2_1[plaNum]->Deactivate();
+		m_chargeUI2_1[plaNum]->SetRotation(Quaternion::Identity);
+		m_chargeUI2_1_1[plaNum]->Deactivate();
+		m_chargeUI2_1_1[plaNum]->SetRotation(Quaternion::Identity);
+		m_chargeUI2_2[plaNum]->Deactivate();
+		m_chargeUI2_2[plaNum]->SetRotation(Quaternion::Identity);
+
+		m_charge1_1Rot[plaNum].x = 0;
+		m_charge1_2Rot[plaNum].x = 0;
+
 		//押したときのタイマー初期化
 		m_chargeTimer[plaNum] = 0;
 		m_attackTimer[plaNum] = 0;
@@ -450,6 +498,10 @@ void Player::PlaNowState(int plaNum)
 		{
 			//チャージ音を鳴らす
 			SoundPlayBack(ChargeSound,plaNum);
+
+			m_chargeUI1_1[plaNum]->Activate();
+			m_chargeUI1_2[plaNum]->Activate();
+			m_chargeUI2_1[plaNum]->Activate();
 		}
 
 		m_isBPushFlg[plaNum] = true;
@@ -464,10 +516,16 @@ void Player::PlaNowState(int plaNum)
 
 		if (m_chargeTimer[plaNum] >= 0 && m_chargeTimer[plaNum] < 30)
 		{
+			m_charge1_1Rot[plaNum].x += 0.01f;
+			m_chargeUI1_1[plaNum]->SetRotation(m_charge1_1Rot[plaNum]);
+
 			m_isAttack0Flg[plaNum] = true;
 		}
 		if (m_chargeTimer[plaNum] >= 30 && m_chargeTimer[plaNum] < 90)
 		{
+			m_charge1_2Rot[plaNum].x += 0.01f;
+			m_chargeUI1_2[plaNum]->SetRotation(m_charge1_2Rot[plaNum]);
+
 			m_isAttack0Flg[plaNum] = false;
 			m_isAttack1Flg[plaNum] = true;
 			m_isAttack1HanteiFlg[plaNum] = true;
@@ -476,6 +534,11 @@ void Player::PlaNowState(int plaNum)
 			if (m_chargeTimer[plaNum] == 30) {
 				m_DASpr2[plaNum]->Deactivate();
 				m_DASpr1[plaNum]->Activate();
+
+				m_chargeUI1_1[plaNum]->Deactivate();
+				m_chargeUI2_1[plaNum]->Deactivate();
+				m_chargeUI2_1_1[plaNum]->Activate();
+				m_chargeUI2_2[plaNum]->Activate();
 			}
 		}
 		if (m_chargeTimer[plaNum] >= 90)
@@ -489,6 +552,8 @@ void Player::PlaNowState(int plaNum)
 			if (m_chargeTimer[plaNum] == 90) {
 				m_DASpr1[plaNum]->Deactivate();
 				m_DASpr2[plaNum]->Activate();
+
+				m_chargeUI1_2[plaNum]->Deactivate();
 			}
 		}
 	}
@@ -500,6 +565,20 @@ void Player::PlaNowState(int plaNum)
 
 		//押したときのタイマー初期化
 		m_chargeTimer[plaNum] = 0;
+
+		m_chargeUI1_1[plaNum]->Deactivate();
+		m_chargeUI1_1[plaNum]->SetRotation(Quaternion::Identity);
+		m_chargeUI1_2[plaNum]->Deactivate();
+		m_chargeUI1_2[plaNum]->SetRotation(Quaternion::Identity);
+		m_chargeUI2_1[plaNum]->Deactivate();
+		m_chargeUI2_1[plaNum]->SetRotation(Quaternion::Identity);
+		m_chargeUI2_1_1[plaNum]->Deactivate();
+		m_chargeUI2_1_1[plaNum]->SetRotation(Quaternion::Identity);
+		m_chargeUI2_2[plaNum]->Deactivate();
+		m_chargeUI2_2[plaNum]->SetRotation(Quaternion::Identity);
+
+		m_charge1_1Rot[plaNum].x = 0;
+		m_charge1_2Rot[plaNum].x = 0;
 
 		//攻撃フラグによって攻撃処理を変える
 
@@ -585,6 +664,20 @@ void Player::PlaNowState(int plaNum)
 				m_isCharge2HanteiFlg[plaNum] = false;
 				m_isAttack2HanteiFlg[plaNum] = false;
 				m_DASpr2[plaNum]->Deactivate();
+
+				m_chargeUI1_1[plaNum]->Deactivate();
+				m_chargeUI1_1[plaNum]->SetRotation(Quaternion::Identity);
+				m_chargeUI1_2[plaNum]->Deactivate();
+				m_chargeUI1_2[plaNum]->SetRotation(Quaternion::Identity);
+				m_chargeUI2_1[plaNum]->Deactivate();
+				m_chargeUI2_1[plaNum]->SetRotation(Quaternion::Identity);
+				m_chargeUI2_1_1[plaNum]->Deactivate();
+				m_chargeUI2_1_1[plaNum]->SetRotation(Quaternion::Identity);
+				m_chargeUI2_2[plaNum]->Deactivate();
+				m_chargeUI2_2[plaNum]->SetRotation(Quaternion::Identity);
+
+				m_charge1_1Rot[plaNum].x = 0;
+				m_charge1_2Rot[plaNum].x = 0;
 			}
 		}
 	}
@@ -694,6 +787,20 @@ void Player::PlaAndEneClash(int plaNum)
 
 			m_DASpr1[plaNum]->Deactivate();
 			m_DASpr2[plaNum]->Deactivate();
+
+			m_chargeUI1_1[plaNum]->Deactivate();
+			m_chargeUI1_1[plaNum]->SetRotation(Quaternion::Identity);
+			m_chargeUI1_2[plaNum]->Deactivate();
+			m_chargeUI1_2[plaNum]->SetRotation(Quaternion::Identity);
+			m_chargeUI2_1[plaNum]->Deactivate();
+			m_chargeUI2_1[plaNum]->SetRotation(Quaternion::Identity);
+			m_chargeUI2_1_1[plaNum]->Deactivate();
+			m_chargeUI2_1_1[plaNum]->SetRotation(Quaternion::Identity);
+			m_chargeUI2_2[plaNum]->Deactivate();
+			m_chargeUI2_2[plaNum]->SetRotation(Quaternion::Identity);
+
+			m_charge1_1Rot[plaNum].x = 0;
+			m_charge1_2Rot[plaNum].x = 0;
 
 			//押したときのタイマー初期化
 			m_chargeTimer[plaNum] = 0;
