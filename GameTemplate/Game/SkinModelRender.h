@@ -10,7 +10,7 @@ private:
 	/// <summary>
 	/// クラスのポインタ
 	/// </summary>
-	Light* m_light{ nullptr };
+	Light* m_light = nullptr;
 
 
 	ModelInitData m_modelInitData;		//モデルイニットデータ構造体のデータを作成
@@ -24,7 +24,7 @@ private:
 
 	bool Start()override;
 	~SkinModelRender()override;
-	void Update()override;
+
 
 
 public:
@@ -34,6 +34,7 @@ public:
 	//描画関数
 	void Render(RenderContext& rc);
 
+	void Update()override;
 
 	/// <summary>
 	/// セッター
@@ -51,6 +52,11 @@ public:
 	/// </summary>
 	//モデルの位置を取得する関数
 	Vector3 GetPosition() { return m_pos; }
+	/// <summary>
+	/// 回転クォータニオンを取得。
+	/// </summary>
+	/// <returns>回転クォータニオン</returns>
+	Quaternion GetRotation() { return m_rot; }
 	//モデルのアドレスを取得する関数
 	Model* GetModel() { return &m_model ; }
 };

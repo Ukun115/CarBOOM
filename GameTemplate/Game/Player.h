@@ -13,26 +13,26 @@ private:
 	/// <summary>
 	/// クラスのポインタ
 	/// </summary>
-	TitleScene* m_titleScene{ nullptr };
-	GameScene* m_gameScene{ nullptr };
-	SkinModelRender* m_player[PLAYER_MAX_NUM]{ nullptr };		//プレイヤー4人分
-	SpriteRender* m_DASpr1[PLAYER_MAX_NUM]{ nullptr };		//プレイヤー4人分
-	SpriteRender* m_DASpr2[PLAYER_MAX_NUM]{ nullptr };		//プレイヤー4人分
-	SpriteRender* m_chargeUI1_1[PLAYER_MAX_NUM];		//チャージ画像
-	SpriteRender* m_chargeUI1_2[PLAYER_MAX_NUM];		//チャージ画像
-	SpriteRender* m_chargeUI2_1[PLAYER_MAX_NUM];		//チャージ画像
-	SpriteRender* m_chargeUI2_1_1[PLAYER_MAX_NUM];		//チャージ画像
-	SpriteRender* m_chargeUI2_2[PLAYER_MAX_NUM];		//チャージ画像
-	Enemy* m_enemy{ nullptr };
-	StageSelectScene* m_stageSelectScene{ nullptr };
-	SoundSource* m_carHorn[PLAYER_MAX_NUM]{ nullptr };	//クラクションサウンド
-	SoundSource* m_shootDownSound[PLAYER_MAX_NUM]{ nullptr };	//撃墜サウンド
-	SoundSource* m_FallSound[PLAYER_MAX_NUM]{ nullptr };	//落下サウンド
-	SoundSource* m_ChargeSound[PLAYER_MAX_NUM]{ nullptr };	//チャージサウンド
-	SoundSource* m_Dash1Sound[PLAYER_MAX_NUM]{ nullptr };	//ダッシュ１サウンド
-	SoundSource* m_Dash2Sound[PLAYER_MAX_NUM]{ nullptr };	//ダッシュ２サウンド
-	SoundSource* m_PlaAndPlaClashSound[PLAYER_MAX_NUM]{ nullptr };	//プレイヤーとプレイヤーがぶつかったときのサウンド
+	TitleScene* m_titleScene = nullptr;
+	GameScene* m_gameScene = nullptr;
+	Enemy* m_enemy = nullptr;
+	StageSelectScene* m_stageSelectScene = nullptr;
 	Stage* m_stage = nullptr;
+	SkinModelRender* m_player[PLAYER_MAX_NUM] = { nullptr };		//プレイヤー4人分
+	SpriteRender* m_chargeUI1_1[PLAYER_MAX_NUM] = { nullptr };		//チャージ画像
+	SpriteRender* m_chargeUI1_2[PLAYER_MAX_NUM] = { nullptr };		//チャージ画像
+	SpriteRender* m_chargeUI2_1[PLAYER_MAX_NUM] = { nullptr };		//チャージ画像
+	SpriteRender* m_chargeUI2_1_1[PLAYER_MAX_NUM] = { nullptr };		//チャージ画像
+	SpriteRender* m_chargeUI2_2[PLAYER_MAX_NUM] = { nullptr };		//チャージ画像
+	SpriteRender* m_crown = nullptr;		//プレイヤーの上に置く王冠画像
+	SoundSource* m_carHorn[PLAYER_MAX_NUM] = { nullptr };	//クラクションサウンド
+	SoundSource* m_shootDownSound[PLAYER_MAX_NUM] = { nullptr };	//撃墜サウンド
+	SoundSource* m_FallSound[PLAYER_MAX_NUM] = { nullptr };	//落下サウンド
+	SoundSource* m_ChargeSound[PLAYER_MAX_NUM] = { nullptr };	//チャージサウンド
+	SoundSource* m_Dash1Sound[PLAYER_MAX_NUM] = { nullptr };	//ダッシュ１サウンド
+	SoundSource* m_Dash2Sound[PLAYER_MAX_NUM] = { nullptr };	//ダッシュ２サウンド
+	SoundSource* m_PlaAndPlaClashSound[PLAYER_MAX_NUM] = { nullptr };	//プレイヤーとプレイヤーがぶつかったときのサウンド
+	SoundSource* ChargeEndSound[PLAYER_MAX_NUM] = { nullptr };	//チャージがたまったら鳴るサウンド
 
 	CharacterController m_charaCon[PLAYER_MAX_NUM];		//プレイヤー4人分のキャラクタコントローラークラスを作成
 	Effect m_shootDownEffect[PLAYER_MAX_NUM];		//プレイヤー4人分の落下したときの撃墜エフェクト
@@ -43,54 +43,65 @@ private:
 	/// <summary>
 	/// フラグ
 	/// </summary>
-	bool m_isCharge1Flg[PLAYER_MAX_NUM]{ false };
-	bool m_isCharge2Flg[PLAYER_MAX_NUM]{ false };
-	bool m_isCharge1HanteiFlg[PLAYER_MAX_NUM]{ false };
-	bool m_isCharge2HanteiFlg[PLAYER_MAX_NUM]{ false };
-	bool m_isBPushFlg[PLAYER_MAX_NUM]{ false };		//Bボタンが押されたときのフラグ
-	bool m_isAttack0Flg[PLAYER_MAX_NUM]{ false };		//Bボタンが押されたときのフラグ
-	bool m_isAttack1Flg[PLAYER_MAX_NUM]{ false };		//Bボタンが押されたときのフラグ
-	bool m_isAttack2Flg[PLAYER_MAX_NUM]{ false };		//Bボタンが押されたときのフラグ
-	bool m_isAttack1HanteiFlg[PLAYER_MAX_NUM]{ false };		//攻撃1の判定フラグ
-	bool m_isAttack2HanteiFlg[PLAYER_MAX_NUM]{ false };		//攻撃2の判定フラグ
-	bool m_isCharge1EffectSoundFlg[PLAYER_MAX_NUM]{ false };
-	bool m_isCharge2EffectSoundFlg[PLAYER_MAX_NUM]{ false };
-	bool m_isFallSoundFlg[PLAYER_MAX_NUM]{ false };			//落下音を落下中何回もならないようにするフラグ
-	bool m_isLandingOKFlg[PLAYER_MAX_NUM]{ false };
+	bool m_isCharge1Flg[PLAYER_MAX_NUM] = { false };
+	bool m_isCharge2Flg[PLAYER_MAX_NUM] = { false };
+	bool m_isCharge1HanteiFlg[PLAYER_MAX_NUM] = { false };
+	bool m_isCharge2HanteiFlg[PLAYER_MAX_NUM] = { false };
+	bool m_isBPushFlg[PLAYER_MAX_NUM] = { false };		//Bボタンが押されたときのフラグ
+	bool m_isAttack0Flg[PLAYER_MAX_NUM] = { false };		//Bボタンが押されたときのフラグ
+	bool m_isAttack1Flg[PLAYER_MAX_NUM] = { false };		//Bボタンが押されたときのフラグ
+	bool m_isAttack2Flg[PLAYER_MAX_NUM] = { false };		//Bボタンが押されたときのフラグ
+	bool m_isAttack1HanteiFlg[PLAYER_MAX_NUM] = { false };		//攻撃1の判定フラグ
+	bool m_isAttack2HanteiFlg[PLAYER_MAX_NUM] = { false };		//攻撃2の判定フラグ
+	bool m_isCharge1EffectSoundFlg[PLAYER_MAX_NUM] = { false };
+	bool m_isCharge2EffectSoundFlg[PLAYER_MAX_NUM] = { false };
+	bool m_isFallSoundFlg[PLAYER_MAX_NUM] = { false };			//落下音を落下中何回もならないようにするフラグ
+	bool m_isLandingOKFlg[PLAYER_MAX_NUM] = { false };
+
+	bool m_plaTourokuFlg[PLAYER_MAX_NUM] = { false };
+	bool m_isPauseFlg = false;
 
 
 	/// <summary>
 	/// タイマー
 	/// </summary>
-	unsigned int m_chargeTimer[PLAYER_MAX_NUM]{ 0 };		//押したときのタイマー
-	unsigned int m_releaseTimer[PLAYER_MAX_NUM]{ 0 };		//離したときのタイマー
-	unsigned int m_attackTimer[PLAYER_MAX_NUM]{ 0 };			//攻撃のタイマー
-	unsigned int m_attackHanteiTimer[PLAYER_MAX_NUM]{ 0 };			//攻撃判定のタイマー
-	unsigned int m_landingEffectDelayTimer[PLAYER_MAX_NUM]{ 0 };			//着地エフェクトをプレイヤーが着地したときに再生させるためのタイマー
+	unsigned int m_chargeTimer[PLAYER_MAX_NUM] = { 0 };		//押したときのタイマー
+	unsigned int m_releaseTimer[PLAYER_MAX_NUM] = { 0 };		//離したときのタイマー
+	unsigned int m_attackTimer[PLAYER_MAX_NUM] = { 0 };			//攻撃のタイマー
+	unsigned int m_attackHanteiTimer[PLAYER_MAX_NUM] = { 0 };			//攻撃判定のタイマー
+	unsigned int m_landingEffectDelayTimer[PLAYER_MAX_NUM] = { 0 };			//着地エフェクトをプレイヤーが着地したときに再生させるためのタイマー
 
 
+	Vector3    m_fallSpeed[PLAYER_MAX_NUM];	//プレイヤーの落下速度。
 	Vector3    m_pos[PLAYER_MAX_NUM];		//プレイヤーの位置
 	Quaternion m_rot[PLAYER_MAX_NUM];		//プレイヤーの回転
 	Quaternion m_charge1_1Rot[PLAYER_MAX_NUM];		//プレイヤーの回転
+	float m_chargeRotValue1[PLAYER_MAX_NUM] = { 0.0f };
 	Quaternion m_charge1_2Rot[PLAYER_MAX_NUM];		//プレイヤーの回転
-	unsigned int m_plaNum{ 0 };	//プレイヤー数をカウントする変数
+	float m_chargeRotValue2[PLAYER_MAX_NUM] = { 0.0f };
+	unsigned int m_plaNum = 0;	//プレイヤー数をカウントする変数
 	Vector3 m_moveSpeed[PLAYER_MAX_NUM];		//移動速度
 	Vector3 m_enePushSpeed;		//敵から与えられるプッシュパワー
 	Vector3 m_plaDir[PLAYER_MAX_NUM];		//向き
-	float m_leftStick_x[PLAYER_MAX_NUM]{ 0.0f };		//左スティックのx入力量
-	float m_leftStick_y[PLAYER_MAX_NUM]{ 0.0f };		//左スティックのy入力量
-	float m_rotAngle[PLAYER_MAX_NUM]{ 0.0f };		//回転角度
+	float m_leftStick_x[PLAYER_MAX_NUM] = { 0.0f };		//左スティックのx入力量
+	float m_leftStick_y[PLAYER_MAX_NUM] = { 0.0f };		//左スティックのy入力量
+	float m_rotAngle[PLAYER_MAX_NUM] = { 0.0f };		//回転角度
 	Vector3 m_friction[PLAYER_MAX_NUM];		//摩擦
 	Vector3 m_diff;				//プレイヤーと敵との距離
-	unsigned int m_pushPlayer[5]{ 0 };
+	unsigned int m_pushPlayer[5] = { 0 };
 	Quaternion m_shootDownEffectRot;
+	Vector2 plaScreenPos[4];
+	Vector3 m_plaChargeUIPos[4];
+	Vector3 m_crownPos;
 
 	//デバッグ用
-	SkinModelRender* m_skinModelRenderArrow[PLAYER_MAX_NUM]{ nullptr };
+	SkinModelRender* m_skinModelRenderArrow[PLAYER_MAX_NUM] = { nullptr };
 	Vector3 m_arrowPos[PLAYER_MAX_NUM];
 	Quaternion m_arrowRot[PLAYER_MAX_NUM];
 	Vector3 m_arrowSize;
 
+	int m_totalPlaNum = 0;
+	int m_stageSelectNum = 0;
 
 	/// <summary>
 	/// 列挙型の宣言
@@ -104,7 +115,7 @@ private:
 		MaxPlayerNum	//プレイヤーの最大数
 	};
 
-	enum SoundNum
+	enum enumSoundNum
 	{
 		ShootDownSound,
 		CarHornSound,
@@ -113,10 +124,11 @@ private:
 		Dash1Sound,
 		Dash2Sound,
 		PlaAndPlaClashSound,
-		PlaAndEneClashSound
+		PlaAndEneClashSound,
+		ChargeEnd
 	};
 
-	enum Wind
+	enum enumWind
 	{
 		Up,		//下から上への風
 		Down,	//上から下への風
@@ -177,4 +189,8 @@ public:
 	//プレイヤーのチャージを取得する関数
 	bool GetPlaisTyazi1HanteiFlg(int plaNum) { return m_isCharge1HanteiFlg[plaNum]; }
 	bool GetPlaisTyazi2HanteiFlg(int plaNum) { return m_isCharge2HanteiFlg[plaNum]; }
+
+	void SetTotalPlaNum(int totalPlaNum) { m_totalPlaNum = totalPlaNum; }
+	void SetStageSelectNum(int stageSelectNum) { m_stageSelectNum = stageSelectNum; }
+	void SetPauseFlg(bool pauseFlg) { m_isPauseFlg = pauseFlg; }
 };

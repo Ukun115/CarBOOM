@@ -15,8 +15,6 @@ namespace
 bool SkinModelRender::Start()
 {
 
-
-	//StartŠÖ”‚Ìreturn
 	return true;
 }
 

@@ -7,6 +7,7 @@
 #include "StageSelectScene.h"
 #include "GameScene.h"
 #include "TitleScene.h"
+#include "Fade.h"
 
 
 namespace
@@ -33,8 +34,17 @@ namespace
 
 bool StageSelectScene::Start()
 {
-	//インスタンスを作成
-	m_titleScene = FindGO<TitleScene>(TITLESCENE_NAME);
+	//ライトオブジェクト生成
+	m_light = NewGO<Light>(PRIORITY_0, LIGHT_NAME);
+	//ディレクションライトをセット
+	m_light->SetDirectionLightData();
+	//半球ライトをセット
+	m_light->SetHemiSphereLightData();
+
+	//フェードイン
+	m_fadeIn = NewGO<Fade>(0, "fade");
+	m_fadeIn->SetState(StateIn);
+	m_fadeIn->SetAlphaValue(1.0f);
 
 	//ステージ説明の背景画像オブジェクト生成
 	m_stageDiscription[0] = NewGO<SpriteRender>(PRIORITY_1, nullptr);
@@ -168,13 +178,14 @@ bool StageSelectScene::Start()
 	//タイトルBGMサウンド
 	SoundPlayBack(TitleSceneBGM);
 
-	//Start関数のreturn文
 	return true;
 }
 
 
 StageSelectScene::~StageSelectScene()
 {
+	DeleteGO(m_light);
+
 	//表示されているステージモデルとステージ名画像をすべて削除
 	for (int stageNum = 0; stageNum < TotalStageNum; stageNum++)
 	{
@@ -192,25 +203,41 @@ StageSelectScene::~StageSelectScene()
 	{
 		DeleteGO(m_Ahukidasi[plaNum]);
 	}
-	//タイトルBGMを削除
-	DeleteGO(m_titleBGM);
+
+
+	if(m_titleBGM != nullptr)
+		DeleteGO(m_titleBGM);
+	if (m_decideSound != nullptr)
+		DeleteGO(m_decideSound);
+	if (m_onStageSound != nullptr)
+		DeleteGO(m_onStageSound);
+	if (m_carHorn != nullptr)
+		DeleteGO(m_carHorn);
+
 	//ステージ選択文字画像
 	DeleteGO(m_stageSelectSprite);
 
-	for (int i = 0; i < 6; i++)
+	for (int i = 0; i < 7; i++)
 	{
 		//ステージ説明の画像を削除
 		DeleteGO(m_stageDiscription[i]);
+		if (i == 0)
+		{
+			continue;
+		}
 		//操作説明がぞうを削除
 		DeleteGO(m_operatorDiscription[i]);
 	}
+
+	if(m_fadeIn != nullptr)
+	DeleteGO(m_fadeIn);
+	if (m_fadeOut != nullptr)
+	DeleteGO(m_fadeOut);
 }
 
 
 void StageSelectScene::Update()
 {
-	if (m_enableUpdateFlg == true)
-	{
 		//ベクトルを可視化させるデバック関数
 		//PlaMooveSpeedDebug();
 		//クラクションを鳴らす関数
@@ -227,64 +254,55 @@ void StageSelectScene::Update()
 		PlaDataUpdate();
 		//ステージの上にいるときそのステージを選択できる関数
 		TouchStage();
-	}
 }
 
 
 //ゲーム画面遷移処理関数
 void StageSelectScene::GameSceneTransition()
 {
-	//Aボタンが押されたら、
-	if (g_pad[PLAYER1]->IsPress(enButtonA))
+	if (m_fadeOut == nullptr)
 	{
-		//決定サウンド
-		SoundPlayBack(DecideSound);
-
-		//ランダムステージが選ばれていたら、
-		if (m_stageNum == RandomStage)
+		//Aボタンが押されたら、
+		if (g_pad[PLAYER1]->IsPress(enButtonA))
 		{
-			//ランダム関数のSEED（種）を設定
-			//（これによりランダム値を本当の意味でランダムにしている）
-			srand((int)time(nullptr));
-			//現在存在するステージの中からランダムで選ぶ
-			m_stageNum = ((rand() % 5)+Stage1);
+			//ステージ５（ティルトステージ）は未実装のため、ステージに入れないようにreturnしています
+			if (m_stageNum == Stage5)
+			{
+				return;
+			}
+
+			//決定サウンド
+			SoundPlayBack(DecideSound);
+
+			//フェードアウト
+			m_fadeOut = NewGO<Fade>(0, "fade");
+			m_fadeOut->SetState(StateOut);
+			m_fadeOut->SetAlphaValue(0.0f);
 		}
-
-		//ゲーム画面に遷移
-		NewGO<GameScene>(PRIORITY_0, GAMESCENE_NAME);
-
-		//表示されているステージモデルとステージ名画像をすべて削除
-		for (int stageNum = 0; stageNum < TotalStageNum; stageNum++)
+	}
+	else
+	{
+		if (m_fadeOut->GetNowState() == StateWait)
 		{
-			DeleteGO(m_stage[stageNum]);
-			DeleteGO(m_stageName[stageNum]);
-		}
-		//プレイヤーを削除。
-		DeleteGO(m_pla);
-		//プレイヤーのスピード可視化矢印を削除。
-		//DeleteGO(m_skinModelRenderArrow);
-		//背景画像を削除
-		DeleteGO(m_titleSprite);
-		//A吹き出し画像を削除
-		for (int plaNum = 0; plaNum < 6; plaNum++)
-		{
-			DeleteGO(m_Ahukidasi[plaNum]);
-		}
-		//タイトルBGMを削除
-		DeleteGO(m_titleBGM);
-		//ステージ選択文字画像
-		DeleteGO(m_stageSelectSprite);
+			//ランダムステージが選ばれていたら、
+			if (m_stageNum == RandomStage)
+			{
+				//ランダム関数のSEED（種）を設定
+				//（これによりランダム値を本当の意味でランダムにしている）
+				srand((int)time(nullptr));
+				//現在存在するステージの中からランダムで選ぶ
+				m_stageNum = ((rand() % 4) + Stage1);
+			}
 
-		for (int i = 0; i < 6; i++)
-		{
-			//ステージ説明の画像を削除
-			DeleteGO(m_stageDiscription[i]);
-			//操作説明がぞうを削除
-			DeleteGO(m_operatorDiscription[i]);
+			//ゲーム画面に遷移
+			m_gameScene = NewGO<GameScene>(PRIORITY_0, GAMESCENE_NAME);
+			//登録された人数データをゲームクラスに渡す
+			m_gameScene->SetTotalPlaNum(m_totalPlaNum);
+			//ステージなんぼが選ばれているかをゲームクラスに渡す
+			m_gameScene->SetSelectStageNum(m_stageNum);
+			//クラスの破棄
+			DeleteGO(this);
 		}
-
-		//このクラスの処理をゲーム画面に移ったときに実行しなくなるフラグ
-		m_enableUpdateFlg = false;
 	}
 }
 

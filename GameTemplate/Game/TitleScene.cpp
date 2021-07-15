@@ -7,6 +7,7 @@
 #include "stdafx.h"
 #include "TitleScene.h"
 #include "StageSelectScene.h"
+#include "Fade.h"
 
 
 namespace
@@ -47,6 +48,11 @@ namespace
 
 bool TitleScene::Start()
 {
+	//フェードイン
+	m_fadeIn = NewGO<Fade>(0, "fade");
+	m_fadeIn->SetState(StateIn);
+	m_fadeIn->SetAlphaValue(1.0f);
+
 	//タイトル名ジングルサウンド
 	SoundPlayBack(TitleSceneGingle);
 
@@ -124,16 +130,10 @@ bool TitleScene::Start()
 
 	for (int plaNum = Player1; plaNum < MaxPlayerNum; plaNum++) {
 		//2P～4Pの非アクティブ画像オブジェクト生成
-		m_plaDeactiveName[plaNum] = NewGO<SpriteRender>(PRIORITY_2, nullptr);
 		m_PlaNameFont[plaNum] = NewGO<FontRender>(1);		//1P
 		if (plaNum == Player1)
 		{
 			m_PlaNameFont[0]->Init(
-				/*m_plaDeactiveName[i]->Init("Assets/image/DDS/Player1_DeactiveName.dds", 300.0f, 150.0f);
-				m_plaDeactiveName[i]->SetPosition(PLAYER1_NAME_POS);
-				//非アクティブ時はないため、非表示にしておく。
-				m_plaDeactiveName[i]->Deactivate();*/
-
 				L"PLAYER1",					//テキスト
 				PLANAME1POS,		//位置
 				PLANAME1COL,		//色
@@ -145,8 +145,6 @@ bool TitleScene::Start()
 		//2P
 		if (plaNum == Player2)
 		{
-			m_plaDeactiveName[plaNum]->SetPosition(PLAYER2_NAME_POS);
-
 			m_PlaNameFont[1]->Init(
 				L"PLAYER2",					//テキスト
 				PLANAME2POS,		//位置
@@ -159,8 +157,6 @@ bool TitleScene::Start()
 		//3P
 		if (plaNum == Player3)
 		{
-			m_plaDeactiveName[plaNum]->SetPosition(PLAYER3_NAME_POS);
-
 			m_PlaNameFont[2]->Init(
 				L"PLAYER3",					//テキスト
 				PLANAME3POS,		//位置
@@ -173,8 +169,6 @@ bool TitleScene::Start()
 		//4P
 		if (plaNum == Player4)
 		{
-			m_plaDeactiveName[plaNum]->SetPosition(PLAYER4_NAME_POS);
-
 			m_PlaNameFont[3]->Init(
 				L"PLAYER4",					//テキスト
 				PLANAME4POS,		//位置
@@ -188,7 +182,6 @@ bool TitleScene::Start()
 		m_PlaNameFont[plaNum]->SetShadowParam(true, 3.0f, Vector4::Black);
 	}
 
-	//Start関数のreturn文
 	return true;
 }
 
@@ -209,43 +202,59 @@ TitleScene::~TitleScene()
 	DeleteGO(m_pressASpeechBalloonArrow);
 
 	//サウンドを削除
+	if(m_titleBGM != nullptr)
 	//タイトルBGMを削除
 	DeleteGO(m_titleBGM);
+	if (m_addPlayer != nullptr)
 	//エンジン音を削除
 	DeleteGO(m_addPlayer);
+	if (m_gameNameGingle != nullptr)
 	//タイトルジングルを削除
 	DeleteGO(m_gameNameGingle);
+	if (m_decideSound != nullptr)
+	DeleteGO(m_decideSound);
+
+	for (int plaNum = Player1; plaNum < MaxPlayerNum; plaNum++) {
+		DeleteGO(m_PlaNameFont[plaNum]);
+	}
+
+	DeleteGO(m_fadeOut);
+	DeleteGO(m_fadeIn);
 }
 
 
 void TitleScene::Update()
 {
-	//ステージ選択画面に遷移すると抜けるフラグ
-	if (m_enableUpdateFlg == true) {
+	//「PRESS START BUTTON」文字画像の点滅処理
+	FlashingFont();
+	//吹き出しの矢印画像が横移動する関数
+	SideMove(60, 0.2f);
 
-		if (m_titleNameSca.x != 1.0f)
-		{
-			//タイトル名を拡大する関数
-			TitleNameScaUp();
-		}
-		else
-		{
-			//タイトル名をウェーブさせる関数
-			TitleNameWave();
-		}
+	if (m_titleNameSca.x != 1.0f)
+	{
+		//タイトル名を拡大する関数
+		TitleNameScaUp();
+	}
+	else
+	{
+		//タイトル名をウェーブさせる関数
+		TitleNameWave();
+	}
 
-		//登録されたプレイヤー数が最大数4人になるまで追加できる
-		if (m_totalPlaNum != MaxPlayerNum)
+	//登録されたプレイヤー数が最大数4人になるまで追加できる
+	if (m_totalPlaNum != MaxPlayerNum)
+	{
+		/*登録されていないコントローラーのAボタンが押されたら、
+		【注意】USBポートに繋がれた順じゃないと登録されていきません。*/
+		if (g_pad[m_totalPlaNum]->IsTrigger(enButtonA))
 		{
-			/*登録されていないコントローラーのAボタンが押されたら、
-			【注意】USBポートに繋がれた順じゃないと登録されていきません。*/
-			if (g_pad[m_totalPlaNum]->IsTrigger(enButtonA))
-			{
-				//プレイヤーを登録する
-				AddPlayer();
-			}
+			//プレイヤーを登録する
+			AddPlayer();
 		}
+	}
 
+	if (m_fadeOut == nullptr)
+	{
 		//登録されている誰かのスタートボタンが押されたら、
 		for (int plaNum = Player1; plaNum < m_totalPlaNum; plaNum++)
 		{
@@ -255,11 +264,36 @@ void TitleScene::Update()
 				//決定サウンド
 				SoundPlayBack(DecideSound);
 
-				//ステージ選択画面に遷移
-				StageSelectSceneTransition();
+				//フェードアウト
+				m_fadeOut = NewGO<Fade>(0, "fade");
+				m_fadeOut->SetState(StateOut);
+				m_fadeOut->SetAlphaValue(0.0f);
+
+				m_nextScene = StateSelectScene;
 			}
 			//セレクトボタンが押されたら、、
 			if (g_pad[plaNum]->IsTrigger(enButtonSelect))
+			{
+				//フェードアウト
+				m_fadeOut = NewGO<Fade>(0, "fade");
+				m_fadeOut->SetState(StateOut);
+				m_fadeOut->SetAlphaValue(0.0f);
+
+				m_nextScene = GameEnd;
+			}
+		}
+	}
+	else
+	{
+		//真っ白になったら遷移
+		if (m_fadeOut->GetNowState() == StateWait) {
+
+			if (m_nextScene == StateSelectScene)
+			{
+				//ステージ選択画面に遷移
+				StageSelectSceneTransition();
+			}
+			if (m_nextScene == GameEnd)
 			{
 				//exeを閉じてゲーム終了
 				exit(EXIT_SUCCESS);
@@ -268,10 +302,6 @@ void TitleScene::Update()
 				//exit(EXIT_SUCCESS);は正常終了		EXIT_SUCCESS = 0
 			}
 		}
-		//「PRESS START BUTTON」文字画像の点滅処理
-		FlashingFont();
-		//吹き出しの矢印画像が横移動する関数
-		SideMove(60, 0.2f);
 	}
 }
 
@@ -293,7 +323,7 @@ void TitleScene::AddPlayer()
 		//3Pの右側
 		m_pressASpeechBalloonPos = PressASpeechBalloonPos3;
 		m_pressASpeechBalloon->SetPosition(m_pressASpeechBalloonPos);
-		m_pressASpeechBalloonPos.x -= 110.0f;
+		m_pressASpeechBalloonPos.x -= 105.0f;
 		m_pressASpeechBalloonArrow->SetPosition(m_pressASpeechBalloonPos);
 
 		//反転させる
@@ -308,7 +338,7 @@ void TitleScene::AddPlayer()
 		//4Pの左側
 		m_pressASpeechBalloonPos = PressASpeechBalloonPos4;
 		m_pressASpeechBalloon->SetPosition(m_pressASpeechBalloonPos);
-		m_pressASpeechBalloonPos.x += 85.0f;
+		m_pressASpeechBalloonPos.x += 80.0f;
 		m_pressASpeechBalloonArrow->SetPosition(m_pressASpeechBalloonPos);
 
 		//元に戻す
@@ -323,8 +353,6 @@ void TitleScene::AddPlayer()
 		m_pressASpeechBalloon->Deactivate();
 		m_pressASpeechBalloonArrow->Deactivate();
 	}
-	//非アクティブ画像を削除。
-	DeleteGO(m_plaDeactiveName[m_totalPlaNum]);
 	//次のプレイヤーへ...
 	m_totalPlaNum++;
 }
@@ -335,31 +363,10 @@ void TitleScene::StageSelectSceneTransition()
 {
 	//ステージ選択画面に遷移
 	m_stageSelectScene = NewGO<StageSelectScene>(PRIORITY_0, STAGESELECT_NAME);
-	////このクラスの削除
-	////DeleteGO(this);
-
-	//タイトルロゴを削除。
-	DeleteGO(m_titleSprite);
-	DeleteGO(m_titleNameSprite);
-	//PUSHSTARTBUTTONを削除。
-	DeleteGO(m_pushStartButtonSprite);
-	//吹き出しを削除。
-	DeleteGO(m_pressASpeechBalloon);
-	DeleteGO(m_pressASpeechBalloonArrow);
-	//タイトルBGMを削除
-	DeleteGO(m_titleBGM);
-	//エンジン音を削除
-	DeleteGO(m_addPlayer);
-	//タイトルジングルを削除
-	DeleteGO(m_gameNameGingle);
-
-	for (int i = 0; i < 9; i++)
-	{
-		DeleteGO(m_titleBaraBaraSprite[i]);
-	}
-
-	//ステージ選択画面に遷移後、ボタンとプレイヤー追加ボタンを押せなくするフラグ
-	m_enableUpdateFlg = false;
+	//登録された人数データを次のクラスに渡す
+	m_stageSelectScene->SetTotalPlaNum(m_totalPlaNum);
+	//このクラスの削除
+	DeleteGO(this);
 }
 
 

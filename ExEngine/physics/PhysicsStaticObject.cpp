@@ -20,3 +20,7 @@ void PhysicsStaticObject::CreateFromModel(Model& model, const Matrix& worldMatri
 	rbInfo.mass = 0.0f;
 	m_rigidBody.Init(rbInfo);
 }
+void PhysicsStaticObject::Update(Vector3& pos, Quaternion& rot)
+{
+	m_rigidBody.SetPositionAndRotation(pos, rot);
+}

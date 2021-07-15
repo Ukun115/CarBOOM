@@ -15,8 +15,6 @@ namespace
 bool SpriteRender::Start()
 {
 
-
-	//StartŠÖ”‚Ìreturn•¶
 	return true;
 }
 

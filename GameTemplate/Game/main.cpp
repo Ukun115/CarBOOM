@@ -34,14 +34,6 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	//////////////////////////////////////
 	auto& renderContext = g_graphicsEngine->GetRenderContext();
 
-	Light* m_light = nullptr;
-	//ライトオブジェクト生成
-	m_light = NewGO<Light>(PRIORITY_0, LIGHT_NAME);
-	//ディレクションライトをセット
-	m_light->SetDirectionLightData();
-	//半球ライトをセット
-	m_light->SetHemiSphereLightData();
-
 	//タイトルシーンオブジェクト生成
 	TitleScene* m_titleScene = NewGO<TitleScene>(PRIORITY_0, TITLESCENE_NAME);
 
@@ -92,5 +84,10 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	}
 	//ゲームオブジェクトマネージャーを削除。
 	GameObjectManager::DeleteInstance();
+
+	PhysicsWorld::DeleteInstance();
+
+	EffectEngine::DeleteInstance();
+
 	return 0;
 }

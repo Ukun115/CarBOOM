@@ -23,27 +23,25 @@ namespace
 bool Stage::Start()
 {
 	//インスタンスを探す
-	m_stageSelectScene = FindGO<StageSelectScene>(STAGESELECT_NAME);
 	m_gameScene = FindGO<GameScene>(GAMESCENE_NAME);
-	m_titleScene = FindGO<TitleScene>(TITLESCENE_NAME);
 	m_player = FindGO<Player>(PLAYER_NAME);
 	//ステージモデルオブジェクト生成
 	m_stage = NewGO<SkinModelRender>(PRIORITY_0,nullptr);
 
 	//選択されたのがどひょうステージのとき、
-	if (m_stageSelectScene->GetStageNum() == Stage1)
+	if (m_stageSelectNum == Stage1)
 	{
 		//どひょうステージをロード
 		m_stage->Init("Assets/modelData/bg/stage_1.tkm");
 	}
 	//選択されたのがドーナツステージのとき、
-	if (m_stageSelectScene->GetStageNum() == Stage2)
+	if (m_stageSelectNum == Stage2)
 	{
 		//ドーナツステージをロード
 		m_stage->Init("Assets/modelData/bg/stage_2.tkm");
 	}
 	//選択されたのがアイスステージのとき、
-	if (m_stageSelectScene->GetStageNum() == Stage3)
+	if (m_stageSelectNum == Stage3)
 	{
 		//アイスステージをロード
 		m_stage->Init("Assets/modelData/bg/stage_3.tkm");
@@ -65,7 +63,7 @@ bool Stage::Start()
 	}
 
 	//選択されたのが風ステージの時
-	if (m_stageSelectScene->GetStageNum() == Stage4)
+	if (m_stageSelectNum == Stage4)
 	{
 		//風ステージをロード
 		m_stage->Init("Assets/modelData/bg/stage_4.tkm");
@@ -76,17 +74,21 @@ bool Stage::Start()
 		m_windDirection = windNum(mt);
 	}
 
-	//選択されたのがかたむきステージの時
-	if (m_stageSelectScene->GetStageNum() == Stage5) {
+	////選択されたのがかたむきステージの時
+	//if (m_stageSelectNum == Stage5) {
 
-		//かたむきステージをロード
-		m_stage->Init("Assets/modelData/bg/stage_5.tkm");
-	}
+	//	//かたむきステージをロード
+	//	m_stage->Init("Assets/modelData/bg/stage_5.tkm");
+	//	Quaternion qRotX, qRotZ, qRot;
+	//	qRotX.SetRotationDegX(10.0f);
+	//	qRotZ.SetRotationDegZ(40.0f);
+	//	qRot.Multiply(qRotX, qRotZ);
+	//	m_stage->SetRotation(qRot);
+	//}
 
 	//当たり判定を適応
 	m_physicsStaticObject.CreateFromModel(*m_stage->GetModel(), m_stage->GetModel()->GetWorldMatrix());
 
-	//Start関数のreturn文
 	return true;
 }
 
@@ -100,22 +102,28 @@ Stage::~Stage()
 
 void Stage::Update()
 {
-	//選択されたステージがアイスステージのとき、
-	if (m_stageSelectScene->GetStageNum() == Stage3)
+	//ポーズ中でないとき、
+	if (!m_isPauseFlg)
 	{
-		//雪エフェクト処理
-		SnowFall();
-	}
-	if (m_stageSelectScene->GetStageNum() == Stage4)
-	{
-		//風の影響を与える
-		WindStage();
-	}
 
-	if (m_stageSelectScene->GetStageNum() == Stage5)
-	{
-		//傾かせる
-		Tilt();
+		//選択されたステージがアイスステージのとき、
+		if (m_stageSelectNum == Stage3)
+		{
+			//雪エフェクト処理
+			SnowFall();
+		}
+		if (m_stageSelectNum == Stage4)
+		{
+			//風の影響を与える
+			WindStage();
+		}
+
+		//if (m_stageSelectNum == Stage5)
+		//{
+		//	//傾かせる
+		//	Tilt();
+		//}
+		//m_physicsStaticObject.Update(m_stage->GetPosition(), m_stage->GetRotation());
 	}
 }
 
@@ -151,7 +159,7 @@ void Stage::SnowFall()
 void Stage::WindStage()
 {
 	//風ステージが選択されている場合、風の影響を与える
-	if (m_stageSelectScene->GetStageNum() == STAGE4)
+	if (m_stageSelectNum == STAGE4)
 	{
 		//10秒毎にプレイヤーに風の影響を与える角度を決める(ランダム)
 		//while (m_game_Scene->GetNowTime() == 0) {
@@ -189,7 +197,7 @@ void Stage::WindStage()
 void Stage::Tilt()
 {
 	//ステージを傾けるためにステージの中心からプレイヤーまでの距離を測る
-	for (int i = 0; i < m_titleScene->GetTotalPlaNum(); i++)
+	for (int i = 0; i < m_totalPlaNum; i++)
 	{
 		m_plaPos[i] = m_player->GetPlaPos(i);
 	}

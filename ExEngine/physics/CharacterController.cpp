@@ -129,8 +129,9 @@ void CharacterController::Init(float radius, float height, const Vector3& positi
 
 	m_isInited = true;
 }
-const Vector3& CharacterController::Execute( Vector3& moveSpeed, float deltaTime )
+const Vector3& CharacterController::Execute( Vector3& moveSpeed, float deltaTime, bool& isHitGround, Vector3& hitGroundNormal )
 {
+	isHitGround = false;
 	if (moveSpeed.y > 0.0f) {
 		//êÅÇ¡îÚÇ—íÜÇ…Ç∑ÇÈÅB
 		m_isJump = true;
@@ -269,6 +270,9 @@ const Vector3& CharacterController::Execute( Vector3& moveSpeed, float deltaTime
 			PhysicsWorld::GetInstance()->ConvexSweepTest((const btConvexShape*)m_collider.GetBody(), start, end, callback);
 			if (callback.isHit) {
 				//ìñÇΩÇ¡ÇΩÅB
+				//
+				isHitGround = true;
+				hitGroundNormal = callback.hitNormal;
 				moveSpeed.y = 0.0f;
 				m_isJump = false;
 				m_isOnGround = true;

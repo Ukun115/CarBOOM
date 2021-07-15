@@ -10,10 +10,17 @@
 #include "Player.h"
 #include "Stage.h"
 #include "TitleScene.h"
+#include "StageSelectScene.h"
+#include "Fade.h"
 
 
 namespace
 {
+	const Vector2 PLANAME1POS = { -600.0f, 310.0f };			//プレイヤー1の名前表示位置
+	const Vector2 PLANAME2POS = { 400.0f, 310.0f };				//プレイヤー2の名前表示位置
+	const Vector2 PLANAME3POS = { -600.0f,-290.0f };			//プレイヤー3の名前表示位置
+	const Vector2 PLANAME4POS = { 400.0f,-290.0f, };			//プレイヤー4の名前表示位置
+
 	const Vector2   TIMELIMIT_POS = { -40.0f,300.0f };			//制限時間フォントの位置
 	const Vector4   TIMELIMIT_COL = { 1.0f,1.0f,1.0f,1.0f };	//制限時間フォントの色
 	const Vector4   TIMELIMIT_LAST_COL = { 1.0f,0.0f,0.0f,1.0f };	//制限時間フォントの残り5秒の色
@@ -45,15 +52,30 @@ namespace
 
 bool GameScene::Start()
 {
-	//インスタンスを探す。
-	m_titleScene = FindGO<TitleScene>(TITLESCENE_NAME);
+	//ライトオブジェクト生成
+	m_light = NewGO<Light>(PRIORITY_0, LIGHT_NAME);
+	//ディレクションライトをセット
+	m_light->SetDirectionLightData();
+	//半球ライトをセット
+	m_light->SetHemiSphereLightData();
+
+	//フェードイン
+	m_fadeIn = NewGO<Fade>(0, "fade");
+	m_fadeIn->SetState(StateIn);
+	m_fadeIn->SetAlphaValue(1.0f);
 
 	//敵オブジェクト生成
 	m_enemy = NewGO<Enemy>(PRIORITY_0, ENEMY_NAME);
+	m_enemy->SetTotalPlaNum(m_totalPlaNum);
+	m_enemy->SetStageSelectNum(m_stageSelecttNum);
 	//プレイヤーオブジェクト生成
 	m_player = NewGO<Player>(PRIORITY_0, PLAYER_NAME);
+	m_player->SetTotalPlaNum(m_totalPlaNum);
+	m_player->SetStageSelectNum(m_stageSelecttNum);
 	//ステージオブジェクト生成
-	m_normalStage = NewGO<Stage>(PRIORITY_0, "stage");
+	m_stage = NewGO<Stage>(PRIORITY_0, STAGE_NAME);
+	m_stage->SetSelectStageNum(m_stageSelecttNum);
+	m_stage->SetTotalPlaNum(m_stageSelecttNum);
 
 	//王冠画像オブジェクト生成
 	m_crownSprite = NewGO<SpriteRender>(PRIORITY_1, nullptr);
@@ -62,6 +84,17 @@ bool GameScene::Start()
 	m_crownSprite->SetPosition({ PLAYER1_CROWN_POS });						//位置を設定
 	m_crownSprite->SetScale({ CROWN_SCA });									//拡大率を設定
 	m_crownSprite->Deactivate();					//はじめは誰も一位じゃないので隠しておく。
+
+
+	m_pauseSprite = NewGO<SpriteRender>(PRIORITY_6, nullptr);
+	//ポーズ画像を初期化
+	m_pauseSprite->Init("Assets/image/DDS/Pause.dds", 600.0f, 300.0f);
+	m_pauseSprite->Deactivate();
+
+	m_grayBack = NewGO<SpriteRender>(PRIORITY_5, nullptr);
+	//ポーズ中灰色にする画像を初期化
+	m_grayBack->Init("Assets/image/DDS/GrayBack.dds", 1500.0f, 1500.0f);
+	m_grayBack->Deactivate();
 
 	//制限時間フォントオブジェクト生成（一番上のレイヤーに置きたいのでプライオリティーは最高値）
 	m_timeLimit = NewGO<FontRender>(PRIORITY_1,nullptr);
@@ -104,7 +137,7 @@ bool GameScene::Start()
 		m_TextScoreFontRender[plaNum]->SetShadowParam(true, 3.0f, Vector4::Black);
 	}
 	//登録されていないプレイヤーのスコアはグレー表示にする
-	for (int plaNum = m_titleScene->GetTotalPlaNum() ; plaNum < 4; plaNum++)
+	for (int plaNum = m_totalPlaNum; plaNum < 4; plaNum++)
 	{
 		m_ScoreFontRender[plaNum]->SetColor(GRAY);
 		m_TextScoreFontRender[plaNum]->SetColor(GRAY);
@@ -125,15 +158,94 @@ bool GameScene::Start()
 	m_syutyusen = NewGO<SpriteRender>(PRIORITY_0, nullptr);
 	m_syutyusen->Init("Assets/image/DDS/BackScreenImage.dds", 1600.0f, 800.0f);
 
-	//Start関数のreturn
+	for (int plaNum = Player1; plaNum < MaxPlayerNum; plaNum++) {
+		//2P～4Pの非アクティブ画像オブジェクト生成
+		m_PlaNameFont[plaNum] = NewGO<FontRender>(1);		//1P
+		if (plaNum == Player1)
+		{
+			m_PlaNameFont[plaNum]->Init(
+				L"PLAYER1",					//テキスト
+				PLANAME1POS,		//位置
+				GRAY,		//色
+				FONT_ROT,			//傾き
+				1.0f,		//拡大率
+				FONT_PIV			//基点
+			);
+		};
+		//2P
+		if (plaNum == Player2)
+		{
+			m_PlaNameFont[plaNum]->Init(
+				L"PLAYER2",					//テキスト
+				PLANAME2POS,		//位置
+				GRAY,		//色
+				FONT_ROT,			//傾き
+				1.0f,		//拡大率
+				FONT_PIV			//基点
+			);
+		}
+		//3P
+		if (plaNum == Player3)
+		{
+			m_PlaNameFont[plaNum]->Init(
+				L"PLAYER3",					//テキスト
+				PLANAME3POS,		//位置
+				GRAY,		//色
+				FONT_ROT,			//傾き
+				1.0f,		//拡大率
+				FONT_PIV			//基点
+			);
+		}
+		//4P
+		if (plaNum == Player4)
+		{
+			m_PlaNameFont[plaNum]->Init(
+				L"PLAYER4",					//テキスト
+				PLANAME4POS,		//位置
+				GRAY,		//色
+				FONT_ROT,			//傾き
+				1.0f,		//拡大率
+				FONT_PIV			//基点
+			);
+		}
+		//文字の境界線表示
+		m_PlaNameFont[plaNum]->SetShadowParam(true, 3.0f, Vector4::Black);
+
+		if (m_totalPlaNum > plaNum)
+		{
+			if (plaNum == Player1)
+			{
+				m_PlaNameFont[plaNum]->SetColor(RED);
+			}
+			if (plaNum == Player2)
+			{
+				m_PlaNameFont[plaNum]->SetColor(BLUE);
+			}
+			if (plaNum == Player3)
+			{
+				m_PlaNameFont[plaNum]->SetColor(YELLOW);
+			}
+			if (plaNum == Player4)
+			{
+				m_PlaNameFont[plaNum]->SetColor(GREEN);
+			}
+		}
+	}
+
 	return true;
 }
 
 
 GameScene::~GameScene()
 {
+	DeleteGO(m_light);
+
+	DeleteGO(m_fadeIn);
+	if(m_fadeOut != nullptr)
+	DeleteGO(m_fadeOut);
+
 	//ステージを削除。
-	DeleteGO(m_normalStage);
+	DeleteGO(m_stage);
 
 	for (int i = 0; i < 4; i++)
 	{
@@ -143,6 +255,8 @@ GameScene::~GameScene()
 		DeleteGO(m_ScoreFontRender[i]);
 		//
 		DeleteGO(m_TextScoreFontRender[i]);
+
+		DeleteGO(m_PlaNameFont[i]);
 	}
 	//プレイヤークラスを削除。
 	DeleteGO(m_player);
@@ -155,38 +269,129 @@ GameScene::~GameScene()
 	//ゲーム画面背景を削除
 	DeleteGO(m_syutyusen);
 
-
 	//サウンドを削除
+	if(m_gameStartGingle != nullptr)
 	DeleteGO(m_gameStartGingle);
+	if (m_gameBGM != nullptr)
 	DeleteGO(m_gameBGM);
+	if (m_countDown != nullptr)
 	DeleteGO(m_countDown);
+	if (m_whistleSound != nullptr)
 	DeleteGO(m_whistleSound);
+	if(m_pauseSound != nullptr)
+	DeleteGO(m_pauseSound);
+	if (m_decideSound != nullptr)
+		DeleteGO(m_decideSound);
+
+	DeleteGO(m_resultScene);
+
+	DeleteGO(m_pauseSprite);
+	DeleteGO(m_grayBack);
 }
 
 
 void GameScene::Update()
 {
-	//制限時間のカウント&描画処理
-	TimeLimit();
-
-	//プレイヤーのスコア描画関数
-	PlaScoreDraw();
-
-	//現在のスコア１位を判定し、王冠画像を移動
-	NowCrown();
-
-	//制限時間が0秒になったら、
-	if (m_countTime == 0)
+	//ポーズ中でないとき、
+	if (!m_isPauseFlg)
 	{
-		//リザルト画面に遷移する
-		ResultSceneTransition();
+		//制限時間のカウント&描画処理
+		TimeLimit();
+		m_stage->SetNowTime(m_countTime);
+
+		//プレイヤーのスコア描画関数
+		PlaScoreDraw();
+
+		//現在のスコア１位を判定し、王冠画像を移動
+		NowCrown();
+
+		//制限時間が0秒になったら、
+		if (m_countTime == 0)
+		{
+			//リザルト画面に遷移する
+			ResultSceneTransition();
+		}
+
+		//ゲームシーンに遷移したら、
+		if (m_isFinishCountDownFlg)
+		{
+			//カウントダウン処理を開始
+			CountDown();
+		}
+
+		//リザルトシーンクラスが削除されたら同じくゲームシーンも削除する
+		if (m_deleteFlg)
+		{
+			DeleteGO(this);
+		}
+	}
+	//ポーズ機能
+	for (int i = 0; i < m_totalPlaNum; i++)
+	{
+		//セレクトボタンでオンオフ
+		if (g_pad[i]->IsTrigger(enButtonSelect))
+		{
+			//ポーズ画面を開く音
+			SoundPlayBack(PauseSound);
+
+			//ポーズ中じゃないとき、
+			if (!m_isPauseFlg)
+			{
+				//ポーズにする
+				m_pauseSprite->Activate();
+				m_grayBack->Activate();
+				if (m_gameBGM != nullptr)
+				{
+					m_gameBGM->SetVolume(0.0f);
+				}
+
+				m_isPauseFlg = true;
+			}
+			//ポーズ中の時、
+			else
+			{
+				m_pauseSprite->Deactivate();
+				m_grayBack->Deactivate();
+				if (m_gameBGM != nullptr)
+				{
+					m_gameBGM->SetVolume(0.5f);
+				}
+
+				//ポーズを外す
+				m_isPauseFlg = false;
+			}
+			m_player->SetPauseFlg(m_isPauseFlg);
+			m_enemy->SetPauseFlg(m_isPauseFlg);
+			m_stage->SetPauseFlg(m_isPauseFlg);
+		}
 	}
 
-	//ゲームシーンに遷移したら、
-	if (m_isFinishCountDownFlg)
+	if (m_fadeOut == nullptr && m_isPauseFlg)
 	{
-		//カウントダウン処理を開始
-		CountDown();
+		//ステージ選択画面に戻る
+		for (int plaNum = Player1; plaNum < m_totalPlaNum; plaNum++)
+		{
+			//スタートボタンが押されたら、
+			if (g_pad[plaNum]->IsTrigger(enButtonStart))
+			{
+				//決定サウンド
+				SoundPlayBack(DecideSound);
+				//フェードアウト
+				m_fadeOut = NewGO<Fade>(0, "fade");
+				m_fadeOut->SetState(StateOut);
+				m_fadeOut->SetAlphaValue(0.0f);
+
+			}
+		}
+	}
+
+	if (m_fadeOut != nullptr && m_fadeOut->GetNowState() == StateWait)
+	{
+		//ステージ選択画面に戻る
+		m_stageSelectScene = NewGO<StageSelectScene>(0, STAGESELECT_NAME);
+		m_stageSelectScene->SetTotalPlaNum(m_totalPlaNum);
+
+		DeleteGO(this);
 	}
 }
 
@@ -323,16 +528,16 @@ Vector2 GameScene::GetScorePos(int plaNum)
 {
 	switch (plaNum)
 	{
-	case PLAYER1:
+	case Player1:
 		return PLAYER1_PT_POS;
 		break;
-	case PLAYER2:
+	case Player2:
 		return PLAYER2_PT_POS;
 		break;
-	case PLAYER3:
+	case Player3:
 		return PLAYER3_PT_POS;
 		break;
-	case PLAYER4:
+	case Player4:
 		return PLAYER4_PT_POS;
 		break;
 	}
@@ -354,17 +559,17 @@ void GameScene::SetScoreTextPos(int plaNum)
 		//少し左(xを-40)にずらして表示位置を合わせる
 		switch (plaNum)
 		{
-		case PLAYER1:
+		case Player1:
 			m_plaScorePos[0].x = -560.0f;
 			break;
-		case PLAYER2:
-			m_plaScorePos[1].x = 450.0f;
+		case Player2:
+			m_plaScorePos[1].x = 410.0f;
 			break;
-		case PLAYER3:
+		case Player3:
 			m_plaScorePos[2].x = -560.0f;
 			break;
-		case PLAYER4:
-			m_plaScorePos[3].x = 450.0f;
+		case Player4:
+			m_plaScorePos[3].x = 410.0f;
 			break;
 		}
 	}
@@ -374,17 +579,17 @@ void GameScene::SetScoreTextPos(int plaNum)
 		//少し左(xを-20)にずらして表示位置を合わせる
 		switch (plaNum)
 		{
-		case PLAYER1:
+		case Player1:
 			m_plaScorePos[0].x = -580.0f;
 			break;
-		case PLAYER2:
-			m_plaScorePos[1].x = 470.0f;
+		case Player2:
+			m_plaScorePos[1].x = 390.0f;
 			break;
-		case PLAYER3:
+		case Player3:
 			m_plaScorePos[2].x = -580.0f;
 			break;
-		case PLAYER4:
-			m_plaScorePos[3].x = 470.0f;
+		case Player4:
+			m_plaScorePos[3].x = 390.0f;
 			break;
 		}
 	}
@@ -394,17 +599,17 @@ void GameScene::SetScoreTextPos(int plaNum)
 		//少し左(xを-20)にずらして表示位置を合わせる
 		switch (plaNum)
 		{
-		case PLAYER1:
+		case Player1:
 			m_plaScorePos[0].x = -600.0f;
 			break;
-		case PLAYER2:
-			m_plaScorePos[1].x = 490.0f;
+		case Player2:
+			m_plaScorePos[1].x = 370.0f;
 			break;
-		case PLAYER3:
+		case Player3:
 			m_plaScorePos[2].x = -600.0f;
 			break;
-		case PLAYER4:
-			m_plaScorePos[3].x = 490.0f;
+		case Player4:
+			m_plaScorePos[3].x = 370.0f;
 			break;
 		}
 	}
@@ -419,16 +624,16 @@ Vector4 GameScene::ScoreColor(int plaNum)
 {
 	switch (plaNum)
 	{
-	case PLAYER1:
+	case Player1:
 		return RED;
 		break;
-	case PLAYER2:
+	case Player2:
 		return BLUE;
 		break;
-	case PLAYER3:
+	case Player3:
 		return YELLOW;
 		break;
-	case PLAYER4:
+	case Player4:
 		return GREEN;
 		break;
 	}
@@ -473,9 +678,9 @@ void GameScene::GetPlayerAddScore(int plaNum1,int plaNum2)
 //１位に王冠画像と王冠モデルを渡す関数
 void GameScene::NowCrown()
 {
-	for (int plaNum = PLAYER1; plaNum < m_titleScene->GetTotalPlaNum(); plaNum++)
+	for (int plaNum = Player1; plaNum < m_totalPlaNum; plaNum++)
 	{
-		for (int nextPlaNum = PLAYER1; nextPlaNum < m_titleScene->GetTotalPlaNum(); nextPlaNum++)
+		for (int nextPlaNum = Player1; nextPlaNum < m_totalPlaNum; nextPlaNum++)
 		{
 			//今のプレイヤー(i)と次のプレイヤー(u)を比較
 			//次のプレイヤーのほうがスコアが高いとき、
@@ -519,14 +724,18 @@ void GameScene::ResultSceneTransition()
 	{
 		//ホイッスルサウンド
 		SoundPlayBack(WhistleSound);
+
+		m_pauseOkFlg = false;
 	}
 	//タイマーが120を超えてからリザルト画面に遷移
 	if (m_resultsenniTimer == 180)
 	{
 		//リザルト画面オブジェクト生成
-		NewGO<ResultScene>(PRIORITY_0, nullptr);
-		//ゲームBGM削除
-		DeleteGO(m_gameBGM);
+		m_resultScene = NewGO<ResultScene>(PRIORITY_0, nullptr);
+		m_resultScene->SetTotalPlayerNum(m_totalPlaNum);
+		m_grayBack->Activate();
+		//ゲームBGMをけす
+		m_gameBGM->SetVolume(0.0f);
 	}
 }
 
@@ -546,7 +755,7 @@ void GameScene::SoundPlayBack(int soundNum)
 		break;
 
 	case CountDownSound:
-		//ゲーム中のBGMサウンドの初期化
+		//カウントダウンサウンドの初期化
 		m_countDown = NewGO<SoundSource>(PRIORITY_0, nullptr);
 		m_countDown->Init(L"Assets/sound/CountDown.wav");
 		m_countDown->SetVolume(1.0f);
@@ -558,7 +767,7 @@ void GameScene::SoundPlayBack(int soundNum)
 		//ゲーム中のBGMサウンドの初期化
 		m_gameBGM = NewGO<SoundSource>(PRIORITY_0, nullptr);
 		m_gameBGM->Init(L"Assets/sound/GameBGM.wav");
-		m_gameBGM->SetVolume(0.2f);
+		m_gameBGM->SetVolume(0.5f);
 		m_gameBGM->Play(true);	//真でループ再生
 
 		break;
@@ -567,8 +776,26 @@ void GameScene::SoundPlayBack(int soundNum)
 		//ホイッスルサウンドの初期化
 		m_whistleSound = NewGO<SoundSource>(PRIORITY_0, nullptr);
 		m_whistleSound->Init(L"Assets/sound/Whistle.wav");
-		m_whistleSound->SetVolume(0.1f);
+		m_whistleSound->SetVolume(0.5f);
 		m_whistleSound->Play(false);	//偽でワンショット再生
+
+		break;
+
+	case PauseSound:
+		//ポーズサウンドの初期化
+		m_pauseSound = NewGO<SoundSource>(PRIORITY_0, nullptr);
+		m_pauseSound->Init(L"Assets/sound/PauseSound.wav");
+		m_pauseSound->SetVolume(0.5f);
+		m_pauseSound->Play(false);	//偽でワンショット再生
+
+		break;
+
+	case DecideSound:
+		//決定サウンド
+		m_decideSound = NewGO<SoundSource>(PRIORITY_0, nullptr);
+		m_decideSound->Init(L"Assets/sound/Decide.wav");
+		m_decideSound->SetVolume(0.5f);
+		m_decideSound->Play(false);	//偽でワンショット再生
 
 		break;
 	}

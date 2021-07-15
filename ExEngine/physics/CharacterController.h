@@ -22,7 +22,8 @@ public:
 	}
 	~CharacterController()
 	{
-		RemoveRigidBoby();
+		if (m_isInited)
+			RemoveRigidBoby();
 	}
 	/*!
 		* @brief	初期化。
@@ -37,7 +38,11 @@ public:
 		*@param[in]	deltaTime		経過時間。単位は秒。デフォルトでは、１フレームの経過時間が渡されています。
 		*@return 移動後のキャラクターの座標。
 		*/
-	const Vector3& Execute(Vector3& moveSpeed, float deltaTime);
+	const Vector3& Execute(
+		Vector3& moveSpeed,
+		float deltaTime,
+		bool& isHitGround,
+		Vector3& hitGroundNormal);
 	/*!
 		* @brief	座標を取得。
 		*/

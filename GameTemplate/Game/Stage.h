@@ -26,6 +26,9 @@ private:
 	Effect m_fallSnowEffect[2];		//アイスステージの降ってくる雪エフェクト
 
 
+	bool m_isPauseFlg = false;
+
+
 	/// <summary>
 	/// タイマー
 	/// </summary>
@@ -36,6 +39,9 @@ private:
 	Vector3 m_plaPos[4];			//プレイヤー4体分のプレイヤーの位置
 	Vector3 m_LengthFromStaPivToPla[4];	//ステージの基点からプレイヤーまでの距離
 
+	int m_stageSelectNum = 0;
+	int m_nowTime = 0;
+	int m_totalPlaNum = 0;
 
 	/// <summary>
 	/// 列挙型の宣言
@@ -66,4 +72,9 @@ private:
 
 public:
 	int GetWindDirection() { return m_windDirection; }
+
+	void SetNowTime(int nowTime) { m_nowTime = nowTime ; }
+	void SetSelectStageNum(int stageSelectNum) {m_stageSelectNum = stageSelectNum ; }
+	void SetTotalPlaNum(int totalPlaNum) { m_totalPlaNum = totalPlaNum; }
+	void SetPauseFlg(bool pauseFlg) { m_isPauseFlg = pauseFlg; }
 };

@@ -88,9 +88,12 @@ public:
 	}
 
 	//カラーを設定するインライン関数
-	void SetMulColor(const Vector4& mulColor)
+	void SetMulColor(const float& r, const float& g, const float& b, const float& a)
 	{
-		m_constantBufferCPU.mulColor = mulColor;
+		m_color.x = r;
+		m_color.y = g;
+		m_color.z = b;
+		m_color.w = a;
 	}
 
 private:
@@ -150,4 +153,7 @@ private:
 	Shader				m_vs;					//頂点シェーダー。
 	Shader				m_ps;					//ピクセルシェーダー。
 	bool				m_isInited = false;		//初期化済み？
+
+
+	Vector4 m_color = { 1.0f,1.0f,1.0f,1.0f };	//カラー変更用カラー
 };

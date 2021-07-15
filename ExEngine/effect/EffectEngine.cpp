@@ -44,6 +44,12 @@ EffectEngine::EffectEngine()
 	m_manager->SetMaterialLoader(m_renderer->CreateMaterialLoader());
 	m_manager->SetCurveLoader(Effekseer::MakeRefPtr<Effekseer::CurveLoader>());
 }
+
+EffectEngine::~EffectEngine()
+{
+
+}
+
 Effekseer::EffectRef EffectEngine::LoadEffect(const char16_t* filePath)
 {
 	std::u16string u16FilePath = filePath;

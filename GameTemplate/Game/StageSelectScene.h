@@ -1,32 +1,37 @@
 #pragma once
 class TitleScene;
+class GameScene;
+class Fade;
 
 
 class StageSelectScene : public IGameObject		// コピー禁止ポリシーを継承する。
 {
 private:
 
-	SkinModelRender* m_stage[7]{ nullptr };	//全ステージ分用意
-	SpriteRender* m_stageName[7]{ nullptr };	//全ステージ分用意
-	SpriteRender* m_stageDiscription[7]{ nullptr };	//説明背景画像＋全ステージ分用意
+	Light* m_light = nullptr;
+	Fade* m_fadeOut = nullptr;
+	Fade* m_fadeIn = nullptr;
+	SkinModelRender* m_stage[7] = { nullptr };	//全ステージ分用意
+	SpriteRender* m_stageName[7] = { nullptr };	//全ステージ分用意
+	SpriteRender* m_stageDiscription[7] = { nullptr };	//説明背景画像＋全ステージ分用意
 	SpriteRender* m_operatorDiscription[7] = { nullptr };	//操作説明文画像
-	SpriteRender* m_stageSelectSprite{ nullptr };
-	SkinModelRender* m_pla{ nullptr };	//プレイヤー
-	TitleScene* m_titleScene{ nullptr };
-	SpriteRender* m_titleSprite{ nullptr };
-	SpriteRender* m_Ahukidasi[6]{ nullptr };
-	SoundSource* m_carHorn{ nullptr };	//クラクションサウンド
-	SoundSource* m_decideSound{ nullptr };	//決定サウンド
-	SoundSource* m_onStageSound{ nullptr };	//ステージに乗ったときのサウンド
-	SoundSource* m_titleBGM{ nullptr };	//タイトルBGMサウンド
+	SpriteRender* m_stageSelectSprite = nullptr;
+	SkinModelRender* m_pla = nullptr;	//プレイヤー
+	TitleScene* m_titleScene = nullptr;
+	GameScene* m_gameScene = nullptr;
+	SpriteRender* m_titleSprite = nullptr;
+	SpriteRender* m_Ahukidasi[6] = { nullptr };
+	SoundSource* m_carHorn = nullptr;	//クラクションサウンド
+	SoundSource* m_decideSound = nullptr;	//決定サウンド
+	SoundSource* m_onStageSound = nullptr;	//ステージに乗ったときのサウンド
+	SoundSource* m_titleBGM = nullptr;	//タイトルBGMサウンド
 
 
 	/// <summary>
 	/// フラグ
 	/// </summary>
-	bool m_enableUpdateFlg{ true };
-	bool m_canOnStageSoundPlayFlg[4]{ false };
-
+	bool m_enableUpdateFlg = true;
+	bool m_canOnStageSoundPlayFlg[4] = { false };
 
 	int m_stageNum{ 1 };				//どのステージを選択しているかを格納
 	Vector3 m_stagePos[7];			//ステージの位置
@@ -40,11 +45,13 @@ private:
 	Vector3 m_diff[4];		//ステージとプレイヤーとの距離
 	Vector3 m_AhukidasiPos[6];
 
+	int m_totalPlaNum = 0;
+
 	Vector3 m_stageDiscriptionLetterPos = { -370.0f,-20.0f,0.0f };
 	bool m_isOperatorFlg[7] = { false };
 
 	//デバッグ用
-	SkinModelRender* m_skinModelRenderArrow{ nullptr };
+	SkinModelRender* m_skinModelRenderArrow = nullptr;
 	Vector3 m_arrowPos;
 	Quaternion m_arrowRot;
 	Vector3 m_arrowSize;
@@ -72,6 +79,14 @@ private:
 		DecideSound,
 		OnStageSound,
 		CarHornSound
+	};
+
+	//列挙型
+	enum enumState
+	{
+		StateIn,	//フェードイン
+		StateOut,	//フェードアウト
+		StateWait,	//待機
 	};
 
 
@@ -103,6 +118,13 @@ private:
 
 
 public:
+
+	/// <summary>
+	/// セッター
+	/// </summary>
+	//タイトルシーンで何人プレイヤーが追加されたかを持ってくる
+	void SetTotalPlaNum(int totalPlaNum) { m_totalPlaNum = totalPlaNum; }
+
 
 	/// <summary>
 	/// ゲッター

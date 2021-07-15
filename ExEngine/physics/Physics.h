@@ -32,7 +32,7 @@ public:
 	}
 	
 	void Update(float deltaTime);
-	void DebubDrawWorld(RenderContext& rc);
+	//void DebubDrawWorld(RenderContext& rc);
 	void Release();
 	/*!
 	* @brief	d—Í‚ğİ’èBB

@@ -35,6 +35,11 @@ public:
 	{
 		m_rigidBody.SetFriction(friction);
 	}
+	/// <summary>
+	/// 更新
+	/// </summary>
+	/// <param name="worldMatrix"></param>
+	void Update(Vector3& pos, Quaternion& rot);
 private:
 	MeshCollider m_meshCollider;		//メッシュコライダー。
 	RigidBody m_rigidBody;				//剛体。

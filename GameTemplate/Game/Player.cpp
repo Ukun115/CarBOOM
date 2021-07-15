@@ -34,12 +34,15 @@ namespace
 bool Player::Start()
 {
 	//インスタンスを探す。
-	m_titleScene = FindGO<TitleScene>(TITLESCENE_NAME);
 	m_gameScene = FindGO<GameScene>(GAMESCENE_NAME);
 	m_enemy = FindGO<Enemy>(ENEMY_NAME);
-	m_stageSelectScene = FindGO<StageSelectScene>(STAGESELECT_NAME);
 
 	m_stage = FindGO<Stage>("stage");
+
+	//１位のプレイヤーの上に置く王冠画像
+	m_crown = NewGO<SpriteRender>(PRIORITY_1, nullptr);
+	m_crown->Init("Assets/image/DDS/crowngold.dds", 30.0f, 30.0f);
+	m_crown->Deactivate();
 
 	//各プレイヤーの２段階溜め攻撃のUI
 	for (int plaNum = 0; plaNum < 4; plaNum++)
@@ -70,34 +73,15 @@ bool Player::Start()
 		//非表示
 		m_chargeUI2_2[plaNum]->Deactivate();
 
-
-
-		//溜め１段階目の「１」画像オブジェクト生成
-		m_DASpr1[plaNum] = NewGO<SpriteRender>(PRIORITY_1, nullptr);
-		m_DASpr1[plaNum]->Init("Assets/image/DDS/1.dds", 100.0f, 100.0f);
-		//非表示
-		m_DASpr1[plaNum]->Deactivate();
-		//溜め１段階目の「２」画像オブジェクト生成
-		m_DASpr2[plaNum] = NewGO<SpriteRender>(PRIORITY_1, nullptr);
-		m_DASpr2[plaNum]->SetPosition({ -500.0f,0.0f,0.0f });
-		m_DASpr2[plaNum]->Init("Assets/image/DDS/2.dds", 100.0f, 100.0f);
-		//非表示
-		m_DASpr2[plaNum]->Deactivate();
+		m_chargeUI1_1[plaNum]->SetRotation(Quaternion::Identity);
+		m_chargeUI1_2[plaNum]->SetRotation(Quaternion::Identity);
+		m_chargeUI2_1[plaNum]->SetRotation(Quaternion::Identity);
+		m_chargeUI2_1_1[plaNum]->SetRotation(Quaternion::Identity);
+		m_chargeUI2_2[plaNum]->SetRotation(Quaternion::Identity);
 	}
-	m_DASpr1[0]->SetPosition({ -500.0f,150.0f,0.0f });
-	m_DASpr1[1]->SetPosition({ 500.0f,150.0f,0.0f });
-	m_DASpr1[2]->SetPosition({ -500.0f,-150.0f,0.0f });
-	m_DASpr1[3]->SetPosition({ 500.0f,-150.0f,0.0f });
-	m_DASpr2[0]->SetPosition({ -500.0f,150.0f,0.0f });
-	m_DASpr2[1]->SetPosition({ 500.0f,150.0f,0.0f });
-	m_DASpr2[2]->SetPosition({ -500.0f,-150.0f,0.0f });
-	m_DASpr2[3]->SetPosition({ 500.0f,-150.0f,0.0f });
 
-	for (int plaNum = Player1; plaNum < MaxPlayerNum; plaNum++)
+	for (int plaNum = Player1; plaNum < m_totalPlaNum; plaNum++)
 	{
-		//登録されていたら実行
-		if (m_titleScene->GetPlaFlg(plaNum))
-		{
 			//プレイヤーモデルオブジェクト生成
 			m_player[plaNum] = NewGO<SkinModelRender>(PRIORITY_0, nullptr);
 
@@ -184,14 +168,12 @@ bool Player::Start()
 
 			//プレイヤー数を+1
 			m_plaNum++;
-		}
 	}
 	for (int plaNum = 0; plaNum < 5; plaNum++)
 	{
 		m_pushPlayer[plaNum] = 4;	//初期値は誰にもポイントが入らない4。
 	}
 
-	//Start関数のreturn文
 	return true;
 }
 
@@ -199,137 +181,187 @@ bool Player::Start()
 Player::~Player()
 {
 	//登録されているプレイヤー数ループ
-	for (int plaNum = Player1; plaNum < m_plaNum; plaNum++)
+	for (int plaNum = Player1; plaNum < m_totalPlaNum; plaNum++)
 	{
 		//プレイヤーを削除
 		DeleteGO(m_player[plaNum]);
 		//チャージ攻撃の際の段階文字表示の削除。
-		DeleteGO(m_DASpr1[plaNum]);
-		DeleteGO(m_DASpr2[plaNum]);
-		DeleteGO(m_DASpr2[plaNum]);
 		DeleteGO(m_chargeUI1_1[plaNum]);
 		DeleteGO(m_chargeUI1_2[plaNum]);
 		DeleteGO(m_chargeUI2_1[plaNum]);
 		DeleteGO(m_chargeUI2_1_1[plaNum]);
 		DeleteGO(m_chargeUI2_2[plaNum]);
 		//サウンドを削除
+		if(m_shootDownSound[plaNum] != nullptr)
 		DeleteGO(m_shootDownSound[plaNum]);
+		if (m_carHorn[plaNum] != nullptr)
 		DeleteGO(m_carHorn[plaNum]);
+		if (m_FallSound[plaNum] != nullptr)
 		DeleteGO(m_FallSound[plaNum]);
+		if (m_ChargeSound[plaNum] != nullptr)
 		DeleteGO(m_ChargeSound[plaNum]);
+		if (m_Dash1Sound[plaNum] != nullptr)
 		DeleteGO(m_Dash1Sound[plaNum]);
+		if (m_Dash2Sound[plaNum] != nullptr)
 		DeleteGO(m_Dash2Sound[plaNum]);
+		if (m_PlaAndPlaClashSound[plaNum] != nullptr)
 		DeleteGO(m_PlaAndPlaClashSound[plaNum]);
+		if (ChargeEndSound[plaNum] != nullptr)
+		DeleteGO(ChargeEndSound[plaNum]);
 	}
+	DeleteGO(m_crown);
 }
 
 
 void Player::Update()
 {
-	//登録されているプレイヤー数ループ
-	for (int plaNum = Player1; plaNum < m_plaNum; plaNum++)
+	//ポーズ中でないとき、
+	if (!m_isPauseFlg)
 	{
-		//クラクションを鳴らす
-		SoundPlayBack(CarHornSound,plaNum);
-		//落ちるときの落下効果音をならす
-		SoundPlayBack(FallSound,plaNum);
 
-		//制限時間が0秒になったらプレイヤーの処理を全て止める
-		if (m_gameScene->GetNowTime() != TIME0) {
+		//登録されているプレイヤー数ループ
+		for (int plaNum = Player1; plaNum < m_totalPlaNum; plaNum++)
+		{
+			//クラクションを鳴らす
+			SoundPlayBack(CarHornSound, plaNum);
+			//落ちるときの落下効果音をならす
+			SoundPlayBack(FallSound, plaNum);
 
-			//重力の影響を与える
-			Gravity(plaNum);
-
-			//ゲーム開始のカウントダウンが終わるまでプレイヤーの処理をすべて止める
-			if (!m_gameScene->GetCountDownFlg())
-			{
-				//回転処理
-				PlaTurn(plaNum);
-
-				//プレイヤーの状態
-				PlaNowState(plaNum);
-
-				//ベクトルを可視化させるデバック関数
-				//PlaMooveSpeedDebug(i);
-
-				if (m_charaCon[plaNum].IsOnGround()) {
-
-					if (!m_isBPushFlg[plaNum])
-					{
-						if (m_attackTimer[plaNum] == 0)
-						{
-							//移動処理
-							PlaMove(plaNum);
-						}
-						if (m_isCharge1Flg[plaNum])
-						{
-							if (m_isCharge1EffectSoundFlg[plaNum])
-							{
-								//チャージ１サウンド
-								SoundPlayBack(Dash2Sound, plaNum);
-
-								m_isCharge1EffectSoundFlg[plaNum] = false;
-							}
-
-							//チャージ攻撃1の処理
-							m_moveSpeed[plaNum] = m_plaDir[plaNum] * 8.0f;
-						}
-						if (m_isCharge2Flg[plaNum])
-						{
-							if (m_isCharge2EffectSoundFlg[plaNum])
-							{
-								//チャージ２サウンド
-								SoundPlayBack(Dash1Sound,plaNum);
-
-								//ジェットエフェクト再生
-								m_jetEffect[plaNum].Play();
-
-								m_isCharge2EffectSoundFlg[plaNum] = false;
-							}
-							//チャージ攻撃2処理
-							m_moveSpeed[plaNum] = m_plaDir[plaNum] * 20.0f;
-						}
-
-					}
-					if (m_isBPushFlg[plaNum])
-					{
-						//攻撃準備処理
-						PlaAttackBefore(plaNum);
-
-					}
-				}
-
-				//プレイヤーのリスポーン処理
-				PlaResporn(plaNum);
-				//プレイヤーの移動速度に補正を入れる
-				PlaSpeedCorrection(plaNum);
-
-				//プレイヤーが敵とぶつかったとき敵に押される処理
-				PlaAndEneClash(plaNum);
-
-				//プレイヤーに影響を及ぼす風力
-				WindPower(plaNum);
-
-				//プレイヤーとプレイヤーがぶつかったときの処理
-				PlaAndPlaClash(plaNum);
-
-				//キャラクターコントローラーを使った移動処理に変更。
-				m_pos[plaNum] = m_charaCon[plaNum].Execute(m_moveSpeed[plaNum], 1.0f);
-			}
-
-			if (m_gameScene->GetCountDownFlg())
-			{
-				//ベクトルを可視化させるデバック関数
-				//PlaMooveSpeedDebug(i);
+			//制限時間が0秒になったらプレイヤーの処理を全て止める
+			if (m_gameScene->GetNowTime() != TIME0) {
 
 				//重力の影響を与える
 				Gravity(plaNum);
 
-				//キャラクターコントローラーを使った移動処理に変更。
-				m_pos[plaNum] = m_charaCon[plaNum].Execute(m_moveSpeed[plaNum], 1.0f);
+				//ゲーム開始のカウントダウンが終わるまでプレイヤーの処理をすべて止める
+				if (!m_gameScene->GetCountDownFlg())
+				{
+					//回転処理
+					PlaTurn(plaNum);
+
+					//プレイヤーの状態
+					PlaNowState(plaNum);
+
+					//ベクトルを可視化させるデバック関数
+					//PlaMooveSpeedDebug(i);
+
+					if (m_charaCon[plaNum].IsOnGround()) {
+
+						if (!m_isBPushFlg[plaNum])
+						{
+							if (m_attackTimer[plaNum] == 0)
+							{
+								//移動処理
+								PlaMove(plaNum);
+							}
+							if (m_isCharge1Flg[plaNum] && m_isCharge1EffectSoundFlg[plaNum])
+							{
+								//チャージ１サウンド
+								SoundPlayBack(Dash2Sound, plaNum);
+
+								//チャージ攻撃1の処理
+								m_moveSpeed[plaNum] = m_plaDir[plaNum] * 8.0f;
+
+								m_isCharge1EffectSoundFlg[plaNum] = false;
+							}
+							if (m_isCharge2Flg[plaNum] && m_isCharge2EffectSoundFlg[plaNum])
+							{
+								//チャージ２サウンド
+								SoundPlayBack(Dash1Sound, plaNum);
+
+								//ジェットエフェクト再生
+								m_jetEffect[plaNum].Play();
+
+								//チャージ攻撃2処理
+								m_moveSpeed[plaNum] = m_plaDir[plaNum] * 20.0f;
+
+								m_isCharge2EffectSoundFlg[plaNum] = false;
+							}
+
+						}
+						else
+						{
+							//攻撃準備処理
+							PlaAttackBefore(plaNum);
+						}
+					}
+
+					//プレイヤーのリスポーン処理
+					PlaResporn(plaNum);
+					//プレイヤーの移動速度に補正を入れる
+					PlaSpeedCorrection(plaNum);
+
+					//プレイヤーが敵とぶつかったとき敵に押される処理
+					PlaAndEneClash(plaNum);
+
+					//プレイヤーに影響を及ぼす風力
+					WindPower(plaNum);
+
+					//プレイヤーとプレイヤーがぶつかったときの処理
+					PlaAndPlaClash(plaNum);
+
+					bool isHitGround;
+					Vector3 hitGroundNormal;
+					m_moveSpeed[plaNum] += m_fallSpeed[plaNum];
+					//キャラクターコントローラーを使った移動処理に変更。
+					m_pos[plaNum] = m_charaCon[plaNum].Execute(
+						m_moveSpeed[plaNum],
+						1.0f,
+						isHitGround,
+						hitGroundNormal
+					);
+
+
+					//if (isHitGround) {
+					//	//ぶつかった地面の法線が傾いていくほど落下速度を上げる。
+					//	Vector3 fallPower = { 0.0f,-10.0f, 0.0f };
+					//	Quaternion  qRot;
+					//	qRot.SetRotation(g_vec3Up, hitGroundNormal);
+					//	Vector3 vFallSpeedX, vFallSpeedZ;
+					//	vFallSpeedX = g_vec3AxisX;
+					//	vFallSpeedZ = g_vec3AxisZ;
+					//	qRot.Apply(vFallSpeedX);
+					//	qRot.Apply(vFallSpeedZ);
+					//	//落下速度をX軸に射影する
+					//	float t = vFallSpeedX.Dot(fallPower);
+					//	vFallSpeedX *= t;
+					//	//落下速度をZ軸に射影する。
+					//	t = vFallSpeedZ.Dot(fallPower);
+					//	vFallSpeedZ *= t * 0.1f;
+
+					//	//XZ軸の移動速度が求まったので、二つを合算。
+					//	m_fallSpeed[plaNum] = vFallSpeedX + vFallSpeedZ;
+					//}
+					//else {
+					//	//ぶつかっていない
+					//	m_fallSpeed[plaNum] = g_vec3Zero;
+					//}
+
+
+
+				}
+
+				if (m_gameScene->GetCountDownFlg())
+				{
+					//ベクトルを可視化させるデバック関数
+					//PlaMooveSpeedDebug(i);
+
+					//重力の影響を与える
+					Gravity(plaNum);
+
+					bool isHitGround;
+					Vector3 hitGroundNormal;
+					//キャラクターコントローラーを使った移動処理に変更。
+					m_pos[plaNum] = m_charaCon[plaNum].Execute(
+						m_moveSpeed[plaNum],
+						1.0f,
+						isHitGround,
+						hitGroundNormal
+					);
+				}
+				//登録されているプレイヤーの情報を更新
+				PlaDataUpdate(plaNum);
 			}
-			//登録されているプレイヤーの情報を更新
-			PlaDataUpdate(plaNum);
 		}
 	}
 }
@@ -369,8 +401,6 @@ void Player::PlaResporn(int plaNum)
 		m_isAttack2Flg[plaNum] = false;
 		m_isAttack1HanteiFlg[plaNum] = false;
 		m_isAttack2HanteiFlg[plaNum] = false;
-		m_DASpr1[plaNum]->Deactivate();
-		m_DASpr2[plaNum]->Deactivate();
 
 		m_chargeUI1_1[plaNum]->Deactivate();
 		m_chargeUI1_1[plaNum]->SetRotation(Quaternion::Identity);
@@ -383,16 +413,25 @@ void Player::PlaResporn(int plaNum)
 		m_chargeUI2_2[plaNum]->Deactivate();
 		m_chargeUI2_2[plaNum]->SetRotation(Quaternion::Identity);
 
-		m_charge1_1Rot[plaNum].x = 0;
-		m_charge1_2Rot[plaNum].x = 0;
+		m_chargeRotValue1[plaNum] = 0.0f;
+		m_chargeRotValue2[plaNum] = 0.0f;
 
 		//押したときのタイマー初期化
 		m_chargeTimer[plaNum] = 0;
 		m_attackTimer[plaNum] = 0;
 		m_attackHanteiTimer[plaNum] = 0;
 
+		bool isHitGround;
+		Vector3 hitGroundNormal;
 		//キャラクターコントローラーを使った移動処理に変更。
-		m_pos[plaNum] = m_charaCon[plaNum].Execute(m_moveSpeed[plaNum], 1.0f);
+		m_pos[plaNum] = m_charaCon[plaNum].Execute(
+			m_moveSpeed[plaNum],
+			1.0f,
+			isHitGround,
+			hitGroundNormal
+		);
+
+
 
 		//落下時最後に触れた敵にポイントを与えるm_pushPlayer = 最後に押してきた敵のナンバー
 		m_gameScene->GetPlayerAddScore(m_pushPlayer[plaNum], plaNum);
@@ -484,6 +523,53 @@ void Player::PlaDataUpdate(int plaNum)
 	m_jetEffect[plaNum].SetRotation(m_rot[plaNum]);
 	//更新
 	m_jetEffect[plaNum].Update();
+
+
+	//プレイヤーのワールド座標をスクリーン座標に変換
+	g_camera3D->CalcScreenPositionFromWorldPosition(plaScreenPos[plaNum],m_pos[plaNum]);
+
+
+	//(Vector2をVector3に変換)
+	m_plaChargeUIPos[plaNum].x = plaScreenPos[plaNum].x + 50.0f;
+	m_plaChargeUIPos[plaNum].y = plaScreenPos[plaNum].y;
+	//チャージ攻撃のUIにプレイヤーのスクリーン座標を代入
+	m_chargeUI1_1[plaNum]->SetPosition(m_plaChargeUIPos[plaNum]);
+	m_chargeUI1_2[plaNum]->SetPosition(m_plaChargeUIPos[plaNum]);
+	m_chargeUI2_1[plaNum]->SetPosition(m_plaChargeUIPos[plaNum]);
+	m_chargeUI2_1_1[plaNum]->SetPosition(m_plaChargeUIPos[plaNum]);
+	m_chargeUI2_2[plaNum]->SetPosition(m_plaChargeUIPos[plaNum]);
+
+
+	//１位のプレイヤーの頭上に王冠画像を置く
+	//(Vector2をVector3に変換)
+	if (m_gameScene->GetNumber1Player() == Player1)
+	{
+		m_crown->Activate();
+		m_crownPos.x = plaScreenPos[Player1].x;
+		m_crownPos.y = plaScreenPos[Player1].y + 40.0f;
+		m_crown->SetPosition(m_crownPos);
+	}
+	if (m_gameScene->GetNumber1Player() == Player2)
+	{
+		m_crown->Activate();
+		m_crownPos.x = plaScreenPos[Player2].x;
+		m_crownPos.y = plaScreenPos[Player2].y + 40.0f;
+		m_crown->SetPosition(m_crownPos);
+	}
+	if (m_gameScene->GetNumber1Player() == Player3)
+	{
+		m_crown->Activate();
+		m_crownPos.x = plaScreenPos[Player3].x;
+		m_crownPos.y = plaScreenPos[Player3].y + 40.0f;
+		m_crown->SetPosition(m_crownPos);
+	}
+	if (m_gameScene->GetNumber1Player() == Player4)
+	{
+		m_crown->Activate();
+		m_crownPos.x = plaScreenPos[Player4].x;
+		m_crownPos.y = plaScreenPos[Player4].y + 40.0f;
+		m_crown->SetPosition(m_crownPos);
+	}
 }
 
 
@@ -499,6 +585,7 @@ void Player::PlaNowState(int plaNum)
 			//チャージ音を鳴らす
 			SoundPlayBack(ChargeSound,plaNum);
 
+			m_chargeUI2_1_1[plaNum]->Deactivate();
 			m_chargeUI1_1[plaNum]->Activate();
 			m_chargeUI1_2[plaNum]->Activate();
 			m_chargeUI2_1[plaNum]->Activate();
@@ -516,14 +603,16 @@ void Player::PlaNowState(int plaNum)
 
 		if (m_chargeTimer[plaNum] >= 0 && m_chargeTimer[plaNum] < 30)
 		{
-			m_charge1_1Rot[plaNum].x += 0.01f;
+			m_chargeRotValue1[plaNum] -= 6.0f;
+			m_charge1_1Rot[plaNum].SetRotationDeg(Vector3::AxisZ, m_chargeRotValue1[plaNum]);
 			m_chargeUI1_1[plaNum]->SetRotation(m_charge1_1Rot[plaNum]);
 
 			m_isAttack0Flg[plaNum] = true;
 		}
 		if (m_chargeTimer[plaNum] >= 30 && m_chargeTimer[plaNum] < 90)
 		{
-			m_charge1_2Rot[plaNum].x += 0.01f;
+			m_chargeRotValue2[plaNum] -= 3.0f;
+			m_charge1_2Rot[plaNum].SetRotationDeg(Vector3::AxisZ, m_chargeRotValue2[plaNum]);
 			m_chargeUI1_2[plaNum]->SetRotation(m_charge1_2Rot[plaNum]);
 
 			m_isAttack0Flg[plaNum] = false;
@@ -532,9 +621,6 @@ void Player::PlaNowState(int plaNum)
 
 			//「1」表示
 			if (m_chargeTimer[plaNum] == 30) {
-				m_DASpr2[plaNum]->Deactivate();
-				m_DASpr1[plaNum]->Activate();
-
 				m_chargeUI1_1[plaNum]->Deactivate();
 				m_chargeUI2_1[plaNum]->Deactivate();
 				m_chargeUI2_1_1[plaNum]->Activate();
@@ -550,10 +636,10 @@ void Player::PlaNowState(int plaNum)
 
 			//「2」表示
 			if (m_chargeTimer[plaNum] == 90) {
-				m_DASpr1[plaNum]->Deactivate();
-				m_DASpr2[plaNum]->Activate();
-
 				m_chargeUI1_2[plaNum]->Deactivate();
+
+				//チャージ完了サウンド再生
+				SoundPlayBack(ChargeEnd,plaNum);
 			}
 		}
 	}
@@ -577,8 +663,8 @@ void Player::PlaNowState(int plaNum)
 		m_chargeUI2_2[plaNum]->Deactivate();
 		m_chargeUI2_2[plaNum]->SetRotation(Quaternion::Identity);
 
-		m_charge1_1Rot[plaNum].x = 0;
-		m_charge1_2Rot[plaNum].x = 0;
+		m_chargeRotValue1[plaNum] = 0.0f;
+		m_chargeRotValue2[plaNum] = 0.0f;
 
 		//攻撃フラグによって攻撃処理を変える
 
@@ -623,7 +709,6 @@ void Player::PlaNowState(int plaNum)
 				m_attackHanteiTimer[plaNum] = 0;
 				m_isCharge1HanteiFlg[plaNum] = false;
 				m_isAttack1HanteiFlg[plaNum] = false;
-				m_DASpr1[plaNum]->Deactivate();
 			}
 		}
 
@@ -663,7 +748,6 @@ void Player::PlaNowState(int plaNum)
 				m_attackHanteiTimer[plaNum] = 0;
 				m_isCharge2HanteiFlg[plaNum] = false;
 				m_isAttack2HanteiFlg[plaNum] = false;
-				m_DASpr2[plaNum]->Deactivate();
 
 				m_chargeUI1_1[plaNum]->Deactivate();
 				m_chargeUI1_1[plaNum]->SetRotation(Quaternion::Identity);
@@ -676,8 +760,8 @@ void Player::PlaNowState(int plaNum)
 				m_chargeUI2_2[plaNum]->Deactivate();
 				m_chargeUI2_2[plaNum]->SetRotation(Quaternion::Identity);
 
-				m_charge1_1Rot[plaNum].x = 0;
-				m_charge1_2Rot[plaNum].x = 0;
+				m_chargeRotValue1[plaNum] = 0.0f;
+				m_chargeRotValue2[plaNum] = 0.0f;
 			}
 		}
 	}
@@ -697,7 +781,7 @@ void Player::PlaMove(int plaNum)
 
 	///下のifはステージの処理なのでステージクラスに書く。
 	//アイスステージが選択されているとき、
-	if (m_stageSelectScene->GetStageNum() == STAGE3)
+	if (m_stageSelectNum == STAGE3)
 	{
 		//摩擦を減らす
 		m_friction[plaNum] /= 3.0f;
@@ -785,9 +869,6 @@ void Player::PlaAndEneClash(int plaNum)
 				m_ChargeSound[plaNum]->Stop();
 			}
 
-			m_DASpr1[plaNum]->Deactivate();
-			m_DASpr2[plaNum]->Deactivate();
-
 			m_chargeUI1_1[plaNum]->Deactivate();
 			m_chargeUI1_1[plaNum]->SetRotation(Quaternion::Identity);
 			m_chargeUI1_2[plaNum]->Deactivate();
@@ -799,8 +880,8 @@ void Player::PlaAndEneClash(int plaNum)
 			m_chargeUI2_2[plaNum]->Deactivate();
 			m_chargeUI2_2[plaNum]->SetRotation(Quaternion::Identity);
 
-			m_charge1_1Rot[plaNum].x = 0;
-			m_charge1_2Rot[plaNum].x = 0;
+			m_chargeRotValue1[plaNum] = 0.0f;
+			m_chargeRotValue2[plaNum] = 0.0f;
 
 			//押したときのタイマー初期化
 			m_chargeTimer[plaNum] = 0;
@@ -992,13 +1073,19 @@ void Player::SoundPlayBack(int soundNum, int plaNum)
 		m_PlaAndPlaClashSound[plaNum]->Play(false);	//偽でワンショット再生
 
 		break;
+	case ChargeEnd:
+		//プレイヤーとプレイヤーがぶつかったときのサウンドの初期化
+		ChargeEndSound[plaNum] = NewGO<SoundSource>(PRIORITY_0, nullptr);
+		ChargeEndSound[plaNum]->Init(L"Assets/sound/ChargeEnd.wav");
+		ChargeEndSound[plaNum]->SetVolume(0.1f);
+		ChargeEndSound[plaNum]->Play(false);	//偽でワンショット再生
 	}
 }
 
 
 void Player::WindPower(int planum)
 {
-	if (m_stageSelectScene->GetStageNum() == STAGE4) {
+	if (m_stageSelectNum == STAGE4) {
 
 		//現在の風の向きに応じた処理
 		switch (m_stage->GetWindDirection()) { //ここの()の中には、今どの向きの風なのかを保存している変数を入れる。

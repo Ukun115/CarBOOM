@@ -27,7 +27,6 @@ bool Light::Start()
 	//‹“_‚ÌˆÊ’u‚ğİ’è‚·‚é
 	m_ligData.eyePos = g_camera3D->GetPosition();
 
-	//StartŠÖ”‚Ìreturn•¶
 	return true;
 }
 

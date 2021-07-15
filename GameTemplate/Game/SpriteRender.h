@@ -39,5 +39,5 @@ public:
 	//‰æ‘œ‚ÌŠg‘å—¦‚ğİ’è‚·‚éŠÖ”
 	void SetScale(const Vector3& sca) { m_sca = sca; }
 	//‰æ‘œ‚ÌF‚ğİ’è‚·‚éŠÖ”
-	void SetMulColor(const Vector4& mulColor) { m_sprite.SetMulColor(mulColor); }
+	void SetMulColor(const float& r, const float& g, const float& b, const float& a) { m_sprite.SetMulColor(r, g, b, a); }
 };

@@ -1,5 +1,6 @@
 #pragma once
 class StageSelectScene;
+class Fade;
 
 
 class TitleScene : public IGameObject		// コピー禁止ポリシーを継承する。
@@ -9,6 +10,8 @@ private:
 	/// <summary>
 	/// クラスのポインタ
 	/// </summary>
+	Fade* m_fadeIn = nullptr;
+	Fade* m_fadeOut = nullptr;
 	SpriteRender* m_titleSprite{ nullptr };
 	SpriteRender* m_titleBaraBaraSprite[9]{ nullptr };
 	SpriteRender* m_titleNameSprite{ nullptr };
@@ -49,6 +52,8 @@ private:
 	Vector3 m_arrowSca;
 	Vector3 m_titleBaraBaraSpritePos[9];
 
+	int m_nextScene = 0;
+
 
 	/// <summary>
 	/// 列挙型の宣言
@@ -68,6 +73,20 @@ private:
 		TitleSceneBGM,		//タイトルシーンのBGM
 		DecideSound,		//決定音
 		EngineSound,		//エンジンサウンド
+	};
+
+	//列挙型
+	enum enumState
+	{
+		StateIn,	//フェードイン
+		StateOut,	//フェードアウト
+		StateWait,	//待機
+	};
+
+	enum enumNextScene
+	{
+		StateSelectScene,
+		GameEnd
 	};
 
 

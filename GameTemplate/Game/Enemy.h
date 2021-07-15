@@ -8,7 +8,6 @@ class StageSelectScene;
 class Enemy : public IGameObject	// コピー禁止ポリシーを継承する。
 {
 private:
-
 	/// <summary>
 	/// クラスのポインタ
 	/// </summary>
@@ -22,11 +21,11 @@ private:
 	SoundSource* m_FallSound[ENEMY_MAX_NUM] = { nullptr };	//落下サウンド
 	SoundSource* m_DashSound[ENEMY_MAX_NUM] = { nullptr };	//ダッシュサウンド
 	SoundSource* m_PlaAndEneClashSound[ENEMY_MAX_NUM] = { nullptr };	//衝突サウンド
+	Stage* m_stage = nullptr;
 
 
 	CharacterController m_charaCon[ENEMY_MAX_NUM];		//敵６体分のキャラクタコントローラークラスを作成
 	Effect m_shootDownEffect[ENEMY_MAX_NUM];		//落下したときの撃墜エフェクト
-	Stage* m_stage = nullptr;
 
 
 	/// <summary>
@@ -35,7 +34,7 @@ private:
 	bool m_canCtCountFlg[ENEMY_MAX_NUM] = { false };		//敵６体分のCTのフラグ
 	bool m_canFallSoundPlayFlg[ENEMY_MAX_NUM] = { false };			//落下音を落下中何回もならないようにするフラグ
 	bool m_canPlaAndEneClashSoundPlayFlg[ENEMY_MAX_NUM] = { false };
-
+	bool m_isPauseFlg = false;
 
 	/// <summary>
 	/// タイマー
@@ -49,7 +48,7 @@ private:
 	//敵情報
 	Vector3    m_enePos[ENEMY_MAX_NUM];			//敵６体分の敵の位置
 	Quaternion m_rot[ENEMY_MAX_NUM];			//敵６体分の敵の回転
-	float m_rotAngle[ENEMY_MAX_NUM]{ 0.0f };			//敵６体分の回転角度
+	float m_rotAngle[ENEMY_MAX_NUM] = { 0.0f };			//敵６体分の回転角度
 	Vector3 m_moveSpeed[ENEMY_MAX_NUM];			//敵６体分の移動速度
 	Vector3 m_samDir[ENEMY_MAX_NUM];			//敵とプレイヤーの向き
 	Vector3 m_friction[ENEMY_MAX_NUM];			//敵６体分の摩擦
@@ -58,15 +57,28 @@ private:
 	//↓特に途中で変更しない値なので、const使いたい。
 	Vector3 m_ranEneResPos[10];		//敵のリスポーン位置計10か所
 
-	float m_randEneResAngle[8]{ 0.0f };		//敵のリスポーン回転角度4か所
+	float m_randEneResAngle[8] = { 0.0f };		//敵のリスポーン回転角度4か所
 	Vector3 m_eneDir[6];			//向き
 	Vector3 m_diff;				//プレイヤーと敵との距離
-	unsigned int m_pushPlayer[ENEMY_MAX_NUM]{ 0 };
-	unsigned int m_randomDashSoundNum{ 0 };
-
+	unsigned int m_pushPlayer[ENEMY_MAX_NUM] = { 0 };
+	unsigned int m_randomDashSoundNum = 0;
+	Vector3 m_mostShortKyoriDir[PLAYER_MAX_NUM]; //プレイヤー4体分から敵の向き
+	Vector3 m_settenPos1[ENEMY_MAX_NUM];		 //敵と円の接点1の座標
+	Vector3 m_settenPos2[ENEMY_MAX_NUM];		 //敵と円の接点2の座標
+	Vector3 m_EneToSetten1[ENEMY_MAX_NUM];		 //敵から接点1の距離
+	Vector3 m_EneToSetten2[ENEMY_MAX_NUM];		 //敵から接点2の距離
+	Vector3 m_EneToSetten1Dir[ENEMY_MAX_NUM];    //敵から接点1の向き
+	Vector3 m_EneToSetten2Dir[ENEMY_MAX_NUM];	 //敵から接点2の向き
+	Vector3 m_centerKyori[ENEMY_MAX_NUM];		 //敵から中心の距離
+	float m_CenterToEneAngle[ENEMY_MAX_NUM]{ 0.0f };		//中心から敵のcos
+	float m_CenterToSettenAngle[ENEMY_MAX_NUM]{ 0.0f };		//中心から接点のcos
+	float m_PlayerToSetten1Angle[ENEMY_MAX_NUM]{ 0.0f };	//プレイヤーから接点1のcos
+	float m_PlayerToSetten2Angle[ENEMY_MAX_NUM]{ 0.0f };	//プレイヤーから接点2のcos
+	float m_hankei = 3600.0f;       //穴の半径の2乗
+	Vector3 m_center = { 0.0f,0.0f,0.0f };  //中心の座標
 
 	Vector3 m_enePoiLigPos;
-	int	m_poiLigNum{ 0 };
+	int	m_poiLigNum = 0;
 
 	int m_windDirection = 0;	//現在の風
 
@@ -77,6 +89,8 @@ private:
 	Quaternion m_arrowRot[ENEMY_MAX_NUM];
 	Vector3 m_arrowSize;
 
+	int m_totalPlaNum = 0;
+	int m_stageSelectNum = 0;
 
 	/// <summary>
 	/// 列挙型の宣言
@@ -114,7 +128,7 @@ private:
 		ResPos10,	//１０つ目
 	};
 
-	enum SoundNum
+	enum enumSoundNum
 	{
 		ShootDownSound,
 		FallSound,
@@ -122,7 +136,7 @@ private:
 		PlaAndEneClashSound
 	};
 
-	enum Wind
+	enum enumWind
 	{
 		Up,		//下から上への風
 		Down,	//上から下への風
@@ -169,4 +183,8 @@ public:
 	Vector3 GetEnemyPos(int eneNum) { return m_enePos[eneNum]; }
 	//敵の速度を取得する関数
 	Vector3 GetEnemySpeed(int eneNum) { return m_moveSpeed[eneNum]; }
+
+	void SetTotalPlaNum(int totalPlaNum) { m_totalPlaNum = totalPlaNum; }
+	void SetStageSelectNum(int stageSelectNum) { m_stageSelectNum = stageSelectNum; }
+	void SetPauseFlg(bool pauseFlg) { m_isPauseFlg = pauseFlg; }
 };
