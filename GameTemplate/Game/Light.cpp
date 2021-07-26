@@ -9,9 +9,9 @@
 namespace
 {
 	//ディレクションライト
-	const Vector3 DIRLIG_DIR = { 0.0f, -1.0f ,0.0f };	//方向(真上から真下に落ちる)
+	const Vector3 DIRLIG_DIR = { FLOAT_ZERO, -1.0f ,FLOAT_ZERO };	//方向(真上から真下に落ちる)
 	//スポットライト
-	const Vector3 SPOLIG_POS = { 0.0f, 50.0f ,0.0f };	//位置
+	const Vector3 SPOLIG_POS = { FLOAT_ZERO, 50.0f ,FLOAT_ZERO };	//位置
 	const Vector3 SPOLIG_DIR = { 1.0f, -1.0f ,-1.0f };	//方向
 	const float	  SPOLIG_RAN = 100.0f;					//影響範囲
 	const float	  SPOLIG_ANG = 75.0f;					//射出角度
@@ -56,7 +56,7 @@ void Light::SetDirectionLightData()
 
 
 //ポイントライトの座標,色,影響範囲を設定する関数
-void Light::SetPointLightData(Vector3 position,Vector3 color,float range,int lignum)
+void Light::SetPointLightData(const Vector3 position, const Vector3 color, const float range, const int lignum)
 {
 		//ポイントライトの座標を設定
 		m_ligData.poiLigData[lignum].ptPosition = position;

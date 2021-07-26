@@ -58,16 +58,16 @@ struct ligData {
 };
 
 
-class Light : public IGameObject		// コピー禁止ポリシーを継承する。
+class Light : public IGameObject		//TODO:コピー禁止ポリシーを継承する。
 {
 private:
 
 	ligData m_ligData;		//ライト構造体のデータを作成
 
 
-	bool Start()override;
-	~Light()override;
-	void Update()override;
+	bool Start()override final;
+	~Light()override final;
+	void Update()override final;
 
 
 public:
@@ -78,7 +78,7 @@ public:
 	//ディレクションライトの方向,色を設定する関数
 	void SetDirectionLightData();
 	//ポイントライトの座標,色,影響範囲を設定する関数
-	void SetPointLightData(Vector3 position,Vector3 color,float range,int lignum);
+	void SetPointLightData(const Vector3 position, const Vector3 color, const float range, const int lignum);
 	//スポットライトの座標,色,方向,射出範囲,射出角度を設定する関数
 	void SetSpotLightData();
 	//半球ライトの地面色（照り返しのライト）,天球色,地面の法線を設定する関数
@@ -89,7 +89,7 @@ public:
 	/// ゲッター
 	/// </summary>
 	//ライトのデータを取得する関数
-	ligData GetLight() {return m_ligData ; }
+	ligData GetLight()const {return m_ligData ; }
 	//ライトのデータのアドレスを取得する関数
 	ligData* GetLightAdoress() { return &m_ligData; }
 };

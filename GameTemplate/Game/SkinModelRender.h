@@ -3,7 +3,7 @@ class Model;
 class Light;
 
 
-class SkinModelRender : public IGameObject		// コピー禁止ポリシーを継承する。
+class SkinModelRender : public IGameObject		//TODO:コピー禁止ポリシーを継承する。
 {
 private:
 
@@ -22,8 +22,9 @@ private:
 	Vector3    m_sca = { Vector3::One };			//拡大率
 
 
-	bool Start()override;
-	~SkinModelRender()override;
+	bool Start()override final;
+	~SkinModelRender()override final;
+	void Update()override final;
 
 
 
@@ -34,29 +35,29 @@ public:
 	//描画関数
 	void Render(RenderContext& rc);
 
-	void Update()override;
 
 	/// <summary>
 	/// セッター
 	/// </summary>
 	//モデルの位置を設定する関数
-	void SetPosition(Vector3 pos) { m_pos = pos; }
+	void SetPosition(const Vector3 pos) { m_pos = pos; }
 	//モデルの回転を設定する関数
-	void SetRotation(Quaternion rot) { m_rot = rot; }
+	void SetRotation(const Quaternion rot) { m_rot = rot; }
 	//モデルの拡大率を設定する関数
-	void SetScale(Vector3 sca) { m_sca = sca; }
+	void SetScale(const Vector3 sca) { m_sca = sca; }
 
 
 	/// <summary>
 	/// ゲッター
 	/// </summary>
 	//モデルの位置を取得する関数
-	Vector3 GetPosition() { return m_pos; }
+	Vector3 GetPosition()const { return m_pos; }
 	/// <summary>
 	/// 回転クォータニオンを取得。
 	/// </summary>
 	/// <returns>回転クォータニオン</returns>
-	Quaternion GetRotation() { return m_rot; }
+	Quaternion GetRotation()const { return m_rot; }
+	//TODO: const参照にしたいのにしたら他でエラーが出る...
 	//モデルのアドレスを取得する関数
 	Model* GetModel() { return &m_model ; }
 };

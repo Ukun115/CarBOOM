@@ -6,7 +6,7 @@ bool Fade::Start()
 {
 	m_fadeSprite = NewGO<SpriteRender>(PRIORITY_10,nullptr);
 	m_fadeSprite->Init("Assets/image/DDS/White.dds", 1500.0f, 1500.0f);
-	m_fadeSprite->SetMulColor(0.0f,0.0f,0.0f,m_alphaValue);
+	m_fadeSprite->SetMulColor(FLOAT_ZERO, FLOAT_ZERO, FLOAT_ZERO,m_alphaValue);
 
 	return true;
 }
@@ -25,7 +25,7 @@ void Fade::Update()
 	case StateIn:
 		m_alphaValue -= 0.03f;
 		//完全にフェードインしたら削除
-		if (m_alphaValue <= 0.0f) {
+		if (m_alphaValue <= FLOAT_ZERO) {
 			DeleteGO(this);
 		}
 		break;

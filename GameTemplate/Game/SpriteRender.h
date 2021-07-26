@@ -16,15 +16,15 @@ private:
 							//ªÚ‚µ‚­‚ÍVectorƒNƒ‰ƒX‚ğ‚İ‚Ä‚Ë
 
 
-	bool Start()override;
-	~SpriteRender()override;
-	void Update()override;
+	bool Start()override final;
+	~SpriteRender()override final;
+	void Update()override final;
 
 
 public:
 
 	//‰æ‘œ‚ğ‰Šú‰»‚·‚éŠÖ”
-	void Init(const char* filepath, float width, float height, AlphaBlendMode mode = AlphaBlendMode::AlphaBlendMode_Trans);
+	void Init(const char* filepath, const float width, const float height, AlphaBlendMode mode = AlphaBlendMode::AlphaBlendMode_Trans);
 	//•`‰æŠÖ”
 	void Render(RenderContext& renderContext);
 

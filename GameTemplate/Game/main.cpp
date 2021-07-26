@@ -26,6 +26,12 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	SoundEngine::CreateInstance();
 	SoundEngine::GetInstance()->Init();
 
+
+	//サウンド管轄クラス
+	SoundPlayBack* m_soundPlayBack = nullptr;
+	m_soundPlayBack = NewGO<SoundPlayBack>(0, SOUNDPLAYBACK_NAME);
+
+
 	//ストップウォッチを生成する
 	StopWatch stopWatch;
 
@@ -35,7 +41,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	auto& renderContext = g_graphicsEngine->GetRenderContext();
 
 	//タイトルシーンオブジェクト生成
-	TitleScene* m_titleScene = NewGO<TitleScene>(PRIORITY_0, TITLESCENE_NAME);
+	TitleScene* m_titleScene = NewGO<TitleScene>(PRIORITY_0, nullptr);
 
 
 	// ここからゲームループ。

@@ -1,29 +1,54 @@
 #pragma once
+class TitleScene;
+class StageSelectScene;
 class GameScene;
 class Player;
-class StageSelectScene;
-class TitleScene;
 class Fade;
 
 
-class ResultScene : public IGameObject		// コピー禁止ポリシーを継承する。
+class ResultScene : public IGameObject		//TODO:コピー禁止ポリシーを継承する。
 {
 private:
 
 	/// <summary>
+	/// 列挙型の宣言
+	/// </summary>
+	enum enumSoundNum
+	{
+		ResultGingle,
+		GameBGM,
+		DecideSound,
+		TotalSoundNumm
+	};
+
+	enum enumState
+	{
+		StateIn,	//フェードイン
+		StateOut,	//フェードアウト
+		StateWait,	//待機
+	};
+
+	enum enumPlayer
+	{
+		Player1,
+		Player2,
+		Player3,
+		Player4
+	};
+
+
+	/// <summary>
 	/// クラスのポインタ
 	/// </summary>
-	GameScene* m_gameScene = nullptr;
 	Fade* m_fadeOut = nullptr;
-	StageSelectScene* m_stageSelectScene = nullptr;
-	Player* m_player = nullptr;
 	TitleScene* m_titleScene = nullptr;
+	StageSelectScene* m_stageSelectScene = nullptr;
+	GameScene* m_gameScene = nullptr;
+	Player* m_player = nullptr;
 	SpriteRender* m_resultSprite = nullptr;
 	SpriteRender* m_plaNum[4] = { nullptr };			//プレイヤー4人分用意
 	SpriteRender* m_rankingSprite[4] = { nullptr };	//プレイヤー4人分用意
-	SoundSource* m_resultGingle = nullptr;
-	SoundSource* m_gameBGM = nullptr;	//ゲーム中のBGMサウンド
-	SoundSource* m_decideSound = nullptr;	//決定サウンド
+	SoundPlayBack* m_soundPlayBack = nullptr;
 
 
 	/// <summary>
@@ -42,16 +67,16 @@ private:
 	/// <summary>
 	/// タイマー
 	/// </summary>
-	unsigned int m_exitTimer = 0;
-	int m_plaMoveDelayTimer = 0;
-	int m_verticalMoveTimer = 0;
+	unsigned int m_exitTimer = INT_ZERO;
+	int m_plaMoveDelayTimer = INT_ZERO;
+	int m_verticalMoveTimer = INT_ZERO;
 
 
-	unsigned int m_plaScore[4] = { 0 };		//プレイヤー4人分のスコアを入れる配列
-	int m_totalPlaNum = 0;
+	unsigned int m_plaScore[4] = { INT_ZERO };		//プレイヤー4人分のスコアを入れる配列
+	int m_totalPlaNum = INT_ZERO;
 
-	unsigned int m_select = 0;
-	float m_moveSpeed = 0.0f;
+	unsigned int m_select = INT_ZERO;
+	float m_moveSpeed = FLOAT_ZERO;
 
 	Vector3 m_number1Pos = { 900.0f,50.0f,0.0f };		//１位プレイヤーの表示位置
 	Vector3 m_number2Pos = { 900.0f,-50.0f,0.0f };		//２位プレイヤーの表示位置
@@ -59,28 +84,9 @@ private:
 	Vector3 m_number4Pos = { 900.0f,-250.0f,0.0f };	//４位プレイヤーの表示位置
 
 
-	/// <summary>
-	/// 列挙型の宣言
-	/// </summary>
-	enum SoundNum
-	{
-		ResultGingle,
-		GameBGM,
-		DecideSound,
-	};
-
-	//列挙型
-	enum enumState
-	{
-		StateIn,	//フェードイン
-		StateOut,	//フェードアウト
-		StateWait,	//待機
-	};
-
-
-	bool Start()override;
-	~ResultScene()override;
-	void Update()override;
+	bool Start()override final;
+	~ResultScene()override final;
+	void Update()override final;
 
 
 	//順位によってソートしプレイヤー名の画像を並び替える関数
@@ -90,12 +96,14 @@ private:
 	//プレイヤーが画面外（右側）からスライドしてくる処理関数
 	void SlidePlayerName();
 	//画像が縦移動する関数
-	void VerticalMove(int width, float speed);
-	//サウンドを一括にまとめる関数
-	void SoundPlayBack(int soundNum);
+	void VerticalMove(const int width, const float speed);
+	//順位の画像の初期化をまとめている関数
+	void InitRankingImage();
+	//PLAYER画像の初期化をまとめている関数
+	void InitPlayerImage();
 
 
 public:
-	void SetTotalPlayerNum(int totalPlaNum) { m_totalPlaNum = totalPlaNum; }
+	void SetTotalPlayerNum(const int totalPlaNum) { m_totalPlaNum = totalPlaNum; }
 };
 

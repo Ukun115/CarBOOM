@@ -4,13 +4,13 @@
 
 
 #include "stdafx.h"
-#include "GameScene.h"
-#include "ResultScene.h"
-#include "Enemy.h"
-#include "Player.h"
-#include "Stage.h"
 #include "TitleScene.h"
 #include "StageSelectScene.h"
+#include "GameScene.h"
+#include "ResultScene.h"
+#include "Stage.h"
+#include "Enemy.h"
+#include "Player.h"
 #include "Fade.h"
 
 
@@ -52,6 +52,8 @@ namespace
 
 bool GameScene::Start()
 {
+	m_soundPlayBack = FindGO<SoundPlayBack>(SOUNDPLAYBACK_NAME);
+
 	//ライトオブジェクト生成
 	m_light = NewGO<Light>(PRIORITY_0, LIGHT_NAME);
 	//ディレクションライトをセット
@@ -60,18 +62,20 @@ bool GameScene::Start()
 	m_light->SetHemiSphereLightData();
 
 	//フェードイン
-	m_fadeIn = NewGO<Fade>(0, "fade");
-	m_fadeIn->SetState(StateIn);
-	m_fadeIn->SetAlphaValue(1.0f);
+	m_fade[FadeIn] = NewGO<Fade>(0, nullptr);
+	m_fade[FadeIn]->SetState(StateIn);
+	m_fade[FadeIn]->SetAlphaValue(1.0f);
 
 	//敵オブジェクト生成
 	m_enemy = NewGO<Enemy>(PRIORITY_0, ENEMY_NAME);
 	m_enemy->SetTotalPlaNum(m_totalPlaNum);
 	m_enemy->SetStageSelectNum(m_stageSelecttNum);
+
 	//プレイヤーオブジェクト生成
 	m_player = NewGO<Player>(PRIORITY_0, PLAYER_NAME);
 	m_player->SetTotalPlaNum(m_totalPlaNum);
 	m_player->SetStageSelectNum(m_stageSelecttNum);
+
 	//ステージオブジェクト生成
 	m_stage = NewGO<Stage>(PRIORITY_0, STAGE_NAME);
 	m_stage->SetSelectStageNum(m_stageSelecttNum);
@@ -85,152 +89,18 @@ bool GameScene::Start()
 	m_crownSprite->SetScale({ CROWN_SCA });									//拡大率を設定
 	m_crownSprite->Deactivate();					//はじめは誰も一位じゃないので隠しておく。
 
+	//ポーズ画面の画像の初期化をまとめている関数
+	InitPauseSceneImage();
 
-	m_pauseSprite = NewGO<SpriteRender>(PRIORITY_6, nullptr);
-	//ポーズ画像を初期化
-	m_pauseSprite->Init("Assets/image/DDS/Pause.dds", 600.0f, 300.0f);
-	m_pauseSprite->Deactivate();
+	m_gameBackScreen = NewGO<SpriteRender>(PRIORITY_0, nullptr);
+	m_gameBackScreen->Init("Assets/image/DDS/BackScreenImage.dds", 1600.0f, 800.0f);
 
-	m_grayBack = NewGO<SpriteRender>(PRIORITY_5, nullptr);
-	//ポーズ中灰色にする画像を初期化
-	m_grayBack->Init("Assets/image/DDS/GrayBack.dds", 1500.0f, 1500.0f);
-	m_grayBack->Deactivate();
-
-	//制限時間フォントオブジェクト生成（一番上のレイヤーに置きたいのでプライオリティーは最高値）
-	m_timeLimit = NewGO<FontRender>(PRIORITY_1,nullptr);
-	//各プレイヤーのポイント画像の位置を設定
-	m_plaScorePos[0] = { -520.0f, 255.0f };
-	m_plaScorePos[1] = { 450.0f, 255.0f };
-	m_plaScorePos[2] = { -520.0f,-205.0f };
-	m_plaScorePos[3] = { 450.0f,-205.0f };
-
-	for (int plaNum = 0; plaNum < 4; plaNum++) {
-		//プレイヤーごとのptフォントオブジェクト生成
-		m_ScoreFontRender[plaNum] = NewGO<FontRender>(PRIORITY_1, nullptr);
-		//初期化
-		m_ScoreFontRender[plaNum]->Init
-		(
-			L"pt",				//テキスト
-			GetScorePos(plaNum),		//位置
-			ScoreColor(plaNum),		//色
-			FONT_ROT,			//傾き
-			PT_SCA,				//拡大率
-			FONT_PIV			//基点
-		);
-		//プレイヤーごとのポイントフォントオブジェクト生成
-		m_TextScoreFontRender[plaNum] = NewGO<FontRender>(PRIORITY_1, nullptr);
-		//初期化
-		m_TextScoreFontRender[plaNum]->Init
-		(
-			L"",					//テキスト
-			m_plaScorePos[plaNum],		//位置
-			ScoreColor(plaNum),			//色
-			FONT_ROT,				//傾き
-			FONT_SCA,				//拡大率
-			FONT_PIV				//基点
-		);
-
-
-		//文字の境界線表示
-		m_ScoreFontRender[plaNum]->SetShadowParam(true, 3.0f, Vector4::Black);
-		//文字の境界線表示
-		m_TextScoreFontRender[plaNum]->SetShadowParam(true, 3.0f, Vector4::Black);
-	}
-	//登録されていないプレイヤーのスコアはグレー表示にする
-	for (int plaNum = m_totalPlaNum; plaNum < 4; plaNum++)
-	{
-		m_ScoreFontRender[plaNum]->SetColor(GRAY);
-		m_TextScoreFontRender[plaNum]->SetColor(GRAY);
-	}
-	//制限時間フォントの初期化
-	m_timeLimit->Init
-	(
-		L"",			//テキスト
-		TIMELIMIT_POS,	//位置
-		TIMELIMIT_COL,	//色
-		FONT_ROT,		//傾き
-		FONT_SCA,		//拡大率
-		FONT_PIV		//基点
-	);
-	//文字の境界線表示
-	m_timeLimit->SetShadowParam(true, 3.0f, Vector4::Black);
-
-	m_syutyusen = NewGO<SpriteRender>(PRIORITY_0, nullptr);
-	m_syutyusen->Init("Assets/image/DDS/BackScreenImage.dds", 1600.0f, 800.0f);
-
-	for (int plaNum = Player1; plaNum < MaxPlayerNum; plaNum++) {
-		//2P～4Pの非アクティブ画像オブジェクト生成
-		m_PlaNameFont[plaNum] = NewGO<FontRender>(1);		//1P
-		if (plaNum == Player1)
-		{
-			m_PlaNameFont[plaNum]->Init(
-				L"PLAYER1",					//テキスト
-				PLANAME1POS,		//位置
-				GRAY,		//色
-				FONT_ROT,			//傾き
-				1.0f,		//拡大率
-				FONT_PIV			//基点
-			);
-		};
-		//2P
-		if (plaNum == Player2)
-		{
-			m_PlaNameFont[plaNum]->Init(
-				L"PLAYER2",					//テキスト
-				PLANAME2POS,		//位置
-				GRAY,		//色
-				FONT_ROT,			//傾き
-				1.0f,		//拡大率
-				FONT_PIV			//基点
-			);
-		}
-		//3P
-		if (plaNum == Player3)
-		{
-			m_PlaNameFont[plaNum]->Init(
-				L"PLAYER3",					//テキスト
-				PLANAME3POS,		//位置
-				GRAY,		//色
-				FONT_ROT,			//傾き
-				1.0f,		//拡大率
-				FONT_PIV			//基点
-			);
-		}
-		//4P
-		if (plaNum == Player4)
-		{
-			m_PlaNameFont[plaNum]->Init(
-				L"PLAYER4",					//テキスト
-				PLANAME4POS,		//位置
-				GRAY,		//色
-				FONT_ROT,			//傾き
-				1.0f,		//拡大率
-				FONT_PIV			//基点
-			);
-		}
-		//文字の境界線表示
-		m_PlaNameFont[plaNum]->SetShadowParam(true, 3.0f, Vector4::Black);
-
-		if (m_totalPlaNum > plaNum)
-		{
-			if (plaNum == Player1)
-			{
-				m_PlaNameFont[plaNum]->SetColor(RED);
-			}
-			if (plaNum == Player2)
-			{
-				m_PlaNameFont[plaNum]->SetColor(BLUE);
-			}
-			if (plaNum == Player3)
-			{
-				m_PlaNameFont[plaNum]->SetColor(YELLOW);
-			}
-			if (plaNum == Player4)
-			{
-				m_PlaNameFont[plaNum]->SetColor(GREEN);
-			}
-		}
-	}
+	//制限時間フォントの初期化をまとめている関数
+	InitTimeLimitFont();
+	//PLAYERフォントの初期化をまとめている関数
+	InitPlayerFont();
+	//プレイヤーのポイントフォントの初期化をまとめている関数
+	InitPlayerPtFont();
 
 	return true;
 }
@@ -240,14 +110,14 @@ GameScene::~GameScene()
 {
 	DeleteGO(m_light);
 
-	DeleteGO(m_fadeIn);
-	if(m_fadeOut != nullptr)
-	DeleteGO(m_fadeOut);
+	DeleteGO(m_fade[FadeIn]);
+	if(m_fade[FadeOut] != nullptr)
+	DeleteGO(m_fade[FadeOut]);
 
 	//ステージを削除。
 	DeleteGO(m_stage);
 
-	for (int i = 0; i < 4; i++)
+	for (int i = Player1; i < TotalPlaNum; i++)
 	{
 		//カウントダウンスプライトを削除
 		DeleteGO(m_sprite[i]);
@@ -267,21 +137,7 @@ GameScene::~GameScene()
 	//王冠画像を削除
 	DeleteGO(m_crownSprite);
 	//ゲーム画面背景を削除
-	DeleteGO(m_syutyusen);
-
-	//サウンドを削除
-	if(m_gameStartGingle != nullptr)
-	DeleteGO(m_gameStartGingle);
-	if (m_gameBGM != nullptr)
-	DeleteGO(m_gameBGM);
-	if (m_countDown != nullptr)
-	DeleteGO(m_countDown);
-	if (m_whistleSound != nullptr)
-	DeleteGO(m_whistleSound);
-	if(m_pauseSound != nullptr)
-	DeleteGO(m_pauseSound);
-	if (m_decideSound != nullptr)
-		DeleteGO(m_decideSound);
+	DeleteGO(m_gameBackScreen);
 
 	DeleteGO(m_resultScene);
 
@@ -292,81 +148,45 @@ GameScene::~GameScene()
 
 void GameScene::Update()
 {
-	//ポーズ中でないとき、
-	if (!m_isPauseFlg)
-	{
-		//制限時間のカウント&描画処理
-		TimeLimit();
-		m_stage->SetNowTime(m_countTime);
-
-		//プレイヤーのスコア描画関数
-		PlaScoreDraw();
-
-		//現在のスコア１位を判定し、王冠画像を移動
-		NowCrown();
-
-		//制限時間が0秒になったら、
-		if (m_countTime == 0)
-		{
-			//リザルト画面に遷移する
-			ResultSceneTransition();
-		}
-
-		//ゲームシーンに遷移したら、
-		if (m_isFinishCountDownFlg)
-		{
-			//カウントダウン処理を開始
-			CountDown();
-		}
-
-		//リザルトシーンクラスが削除されたら同じくゲームシーンも削除する
-		if (m_deleteFlg)
-		{
-			DeleteGO(this);
-		}
-	}
 	//ポーズ機能
-	for (int i = 0; i < m_totalPlaNum; i++)
+	PauseMenue();
+
+	//ポーズ中のときは、return以降の処理をしない。
+	if (m_isPauseFlg)
 	{
-		//セレクトボタンでオンオフ
-		if (g_pad[i]->IsTrigger(enButtonSelect))
-		{
-			//ポーズ画面を開く音
-			SoundPlayBack(PauseSound);
+		return;
+	}
+	//制限時間のカウント&描画処理
+	TimeLimit();
+	m_stage->SetNowTime(m_countTime);
 
-			//ポーズ中じゃないとき、
-			if (!m_isPauseFlg)
-			{
-				//ポーズにする
-				m_pauseSprite->Activate();
-				m_grayBack->Activate();
-				if (m_gameBGM != nullptr)
-				{
-					m_gameBGM->SetVolume(0.0f);
-				}
+	//プレイヤーのスコア描画関数
+	PlaScoreDraw();
 
-				m_isPauseFlg = true;
-			}
-			//ポーズ中の時、
-			else
-			{
-				m_pauseSprite->Deactivate();
-				m_grayBack->Deactivate();
-				if (m_gameBGM != nullptr)
-				{
-					m_gameBGM->SetVolume(0.5f);
-				}
+	//現在のスコア１位を判定し、王冠画像を移動
+	NowCrown();
 
-				//ポーズを外す
-				m_isPauseFlg = false;
-			}
-			m_player->SetPauseFlg(m_isPauseFlg);
-			m_enemy->SetPauseFlg(m_isPauseFlg);
-			m_stage->SetPauseFlg(m_isPauseFlg);
-		}
+	//制限時間が0秒になったら、
+	if (m_countTime == INT_ZERO)
+	{
+		//リザルト画面に遷移する
+		ResultSceneTransition();
 	}
 
-	if (m_fadeOut == nullptr && m_isPauseFlg)
+	//ゲームシーンに遷移したら、
+	if (m_isFinishCountDownFlg)
+	{
+		//カウントダウン処理を開始
+		CountDown();
+	}
+
+	//リザルトシーンクラスが削除されたら同じくゲームシーンも削除する
+	if (m_deleteFlg)
+	{
+		DeleteGO(this);
+	}
+
+	if (m_fade[FadeOut] == nullptr && m_isPauseFlg)
 	{
 		//ステージ選択画面に戻る
 		for (int plaNum = Player1; plaNum < m_totalPlaNum; plaNum++)
@@ -375,20 +195,20 @@ void GameScene::Update()
 			if (g_pad[plaNum]->IsTrigger(enButtonStart))
 			{
 				//決定サウンド
-				SoundPlayBack(DecideSound);
+				m_soundPlayBack->GameSceneSoundPlayBack(DecideSound);
 				//フェードアウト
-				m_fadeOut = NewGO<Fade>(0, "fade");
-				m_fadeOut->SetState(StateOut);
-				m_fadeOut->SetAlphaValue(0.0f);
+				m_fade[FadeOut] = NewGO<Fade>(0, nullptr);
+				m_fade[FadeOut]->SetState(StateOut);
+				m_fade[FadeOut]->SetAlphaValue(FLOAT_ZERO);
 
 			}
 		}
 	}
 
-	if (m_fadeOut != nullptr && m_fadeOut->GetNowState() == StateWait)
+	if (m_fade[FadeOut] != nullptr && m_fade[FadeOut]->GetNowState() == StateWait)
 	{
-		//ステージ選択画面に戻る
-		m_stageSelectScene = NewGO<StageSelectScene>(0, STAGESELECT_NAME);
+		//ステージ選択画面に戻るs
+		m_stageSelectScene = NewGO<StageSelectScene>(0, nullptr);
 		m_stageSelectScene->SetTotalPlaNum(m_totalPlaNum);
 
 		DeleteGO(this);
@@ -406,13 +226,13 @@ void GameScene::CountDown()
 	case 0:
 
 		//ゲームスタートジングルサウンド
-		SoundPlayBack(GameStartGingle);
+		m_soundPlayBack->GameSceneSoundPlayBack(GameStartGingle);
 
 		break;
 
 	case 300:
 		//カウントダウンサウンド
-		SoundPlayBack(CountDownSound);
+		m_soundPlayBack->GameSceneSoundPlayBack(CountDownSound);
 
 		//「３」画像オブジェクト生成
 		m_sprite[ARRAY_NUM_0] = NewGO<SpriteRender>(PRIORITY_1, nullptr);
@@ -468,7 +288,7 @@ void GameScene::CountDown()
 		DeleteGO(m_sprite[ARRAY_NUM_3]);
 
 		//ゲーム中のBGMサウンド
-		SoundPlayBack(GameBGM);
+		m_soundPlayBack->GameSceneSoundPlayBack(GameBGM);
 
 		//カウントダウンの処理を抜ける。
 		m_isFinishCountDownFlg = false;
@@ -511,7 +331,7 @@ void GameScene::TimeLimit()
 //プレイヤーのスコア描画関数
 void GameScene::PlaScoreDraw()
 {
-	for (int plaNum = 0; plaNum < 4; plaNum++) {
+	for (int plaNum = INT_ZERO; plaNum < TotalPlaNum; plaNum++) {
 
 		//表示位置更新
 		SetScoreTextPos(plaNum);
@@ -524,7 +344,7 @@ void GameScene::PlaScoreDraw()
 
 
 //プレイヤーごとの「pt」文字の位置を指定する関数
-Vector2 GameScene::GetScorePos(int plaNum)
+Vector2 GameScene::GetScorePos(const int plaNum)
 {
 	switch (plaNum)
 	{
@@ -545,7 +365,7 @@ Vector2 GameScene::GetScorePos(int plaNum)
 
 
 //プレイヤーごとのスコアの位置を指定する関数
-void GameScene::SetScoreTextPos(int plaNum)
+void GameScene::SetScoreTextPos(const int plaNum)
 {
 	//スコアが1桁のとき、
 	m_plaScorePos[0] = { -520.0f, 255.0f };
@@ -620,7 +440,7 @@ void GameScene::SetScoreTextPos(int plaNum)
 
 
 //プレイヤーごとのスコアの色を指定する関数
-Vector4 GameScene::ScoreColor(int plaNum)
+Vector4 GameScene::ScoreColor(const int plaNum)
 {
 	switch (plaNum)
 	{
@@ -642,7 +462,7 @@ Vector4 GameScene::ScoreColor(int plaNum)
 
 /*プレイヤーの得点変動処理関数
   (plaNum1は落としたプレイヤー、plaNum2は落とされたプレイヤー)*/
-void GameScene::GetPlayerAddScore(int plaNum1,int plaNum2)
+void GameScene::GetPlayerAddScore(const int plaNum1, const int plaNum2)
 {
 	//4のとき何もしない
 	if (plaNum1 == 4)
@@ -659,11 +479,6 @@ void GameScene::GetPlayerAddScore(int plaNum1,int plaNum2)
 		//これを入れることで１位が狙われやすい仕様にしている。
 		m_plaScore[plaNum2] -= 20;
 		m_plaScore[plaNum1] += 20;
-		//点数が0以下にならないように補正
-		if (m_plaScore[plaNum2] < 0)
-		{
-			m_plaScore[plaNum2] = 0;
-		}
 	}
 	//敵を落としたとき、
 	if (plaNum2 == 5)
@@ -671,6 +486,12 @@ void GameScene::GetPlayerAddScore(int plaNum1,int plaNum2)
 		//敵を落としたときptを10ptだけ取るように調整
 		//すでに+30ptしているからマイナス20している。
 		m_plaScore[plaNum1] -= 20;
+	}
+
+	//点数が0以下にならないように補正
+	if (m_plaScore[plaNum2] < 0)
+	{
+		m_plaScore[plaNum2] = INT_ZERO;
 	}
 }
 
@@ -695,21 +516,20 @@ void GameScene::NowCrown()
 	}
 
 	//王冠の位置を次のプレイヤーの位置に変更
-	if (m_nowNumOnePla == 0)
+	switch (m_nowNumOnePla)
 	{
+	case Player1:
 		m_crownSprite->SetPosition({ PLAYER1_CROWN_POS });
-	}
-	if (m_nowNumOnePla == 1)
-	{
+		break;
+	case Player2:
 		m_crownSprite->SetPosition({ PLAYER2_CROWN_POS });
-	}
-	if (m_nowNumOnePla == 2)
-	{
+		break;
+	case Player3:
 		m_crownSprite->SetPosition({ PLAYER3_CROWN_POS });
-	}
-	if (m_nowNumOnePla == 3)
-	{
+		break;
+	case Player4:
 		m_crownSprite->SetPosition({ PLAYER4_CROWN_POS });
+		break;
 	}
 }
 
@@ -723,7 +543,7 @@ void GameScene::ResultSceneTransition()
 	if (m_resultsenniTimer == 1)
 	{
 		//ホイッスルサウンド
-		SoundPlayBack(WhistleSound);
+		m_soundPlayBack->GameSceneSoundPlayBack(WhistleSound);
 
 		m_pauseOkFlg = false;
 	}
@@ -735,68 +555,219 @@ void GameScene::ResultSceneTransition()
 		m_resultScene->SetTotalPlayerNum(m_totalPlaNum);
 		m_grayBack->Activate();
 		//ゲームBGMをけす
-		m_gameBGM->SetVolume(0.0f);
+		m_soundPlayBack->m_gameSceneSound[GameBGM]->SetVolume(FLOAT_ZERO);
+		//ゲームシーンに使われているサウンドを破棄
+		m_soundPlayBack->GameSceneDeleteGO();
 	}
 }
 
 
-//サウンドを一括にまとめる関数
-void GameScene::SoundPlayBack(int soundNum)
+//ポーズ機能
+void GameScene::PauseMenue()
 {
-	switch (soundNum)
+	//ポーズ機能
+	for (int i = INT_ZERO; i < m_totalPlaNum; i++)
 	{
-	case GameStartGingle:
-		//ゲームスタートジングルサウンドの初期化
-		m_gameStartGingle = NewGO<SoundSource>(PRIORITY_0, nullptr);
-		m_gameStartGingle->Init(L"Assets/sound/GameStartGingle.wav");
-		m_gameStartGingle->SetVolume(1.0f);
-		m_gameStartGingle->Play(false);	//偽でワンショット再生
+		//セレクトボタンが押されたときのみreturn以降を処理する
+		if (!g_pad[i]->IsTrigger(enButtonSelect))
+		{
+			return;
+		}
+		//ポーズ画面を開く音
+		m_soundPlayBack->GameSceneSoundPlayBack(PauseSound);
 
-		break;
+		//ポーズ中じゃないとき、
+		if (!m_isPauseFlg)
+		{
+			//ポーズにする
+			m_pauseSprite->Activate();
+			m_grayBack->Activate();
+			if (m_soundPlayBack->m_gameSceneSound[GameBGM] != nullptr)
+			{
+				m_soundPlayBack->m_gameSceneSound[GameBGM]->SetVolume(FLOAT_ZERO);
+			}
 
-	case CountDownSound:
-		//カウントダウンサウンドの初期化
-		m_countDown = NewGO<SoundSource>(PRIORITY_0, nullptr);
-		m_countDown->Init(L"Assets/sound/CountDown.wav");
-		m_countDown->SetVolume(1.0f);
-		m_countDown->Play(false);	//真でワンショット再生
+			m_isPauseFlg = true;
+		}
+		//ポーズ中の時、
+		else
+		{
+			m_pauseSprite->Deactivate();
+			m_grayBack->Deactivate();
+			if (m_soundPlayBack->m_gameSceneSound[GameBGM] != nullptr)
+			{
+				m_soundPlayBack->m_gameSceneSound[GameBGM]->SetVolume(0.5f);
+			}
 
-		break;
-
-	case GameBGM:
-		//ゲーム中のBGMサウンドの初期化
-		m_gameBGM = NewGO<SoundSource>(PRIORITY_0, nullptr);
-		m_gameBGM->Init(L"Assets/sound/GameBGM.wav");
-		m_gameBGM->SetVolume(0.5f);
-		m_gameBGM->Play(true);	//真でループ再生
-
-		break;
-
-	case WhistleSound:
-		//ホイッスルサウンドの初期化
-		m_whistleSound = NewGO<SoundSource>(PRIORITY_0, nullptr);
-		m_whistleSound->Init(L"Assets/sound/Whistle.wav");
-		m_whistleSound->SetVolume(0.5f);
-		m_whistleSound->Play(false);	//偽でワンショット再生
-
-		break;
-
-	case PauseSound:
-		//ポーズサウンドの初期化
-		m_pauseSound = NewGO<SoundSource>(PRIORITY_0, nullptr);
-		m_pauseSound->Init(L"Assets/sound/PauseSound.wav");
-		m_pauseSound->SetVolume(0.5f);
-		m_pauseSound->Play(false);	//偽でワンショット再生
-
-		break;
-
-	case DecideSound:
-		//決定サウンド
-		m_decideSound = NewGO<SoundSource>(PRIORITY_0, nullptr);
-		m_decideSound->Init(L"Assets/sound/Decide.wav");
-		m_decideSound->SetVolume(0.5f);
-		m_decideSound->Play(false);	//偽でワンショット再生
-
-		break;
+			//ポーズを外す
+			m_isPauseFlg = false;
+		}
+		m_player->SetPauseFlg(m_isPauseFlg);
+		m_enemy->SetPauseFlg(m_isPauseFlg);
+		m_stage->SetPauseFlg(m_isPauseFlg);
 	}
+}
+
+//PLAYERフォントの初期化をまとめている関数
+void GameScene::InitPlayerFont()
+{
+	for (int plaNum = Player1; plaNum < TotalPlaNum; plaNum++) {
+		//2P～4Pの非アクティブ画像オブジェクト生成
+		m_PlaNameFont[plaNum] = NewGO<FontRender>(1);		//1P
+		if (plaNum == Player1)
+		{
+			m_PlaNameFont[plaNum]->Init(
+				L"PLAYER1",					//テキスト
+				PLANAME1POS,				//位置
+				GRAY,						//色
+				FONT_ROT,					//傾き
+				1.0f,						//拡大率
+				FONT_PIV					//基点
+			);
+		};
+		//2P
+		if (plaNum == Player2)
+		{
+			m_PlaNameFont[plaNum]->Init(
+				L"PLAYER2",					//テキスト
+				PLANAME2POS,				//位置
+				GRAY,						//色
+				FONT_ROT,					//傾き
+				1.0f,						//拡大率
+				FONT_PIV					//基点
+			);
+		}
+		//3P
+		if (plaNum == Player3)
+		{
+			m_PlaNameFont[plaNum]->Init(
+				L"PLAYER3",					//テキスト
+				PLANAME3POS,				//位置
+				GRAY,						//色
+				FONT_ROT,					//傾き
+				1.0f,						//拡大率
+				FONT_PIV					//基点
+			);
+		}
+		//4P
+		if (plaNum == Player4)
+		{
+			m_PlaNameFont[plaNum]->Init(
+				L"PLAYER4",					//テキスト
+				PLANAME4POS,				//位置
+				GRAY,						//色
+				FONT_ROT,					//傾き
+				1.0f,						//拡大率
+				FONT_PIV					//基点
+			);
+		}
+		//文字の境界線表示
+		m_PlaNameFont[plaNum]->SetShadowParam(true, 3.0f, Vector4::Black);
+
+		if (m_totalPlaNum <= plaNum)
+		{
+			return;
+		}
+		switch (plaNum)
+		{
+		case Player1:
+			m_PlaNameFont[plaNum]->SetColor(RED);
+			break;
+		case Player2:
+			m_PlaNameFont[plaNum]->SetColor(BLUE);
+			break;
+		case Player3:
+			m_PlaNameFont[plaNum]->SetColor(YELLOW);
+			break;
+		case Player4:
+			m_PlaNameFont[plaNum]->SetColor(GREEN);
+			break;
+		}
+	}
+}
+
+
+//プレイヤーのポイントフォントの初期化をまとめている関数
+void GameScene::InitPlayerPtFont()
+{
+	//各プレイヤーのポイント画像の位置を設定
+	m_plaScorePos[0] = { -520.0f, 255.0f };
+	m_plaScorePos[1] = { 450.0f, 255.0f };
+	m_plaScorePos[2] = { -520.0f,-205.0f };
+	m_plaScorePos[3] = { 450.0f,-205.0f };
+
+	for (int plaNum = INT_ZERO; plaNum < TotalPlaNum; plaNum++) {
+		//プレイヤーごとのptフォントオブジェクト生成
+		m_ScoreFontRender[plaNum] = NewGO<FontRender>(PRIORITY_1, nullptr);
+		//初期化
+		m_ScoreFontRender[plaNum]->Init
+		(
+			L"pt",				//テキスト
+			GetScorePos(plaNum),		//位置
+			ScoreColor(plaNum),		//色
+			FONT_ROT,			//傾き
+			PT_SCA,				//拡大率
+			FONT_PIV			//基点
+		);
+		//プレイヤーごとのポイントフォントオブジェクト生成
+		m_TextScoreFontRender[plaNum] = NewGO<FontRender>(PRIORITY_1, nullptr);
+		//初期化
+		m_TextScoreFontRender[plaNum]->Init
+		(
+			L"",					//テキスト
+			m_plaScorePos[plaNum],		//位置
+			ScoreColor(plaNum),			//色
+			FONT_ROT,				//傾き
+			FONT_SCA,				//拡大率
+			FONT_PIV				//基点
+		);
+
+
+		//文字の境界線表示
+		m_ScoreFontRender[plaNum]->SetShadowParam(true, 3.0f, Vector4::Black);
+		//文字の境界線表示
+		m_TextScoreFontRender[plaNum]->SetShadowParam(true, 3.0f, Vector4::Black);
+	}
+	//登録されていないプレイヤーのスコアはグレー表示にする
+	for (int plaNum = m_totalPlaNum; plaNum < TotalPlaNum; plaNum++)
+	{
+		m_ScoreFontRender[plaNum]->SetColor(GRAY);
+		m_TextScoreFontRender[plaNum]->SetColor(GRAY);
+	}
+}
+
+
+//制限時間フォントの初期化をまとめている関数
+void GameScene::InitTimeLimitFont()
+{
+	//制限時間フォントオブジェクト生成（一番上のレイヤーに置きたいのでプライオリティーは最高値）
+	m_timeLimit = NewGO<FontRender>(PRIORITY_1, nullptr);
+
+	//制限時間フォントの初期化
+	m_timeLimit->Init
+	(
+		L"",			//テキスト
+		TIMELIMIT_POS,	//位置
+		TIMELIMIT_COL,	//色
+		FONT_ROT,		//傾き
+		FONT_SCA,		//拡大率
+		FONT_PIV		//基点
+	);
+	//文字の境界線表示
+	m_timeLimit->SetShadowParam(true, 3.0f, Vector4::Black);
+}
+
+
+//ポーズ画面の画像の初期化をまとめている関数
+void GameScene::InitPauseSceneImage()
+{
+	m_pauseSprite = NewGO<SpriteRender>(PRIORITY_6, nullptr);
+	//ポーズ画像を初期化
+	m_pauseSprite->Init("Assets/image/DDS/Pause.dds", 600.0f, 300.0f);
+	m_pauseSprite->Deactivate();
+
+	m_grayBack = NewGO<SpriteRender>(PRIORITY_5, nullptr);
+	//ポーズ中灰色にする画像を初期化
+	m_grayBack->Init("Assets/image/DDS/GrayBack.dds", 1500.0f, 1500.0f);
+	m_grayBack->Deactivate();
 }

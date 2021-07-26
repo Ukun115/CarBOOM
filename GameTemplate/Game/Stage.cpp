@@ -4,10 +4,10 @@
 
 
 #include "stdafx.h"
-#include "Stage.h"
+#include "TitleScene.h"
 #include "StageSelectScene.h"
 #include "GameScene.h"
-#include "TitleScene.h"
+#include "Stage.h"
 #include "Player.h"
 #include "Enemy.h"
 #include <random>

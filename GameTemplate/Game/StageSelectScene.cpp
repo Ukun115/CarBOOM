@@ -4,9 +4,9 @@
 
 
 #include "stdafx.h"
+#include "TitleScene.h"
 #include "StageSelectScene.h"
 #include "GameScene.h"
-#include "TitleScene.h"
 #include "Fade.h"
 
 
@@ -34,6 +34,8 @@ namespace
 
 bool StageSelectScene::Start()
 {
+	m_soundPlayBack = FindGO<SoundPlayBack>(SOUNDPLAYBACK_NAME);
+
 	//ライトオブジェクト生成
 	m_light = NewGO<Light>(PRIORITY_0, LIGHT_NAME);
 	//ディレクションライトをセット
@@ -42,9 +44,9 @@ bool StageSelectScene::Start()
 	m_light->SetHemiSphereLightData();
 
 	//フェードイン
-	m_fadeIn = NewGO<Fade>(0, "fade");
-	m_fadeIn->SetState(StateIn);
-	m_fadeIn->SetAlphaValue(1.0f);
+	m_fade[FadeIn] = NewGO<Fade>(0, nullptr);
+	m_fade[FadeIn]->SetState(StateIn);
+	m_fade[FadeIn]->SetAlphaValue(1.0f);
 
 	//ステージ説明の背景画像オブジェクト生成
 	m_stageDiscription[0] = NewGO<SpriteRender>(PRIORITY_1, nullptr);
@@ -69,12 +71,12 @@ bool StageSelectScene::Start()
 	}
 
 	m_stageSelectSprite->Init("Assets/Image/DDS/STAGESELECT.dds", 750, 375);
-	Vector3 m_stageSelectSpritePos = {0.0f,310.0f,0.0f};
+	Vector3 m_stageSelectSpritePos = { FLOAT_ZERO,310.0f,FLOAT_ZERO };
 	m_stageSelectSprite->SetPosition(m_stageSelectSpritePos);
 
 	//ステージ説明のバックスクリーン画像
 	m_stageDiscription[0]->Init("Assets/Image/DDS/StageDescriptionBackScreen.dds", 500, 600);
-	Vector3 m_stageDiscriptionPos = {-400.0f,-20.0f,0.0f};
+	Vector3 m_stageDiscriptionPos = {-400.0f,-20.0f,FLOAT_ZERO };
 	m_stageDiscription[0]->SetPosition(m_stageDiscriptionPos);
 	//フラットステージ説明文字
 	m_stageDiscription[Stage1]->Init("Assets/Image/DDS/FlatStageDiscription.dds", 550, 550);
@@ -176,7 +178,7 @@ bool StageSelectScene::Start()
 	m_titleSprite->Init("Assets/image/DDS/BackScreenImage.dds", 1600.0f, 800.0f);
 
 	//タイトルBGMサウンド
-	SoundPlayBack(TitleSceneBGM);
+	m_soundPlayBack->StageSelectSceneSoundPlayBack(TitleSceneBGM);
 
 	return true;
 }
@@ -204,16 +206,6 @@ StageSelectScene::~StageSelectScene()
 		DeleteGO(m_Ahukidasi[plaNum]);
 	}
 
-
-	if(m_titleBGM != nullptr)
-		DeleteGO(m_titleBGM);
-	if (m_decideSound != nullptr)
-		DeleteGO(m_decideSound);
-	if (m_onStageSound != nullptr)
-		DeleteGO(m_onStageSound);
-	if (m_carHorn != nullptr)
-		DeleteGO(m_carHorn);
-
 	//ステージ選択文字画像
 	DeleteGO(m_stageSelectSprite);
 
@@ -229,41 +221,65 @@ StageSelectScene::~StageSelectScene()
 		DeleteGO(m_operatorDiscription[i]);
 	}
 
-	if(m_fadeIn != nullptr)
-	DeleteGO(m_fadeIn);
-	if (m_fadeOut != nullptr)
-	DeleteGO(m_fadeOut);
+	if(m_fade[FadeIn] != nullptr)
+	DeleteGO(m_fade[FadeIn]);
+	if (m_fade[FadeOutBadk] != nullptr)
+	DeleteGO(m_fade[FadeOutBadk]);
+	if (m_fade[FadeOutNext] != nullptr)
+	DeleteGO(m_fade[FadeOutNext]);
 }
 
 
 void StageSelectScene::Update()
 {
-		//ベクトルを可視化させるデバック関数
-		//PlaMooveSpeedDebug();
-		//クラクションを鳴らす関数
-		CarHorn();
-		//プレイヤーの回転処理
-		PlaTurn();
-		//プレイヤーの通常移動処理
-		PlaMove();
-		//プレイヤーの移動速度に補正を入れる
-		PlaSpeedCorrection();
-		//プレイヤーが画面外に行かないようにする
-		AvoidScreenOutSide();
-		//プレイヤーの位置,回転の情報を更新する
-		PlaDataUpdate();
-		//ステージの上にいるときそのステージを選択できる関数
-		TouchStage();
+	//ベクトルを可視化させるデバック関数
+	//PlaMooveSpeedDebug();
+	//クラクションを鳴らす関数
+	CarHorn();
+	//プレイヤーの回転処理
+	PlaTurn();
+	//プレイヤーの通常移動処理
+	PlaMove();
+	//プレイヤーの移動速度に補正を入れる
+	PlaSpeedCorrection();
+	//プレイヤーが画面外に行かないようにする
+	AvoidScreenOutSide();
+	//プレイヤーの位置,回転の情報を更新する
+	PlaDataUpdate();
+	//ステージの上にいるときそのステージを選択できる関数
+	TouchStage();
+
+	//セレクトボタンが押されたら、
+	if (g_pad[PLAYER1]->IsTrigger(enButtonSelect))
+	{
+		//決定サウンド
+		m_soundPlayBack->StageSelectSceneSoundPlayBack(DecideSound);
+
+		//フェードアウト
+		m_fade[FadeOutBadk] = NewGO<Fade>(0, nullptr);
+		m_fade[FadeOutBadk]->SetState(StateOut);
+		m_fade[FadeOutBadk]->SetAlphaValue(FLOAT_ZERO);
+
+		m_nextTitleSceneFlg = 1;
+	}
+	if (m_nextTitleSceneFlg)
+	{
+		if (m_fade[FadeOutBadk]->GetNowState() == StateWait)
+		{
+			m_titleScene = NewGO<TitleScene>(PRIORITY_0, nullptr);
+			DeleteGO(this);
+		}
+	}
 }
 
 
 //ゲーム画面遷移処理関数
 void StageSelectScene::GameSceneTransition()
 {
-	if (m_fadeOut == nullptr)
+	if (m_fade[FadeOutNext] == nullptr)
 	{
 		//Aボタンが押されたら、
-		if (g_pad[PLAYER1]->IsPress(enButtonA))
+		if (g_pad[PLAYER1]->IsTrigger(enButtonA))
 		{
 			//ステージ５（ティルトステージ）は未実装のため、ステージに入れないようにreturnしています
 			if (m_stageNum == Stage5)
@@ -272,17 +288,17 @@ void StageSelectScene::GameSceneTransition()
 			}
 
 			//決定サウンド
-			SoundPlayBack(DecideSound);
+			m_soundPlayBack->StageSelectSceneSoundPlayBack(DecideSound);
 
 			//フェードアウト
-			m_fadeOut = NewGO<Fade>(0, "fade");
-			m_fadeOut->SetState(StateOut);
-			m_fadeOut->SetAlphaValue(0.0f);
+			m_fade[FadeOutNext] = NewGO<Fade>(0, nullptr);
+			m_fade[FadeOutNext]->SetState(StateOut);
+			m_fade[FadeOutNext]->SetAlphaValue(FLOAT_ZERO);
 		}
 	}
 	else
 	{
-		if (m_fadeOut->GetNowState() == StateWait)
+		if (m_fade[FadeOutNext]->GetNowState() == StateWait)
 		{
 			//ランダムステージが選ばれていたら、
 			if (m_stageNum == RandomStage)
@@ -302,6 +318,8 @@ void StageSelectScene::GameSceneTransition()
 			m_gameScene->SetSelectStageNum(m_stageNum);
 			//クラスの破棄
 			DeleteGO(this);
+			//ステージセレクトシーンで使われているサウンドを破棄
+			m_soundPlayBack->StageSelectSceneDeleteGO();
 		}
 	}
 }
@@ -400,7 +418,7 @@ void StageSelectScene::TouchStage()
 		//ステージの上に乗っていたら
 		if (m_diff[stageNum].Length() < 70.0f)
 		{
-			if (stageNum == 1)
+			if (stageNum == STAGE1)
 			{
 				//A吹き出しを表示
 				m_Ahukidasi[0]->Activate();
@@ -408,7 +426,7 @@ void StageSelectScene::TouchStage()
 				//ステージ説明文を表示
 				m_stageDiscription[Stage1]->Activate();
 			}
-			if (stageNum == 2)
+			if (stageNum == STAGE2)
 			{
 				//A吹き出しを表示
 				m_Ahukidasi[1]->Activate();
@@ -416,7 +434,7 @@ void StageSelectScene::TouchStage()
 				//ステージ説明文を表示
 				m_stageDiscription[Stage2]->Activate();
 			}
-			if (stageNum == 3)
+			if (stageNum == STAGE3)
 			{
 				//A吹き出しを表示
 				m_Ahukidasi[2]->Activate();
@@ -424,7 +442,7 @@ void StageSelectScene::TouchStage()
 				//ステージ説明文を表示
 				m_stageDiscription[Stage3]->Activate();
 			}
-			if (stageNum == 4)
+			if (stageNum == STAGE4)
 			{
 				//A吹き出しを表示
 				m_Ahukidasi[3]->Activate();
@@ -432,7 +450,7 @@ void StageSelectScene::TouchStage()
 				//ステージ説明文を表示
 				m_stageDiscription[Stage4]->Activate();
 			}
-			if (stageNum == 5)
+			if (stageNum == STAGE5)
 			{
 				//A吹き出しを表示
 				m_Ahukidasi[4]->Activate();
@@ -440,7 +458,7 @@ void StageSelectScene::TouchStage()
 				//ステージ説明文を表示
 				m_stageDiscription[Stage5]->Activate();
 			}
-			if (stageNum == 6)
+			if (stageNum == STAGE6)
 			{
 				//A吹き出しを表示
 				m_Ahukidasi[5]->Activate();
@@ -452,7 +470,7 @@ void StageSelectScene::TouchStage()
 			if (m_canOnStageSoundPlayFlg[stageNum])
 			{
 				//ステージを選択できるようになったら鳴らすサウンド
-				SoundPlayBack(OnStageSound);
+				m_soundPlayBack->StageSelectSceneSoundPlayBack(OnStageSound);
 
 				m_canOnStageSoundPlayFlg[stageNum] = false;
 			}
@@ -534,50 +552,6 @@ void StageSelectScene::CarHorn()
 	if (g_pad[0]->IsTrigger(enButtonX))
 	{
 		//クラクションサウンド
-		SoundPlayBack(CarHornSound);
-	}
-}
-
-
-//サウンドを一括にまとめる関数
-void StageSelectScene::SoundPlayBack(int soundNum)
-{
-	switch (soundNum)
-	{
-	case TitleSceneBGM:
-		//タイトルBGMサウンドの初期化
-		m_titleBGM = NewGO<SoundSource>(PRIORITY_0, nullptr);
-		m_titleBGM->Init(L"Assets/sound/TitleSceneBGM.wav");
-		m_titleBGM->SetVolume(0.1f);
-		m_titleBGM->Play(true);	//真でループ再生
-
-		break;
-
-	case DecideSound:
-		//決定サウンド
-		m_decideSound = NewGO<SoundSource>(PRIORITY_0, nullptr);
-		m_decideSound->Init(L"Assets/sound/Decide.wav");
-		m_decideSound->SetVolume(0.5f);
-		m_decideSound->Play(false);	//偽でワンショット再生
-
-		break;
-
-	case OnStageSound:
-		//ステージを選択できるようになったら鳴らすサウンドの初期化
-		m_onStageSound = NewGO<SoundSource>(PRIORITY_0, nullptr);
-		m_onStageSound->Init(L"Assets/sound/OnStage.wav");
-		m_onStageSound->SetVolume(0.5f);
-		m_onStageSound->Play(false);	//偽でワンショット再生
-
-		break;
-
-	case CarHornSound:
-		//クラクションサウンドの初期化
-		m_carHorn = NewGO<SoundSource>(PRIORITY_0, nullptr);
-		m_carHorn->Init(L"Assets/sound/CarHorn.wav");
-		m_carHorn->SetVolume(0.5f);
-		m_carHorn->Play(false);	//偽でワンショット再生
-
-		break;
+		m_soundPlayBack->StageSelectSceneSoundPlayBack(CarHornSound);
 	}
 }

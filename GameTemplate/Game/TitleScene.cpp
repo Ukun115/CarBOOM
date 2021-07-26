@@ -49,60 +49,20 @@ namespace
 bool TitleScene::Start()
 {
 	//フェードイン
-	m_fadeIn = NewGO<Fade>(0, "fade");
-	m_fadeIn->SetState(StateIn);
-	m_fadeIn->SetAlphaValue(1.0f);
+	m_fade[FadeIn] = NewGO<Fade>(0, nullptr);
+	m_fade[FadeIn]->SetState(StateIn);
+	m_fade[FadeIn]->SetAlphaValue(1.0f);
+
+	m_soundPlayBack = FindGO<SoundPlayBack>(SOUNDPLAYBACK_NAME);
 
 	//タイトル名ジングルサウンド
-	SoundPlayBack(TitleSceneGingle);
+	m_soundPlayBack->TitleSceneSoundPlayBack(TitleSceneGingle);
 
 	//タイトルBGMサウンド
-	SoundPlayBack(TitleSceneBGM);
+	m_soundPlayBack->TitleSceneSoundPlayBack(TitleSceneBGM);
 
-	//タイトルロゴオブジェクト生成
-	m_titleSprite = NewGO<SpriteRender>(PRIORITY_0,nullptr);
-	m_titleSprite->Init("Assets/image/DDS/TitleRogo.dds", 1600.0f, 800.0f);
-	//タイトル名オブジェクト生成
-	m_titleNameSprite = NewGO<SpriteRender>(PRIORITY_1, nullptr);
-	m_titleNameSprite->Init("Assets/image/DDS/TitleName.dds", 1600.0f, 800.0f);
-	m_titleNameSca.x = 0.0f;
-	m_titleNameSprite->SetScale(m_titleNameSca);
-	for (int i = 0; i < 9; i++)
-	{
-		m_titleBaraBaraSprite[i] = NewGO<SpriteRender>(PRIORITY_0, nullptr);
-		switch (i)
-		{
-		case 0:
-			m_titleBaraBaraSprite[i]->Init("Assets/image/DDS/TitleName_1.dds", 1600.0f, 800.0f);
-			break;
-		case 1:
-			m_titleBaraBaraSprite[i]->Init("Assets/image/DDS/TitleName_2.dds", 1600.0f, 800.0f);
-			break;
-		case 2:
-			m_titleBaraBaraSprite[i]->Init("Assets/image/DDS/TitleName_3.dds", 1600.0f, 800.0f);
-			break;
-		case 3:
-			m_titleBaraBaraSprite[i]->Init("Assets/image/DDS/TitleName_4.dds", 1600.0f, 800.0f);
-			break;
-		case 4:
-			m_titleBaraBaraSprite[i]->Init("Assets/image/DDS/TitleName_5.dds", 1600.0f, 800.0f);
-			break;
-		case 5:
-			m_titleBaraBaraSprite[i]->Init("Assets/image/DDS/TitleName_6.dds", 1600.0f, 800.0f);
-			break;
-		case 6:
-			m_titleBaraBaraSprite[i]->Init("Assets/image/DDS/TitleName_7.dds", 1600.0f, 800.0f);
-			break;
-		case 7:
-			m_titleBaraBaraSprite[i]->Init("Assets/image/DDS/TitleName_8.dds", 1600.0f, 800.0f);
-			break;
-		case 8:
-			m_titleBaraBaraSprite[i]->Init("Assets/image/DDS/TitleName_9.dds", 1600.0f, 800.0f);
-			break;
-		}
-		//初めは非表示
-		m_titleBaraBaraSprite[i]->Deactivate();
-	}
+	//タイトル画面の画像の初期化をまとめている関数
+	InitTitleSceneImage();
 
 	//PUSH START BUTTONオブジェクト生成
 	m_pushStartButtonSprite = NewGO<SpriteRender>(PRIORITY_1, nullptr);
@@ -125,62 +85,8 @@ bool TitleScene::Start()
 	//大きさ調整
 	m_pressASpeechBalloon->SetScale({0.5f,0.5f,0.5f});
 
-	//１Pの追加フラグを真に。
-	m_isAddPlayerFlg[Player1] = true;
-
-	for (int plaNum = Player1; plaNum < MaxPlayerNum; plaNum++) {
-		//2P～4Pの非アクティブ画像オブジェクト生成
-		m_PlaNameFont[plaNum] = NewGO<FontRender>(1);		//1P
-		if (plaNum == Player1)
-		{
-			m_PlaNameFont[0]->Init(
-				L"PLAYER1",					//テキスト
-				PLANAME1POS,		//位置
-				PLANAME1COL,		//色
-				FONT_ROT,			//傾き
-				PLA1234_SCA,		//拡大率
-				FONT_PIV			//基点
-			);
-		};
-		//2P
-		if (plaNum == Player2)
-		{
-			m_PlaNameFont[1]->Init(
-				L"PLAYER2",					//テキスト
-				PLANAME2POS,		//位置
-				PLANAME234COL,		//色
-				FONT_ROT,			//傾き
-				PLA1234_SCA,		//拡大率
-				FONT_PIV			//基点
-			);
-		}
-		//3P
-		if (plaNum == Player3)
-		{
-			m_PlaNameFont[2]->Init(
-				L"PLAYER3",					//テキスト
-				PLANAME3POS,		//位置
-				PLANAME234COL,		//色
-				FONT_ROT,			//傾き
-				PLA1234_SCA,		//拡大率
-				FONT_PIV			//基点
-			);
-		}
-		//4P
-		if (plaNum == Player4)
-		{
-			m_PlaNameFont[3]->Init(
-				L"PLAYER4",					//テキスト
-				PLANAME4POS,		//位置
-				PLANAME234COL,		//色
-				FONT_ROT,			//傾き
-				PLA1234_SCA,		//拡大率
-				FONT_PIV			//基点
-			);
-		}
-		//文字の境界線表示
-		m_PlaNameFont[plaNum]->SetShadowParam(true, 3.0f, Vector4::Black);
-	}
+	//PLAYERフォントの初期化をまとめている関数
+	InitPlayerFont();
 
 	return true;
 }
@@ -201,25 +107,14 @@ TitleScene::~TitleScene()
 	DeleteGO(m_pressASpeechBalloon);
 	DeleteGO(m_pressASpeechBalloonArrow);
 
-	//サウンドを削除
-	if(m_titleBGM != nullptr)
-	//タイトルBGMを削除
-	DeleteGO(m_titleBGM);
-	if (m_addPlayer != nullptr)
-	//エンジン音を削除
-	DeleteGO(m_addPlayer);
-	if (m_gameNameGingle != nullptr)
-	//タイトルジングルを削除
-	DeleteGO(m_gameNameGingle);
-	if (m_decideSound != nullptr)
-	DeleteGO(m_decideSound);
-
-	for (int plaNum = Player1; plaNum < MaxPlayerNum; plaNum++) {
+	for (int plaNum = Player1; plaNum < TotalPlaNum; plaNum++) {
 		DeleteGO(m_PlaNameFont[plaNum]);
 	}
 
-	DeleteGO(m_fadeOut);
-	DeleteGO(m_fadeIn);
+	for (int i = 0; i < 2; i++)
+	{
+		DeleteGO(m_fade[i]);
+	}
 }
 
 
@@ -229,6 +124,8 @@ void TitleScene::Update()
 	FlashingFont();
 	//吹き出しの矢印画像が横移動する関数
 	SideMove(60, 0.2f);
+
+	//タイトル名の動き
 
 	if (m_titleNameSca.x != 1.0f)
 	{
@@ -242,7 +139,7 @@ void TitleScene::Update()
 	}
 
 	//登録されたプレイヤー数が最大数4人になるまで追加できる
-	if (m_totalPlaNum != MaxPlayerNum)
+	if (m_totalPlaNum != TotalPlaNum)
 	{
 		/*登録されていないコントローラーのAボタンが押されたら、
 		【注意】USBポートに繋がれた順じゃないと登録されていきません。*/
@@ -253,55 +150,21 @@ void TitleScene::Update()
 		}
 	}
 
-	if (m_fadeOut == nullptr)
+	if (m_fade[FadeOut] == nullptr)
 	{
 		//登録されている誰かのスタートボタンが押されたら、
-		for (int plaNum = Player1; plaNum < m_totalPlaNum; plaNum++)
+		for (unsigned int plaNum = Player1; plaNum < m_totalPlaNum; plaNum++)
 		{
-			//スタートボタンが押されたら、
-			if (g_pad[plaNum]->IsTrigger(enButtonStart))
-			{
-				//決定サウンド
-				SoundPlayBack(DecideSound);
-
-				//フェードアウト
-				m_fadeOut = NewGO<Fade>(0, "fade");
-				m_fadeOut->SetState(StateOut);
-				m_fadeOut->SetAlphaValue(0.0f);
-
-				m_nextScene = StateSelectScene;
-			}
-			//セレクトボタンが押されたら、、
-			if (g_pad[plaNum]->IsTrigger(enButtonSelect))
-			{
-				//フェードアウト
-				m_fadeOut = NewGO<Fade>(0, "fade");
-				m_fadeOut->SetState(StateOut);
-				m_fadeOut->SetAlphaValue(0.0f);
-
-				m_nextScene = GameEnd;
-			}
+			//スタートボタンが押されたときの処理関数
+			PushStartButton(plaNum);
+			//ボタンが押されたときの処理関数
+			PushSelectButton(plaNum);
 		}
 	}
 	else
 	{
-		//真っ白になったら遷移
-		if (m_fadeOut->GetNowState() == StateWait) {
-
-			if (m_nextScene == StateSelectScene)
-			{
-				//ステージ選択画面に遷移
-				StageSelectSceneTransition();
-			}
-			if (m_nextScene == GameEnd)
-			{
-				//exeを閉じてゲーム終了
-				exit(EXIT_SUCCESS);
-				//メモ//
-				//exit(EXIT_FAILURE);は異常終了		EXIT_FAILURE = 1
-				//exit(EXIT_SUCCESS);は正常終了		EXIT_SUCCESS = 0
-			}
-		}
+		//選択された次のシーンに行く処理関数
+		NextScene();
 	}
 }
 
@@ -310,7 +173,7 @@ void TitleScene::Update()
 void TitleScene::AddPlayer()
 {
 	//エンジンサウンド
-	SoundPlayBack(EngineSound);
+	m_soundPlayBack->TitleSceneSoundPlayBack(EngineSound);
 
 	//新規プレイヤーの追加フラグを真に。
 	m_isAddPlayerFlg[m_totalPlaNum] = true;
@@ -362,11 +225,13 @@ void TitleScene::AddPlayer()
 void TitleScene::StageSelectSceneTransition()
 {
 	//ステージ選択画面に遷移
-	m_stageSelectScene = NewGO<StageSelectScene>(PRIORITY_0, STAGESELECT_NAME);
+	m_stageSelectScene = NewGO<StageSelectScene>(PRIORITY_0, nullptr);
 	//登録された人数データを次のクラスに渡す
 	m_stageSelectScene->SetTotalPlaNum(m_totalPlaNum);
 	//このクラスの削除
 	DeleteGO(this);
+	//タイトルシーンで使われるサウンドを破棄
+	m_soundPlayBack->TitleSceneDeleteGO();
 }
 
 
@@ -403,7 +268,7 @@ void TitleScene::FlashingFont()
 
 
 //画像が横移動する関数
-void TitleScene::SideMove(int width,float speed)
+void TitleScene::SideMove(const int width, const float speed)
 {
 	if (m_sideMoveTimer < width)
 	{
@@ -426,7 +291,7 @@ void TitleScene::SideMove(int width,float speed)
 
 
 //画像が縦移動する関数
-void TitleScene::VerticalMove(int width, float speed,int spriteNum)
+void TitleScene::VerticalMove(const int width, const float speed, const int spriteNum)
 {
 	if (m_verticalMoveTimer[spriteNum] < width)
 	{
@@ -454,10 +319,10 @@ void TitleScene::TitleNameScaUp()
 {
 	if (m_titleNameSca.x < 1.0f)
 	{
-		m_scaUpValue += 0.001;
+		m_scaUpValue += 0.001f;
 		if (m_titleNameSca.x > 0.5f)
 		{
-			m_scaUpValue += 0.005;
+			m_scaUpValue += 0.005f;
 		}
 		m_titleNameSca.x += m_scaUpValue;
 
@@ -539,46 +404,169 @@ void TitleScene::TitleNameWave()
 }
 
 
-//サウンドを一括にまとめる関数
-void TitleScene::SoundPlayBack(int soundNum)
+//スタートボタンが押されたときの処理関数
+void TitleScene::PushStartButton(int plaNum)
 {
-	switch (soundNum)
+	//スタートボタンが押されたら、
+	if (g_pad[plaNum]->IsTrigger(enButtonStart))
 	{
-	case TitleSceneGingle:
-		//タイトル名ジングルサウンドの初期化
-		m_gameNameGingle = NewGO<SoundSource>(PRIORITY_0, nullptr);
-		m_gameNameGingle->Init(L"Assets/sound/TitleSceneGingle.wav");
-		m_gameNameGingle->SetVolume(0.5f);
-		m_gameNameGingle->Play(false);	//偽でワンショット再生
-
-		break;
-
-	case TitleSceneBGM:
-		//タイトルBGMサウンドの初期化
-		m_titleBGM = NewGO<SoundSource>(PRIORITY_0, nullptr);
-		m_titleBGM->Init(L"Assets/sound/TitleSceneBGM.wav");
-		m_titleBGM->SetVolume(0.01f);
-		m_titleBGM->Play(true);	//真でループ再生
-
-		break;
-
-	case DecideSound:
 		//決定サウンド
-		m_decideSound = NewGO<SoundSource>(PRIORITY_0, nullptr);
-		m_decideSound->Init(L"Assets/sound/Decide.wav");
-		m_decideSound->SetVolume(0.5f);
-		m_decideSound->Play(false);	//偽でワンショット再生
+		m_soundPlayBack->TitleSceneSoundPlayBack(DecideSound);
 
-		break;
+		//フェードアウト
+		m_fade[FadeOut] = NewGO<Fade>(0, nullptr);
+		m_fade[FadeOut]->SetState(StateOut);
+		m_fade[FadeOut]->SetAlphaValue(FLOAT_ZERO);
 
-	case EngineSound:
+		m_nextScene = StateSelectScene;
+	}
+}
 
-		//エンジンサウンド
-		m_addPlayer = NewGO<SoundSource>(PRIORITY_0, nullptr);
-		m_addPlayer->Init(L"Assets/sound/AddPlayer.wav");
-		m_addPlayer->SetVolume(0.5f);
-		m_addPlayer->Play(false);	//偽でワンショット再生
+//ボタンが押されたときの処理関数
+void TitleScene::PushSelectButton(int plaNum)
+{
+	//セレクトボタンが押されたら、、
+	if (g_pad[plaNum]->IsTrigger(enButtonSelect))
+	{
+		//フェードアウト
+		m_fade[FadeOut] = NewGO<Fade>(0, nullptr);
+		m_fade[FadeOut]->SetState(StateOut);
+		m_fade[FadeOut]->SetAlphaValue(FLOAT_ZERO);
 
-		break;
+		m_nextScene = GameEnd;
+	}
+}
+
+//選択された次のシーンに行く処理関数
+void TitleScene::NextScene()
+{
+	//真っ白になったら遷移
+	if (m_fade[FadeOut]->GetNowState() == StateWait) {
+
+		if (m_nextScene == StateSelectScene)
+		{
+			//ステージ選択画面に遷移
+			StageSelectSceneTransition();
+		}
+		if (m_nextScene == GameEnd)
+		{
+			//exeを閉じてゲーム終了
+			exit(EXIT_SUCCESS);
+			//メモ//
+			//exit(EXIT_FAILURE);は異常終了		EXIT_FAILURE = 1
+			//exit(EXIT_SUCCESS);は正常終了		EXIT_SUCCESS = 0
+		}
+	}
+}
+
+
+//PLAYERフォントの初期化をまとめている関数
+void TitleScene::InitPlayerFont()
+{
+	//１Pの追加フラグを真に。
+	m_isAddPlayerFlg[Player1] = true;
+
+	for (int plaNum = Player1; plaNum < TotalPlaNum; plaNum++) {
+		//2P～4Pの非アクティブ画像オブジェクト生成
+		m_PlaNameFont[plaNum] = NewGO<FontRender>(1);		//1P
+		if (plaNum == Player1)
+		{
+			m_PlaNameFont[0]->Init(
+				L"PLAYER1",			//テキスト
+				PLANAME1POS,		//位置
+				PLANAME1COL,		//色
+				FONT_ROT,			//傾き
+				PLA1234_SCA,		//拡大率
+				FONT_PIV			//基点
+			);
+		};
+		//2P
+		if (plaNum == Player2)
+		{
+			m_PlaNameFont[1]->Init(
+				L"PLAYER2",			//テキスト
+				PLANAME2POS,		//位置
+				PLANAME234COL,		//色
+				FONT_ROT,			//傾き
+				PLA1234_SCA,		//拡大率
+				FONT_PIV			//基点
+			);
+		}
+		//3P
+		if (plaNum == Player3)
+		{
+			m_PlaNameFont[2]->Init(
+				L"PLAYER3",			//テキスト
+				PLANAME3POS,		//位置
+				PLANAME234COL,		//色
+				FONT_ROT,			//傾き
+				PLA1234_SCA,		//拡大率
+				FONT_PIV			//基点
+			);
+		}
+		//4P
+		if (plaNum == Player4)
+		{
+			m_PlaNameFont[3]->Init(
+				L"PLAYER4",			//テキスト
+				PLANAME4POS,		//位置
+				PLANAME234COL,		//色
+				FONT_ROT,			//傾き
+				PLA1234_SCA,		//拡大率
+				FONT_PIV			//基点
+			);
+		}
+		//文字の境界線表示
+		m_PlaNameFont[plaNum]->SetShadowParam(true, 3.0f, Vector4::Black);
+	}
+}
+
+
+//タイトル画面の画像の初期化をまとめている関数
+void TitleScene::InitTitleSceneImage()
+{
+	//タイトルロゴオブジェクト生成
+	m_titleSprite = NewGO<SpriteRender>(PRIORITY_0, nullptr);
+	m_titleSprite->Init("Assets/image/DDS/TitleRogo.dds", 1600.0f, 800.0f);
+	//タイトル名オブジェクト生成
+	m_titleNameSprite = NewGO<SpriteRender>(PRIORITY_1, nullptr);
+	m_titleNameSprite->Init("Assets/image/DDS/TitleName.dds", 1600.0f, 800.0f);
+	m_titleNameSca.x = FLOAT_ZERO;
+	m_titleNameSprite->SetScale(m_titleNameSca);
+	for (int i = 0; i < 9; i++)
+	{
+		m_titleBaraBaraSprite[i] = NewGO<SpriteRender>(PRIORITY_0, nullptr);
+		switch (i)
+		{
+		case 0:
+			m_titleBaraBaraSprite[i]->Init("Assets/image/DDS/TitleName_1.dds", 1600.0f, 800.0f);
+			break;
+		case 1:
+			m_titleBaraBaraSprite[i]->Init("Assets/image/DDS/TitleName_2.dds", 1600.0f, 800.0f);
+			break;
+		case 2:
+			m_titleBaraBaraSprite[i]->Init("Assets/image/DDS/TitleName_3.dds", 1600.0f, 800.0f);
+			break;
+		case 3:
+			m_titleBaraBaraSprite[i]->Init("Assets/image/DDS/TitleName_4.dds", 1600.0f, 800.0f);
+			break;
+		case 4:
+			m_titleBaraBaraSprite[i]->Init("Assets/image/DDS/TitleName_5.dds", 1600.0f, 800.0f);
+			break;
+		case 5:
+			m_titleBaraBaraSprite[i]->Init("Assets/image/DDS/TitleName_6.dds", 1600.0f, 800.0f);
+			break;
+		case 6:
+			m_titleBaraBaraSprite[i]->Init("Assets/image/DDS/TitleName_7.dds", 1600.0f, 800.0f);
+			break;
+		case 7:
+			m_titleBaraBaraSprite[i]->Init("Assets/image/DDS/TitleName_8.dds", 1600.0f, 800.0f);
+			break;
+		case 8:
+			m_titleBaraBaraSprite[i]->Init("Assets/image/DDS/TitleName_9.dds", 1600.0f, 800.0f);
+			break;
+		}
+		//初めは非表示
+		m_titleBaraBaraSprite[i]->Deactivate();
 	}
 }

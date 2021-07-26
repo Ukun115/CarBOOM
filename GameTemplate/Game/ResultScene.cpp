@@ -4,25 +4,25 @@
 
 
 #include "stdafx.h"
-#include "ResultScene.h"
-#include "GameScene.h"
-#include "Player.h"
 #include "TitleScene.h"
 #include "StageSelectScene.h"
+#include "GameScene.h"
+#include "ResultScene.h"
+#include "Player.h"
 #include "Fade.h"
 
 
 namespace
 {
-	Vector3 NUMBER1_END_POS = { 150.0f,50.0f,0.0f };		//１位プレイヤーの表示位置
-	Vector3 NUMBER2_END_POS = { 150.0f,-50.0f,0.0f };		//２位プレイヤーの表示位置
-	Vector3 NUMBER3_END_POS = { 150.0f,-150.0f,0.0f };	//３位プレイヤーの表示位置
-	Vector3 NUMBER4_END_POS = { 150.0f,-250.0f,0.0f };	//４位プレイヤーの表示位置
+	Vector3 NUMBER1_END_POS = { 150.0f,50.0f,FLOAT_ZERO };		//１位プレイヤーの表示位置
+	Vector3 NUMBER2_END_POS = { 150.0f,-50.0f,FLOAT_ZERO };		//２位プレイヤーの表示位置
+	Vector3 NUMBER3_END_POS = { 150.0f,-150.0f,FLOAT_ZERO };	//３位プレイヤーの表示位置
+	Vector3 NUMBER4_END_POS = { 150.0f,-250.0f,FLOAT_ZERO };	//４位プレイヤーの表示位置
 
-	const Vector3 RANKING1_POS = { -150.0f,50.0f,0.0f };	//１位画像の位置
-	const Vector3 RANKING2_POS = { -150.0f,-50.0f,0.0f };	//２位画像の位置
-	const Vector3 RANKING3_POS = { -150.0f,-150.0f,0.0f };	//３位画像の位置
-	const Vector3 RANKING4_POS = { -150.0f,-250.0f,0.0f };	//４位画像の位置
+	const Vector3 RANKING1_POS = { -150.0f,50.0f,FLOAT_ZERO };	//１位画像の位置
+	const Vector3 RANKING2_POS = { -150.0f,-50.0f,FLOAT_ZERO };	//２位画像の位置
+	const Vector3 RANKING3_POS = { -150.0f,-150.0f,FLOAT_ZERO };	//３位画像の位置
+	const Vector3 RANKING4_POS = { -150.0f,-250.0f,FLOAT_ZERO };	//４位画像の位置
 }
 
 
@@ -31,76 +31,25 @@ bool ResultScene::Start()
 	//インスタンスを探す。
 	m_gameScene = FindGO<GameScene>(GAMESCENE_NAME);
 	m_player = FindGO<Player>(PLAYER_NAME);
+	m_soundPlayBack = FindGO<SoundPlayBack>(SOUNDPLAYBACK_NAME);
 
-	//順位文字を初期化し、表示
-	for (int plaNum = 0; plaNum < 4; plaNum++)
-	{
-		//順位画像オブジェクト生成
-		m_rankingSprite[plaNum] = NewGO<SpriteRender>(PRIORITY_6, nullptr);
+	//順位の画像の初期化をまとめている関数
+	InitRankingImage();
 
-		//１位画像
-		if (plaNum == 0)
-		{
-			m_rankingSprite[plaNum]->Init("Assets/image/DDS/1st.dds", 150.0f, 150.0f);
-			m_rankingSprite[plaNum]->SetPosition(RANKING1_POS);
-		}
-		//2位画像
-		if (plaNum == 1)
-		{
-			m_rankingSprite[plaNum]->Init("Assets/image/DDS/2nd.dds", 150.0f, 150.0f);
-			m_rankingSprite[plaNum]->SetPosition(RANKING2_POS);
-		}
-		//3位画像
-		if (plaNum == 2)
-		{
-			m_rankingSprite[plaNum]->Init("Assets/image/DDS/3rd.dds", 150.0f, 150.0f);
-			m_rankingSprite[plaNum]->SetPosition(RANKING3_POS);
-		}
-		//4位画像
-		if (plaNum == 3)
-		{
-			m_rankingSprite[plaNum]->Init("Assets/image/DDS/4th.dds", 150.0f, 150.0f);
-			m_rankingSprite[plaNum]->SetPosition(RANKING4_POS);
-		}
-	}
 	//リザルトジングル
-	SoundPlayBack(ResultGingle);
+	m_soundPlayBack->ResultSceneSoundPlayBack(ResultGingle);
 
 	//ゲーム中のBGMサウンド
-	SoundPlayBack(GameBGM);
+	m_soundPlayBack->ResultSceneSoundPlayBack(GameBGM);
 
 	//リザルト文字画像オブジェクト生成
 	m_resultSprite = NewGO<SpriteRender>(PRIORITY_6, nullptr);
 	m_resultSprite->Init("Assets/image/DDS/Result.dds", 600.0f, 300.0f);
-	Vector3 m_resSprPos = { 0.0f,160.0f,0.0f };
+	Vector3 m_resSprPos = { FLOAT_ZERO,160.0f,FLOAT_ZERO };
 	m_resultSprite->SetPosition(m_resSprPos);
 
-
-	for (int plaNum = 0; plaNum < m_player->GetPlaNum(); plaNum++)
-	{
-		//プレイヤー文字画像オブジェクト生成
-		m_plaNum[plaNum] = NewGO<SpriteRender>(PRIORITY_6, nullptr);
-		//1P
-		if (plaNum == 0)
-		{
-			m_plaNum[plaNum]->Init("Assets/image/DDS/Player1_ActiveName.dds", 340.0f, 170.0f);
-		}
-		//2P
-		if (plaNum == 1)
-		{
-			m_plaNum[plaNum]->Init("Assets/image/DDS/Player2_ActiveName.dds", 340.0f, 170.0f);
-		}
-		//3P
-		if (plaNum == 2)
-		{
-			m_plaNum[plaNum]->Init("Assets/image/DDS/Player3_ActiveName.dds", 340.0f, 170.0f);
-		}
-		//4P
-		if (plaNum == 3)
-		{
-			m_plaNum[plaNum]->Init("Assets/image/DDS/Player4_ActiveName.dds", 340.0f, 170.0f);
-		}
-	}
+	//PLAYER画像の初期化をまとめている関数
+	InitPlayerImage();
 
 	//順位情報を並び替え
 	RankingSort();
@@ -121,14 +70,6 @@ ResultScene::~ResultScene()
 
 		DeleteGO(m_rankingSprite[plaNum]);
 	}
-
-	//サウンドを削除
-	if(m_resultGingle != nullptr)
-	DeleteGO(m_resultGingle);
-	if (m_gameBGM != nullptr)
-	DeleteGO(m_gameBGM);
-	if (m_decideSound != nullptr)
-	DeleteGO(m_decideSound);
 
 	DeleteGO(m_fadeOut);
 }
@@ -200,81 +141,85 @@ void ResultScene::SelectScene()
 	if (m_fadeOut == nullptr)
 	{
 		//プレイヤーの内、誰かのセレクトボタンが押されたら、
-		for (int plaNum = 0; plaNum < 4; plaNum++) {
+		for (int plaNum = Player1; plaNum < m_totalPlaNum; plaNum++) {
 			//セレクトボタンが押されたら、
 			if (g_pad[plaNum]->IsTrigger(enButtonSelect))
 			{
 				//決定サウンド
-				SoundPlayBack(DecideSound);
+				m_soundPlayBack->ResultSceneSoundPlayBack(DecideSound);
 
 				m_select = 0;
 
 				//フェードアウト
-				m_fadeOut = NewGO<Fade>(0, "fade");
+				m_fadeOut = NewGO<Fade>(0, nullptr);
 				m_fadeOut->SetState(StateOut);
-				m_fadeOut->SetAlphaValue(0.0f);
+				m_fadeOut->SetAlphaValue(FLOAT_ZERO);
 			}
 			//スタートボタンが押されたら、
 			if (g_pad[plaNum]->IsTrigger(enButtonStart))
 			{
 				//決定サウンド
-				SoundPlayBack(DecideSound);
+				m_soundPlayBack->ResultSceneSoundPlayBack(DecideSound);
 
 				m_select = 1;
 
 				//フェードアウト
-				m_fadeOut = NewGO<Fade>(0, "fade");
+				m_fadeOut = NewGO<Fade>(0, nullptr);
 				m_fadeOut->SetState(StateOut);
-				m_fadeOut->SetAlphaValue(0.0f);
+				m_fadeOut->SetAlphaValue(FLOAT_ZERO);
 			}
 			//Yボタンが押されたら、
 			if (g_pad[plaNum]->IsTrigger(enButtonY))
 			{
 				//決定サウンド
-				SoundPlayBack(DecideSound);
+				m_soundPlayBack->ResultSceneSoundPlayBack(DecideSound);
 
 				m_select = 2;
 
 				//フェードアウト
-				m_fadeOut = NewGO<Fade>(0, "fade");
+				m_fadeOut = NewGO<Fade>(0, nullptr);
 				m_fadeOut->SetState(StateOut);
-				m_fadeOut->SetAlphaValue(0.0f);
+				m_fadeOut->SetAlphaValue(FLOAT_ZERO);
 			}
 		}
 	}
 	else
 	{
-		if (m_fadeOut->GetNowState() == StateWait&& !m_muriFlg)
+		if (m_fadeOut->GetNowState() != StateWait && !m_muriFlg)
 		{
-			switch (m_select)
-			{
-			case 0:
-				//exeを閉じてゲーム終了
-				exit(EXIT_SUCCESS);
-				//メモ//
-				//exit(EXIT_FAILURE);は異常終了		EXIT_FAILURE = 1
-				//exit(EXIT_SUCCESS);は正常終了		EXIT_SUCCESS = 0
-				break;
-			case 1:
-				//タイトル画面に戻る
-				NewGO<TitleScene>(0, TITLESCENE_NAME);
-				//ゲームシーンクラスを削除するようにフラグをオン！
-				m_gameScene->SetDeleteFlg(true);
+			return;
+		}
 
-				m_muriFlg = true;
-				break;
-			case 2:
-				//ステージ選択画面に戻る
-				m_stageSelectScene = NewGO<StageSelectScene>(0, STAGESELECT_NAME);
-				m_stageSelectScene->SetTotalPlaNum(m_totalPlaNum);
+		switch (m_select)
+		{
+		case 0:
+			//exeを閉じてゲーム終了
+			exit(EXIT_SUCCESS);
+			//メモ//
+			//exit(EXIT_FAILURE);は異常終了		EXIT_FAILURE = 1
+			//exit(EXIT_SUCCESS);は正常終了		EXIT_SUCCESS = 0
+			break;
+		case 1:
+			//タイトル画面に戻る
+			NewGO<TitleScene>(0, nullptr);
+			//ゲームシーンクラスを削除するようにフラグをオン
+			m_gameScene->SetDeleteFlg(true);
+			//リザルト画面で使われるサウンドを破棄
+			m_soundPlayBack->ResultSceneDeleteGO();
 
-				//ゲームシーンクラスを削除するようにフラグをオン！
-				m_gameScene->SetDeleteFlg(true);
+			m_muriFlg = true;
+			break;
+		case 2:
+			//ステージ選択画面に戻る
+			m_stageSelectScene = NewGO<StageSelectScene>(0, nullptr);
+			m_stageSelectScene->SetTotalPlaNum(m_totalPlaNum);
 
-				m_muriFlg = true;
-				break;
+			//ゲームシーンクラスを削除するようにフラグをオン
+			m_gameScene->SetDeleteFlg(true);
 
-			}
+			m_muriFlg = true;
+			break;
+
 		}
 	}
 }
@@ -396,7 +341,7 @@ void ResultScene::SlidePlayerName()
 
 
 //画像がジャンプする関数
-void ResultScene::VerticalMove(int width, float speed)
+void ResultScene::VerticalMove(const int width, const float speed)
 {
 	if (m_verticalMoveTimer < width)
 	{
@@ -474,36 +419,67 @@ void ResultScene::VerticalMove(int width, float speed)
 }
 
 
-//サウンドを一括にまとめる関数
-void ResultScene::SoundPlayBack(int soundNum)
+//順位の画像の初期化をまとめている関数
+void ResultScene::InitRankingImage()
 {
-	switch (soundNum)
+	//順位文字を初期化し、表示
+	for (int plaNum = 0; plaNum < 4; plaNum++)
 	{
-	case ResultGingle:
-		//リザルトジングルの初期化
-		m_resultGingle = NewGO<SoundSource>(PRIORITY_0, nullptr);
-		m_resultGingle->Init(L"Assets/sound/ResultGingle.wav");
-		m_resultGingle->SetVolume(0.5f);
-		m_resultGingle->Play(false);	//偽でワンショット再生
+		//順位画像オブジェクト生成
+		m_rankingSprite[plaNum] = NewGO<SpriteRender>(PRIORITY_6, nullptr);
 
-		break;
+		switch (plaNum)
+		{
+		//１位画像
+		case Player1:
+			m_rankingSprite[plaNum]->Init("Assets/image/DDS/1st.dds", 150.0f, 150.0f);
+			m_rankingSprite[plaNum]->SetPosition(RANKING1_POS);
+			break;
+		//２位画像
+		case Player2:
+			m_rankingSprite[plaNum]->Init("Assets/image/DDS/2nd.dds", 150.0f, 150.0f);
+			m_rankingSprite[plaNum]->SetPosition(RANKING2_POS);
+			break;
+		//３位画像
+		case Player3:
+			m_rankingSprite[plaNum]->Init("Assets/image/DDS/3rd.dds", 150.0f, 150.0f);
+			m_rankingSprite[plaNum]->SetPosition(RANKING3_POS);
+			break;
+		//４位画像
+		case Player4:
+			m_rankingSprite[plaNum]->Init("Assets/image/DDS/4th.dds", 150.0f, 150.0f);
+			m_rankingSprite[plaNum]->SetPosition(RANKING4_POS);
+			break;
+		}
+	}
+}
 
-	case GameBGM:
-		//ゲーム中のBGMサウンドの初期化
-		m_gameBGM = NewGO<SoundSource>(PRIORITY_0, nullptr);
-		m_gameBGM->Init(L"Assets/sound/GameBGM.wav");
-		m_gameBGM->SetVolume(0.01f);
-		m_gameBGM->Play(true);	//真でループ再生
 
-		break;
-
-	case DecideSound:
-		//決定サウンド
-		m_decideSound = NewGO<SoundSource>(PRIORITY_0, nullptr);
-		m_decideSound->Init(L"Assets/sound/Decide.wav");
-		m_decideSound->SetVolume(0.5f);
-		m_decideSound->Play(false);	//偽でワンショット再生
-
-		break;
+//PLAYER画像の初期化をまとめている関数
+void ResultScene::InitPlayerImage()
+{
+	for (int plaNum = Player1; plaNum < m_player->GetPlaNum(); plaNum++)
+	{
+		//プレイヤー文字画像オブジェクト生成
+		m_plaNum[plaNum] = NewGO<SpriteRender>(PRIORITY_6, nullptr);
+		switch (plaNum)
+		{
+		//１P
+		case Player1:
+			m_plaNum[plaNum]->Init("Assets/image/DDS/Player1_ActiveName.dds", 340.0f, 170.0f);
+			break;
+		//２P
+		case Player2:
+			m_plaNum[plaNum]->Init("Assets/image/DDS/Player2_ActiveName.dds", 340.0f, 170.0f);
+			break;
+		//３P
+		case Player3:
+			m_plaNum[plaNum]->Init("Assets/image/DDS/Player3_ActiveName.dds", 340.0f, 170.0f);
+			break;
+		//４P
+		case Player4:
+			m_plaNum[plaNum]->Init("Assets/image/DDS/Player4_ActiveName.dds", 340.0f, 170.0f);
+			break;
+		}
 	}
 }
