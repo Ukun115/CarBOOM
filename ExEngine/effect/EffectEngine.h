@@ -68,7 +68,7 @@ public:
 		baseMat.Value[0][0] = mBase.m[0][0];
 		baseMat.Value[0][1] = mBase.m[0][1];
 		baseMat.Value[0][2] = mBase.m[0][2];
-		
+
 		baseMat.Value[1][0] = mBase.m[1][0];
 		baseMat.Value[1][1] = mBase.m[1][1];
 		baseMat.Value[1][2] = mBase.m[1][2];

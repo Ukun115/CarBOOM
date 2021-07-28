@@ -36,10 +36,11 @@ void SkinModelRender::Update()
 void SkinModelRender::Init(const char* tkmFilePath)
 {
 	//インスタンスを探す
-	m_light = FindGO<Light>(LIGHT_NAME);
+	m_light = FindGO<Light>(nsStdafx::LIGHT_NAME);
 
 	//tkmファイルのファイルパスを設定する
-	m_modelInitData.m_tkmFilePath = tkmFilePath;
+	sprintf(m_filePath, "Assets/modelData/%s.tkm", tkmFilePath);
+	m_modelInitData.m_tkmFilePath = m_filePath;
 	//使用するシェーダーファイルパスを設定する
 	m_modelInitData.m_fxFilePath = "Assets/shader/model.fx";
 	/*モデルの初期化情報を定数バッファとしてディスクリプタヒープに

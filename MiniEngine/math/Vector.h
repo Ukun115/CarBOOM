@@ -276,6 +276,7 @@ public:
 	}
 	/// <summary>
 	/// ベクトルの長さの二乗を取得。
+	/// ルート内バージョン
 	/// </summary>
 	float LengthSq() const
 	{

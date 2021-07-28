@@ -146,7 +146,7 @@ void SoundPlayBack::TitleSceneSoundPlayBack(const int soundNum)
 	{
 	case TitleSceneGingle:
 		//タイトル名ジングルサウンドの初期化
-		m_titleSceneSound[soundNum] = NewGO<SoundSource>(PRIORITY_0, nullptr);
+		m_titleSceneSound[soundNum] = NewGO<SoundSource>(nsStdafx::PRIORITY_0, nullptr);
 		m_titleSceneSound[soundNum]->Init(L"Assets/sound/TitleSceneGingle.wav");
 		m_titleSceneSound[soundNum]->SetVolume(0.5f);
 		m_titleSceneSound[soundNum]->Play(false);	//偽でワンショット再生
@@ -155,7 +155,7 @@ void SoundPlayBack::TitleSceneSoundPlayBack(const int soundNum)
 
 	case TitleSceneBGM:
 		//タイトルBGMサウンドの初期化
-		m_titleSceneSound[soundNum] = NewGO<SoundSource>(PRIORITY_0, nullptr);
+		m_titleSceneSound[soundNum] = NewGO<SoundSource>(nsStdafx::PRIORITY_0, nullptr);
 		m_titleSceneSound[soundNum]->Init(L"Assets/sound/TitleSceneBGM.wav");
 		m_titleSceneSound[soundNum]->SetVolume(0.01f);
 		m_titleSceneSound[soundNum]->Play(true);	//真でループ再生
@@ -164,7 +164,7 @@ void SoundPlayBack::TitleSceneSoundPlayBack(const int soundNum)
 
 	case TitleSceneDecideSound:
 		//決定サウンド
-		m_titleSceneSound[soundNum] = NewGO<SoundSource>(PRIORITY_0, nullptr);
+		m_titleSceneSound[soundNum] = NewGO<SoundSource>(nsStdafx::PRIORITY_0, nullptr);
 		m_titleSceneSound[soundNum]->Init(L"Assets/sound/Decide.wav");
 		m_titleSceneSound[soundNum]->SetVolume(0.5f);
 		m_titleSceneSound[soundNum]->Play(false);	//偽でワンショット再生
@@ -174,7 +174,7 @@ void SoundPlayBack::TitleSceneSoundPlayBack(const int soundNum)
 	case EngineSound:
 
 		//エンジンサウンド
-		m_titleSceneSound[soundNum] = NewGO<SoundSource>(PRIORITY_0, nullptr);
+		m_titleSceneSound[soundNum] = NewGO<SoundSource>(nsStdafx::PRIORITY_0, nullptr);
 		m_titleSceneSound[soundNum]->Init(L"Assets/sound/AddPlayer.wav");
 		m_titleSceneSound[soundNum]->SetVolume(0.5f);
 		m_titleSceneSound[soundNum]->Play(false);	//偽でワンショット再生
@@ -189,7 +189,7 @@ void SoundPlayBack::StageSelectSceneSoundPlayBack(const int soundNum)
 	{
 	case StageSelectSceneTitleSceneBGM:
 		//タイトルBGMサウンドの初期化
-		m_stageSelectSceneSound[soundNum] = NewGO<SoundSource>(PRIORITY_0, nullptr);
+		m_stageSelectSceneSound[soundNum] = NewGO<SoundSource>(nsStdafx::PRIORITY_0, nullptr);
 		m_stageSelectSceneSound[soundNum]->Init(L"Assets/sound/TitleSceneBGM.wav");
 		m_stageSelectSceneSound[soundNum]->SetVolume(0.1f);
 		m_stageSelectSceneSound[soundNum]->Play(true);	//真でループ再生
@@ -198,7 +198,7 @@ void SoundPlayBack::StageSelectSceneSoundPlayBack(const int soundNum)
 
 	case StageSelectSceneDecideSound:
 		//決定サウンド
-		m_stageSelectSceneSound[soundNum] = NewGO<SoundSource>(PRIORITY_0, nullptr);
+		m_stageSelectSceneSound[soundNum] = NewGO<SoundSource>(nsStdafx::PRIORITY_0, nullptr);
 		m_stageSelectSceneSound[soundNum]->Init(L"Assets/sound/Decide.wav");
 		m_stageSelectSceneSound[soundNum]->SetVolume(0.5f);
 		m_stageSelectSceneSound[soundNum]->Play(false);	//偽でワンショット再生
@@ -207,7 +207,7 @@ void SoundPlayBack::StageSelectSceneSoundPlayBack(const int soundNum)
 
 	case OnStageSound:
 		//ステージを選択できるようになったら鳴らすサウンドの初期化
-		m_stageSelectSceneSound[soundNum] = NewGO<SoundSource>(PRIORITY_0, nullptr);
+		m_stageSelectSceneSound[soundNum] = NewGO<SoundSource>(nsStdafx::PRIORITY_0, nullptr);
 		m_stageSelectSceneSound[soundNum]->Init(L"Assets/sound/OnStage.wav");
 		m_stageSelectSceneSound[soundNum]->SetVolume(0.5f);
 		m_stageSelectSceneSound[soundNum]->Play(false);	//偽でワンショット再生
@@ -216,7 +216,7 @@ void SoundPlayBack::StageSelectSceneSoundPlayBack(const int soundNum)
 
 	case StageSelectSceneCarHornSound:
 		//クラクションサウンドの初期化
-		m_stageSelectSceneSound[soundNum] = NewGO<SoundSource>(PRIORITY_0, nullptr);
+		m_stageSelectSceneSound[soundNum] = NewGO<SoundSource>(nsStdafx::PRIORITY_0, nullptr);
 		m_stageSelectSceneSound[soundNum]->Init(L"Assets/sound/CarHorn.wav");
 		m_stageSelectSceneSound[soundNum]->SetVolume(0.5f);
 		m_stageSelectSceneSound[soundNum]->Play(false);	//偽でワンショット再生
@@ -231,7 +231,7 @@ void SoundPlayBack::GameSceneSoundPlayBack(const int soundNum)
 	{
 	case GameStartGingle:
 		//ゲームスタートジングルサウンドの初期化
-		m_gameSceneSound[soundNum] = NewGO<SoundSource>(PRIORITY_0, nullptr);
+		m_gameSceneSound[soundNum] = NewGO<SoundSource>(nsStdafx::PRIORITY_0, nullptr);
 		m_gameSceneSound[soundNum]->Init(L"Assets/sound/GameStartGingle.wav");
 		m_gameSceneSound[soundNum]->SetVolume(1.0f);
 		m_gameSceneSound[soundNum]->Play(false);	//偽でワンショット再生
@@ -240,7 +240,7 @@ void SoundPlayBack::GameSceneSoundPlayBack(const int soundNum)
 
 	case CountDownSound:
 		//カウントダウンサウンドの初期化
-		m_gameSceneSound[soundNum] = NewGO<SoundSource>(PRIORITY_0, nullptr);
+		m_gameSceneSound[soundNum] = NewGO<SoundSource>(nsStdafx::PRIORITY_0, nullptr);
 		m_gameSceneSound[soundNum]->Init(L"Assets/sound/CountDown.wav");
 		m_gameSceneSound[soundNum]->SetVolume(1.0f);
 		m_gameSceneSound[soundNum]->Play(false);	//真でワンショット再生
@@ -249,7 +249,7 @@ void SoundPlayBack::GameSceneSoundPlayBack(const int soundNum)
 
 	case GameSceneGameBGM:
 		//ゲーム中のBGMサウンドの初期化
-		m_gameSceneSound[soundNum] = NewGO<SoundSource>(PRIORITY_0, nullptr);
+		m_gameSceneSound[soundNum] = NewGO<SoundSource>(nsStdafx::PRIORITY_0, nullptr);
 		m_gameSceneSound[soundNum]->Init(L"Assets/sound/GameBGM.wav");
 		m_gameSceneSound[soundNum]->SetVolume(0.5f);
 		m_gameSceneSound[soundNum]->Play(true);	//真でループ再生
@@ -258,7 +258,7 @@ void SoundPlayBack::GameSceneSoundPlayBack(const int soundNum)
 
 	case WhistleSound:
 		//ホイッスルサウンドの初期化
-		m_gameSceneSound[soundNum] = NewGO<SoundSource>(PRIORITY_0, nullptr);
+		m_gameSceneSound[soundNum] = NewGO<SoundSource>(nsStdafx::PRIORITY_0, nullptr);
 		m_gameSceneSound[soundNum]->Init(L"Assets/sound/Whistle.wav");
 		m_gameSceneSound[soundNum]->SetVolume(0.5f);
 		m_gameSceneSound[soundNum]->Play(false);	//偽でワンショット再生
@@ -267,7 +267,7 @@ void SoundPlayBack::GameSceneSoundPlayBack(const int soundNum)
 
 	case PauseSound:
 		//ポーズサウンドの初期化
-		m_gameSceneSound[soundNum] = NewGO<SoundSource>(PRIORITY_0, nullptr);
+		m_gameSceneSound[soundNum] = NewGO<SoundSource>(nsStdafx::PRIORITY_0, nullptr);
 		m_gameSceneSound[soundNum]->Init(L"Assets/sound/PauseSound.wav");
 		m_gameSceneSound[soundNum]->SetVolume(0.5f);
 		m_gameSceneSound[soundNum]->Play(false);	//偽でワンショット再生
@@ -276,7 +276,7 @@ void SoundPlayBack::GameSceneSoundPlayBack(const int soundNum)
 
 	case GameSceneDecideSound:
 		//決定サウンド
-		m_gameSceneSound[soundNum] = NewGO<SoundSource>(PRIORITY_0, nullptr);
+		m_gameSceneSound[soundNum] = NewGO<SoundSource>(nsStdafx::PRIORITY_0, nullptr);
 		m_gameSceneSound[soundNum]->Init(L"Assets/sound/Decide.wav");
 		m_gameSceneSound[soundNum]->SetVolume(0.5f);
 		m_gameSceneSound[soundNum]->Play(false);	//偽でワンショット再生
@@ -291,7 +291,7 @@ void SoundPlayBack::PlayerSoundPlayBack(const int soundNum, const int plaNum)
 	{
 	case PlaShootDownSound:
 		//撃墜サウンドの初期化
-		m_playerSound[plaNum][soundNum] = NewGO<SoundSource>(PRIORITY_0, nullptr);
+		m_playerSound[plaNum][soundNum] = NewGO<SoundSource>(nsStdafx::PRIORITY_0, nullptr);
 		m_playerSound[plaNum][soundNum]->Init(L"Assets/sound/ShootDown.wav");
 		m_playerSound[plaNum][soundNum]->SetVolume(1.0f);
 		m_playerSound[plaNum][soundNum]->Play(false);	//偽でワンショット再生
@@ -300,7 +300,7 @@ void SoundPlayBack::PlayerSoundPlayBack(const int soundNum, const int plaNum)
 
 	case CarHornSound:
 		//クラクションサウンドの初期化
-		m_playerSound[plaNum][soundNum] = NewGO<SoundSource>(PRIORITY_0, nullptr);
+		m_playerSound[plaNum][soundNum] = NewGO<SoundSource>(nsStdafx::PRIORITY_0, nullptr);
 		m_playerSound[plaNum][soundNum]->Init(L"Assets/sound/CarHorn.wav");
 		m_playerSound[plaNum][soundNum]->SetVolume(0.5f);
 		m_playerSound[plaNum][soundNum]->Play(false);	//偽でワンショット再生
@@ -309,7 +309,7 @@ void SoundPlayBack::PlayerSoundPlayBack(const int soundNum, const int plaNum)
 
 	case PlaFallSound:
 		//落下サウンドの初期化
-		m_playerSound[plaNum][soundNum] = NewGO<SoundSource>(PRIORITY_0, nullptr);
+		m_playerSound[plaNum][soundNum] = NewGO<SoundSource>(nsStdafx::PRIORITY_0, nullptr);
 		m_playerSound[plaNum][soundNum]->Init(L"Assets/sound/Fall.wav");
 		m_playerSound[plaNum][soundNum]->SetVolume(0.1f);
 		m_playerSound[plaNum][soundNum]->Play(false);	//偽でワンショット再生
@@ -318,7 +318,7 @@ void SoundPlayBack::PlayerSoundPlayBack(const int soundNum, const int plaNum)
 
 	case ChargeSound:
 		//チャージサウンドの初期化
-		m_playerSound[plaNum][soundNum] = NewGO<SoundSource>(PRIORITY_0, nullptr);
+		m_playerSound[plaNum][soundNum] = NewGO<SoundSource>(nsStdafx::PRIORITY_0, nullptr);
 		m_playerSound[plaNum][soundNum]->Init(L"Assets/sound/Charge.wav");
 		m_playerSound[plaNum][soundNum]->SetVolume(0.1f);
 		m_playerSound[plaNum][soundNum]->Play(false);	//偽でワンショット再生
@@ -327,7 +327,7 @@ void SoundPlayBack::PlayerSoundPlayBack(const int soundNum, const int plaNum)
 
 	case Dash1Sound:
 		//ダッシュ１サウンドの初期化
-		m_playerSound[plaNum][soundNum] = NewGO<SoundSource>(PRIORITY_0, nullptr);
+		m_playerSound[plaNum][soundNum] = NewGO<SoundSource>(nsStdafx::PRIORITY_0, nullptr);
 		m_playerSound[plaNum][soundNum]->Init(L"Assets/sound/PlaDash1.wav");
 		m_playerSound[plaNum][soundNum]->SetVolume(0.5f);
 		m_playerSound[plaNum][soundNum]->Play(false);	//偽でワンショット再生
@@ -336,7 +336,7 @@ void SoundPlayBack::PlayerSoundPlayBack(const int soundNum, const int plaNum)
 
 	case Dash2Sound:
 		//ダッシュ２サウンドの初期化
-		m_playerSound[plaNum][soundNum] = NewGO<SoundSource>(PRIORITY_0, nullptr);
+		m_playerSound[plaNum][soundNum] = NewGO<SoundSource>(nsStdafx::PRIORITY_0, nullptr);
 		m_playerSound[plaNum][soundNum]->Init(L"Assets/sound/PlaDash2.wav");
 		m_playerSound[plaNum][soundNum]->SetVolume(0.5f);
 		m_playerSound[plaNum][soundNum]->Play(false);	//偽でワンショット再生
@@ -344,7 +344,7 @@ void SoundPlayBack::PlayerSoundPlayBack(const int soundNum, const int plaNum)
 		break;
 	case PlaAndPlaClashSound:
 		//プレイヤーとプレイヤーがぶつかったときのサウンドの初期化
-		m_playerSound[plaNum][soundNum] = NewGO<SoundSource>(PRIORITY_0, nullptr);
+		m_playerSound[plaNum][soundNum] = NewGO<SoundSource>(nsStdafx::PRIORITY_0, nullptr);
 		m_playerSound[plaNum][soundNum]->Init(L"Assets/sound/Clash1.wav");
 		m_playerSound[plaNum][soundNum]->SetVolume(1.0f);
 		m_playerSound[plaNum][soundNum]->Play(false);	//偽でワンショット再生
@@ -352,7 +352,7 @@ void SoundPlayBack::PlayerSoundPlayBack(const int soundNum, const int plaNum)
 		break;
 	case ChargeEnd:
 		//チャージ完了サウンドの初期化
-		m_playerSound[plaNum][soundNum] = NewGO<SoundSource>(PRIORITY_0, nullptr);
+		m_playerSound[plaNum][soundNum] = NewGO<SoundSource>(nsStdafx::PRIORITY_0, nullptr);
 		m_playerSound[plaNum][soundNum]->Init(L"Assets/sound/ChargeEnd.wav");
 		m_playerSound[plaNum][soundNum]->SetVolume(0.1f);
 		m_playerSound[plaNum][soundNum]->Play(false);	//偽でワンショット再生
@@ -365,7 +365,7 @@ void SoundPlayBack::EnemySoundPlayBack(const int soundNum, const int eneNum)
 	{
 	case EneShootDownSound:
 		//撃墜サウンドの初期化
-		m_enemySound[eneNum][soundNum] = NewGO<SoundSource>(PRIORITY_0, nullptr);
+		m_enemySound[eneNum][soundNum] = NewGO<SoundSource>(nsStdafx::PRIORITY_0, nullptr);
 		m_enemySound[eneNum][soundNum]->Init(L"Assets/sound/ShootDown.wav");
 		m_enemySound[eneNum][soundNum]->SetVolume(0.2f);
 		m_enemySound[eneNum][soundNum]->Play(false);	//偽でワンショット再生
@@ -374,7 +374,7 @@ void SoundPlayBack::EnemySoundPlayBack(const int soundNum, const int eneNum)
 
 	case EneFallSound:
 		//落下サウンドの初期化
-		m_enemySound[eneNum][soundNum] = NewGO<SoundSource>(PRIORITY_0, nullptr);
+		m_enemySound[eneNum][soundNum] = NewGO<SoundSource>(nsStdafx::PRIORITY_0, nullptr);
 		m_enemySound[eneNum][soundNum]->Init(L"Assets/sound/Fall.wav");
 		m_enemySound[eneNum][soundNum]->SetVolume(0.1f);
 		m_enemySound[eneNum][soundNum]->Play(false);	//偽でワンショット再生
@@ -383,7 +383,7 @@ void SoundPlayBack::EnemySoundPlayBack(const int soundNum, const int eneNum)
 
 	case DashSound:
 		//落下サウンドの初期化
-		m_enemySound[eneNum][soundNum] = NewGO<SoundSource>(PRIORITY_0, nullptr);
+		m_enemySound[eneNum][soundNum] = NewGO<SoundSource>(nsStdafx::PRIORITY_0, nullptr);
 		//ランダム関数のSEED（種）を設定
 		//（これによりランダム値を本当の意味でランダムにしている）
 		srand((int)time(nullptr));
@@ -425,7 +425,7 @@ void SoundPlayBack::EnemySoundPlayBack(const int soundNum, const int eneNum)
 
 	case EnePlaAndEneClashSound:
 		//プレイヤーとプレイヤーがぶつかったときのサウンドの初期化
-		m_enemySound[eneNum][soundNum] = NewGO<SoundSource>(PRIORITY_0, nullptr);
+		m_enemySound[eneNum][soundNum] = NewGO<SoundSource>(nsStdafx::PRIORITY_0, nullptr);
 		m_enemySound[eneNum][soundNum]->Init(L"Assets/sound/Clash2.wav");
 		m_enemySound[eneNum][soundNum]->SetVolume(0.5f);
 		m_enemySound[eneNum][soundNum]->Play(false);	//偽でワンショット再生
@@ -440,7 +440,7 @@ void SoundPlayBack::ResultSceneSoundPlayBack(const int soundNum)
 	{
 	case ResultGingle:
 		//リザルトジングルの初期化
-		m_resultSceneSceneSound[soundNum] = NewGO<SoundSource>(PRIORITY_0, nullptr);
+		m_resultSceneSceneSound[soundNum] = NewGO<SoundSource>(nsStdafx::PRIORITY_0, nullptr);
 		m_resultSceneSceneSound[soundNum]->Init(L"Assets/sound/ResultGingle.wav");
 		m_resultSceneSceneSound[soundNum]->SetVolume(0.5f);
 		m_resultSceneSceneSound[soundNum]->Play(false);	//偽でワンショット再生
@@ -449,7 +449,7 @@ void SoundPlayBack::ResultSceneSoundPlayBack(const int soundNum)
 
 	case ResultSceneGameBGM:
 		//ゲーム中のBGMサウンドの初期化
-		m_resultSceneSceneSound[soundNum] = NewGO<SoundSource>(PRIORITY_0, nullptr);
+		m_resultSceneSceneSound[soundNum] = NewGO<SoundSource>(nsStdafx::PRIORITY_0, nullptr);
 		m_resultSceneSceneSound[soundNum]->Init(L"Assets/sound/GameBGM.wav");
 		m_resultSceneSceneSound[soundNum]->SetVolume(0.01f);
 		m_resultSceneSceneSound[soundNum]->Play(true);	//真でループ再生
@@ -458,7 +458,7 @@ void SoundPlayBack::ResultSceneSoundPlayBack(const int soundNum)
 
 	case ResultSceneDecideSound:
 		//決定サウンド
-		m_resultSceneSceneSound[soundNum] = NewGO<SoundSource>(PRIORITY_0, nullptr);
+		m_resultSceneSceneSound[soundNum] = NewGO<SoundSource>(nsStdafx::PRIORITY_0, nullptr);
 		m_resultSceneSceneSound[soundNum]->Init(L"Assets/sound/Decide.wav");
 		m_resultSceneSceneSound[soundNum]->SetVolume(0.5f);
 		m_resultSceneSceneSound[soundNum]->Play(false);	//偽でワンショット再生

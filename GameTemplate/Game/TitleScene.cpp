@@ -10,7 +10,7 @@
 #include "Fade.h"
 
 
-namespace
+namespace nsTitleScene
 {
 	const Vector2 PLANAME1POS = { -600.0f, 310.0f };			//プレイヤー1の名前表示位置
 	const Vector2 PLANAME2POS = { 400.0f, 310.0f };				//プレイヤー2の名前表示位置
@@ -19,10 +19,6 @@ namespace
 
 	const Vector3 FlashingFont_POS = { 0.0f, -200.0f,0.0f };				//点滅文字の表示位置
 	const Vector3 FlashingFont_SCA = { 1.2f, 1.2f,1.2f };					//点滅文字の大きさ
-
-	const Vector3 PLAYER2_NAME_POS;
-	const Vector3 PLAYER3_NAME_POS;
-	const Vector3 PLAYER4_NAME_POS;
 
 	const Vector3 PressASpeechBalloonPos2 = { 300.0f,280.0f,0 };
 	const Vector3 PressASpeechBalloonPos3 = { -270.0f,-315,0 };
@@ -41,8 +37,6 @@ namespace
 	const float     FONT_ROT = 0.0f;			//フォントの傾き
 	const Vector2   FONT_PIV = { 1.0f,1.0f };	//フォントの基点
 	const float     FONT_SCA = 1.4f;			//フォントの拡大率
-
-	const float PLA_SCA = 0.85f;
 }
 
 
@@ -53,7 +47,7 @@ bool TitleScene::Start()
 	m_fade[FadeIn]->SetState(StateIn);
 	m_fade[FadeIn]->SetAlphaValue(1.0f);
 
-	m_soundPlayBack = FindGO<SoundPlayBack>(SOUNDPLAYBACK_NAME);
+	m_soundPlayBack = FindGO<SoundPlayBack>(nsStdafx::SOUNDPLAYBACK_NAME);
 
 	//タイトル名ジングルサウンド
 	m_soundPlayBack->TitleSceneSoundPlayBack(TitleSceneGingle);
@@ -65,23 +59,22 @@ bool TitleScene::Start()
 	InitTitleSceneImage();
 
 	//PUSH START BUTTONオブジェクト生成
-	m_pushStartButtonSprite = NewGO<SpriteRender>(PRIORITY_1, nullptr);
-	m_pushStartButtonSprite->Init("Assets/image/DDS/PRESSSTARTBUTTON.dds", 400.0f, 200.0f);
-	m_pushStartButtonSprite->SetPosition({ FlashingFont_POS });
-	m_pushStartButtonSprite->SetScale({ FlashingFont_SCA });
+	m_pushStartButtonSprite = NewGO<SpriteRender>(nsStdafx::PRIORITY_1, nullptr);
+	m_pushStartButtonSprite->Init("PRESSSTARTBUTTON", 400.0f, 200.0f);
+	m_pushStartButtonSprite->SetPosition({ nsTitleScene::FlashingFont_POS });
+	m_pushStartButtonSprite->SetScale({ nsTitleScene::FlashingFont_SCA });
 
 	//PRESS A !! 吹き出し画像オブジェクト生成
-	m_pressASpeechBalloon = NewGO<SpriteRender>(PRIORITY_1, nullptr);
-	m_pressASpeechBalloonArrow = NewGO<SpriteRender>(PRIORITY_1, nullptr);
-	m_pressASpeechBalloon->Init("Assets/image/DDS/PRESS A !!.dds", 400.0f, 200.0f);
-	m_pressASpeechBalloonArrow->Init("Assets/image/DDS/PRESS A !!Arrow.dds", 200.0f, 100.0f);
+	m_pressASpeechBalloon = NewGO<SpriteRender>(nsStdafx::PRIORITY_1, nullptr);
+	m_pressASpeechBalloonArrow = NewGO<SpriteRender>(nsStdafx::PRIORITY_1, nullptr);
+	m_pressASpeechBalloon->Init("PRESS A !!", 400.0f, 200.0f);
+	m_pressASpeechBalloonArrow->Init("PRESS A !!Arrow", 200.0f, 100.0f);
 	//初期位置設定
 	//2Pの左側
-	m_pressASpeechBalloonPos = PressASpeechBalloonPos2;
+	m_pressASpeechBalloonPos = nsTitleScene::PressASpeechBalloonPos2;
 	m_pressASpeechBalloon->SetPosition(m_pressASpeechBalloonPos);
 	m_pressASpeechBalloonPos.x += 75.0f;
 	m_pressASpeechBalloonArrow->SetPosition(m_pressASpeechBalloonPos);
-
 	//大きさ調整
 	m_pressASpeechBalloon->SetScale({0.5f,0.5f,0.5f});
 
@@ -126,7 +119,6 @@ void TitleScene::Update()
 	SideMove(60, 0.2f);
 
 	//タイトル名の動き
-
 	if (m_titleNameSca.x != 1.0f)
 	{
 		//タイトル名を拡大する関数
@@ -138,17 +130,8 @@ void TitleScene::Update()
 		TitleNameWave();
 	}
 
-	//登録されたプレイヤー数が最大数4人になるまで追加できる
-	if (m_totalPlaNum != TotalPlaNum)
-	{
-		/*登録されていないコントローラーのAボタンが押されたら、
-		【注意】USBポートに繋がれた順じゃないと登録されていきません。*/
-		if (g_pad[m_totalPlaNum]->IsTrigger(enButtonA))
-		{
-			//プレイヤーを登録する
-			AddPlayer();
-		}
-	}
+	//プレイヤーを登録する
+	AddPlayer();
 
 	if (m_fade[FadeOut] == nullptr)
 	{
@@ -172,51 +155,56 @@ void TitleScene::Update()
 //プレイヤーを追加する関数
 void TitleScene::AddPlayer()
 {
+	//登録されたプレイヤー数が最大数4人になるまで追加できる
+	if (m_totalPlaNum == TotalPlaNum)
+	{
+		return;
+	}
+	/*登録されていないコントローラーのAボタンが押されたら、
+	【注意】USBポートに繋がれた順じゃないと登録されていきません。*/
+	if (!g_pad[m_totalPlaNum]->IsTrigger(enButtonA))
+	{
+		return;
+	}
 	//エンジンサウンド
 	m_soundPlayBack->TitleSceneSoundPlayBack(EngineSound);
 
 	//新規プレイヤーの追加フラグを真に。
 	m_isAddPlayerFlg[m_totalPlaNum] = true;
 
-	//2Pのアクティブ化+アクティブ画像表示
-	if (m_totalPlaNum == Player2)
+	switch (m_totalPlaNum)
 	{
-		m_PlaNameFont[1]->SetColor(PLANAME2COL);
-
+	case Player2:
+		m_PlaNameFont[1]->SetColor(nsTitleScene::PLANAME2COL);
 		//3Pの右側
-		m_pressASpeechBalloonPos = PressASpeechBalloonPos3;
+		m_pressASpeechBalloonPos = nsTitleScene::PressASpeechBalloonPos3;
 		m_pressASpeechBalloon->SetPosition(m_pressASpeechBalloonPos);
 		m_pressASpeechBalloonPos.x -= 105.0f;
 		m_pressASpeechBalloonArrow->SetPosition(m_pressASpeechBalloonPos);
-
 		//反転させる
 		m_arrowSca = { -1.0f,-1.0f,-1.0f };
 		m_pressASpeechBalloonArrow->SetScale(m_arrowSca);
-	}
-	//3Pのアクティブ化+アクティブ画像表示
-	if (m_totalPlaNum == Player3)
-	{
-		m_PlaNameFont[2]->SetColor(PLANAME3COL);
+		break;
 
+	case Player3:
+		m_PlaNameFont[2]->SetColor(nsTitleScene::PLANAME3COL);
 		//4Pの左側
-		m_pressASpeechBalloonPos = PressASpeechBalloonPos4;
+		m_pressASpeechBalloonPos = nsTitleScene::PressASpeechBalloonPos4;
 		m_pressASpeechBalloon->SetPosition(m_pressASpeechBalloonPos);
 		m_pressASpeechBalloonPos.x += 80.0f;
 		m_pressASpeechBalloonArrow->SetPosition(m_pressASpeechBalloonPos);
-
 		//元に戻す
 		m_pressASpeechBalloonArrow->SetScale(Vector3::One);
-	}
-	//4Pのアクティブ化+アクティブ画像表示
-	if (m_totalPlaNum == Player4)
-	{
-		m_PlaNameFont[3]->SetColor(PLANAME4COL);
+		break;
 
+	case Player4:
+		m_PlaNameFont[3]->SetColor(nsTitleScene::PLANAME4COL);
 		//非表示
 		m_pressASpeechBalloon->Deactivate();
 		m_pressASpeechBalloonArrow->Deactivate();
+		break;
 	}
-	//次のプレイヤーへ...
+	//次のプレイヤーへ
 	m_totalPlaNum++;
 }
 
@@ -225,7 +213,7 @@ void TitleScene::AddPlayer()
 void TitleScene::StageSelectSceneTransition()
 {
 	//ステージ選択画面に遷移
-	m_stageSelectScene = NewGO<StageSelectScene>(PRIORITY_0, nullptr);
+	m_stageSelectScene = NewGO<StageSelectScene>(nsStdafx::PRIORITY_0, nullptr);
 	//登録された人数データを次のクラスに渡す
 	m_stageSelectScene->SetTotalPlaNum(m_totalPlaNum);
 	//このクラスの削除
@@ -317,29 +305,28 @@ void TitleScene::VerticalMove(const int width, const float speed, const int spri
 //タイトル名を拡大する関数
 void TitleScene::TitleNameScaUp()
 {
-	if (m_titleNameSca.x < 1.0f)
+	if (m_titleNameSca.x >= 1.0f)
 	{
-		m_scaUpValue += 0.001f;
-		if (m_titleNameSca.x > 0.5f)
-		{
-			m_scaUpValue += 0.005f;
-		}
-		m_titleNameSca.x += m_scaUpValue;
-
-		//1.0fで終わるように補正
-		if (m_titleNameSca.x > 1.0f)
-		{
-			m_titleNameSca.x = 1.0f;
-		}
-
-		m_titleNameSprite->SetScale(m_titleNameSca);
-
-		if (m_titleNameSca.x == 1.0f)
-		{
-			//タイトル拡大用のタイトル名画像を削除。
-			DeleteGO(m_titleNameSprite);
-		}
+		return;
 	}
+	m_scaUpValue += 0.001f;
+	if (m_titleNameSca.x > 0.5f)
+	{
+		m_scaUpValue += 0.005f;
+	}
+	m_titleNameSca.x += m_scaUpValue;
+
+	//1.0fで終わるように補正
+	m_titleNameSca.x = min(m_titleNameSca.x, 1.0f);
+
+	m_titleNameSprite->SetScale(m_titleNameSca);
+
+	if (m_titleNameSca.x != 1.0f)
+	{
+		return;
+	}
+	//タイトル拡大用のタイトル名画像を削除。
+	DeleteGO(m_titleNameSprite);
 }
 
 
@@ -408,54 +395,58 @@ void TitleScene::TitleNameWave()
 void TitleScene::PushStartButton(int plaNum)
 {
 	//スタートボタンが押されたら、
-	if (g_pad[plaNum]->IsTrigger(enButtonStart))
+	if (!g_pad[plaNum]->IsTrigger(enButtonStart))
 	{
-		//決定サウンド
-		m_soundPlayBack->TitleSceneSoundPlayBack(DecideSound);
-
-		//フェードアウト
-		m_fade[FadeOut] = NewGO<Fade>(0, nullptr);
-		m_fade[FadeOut]->SetState(StateOut);
-		m_fade[FadeOut]->SetAlphaValue(FLOAT_ZERO);
-
-		m_nextScene = StateSelectScene;
+		return;
 	}
+	//決定サウンド
+	m_soundPlayBack->TitleSceneSoundPlayBack(DecideSound);
+
+	//フェードアウト
+	m_fade[FadeOut] = NewGO<Fade>(0, nullptr);
+	m_fade[FadeOut]->SetState(StateOut);
+	m_fade[FadeOut]->SetAlphaValue(nsStdafx::FLOAT_ZERO);
+
+	m_nextScene = StateSelectScene;
 }
 
 //ボタンが押されたときの処理関数
 void TitleScene::PushSelectButton(int plaNum)
 {
 	//セレクトボタンが押されたら、、
-	if (g_pad[plaNum]->IsTrigger(enButtonSelect))
+	if (!g_pad[plaNum]->IsTrigger(enButtonSelect))
 	{
-		//フェードアウト
-		m_fade[FadeOut] = NewGO<Fade>(0, nullptr);
-		m_fade[FadeOut]->SetState(StateOut);
-		m_fade[FadeOut]->SetAlphaValue(FLOAT_ZERO);
-
-		m_nextScene = GameEnd;
+		return;
 	}
+	//フェードアウト
+	m_fade[FadeOut] = NewGO<Fade>(0, nullptr);
+	m_fade[FadeOut]->SetState(StateOut);
+	m_fade[FadeOut]->SetAlphaValue(nsStdafx::FLOAT_ZERO);
+
+	m_nextScene = GameEnd;
 }
 
 //選択された次のシーンに行く処理関数
 void TitleScene::NextScene()
 {
 	//真っ白になったら遷移
-	if (m_fade[FadeOut]->GetNowState() == StateWait) {
-
-		if (m_nextScene == StateSelectScene)
-		{
-			//ステージ選択画面に遷移
-			StageSelectSceneTransition();
-		}
-		if (m_nextScene == GameEnd)
-		{
-			//exeを閉じてゲーム終了
-			exit(EXIT_SUCCESS);
-			//メモ//
-			//exit(EXIT_FAILURE);は異常終了		EXIT_FAILURE = 1
-			//exit(EXIT_SUCCESS);は正常終了		EXIT_SUCCESS = 0
-		}
+	if (m_fade[FadeOut]->GetNowState() != StateWait)
+	{
+		return;
+	}
+	switch (m_nextScene)
+	{
+	case StateSelectScene:
+		//ステージ選択画面に遷移
+		StageSelectSceneTransition();
+		break;
+	case GameEnd:
+		//exeを閉じてゲーム終了
+		exit(EXIT_SUCCESS);
+		//メモ//
+		//exit(EXIT_FAILURE);は異常終了		EXIT_FAILURE = 1
+		//exit(EXIT_SUCCESS);は正常終了		EXIT_SUCCESS = 0
+		break;
 	}
 }
 
@@ -468,53 +459,49 @@ void TitleScene::InitPlayerFont()
 
 	for (int plaNum = Player1; plaNum < TotalPlaNum; plaNum++) {
 		//2P～4Pの非アクティブ画像オブジェクト生成
-		m_PlaNameFont[plaNum] = NewGO<FontRender>(1);		//1P
-		if (plaNum == Player1)
+		m_PlaNameFont[plaNum] = NewGO<FontRender>(nsStdafx::PRIORITY_0,nullptr);		//1P
+		switch (plaNum)
 		{
-			m_PlaNameFont[0]->Init(
+		case Player1:
+			m_PlaNameFont[Player1]->Init(
 				L"PLAYER1",			//テキスト
-				PLANAME1POS,		//位置
-				PLANAME1COL,		//色
-				FONT_ROT,			//傾き
-				PLA1234_SCA,		//拡大率
-				FONT_PIV			//基点
+				nsTitleScene::PLANAME1POS,		//位置
+				nsTitleScene::PLANAME1COL,		//色
+				nsTitleScene::FONT_ROT,			//傾き
+				nsTitleScene::PLA1234_SCA,		//拡大率
+				nsTitleScene::FONT_PIV			//基点
 			);
-		};
-		//2P
-		if (plaNum == Player2)
-		{
-			m_PlaNameFont[1]->Init(
+			break;
+		case Player2:
+			m_PlaNameFont[Player2]->Init(
 				L"PLAYER2",			//テキスト
-				PLANAME2POS,		//位置
-				PLANAME234COL,		//色
-				FONT_ROT,			//傾き
-				PLA1234_SCA,		//拡大率
-				FONT_PIV			//基点
+				nsTitleScene::PLANAME2POS,		//位置
+				nsTitleScene::PLANAME234COL,		//色
+				nsTitleScene::FONT_ROT,			//傾き
+				nsTitleScene::PLA1234_SCA,		//拡大率
+				nsTitleScene::FONT_PIV			//基点
 			);
-		}
-		//3P
-		if (plaNum == Player3)
-		{
-			m_PlaNameFont[2]->Init(
+			break;
+		case Player3:
+			m_PlaNameFont[Player3]->Init(
 				L"PLAYER3",			//テキスト
-				PLANAME3POS,		//位置
-				PLANAME234COL,		//色
-				FONT_ROT,			//傾き
-				PLA1234_SCA,		//拡大率
-				FONT_PIV			//基点
+				nsTitleScene::PLANAME3POS,		//位置
+				nsTitleScene::PLANAME234COL,		//色
+				nsTitleScene::FONT_ROT,			//傾き
+				nsTitleScene::PLA1234_SCA,		//拡大率
+				nsTitleScene::FONT_PIV			//基点
 			);
-		}
-		//4P
-		if (plaNum == Player4)
-		{
-			m_PlaNameFont[3]->Init(
+			break;
+		case Player4:
+			m_PlaNameFont[Player4]->Init(
 				L"PLAYER4",			//テキスト
-				PLANAME4POS,		//位置
-				PLANAME234COL,		//色
-				FONT_ROT,			//傾き
-				PLA1234_SCA,		//拡大率
-				FONT_PIV			//基点
+				nsTitleScene::PLANAME4POS,		//位置
+				nsTitleScene::PLANAME234COL,		//色
+				nsTitleScene::FONT_ROT,			//傾き
+				nsTitleScene::PLA1234_SCA,		//拡大率
+				nsTitleScene::FONT_PIV			//基点
 			);
+			break;
 		}
 		//文字の境界線表示
 		m_PlaNameFont[plaNum]->SetShadowParam(true, 3.0f, Vector4::Black);
@@ -526,46 +513,18 @@ void TitleScene::InitPlayerFont()
 void TitleScene::InitTitleSceneImage()
 {
 	//タイトルロゴオブジェクト生成
-	m_titleSprite = NewGO<SpriteRender>(PRIORITY_0, nullptr);
-	m_titleSprite->Init("Assets/image/DDS/TitleRogo.dds", 1600.0f, 800.0f);
+	m_titleSprite = NewGO<SpriteRender>(nsStdafx::PRIORITY_0, nullptr);
+	m_titleSprite->Init("TitleRogo", 1600.0f, 800.0f);
 	//タイトル名オブジェクト生成
-	m_titleNameSprite = NewGO<SpriteRender>(PRIORITY_1, nullptr);
-	m_titleNameSprite->Init("Assets/image/DDS/TitleName.dds", 1600.0f, 800.0f);
-	m_titleNameSca.x = FLOAT_ZERO;
+	m_titleNameSprite = NewGO<SpriteRender>(nsStdafx::PRIORITY_1, nullptr);
+	m_titleNameSprite->Init("TitleName", 1600.0f, 800.0f);
+	m_titleNameSca.x = nsStdafx::FLOAT_ZERO;
 	m_titleNameSprite->SetScale(m_titleNameSca);
 	for (int i = 0; i < 9; i++)
 	{
-		m_titleBaraBaraSprite[i] = NewGO<SpriteRender>(PRIORITY_0, nullptr);
-		switch (i)
-		{
-		case 0:
-			m_titleBaraBaraSprite[i]->Init("Assets/image/DDS/TitleName_1.dds", 1600.0f, 800.0f);
-			break;
-		case 1:
-			m_titleBaraBaraSprite[i]->Init("Assets/image/DDS/TitleName_2.dds", 1600.0f, 800.0f);
-			break;
-		case 2:
-			m_titleBaraBaraSprite[i]->Init("Assets/image/DDS/TitleName_3.dds", 1600.0f, 800.0f);
-			break;
-		case 3:
-			m_titleBaraBaraSprite[i]->Init("Assets/image/DDS/TitleName_4.dds", 1600.0f, 800.0f);
-			break;
-		case 4:
-			m_titleBaraBaraSprite[i]->Init("Assets/image/DDS/TitleName_5.dds", 1600.0f, 800.0f);
-			break;
-		case 5:
-			m_titleBaraBaraSprite[i]->Init("Assets/image/DDS/TitleName_6.dds", 1600.0f, 800.0f);
-			break;
-		case 6:
-			m_titleBaraBaraSprite[i]->Init("Assets/image/DDS/TitleName_7.dds", 1600.0f, 800.0f);
-			break;
-		case 7:
-			m_titleBaraBaraSprite[i]->Init("Assets/image/DDS/TitleName_8.dds", 1600.0f, 800.0f);
-			break;
-		case 8:
-			m_titleBaraBaraSprite[i]->Init("Assets/image/DDS/TitleName_9.dds", 1600.0f, 800.0f);
-			break;
-		}
+		m_titleBaraBaraSprite[i] = NewGO<SpriteRender>(nsStdafx::PRIORITY_0, nullptr);
+		sprintf(m_filePath, "TitleName_%d", i);
+		m_titleBaraBaraSprite[i]->Init(m_filePath, 1600.0f, 800.0f);
 		//初めは非表示
 		m_titleBaraBaraSprite[i]->Deactivate();
 	}

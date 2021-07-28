@@ -6,12 +6,6 @@
 #include "stdafx.h"
 
 
-namespace
-{
-
-}
-
-
 bool SpriteRender::Start()
 {
 
@@ -33,9 +27,10 @@ void SpriteRender::Update()
 
 
 //画像を初期化する関数
-void SpriteRender::Init(const char* filepath, float width, float height, AlphaBlendMode mode)
+void SpriteRender::Init(const char* filePath, float width, float height, AlphaBlendMode mode)
 {
-	m_spriteInitData.m_ddsFilePath[0] = filepath;					//ファイルパス
+	sprintf(m_filePath, "Assets/image/DDS/%s.dds", filePath);
+	m_spriteInitData.m_ddsFilePath[0] = m_filePath;					//ファイルパス
 	m_spriteInitData.m_fxFilePath = "Assets/shader/sprite.fx";		//シェーダーファイルのパスを指定
 	m_spriteInitData.m_width = width;								//横幅
 	m_spriteInitData.m_height = height;								//縦幅

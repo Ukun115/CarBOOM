@@ -33,7 +33,15 @@ private:
 		Player1,
 		Player2,
 		Player3,
-		Player4
+		Player4,
+		TotalPlaNum
+	};
+
+	enum enumNextScene
+	{
+		NextGameEnd,
+		NextTitleScene,
+		NextStageSelectScene
 	};
 
 
@@ -46,8 +54,8 @@ private:
 	GameScene* m_gameScene = nullptr;
 	Player* m_player = nullptr;
 	SpriteRender* m_resultSprite = nullptr;
-	SpriteRender* m_plaNum[4] = { nullptr };			//プレイヤー4人分用意
-	SpriteRender* m_rankingSprite[4] = { nullptr };	//プレイヤー4人分用意
+	SpriteRender* m_plaNum[TotalPlaNum] = { nullptr };			//プレイヤー4人分用意
+	SpriteRender* m_rankingSprite[TotalPlaNum] = { nullptr };	//プレイヤー4人分用意
 	SoundPlayBack* m_soundPlayBack = nullptr;
 
 
@@ -55,10 +63,7 @@ private:
 	/// フラグ
 	/// </summary>
 	bool m_enableTimerCountFlg = false;
-	bool m_pla4MoveFlg = false;
-	bool m_pla3MoveFlg = false;
-	bool m_pla2MoveFlg = false;
-	bool m_pla1MoveFlg = false;
+	bool m_plaMoveFlg[TotalPlaNum] = { false };
 	bool m_delayTimerOnFlg = true;
 	bool m_plaJumpFlg = false;
 	bool m_muriFlg = false;
@@ -67,16 +72,18 @@ private:
 	/// <summary>
 	/// タイマー
 	/// </summary>
-	unsigned int m_exitTimer = INT_ZERO;
-	int m_plaMoveDelayTimer = INT_ZERO;
-	int m_verticalMoveTimer = INT_ZERO;
+	unsigned int m_exitTimer = nsStdafx::INT_ZERO;
+	int m_plaMoveDelayTimer = nsStdafx::INT_ZERO;
+	int m_verticalMoveTimer = nsStdafx::INT_ZERO;
 
 
-	unsigned int m_plaScore[4] = { INT_ZERO };		//プレイヤー4人分のスコアを入れる配列
-	int m_totalPlaNum = INT_ZERO;
+	unsigned int m_plaScore[TotalPlaNum] = { nsStdafx::INT_ZERO };		//プレイヤー4人分のスコアを入れる配列
+	int m_totalPlaNum = nsStdafx::INT_ZERO;
 
-	unsigned int m_select = INT_ZERO;
-	float m_moveSpeed = FLOAT_ZERO;
+	unsigned int m_select = nsStdafx::INT_ZERO;
+	float m_moveSpeed = nsStdafx::FLOAT_ZERO;
+
+	char m_filePath[256];
 
 	Vector3 m_number1Pos = { 900.0f,50.0f,0.0f };		//１位プレイヤーの表示位置
 	Vector3 m_number2Pos = { 900.0f,-50.0f,0.0f };		//２位プレイヤーの表示位置

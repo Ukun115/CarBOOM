@@ -6,7 +6,6 @@ class Fade;
 class TitleScene : public IGameObject		//TODO:コピー禁止ポリシーを継承する。
 {
 private:
-
 	/// <summary>
 	/// 列挙型の宣言
 	/// </summary>
@@ -76,9 +75,9 @@ private:
 	/// <summary>
 	/// タイマー
 	/// </summary>
-	unsigned int m_flashingFontTimer = { INT_ZERO };		//点滅文字の表示非表示の切り替えタイマー
-	int m_sideMoveTimer = INT_ZERO;
-	int m_waveTimer = INT_ZERO;
+	unsigned int m_flashingFontTimer = { nsStdafx::INT_ZERO };		//点滅文字の表示非表示の切り替えタイマー
+	int m_sideMoveTimer = nsStdafx::INT_ZERO;
+	int m_waveTimer = nsStdafx::INT_ZERO;
 	int m_verticalMoveTimer[9] = { 0 };
 
 
@@ -89,7 +88,9 @@ private:
 	Vector3 m_arrowSca;
 	Vector3 m_titleBaraBaraSpritePos[9];
 
-	int m_nextScene = INT_ZERO;
+	int m_nextScene = nsStdafx::INT_ZERO;
+
+	char m_filePath[256];
 
 
 	bool Start()override final;
@@ -124,12 +125,4 @@ private:
 
 
 public:
-
-	/// <summary>
-	/// ゲッター
-	/// </summary>
-	//プレイヤーが追加されているかどうかを取得する関数
-	 bool GetPlaFlg(const int planum)const { return m_isAddPlayerFlg[planum]; }
-	//登録されたプレイヤーの合計人数を取得する関数
-	int GetTotalPlaNum()const { return m_totalPlaNum; }
 };

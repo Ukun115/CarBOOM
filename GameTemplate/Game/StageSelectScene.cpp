@@ -10,7 +10,7 @@
 #include "Fade.h"
 
 
-namespace
+namespace nsStageSelectScene
 {
 	const int PLAYER1 = 0;		//プレイヤー１
 
@@ -34,10 +34,10 @@ namespace
 
 bool StageSelectScene::Start()
 {
-	m_soundPlayBack = FindGO<SoundPlayBack>(SOUNDPLAYBACK_NAME);
+	m_soundPlayBack = FindGO<SoundPlayBack>(nsStdafx::SOUNDPLAYBACK_NAME);
 
 	//ライトオブジェクト生成
-	m_light = NewGO<Light>(PRIORITY_0, LIGHT_NAME);
+	m_light = NewGO<Light>(nsStdafx::PRIORITY_0, nsStdafx::LIGHT_NAME);
 	//ディレクションライトをセット
 	m_light->SetDirectionLightData();
 	//半球ライトをセット
@@ -49,113 +49,95 @@ bool StageSelectScene::Start()
 	m_fade[FadeIn]->SetAlphaValue(1.0f);
 
 	//ステージ説明の背景画像オブジェクト生成
-	m_stageDiscription[0] = NewGO<SpriteRender>(PRIORITY_1, nullptr);
+	m_stageDiscription[0] = NewGO<SpriteRender>(nsStdafx::PRIORITY_1, nullptr);
+	//ステージ説明のバックスクリーン画像
+	m_stageDiscription[0]->Init("Stage0Discription", 500, 600);
+	Vector3 m_stageDiscriptionPos = { -400.0f,-20.0f,nsStdafx::FLOAT_ZERO };
+	m_stageDiscription[0]->SetPosition(m_stageDiscriptionPos);
 
 	//ステージセレクト文字画像オブジェクト生成
-	m_stageSelectSprite = NewGO<SpriteRender>(PRIORITY_1, nullptr);
+	m_stageSelectSprite = NewGO<SpriteRender>(nsStdafx::PRIORITY_1, nullptr);
 
 	for (int stageNum = Stage1; stageNum < TotalStageNum; stageNum++)
 	{
 		//操作説明の画像オブジェクト生成
-		m_operatorDiscription[stageNum] = NewGO<SpriteRender>(PRIORITY_2, nullptr);
-		m_operatorDiscription[stageNum]->Init("Assets/Image/DDS/OperationDiscription.dds", 550, 550);
+		m_operatorDiscription[stageNum] = NewGO<SpriteRender>(nsStdafx::PRIORITY_2, nullptr);
+		m_operatorDiscription[stageNum]->Init("OperationDiscription", 550, 550);
 		//説明文字の表示位置を指定
 		m_operatorDiscription[stageNum]->SetPosition(m_stageDiscriptionLetterPos);
 
 		//ステージ説明の背景画像オブジェクト生成
-		m_stageDiscription[stageNum] = NewGO<SpriteRender>(PRIORITY_2, nullptr);
-		//全ステージモデルオブジェクト生成
-		m_stage[stageNum] = NewGO<SkinModelRender>(PRIORITY_1, nullptr);
-		//全ステージスプライトオブジェクト生成
-		m_stageName[stageNum] = NewGO<SpriteRender>(PRIORITY_1, nullptr);
-	}
-
-	m_stageSelectSprite->Init("Assets/Image/DDS/STAGESELECT.dds", 750, 375);
-	Vector3 m_stageSelectSpritePos = { FLOAT_ZERO,310.0f,FLOAT_ZERO };
-	m_stageSelectSprite->SetPosition(m_stageSelectSpritePos);
-
-	//ステージ説明のバックスクリーン画像
-	m_stageDiscription[0]->Init("Assets/Image/DDS/StageDescriptionBackScreen.dds", 500, 600);
-	Vector3 m_stageDiscriptionPos = {-400.0f,-20.0f,FLOAT_ZERO };
-	m_stageDiscription[0]->SetPosition(m_stageDiscriptionPos);
-	//フラットステージ説明文字
-	m_stageDiscription[Stage1]->Init("Assets/Image/DDS/FlatStageDiscription.dds", 550, 550);
-	//ドーナツステージ説明文字
-	m_stageDiscription[Stage2]->Init("Assets/Image/DDS/DonutStageDescription.dds", 550, 550);
-	//アイスステージ説明文字
-	m_stageDiscription[Stage3]->Init("Assets/Image/DDS/IceStageDiscription.dds", 550, 550);
-	//ウィンドステージ説明文字
-	m_stageDiscription[Stage4]->Init("Assets/Image/DDS/WindStageDiscription.dds", 550, 550);
-	//ティルトステージ説明文字
-	m_stageDiscription[Stage5]->Init("Assets/Image/DDS/TiltStageDiscription.dds", 550, 550);
-	//ランダムステージ説明文字
-	m_stageDiscription[RandomStage]->Init("Assets/Image/DDS/RandomStageDiscription.dds", 550, 550);
-
-	for (int stageNum = Stage1; stageNum < TotalStageNum; stageNum++)
-	{
+		m_stageDiscription[stageNum] = NewGO<SpriteRender>(nsStdafx::PRIORITY_2, nullptr);
+		sprintf(m_filePath, "Stage%dDiscription", stageNum);
+		m_stageDiscription[stageNum]->Init(m_filePath, 550, 550);
 		//位置を指定
 		m_stageDiscription[stageNum]->SetPosition(m_stageDiscriptionLetterPos);
 		m_stageDiscription[stageNum]->Deactivate();
+
+		//全ステージモデルオブジェクト生成
+		m_stage[stageNum] = NewGO<SkinModelRender>(nsStdafx::PRIORITY_1, nullptr);
+		//全ステージスプライトオブジェクト生成
+		m_stageName[stageNum] = NewGO<SpriteRender>(nsStdafx::PRIORITY_1, nullptr);
 	}
 
+
+	m_stageSelectSprite->Init("STAGESELECT", 750, 375);
+	Vector3 m_stageSelectSpritePos = { nsStdafx::FLOAT_ZERO,310.0f,nsStdafx::FLOAT_ZERO };
+	m_stageSelectSprite->SetPosition(m_stageSelectSpritePos);
+
+	for (int i = Stage1; i < TotalStageNum; i++)
+	{
+		sprintf(m_filePath, "bg/stage_%d_Select", i);
+		m_stage[i]->Init(m_filePath);
+		sprintf(m_filePath, "Stage%dName", i);
+		m_stageName[i]->Init(m_filePath,200,100);
+	}
 	//どひょうステージ&名前画像をロード
-	m_stage[Stage1]->Init("Assets/modelData/bg/stage_1_Select.tkm");
-	m_stageName[Stage1]->Init("Assets/Image/DDS/FLAT STAGE.dds", 200, 100);
 	//左上
-	m_stagePos[Stage1] = STAGE_1_POS;
+	m_stagePos[Stage1] = nsStageSelectScene::STAGE_1_POS;
 	m_stage[Stage1]->SetPosition(m_stagePos[Stage1]);
-	m_stageName[Stage1]->SetPosition(STAGE_1_NAME_POS);
+	m_stageName[Stage1]->SetPosition(nsStageSelectScene::STAGE_1_NAME_POS);
 
 	//ドーナツステージ&名前画像をロード
-	m_stage[Stage2]->Init("Assets/modelData/bg/stage_2_Select.tkm");
-	m_stageName[Stage2]->Init("Assets/Image/DDS/DONUT STAGE.dds", 200, 100);
 	//右上
-	m_stagePos[Stage2] = STAGE_2_POS;
+	m_stagePos[Stage2] = nsStageSelectScene::STAGE_2_POS;
 	m_stage[Stage2]->SetPosition(m_stagePos[Stage2]);
-	m_stageName[Stage2]->SetPosition(STAGE_2_NAME_POS);
+	m_stageName[Stage2]->SetPosition(nsStageSelectScene::STAGE_2_NAME_POS);
 
 	//アイスステージ&名前画像をロード
-	m_stage[Stage3]->Init("Assets/modelData/bg/stage_3_Select.tkm");
-	m_stageName[Stage3]->Init("Assets/Image/DDS/ICE STAGE.dds", 200, 100);
 	//左下
-	m_stagePos[Stage3] = STAGE_3_POS;
+	m_stagePos[Stage3] = nsStageSelectScene::STAGE_3_POS;
 	m_stage[Stage3]->SetPosition(m_stagePos[Stage3]);
-	m_stageName[Stage3]->SetPosition(STAGE_3_NAME_POS);
+	m_stageName[Stage3]->SetPosition(nsStageSelectScene::STAGE_3_NAME_POS);
 
 	//ウィンドステージ&名前画像をロード
-	m_stage[Stage4]->Init("Assets/modelData/bg/stage_4_Select.tkm");
-	m_stageName[Stage4]->Init("Assets/Image/DDS/WIND STAGE.dds", 200, 100);
 	//右下
-	m_stagePos[Stage4] = STAGE_4_POS;
+	m_stagePos[Stage4] = nsStageSelectScene::STAGE_4_POS;
 	m_stage[Stage4]->SetPosition(m_stagePos[Stage4]);
-	m_stageName[Stage4]->SetPosition(STAGE_4_NAME_POS);
+	m_stageName[Stage4]->SetPosition(nsStageSelectScene::STAGE_4_NAME_POS);
 
 	//ティルトステージ&名前画像をロード
-	m_stage[Stage5]->Init("Assets/modelData/bg/stage_5_Select.tkm");
-	m_stageName[Stage5]->Init("Assets/Image/DDS/TILT STAGE.dds", 200, 100);
 	//右真ん中
-	m_stagePos[Stage5] = STAGE_5_POS;
+	m_stagePos[Stage5] = nsStageSelectScene::STAGE_5_POS;
 	m_stage[Stage5]->SetPosition(m_stagePos[Stage5]);
-	m_stageName[Stage5]->SetPosition(STAGE_5_NAME_POS);
+	m_stageName[Stage5]->SetPosition(nsStageSelectScene::STAGE_5_NAME_POS);
 
 	//ランダムステージ&名前画像をロード
-	m_stage[RandomStage]->Init("Assets/modelData/bg/stage_random.tkm");
-	m_stageName[RandomStage]->Init("Assets/Image/DDS/RANDOM.dds", 200, 100);
 	//右下
-	m_stagePos[RandomStage] = STAGE_RANDOM_POS;
+	m_stagePos[RandomStage] = nsStageSelectScene::STAGE_RANDOM_POS;
 	m_stage[RandomStage]->SetPosition(m_stagePos[RandomStage]);
-	m_stageName[RandomStage]->SetPosition(STAGE_RANDOM_NAME_POS);
+	m_stageName[RandomStage]->SetPosition(nsStageSelectScene::STAGE_RANDOM_NAME_POS);
 
 	//プレイヤーモデルオブジェクト生成
 	//文字画像の上に乗るようにプライオリティーは１つ文字画像よりも高くする
-	m_pla = NewGO<SkinModelRender>(PRIORITY_2, nullptr);
-	m_pla->Init("Assets/modelData/LowPoly_PlayerCar_Red.tkm");	//赤車
+	m_pla = NewGO<SkinModelRender>(nsStdafx::PRIORITY_2, nullptr);
+	m_pla->Init("LowPoly_PlayerCar_0");	//赤車
 	//初期位置設定
 	m_pla->SetPosition(Vector3::Zero);
 
 	//デバック用のプレイヤースピードの矢印表示
 	//m_skinModelRenderArrow = NewGO<SkinModelRender>(PRIORITY_2, nullptr);
-	//m_skinModelRenderArrow->Init("Assets/modelData/Arrow.tkm");	//矢印
+	//m_skinModelRenderArrow->Init("Arrow");	//矢印
 
 
 	m_AhukidasiPos[0] = { 0, 200, 0 };//フラット
@@ -167,15 +149,15 @@ bool StageSelectScene::Start()
 	//プレイヤーの上に表示されるA吹き出し
 	for (int stageNum = 0; stageNum < 6; stageNum++)
 	{
-		m_Ahukidasi[stageNum] = NewGO<SpriteRender>(PRIORITY_2, nullptr);
-		m_Ahukidasi[stageNum]->Init("Assets/Image/DDS/Ahukidasi.dds", 100, 100);
+		m_Ahukidasi[stageNum] = NewGO<SpriteRender>(nsStdafx::PRIORITY_2, nullptr);
+		m_Ahukidasi[stageNum]->Init("Ahukidasi", 100, 100);
 		m_Ahukidasi[stageNum]->Deactivate();
 		m_Ahukidasi[stageNum]->SetPosition(m_AhukidasiPos[stageNum]);
 	}
 
 	//オブジェクト生成(背景画像)
-	m_titleSprite = NewGO<SpriteRender>(PRIORITY_0, nullptr);
-	m_titleSprite->Init("Assets/image/DDS/BackScreenImage.dds", 1600.0f, 800.0f);
+	m_titleSprite = NewGO<SpriteRender>(nsStdafx::PRIORITY_0, nullptr);
+	m_titleSprite->Init("BackScreenImage", 1600.0f, 800.0f);
 
 	//タイトルBGMサウンド
 	m_soundPlayBack->StageSelectSceneSoundPlayBack(TitleSceneBGM);
@@ -232,44 +214,34 @@ StageSelectScene::~StageSelectScene()
 
 void StageSelectScene::Update()
 {
-	//ベクトルを可視化させるデバック関数
-	//PlaMooveSpeedDebug();
-	//クラクションを鳴らす関数
-	CarHorn();
-	//プレイヤーの回転処理
-	PlaTurn();
-	//プレイヤーの通常移動処理
-	PlaMove();
-	//プレイヤーの移動速度に補正を入れる
-	PlaSpeedCorrection();
-	//プレイヤーが画面外に行かないようにする
-	AvoidScreenOutSide();
-	//プレイヤーの位置,回転の情報を更新する
-	PlaDataUpdate();
-	//ステージの上にいるときそのステージを選択できる関数
-	TouchStage();
+	//プレイヤー操作をまとめている関数
+	PlayerInformation();
 
 	//セレクトボタンが押されたら、
-	if (g_pad[PLAYER1]->IsTrigger(enButtonSelect))
+	if (!g_pad[nsStageSelectScene::PLAYER1]->IsTrigger(enButtonSelect))
 	{
-		//決定サウンド
-		m_soundPlayBack->StageSelectSceneSoundPlayBack(DecideSound);
-
-		//フェードアウト
-		m_fade[FadeOutBadk] = NewGO<Fade>(0, nullptr);
-		m_fade[FadeOutBadk]->SetState(StateOut);
-		m_fade[FadeOutBadk]->SetAlphaValue(FLOAT_ZERO);
-
-		m_nextTitleSceneFlg = 1;
+		return;
 	}
-	if (m_nextTitleSceneFlg)
+	//決定サウンド
+	m_soundPlayBack->StageSelectSceneSoundPlayBack(DecideSound);
+
+	//フェードアウト
+	m_fade[FadeOutBadk] = NewGO<Fade>(0, nullptr);
+	m_fade[FadeOutBadk]->SetState(StateOut);
+	m_fade[FadeOutBadk]->SetAlphaValue(nsStdafx::FLOAT_ZERO);
+
+	m_nextTitleSceneFlg = 1;
+
+	if (!m_nextTitleSceneFlg)
 	{
-		if (m_fade[FadeOutBadk]->GetNowState() == StateWait)
-		{
-			m_titleScene = NewGO<TitleScene>(PRIORITY_0, nullptr);
-			DeleteGO(this);
-		}
+		return;
 	}
+	if (m_fade[FadeOutBadk]->GetNowState() != StateWait)
+	{
+		return;
+	}
+	m_titleScene = NewGO<TitleScene>(nsStdafx::PRIORITY_0, nullptr);
+	DeleteGO(this);
 }
 
 
@@ -279,7 +251,7 @@ void StageSelectScene::GameSceneTransition()
 	if (m_fade[FadeOutNext] == nullptr)
 	{
 		//Aボタンが押されたら、
-		if (g_pad[PLAYER1]->IsTrigger(enButtonA))
+		if (g_pad[nsStageSelectScene::PLAYER1]->IsTrigger(enButtonA))
 		{
 			//ステージ５（ティルトステージ）は未実装のため、ステージに入れないようにreturnしています
 			if (m_stageNum == Stage5)
@@ -293,45 +265,36 @@ void StageSelectScene::GameSceneTransition()
 			//フェードアウト
 			m_fade[FadeOutNext] = NewGO<Fade>(0, nullptr);
 			m_fade[FadeOutNext]->SetState(StateOut);
-			m_fade[FadeOutNext]->SetAlphaValue(FLOAT_ZERO);
+			m_fade[FadeOutNext]->SetAlphaValue(nsStdafx::FLOAT_ZERO);
 		}
 	}
 	else
 	{
-		if (m_fade[FadeOutNext]->GetNowState() == StateWait)
+		if (m_fade[FadeOutNext]->GetNowState() != StateWait)
 		{
-			//ランダムステージが選ばれていたら、
-			if (m_stageNum == RandomStage)
-			{
-				//ランダム関数のSEED（種）を設定
-				//（これによりランダム値を本当の意味でランダムにしている）
-				srand((int)time(nullptr));
-				//現在存在するステージの中からランダムで選ぶ
-				m_stageNum = ((rand() % 4) + Stage1);
-			}
-
-			//ゲーム画面に遷移
-			m_gameScene = NewGO<GameScene>(PRIORITY_0, GAMESCENE_NAME);
-			//登録された人数データをゲームクラスに渡す
-			m_gameScene->SetTotalPlaNum(m_totalPlaNum);
-			//ステージなんぼが選ばれているかをゲームクラスに渡す
-			m_gameScene->SetSelectStageNum(m_stageNum);
-			//クラスの破棄
-			DeleteGO(this);
-			//ステージセレクトシーンで使われているサウンドを破棄
-			m_soundPlayBack->StageSelectSceneDeleteGO();
+			return;
 		}
+		//ランダムステージが選ばれていたら、
+		if (m_stageNum == RandomStage)
+		{
+			//ランダム関数のSEED（種）を設定
+			//（これによりランダム値を本当の意味でランダムにしている）
+			srand((int)time(nullptr));
+			//現在存在するステージの中からランダムで選ぶ
+			m_stageNum = ((rand() % 4) + Stage1);
+		}
+
+		//ゲーム画面に遷移
+		m_gameScene = NewGO<GameScene>(nsStdafx::PRIORITY_0, nsStdafx::GAMESCENE_NAME);
+		//登録された人数データをゲームクラスに渡す
+		m_gameScene->SetTotalPlaNum(m_totalPlaNum);
+		//ステージなんぼが選ばれているかをゲームクラスに渡す
+		m_gameScene->SetSelectStageNum(m_stageNum);
+		//クラスの破棄
+		DeleteGO(this);
+		//ステージセレクトシーンで使われているサウンドを破棄
+		m_soundPlayBack->StageSelectSceneDeleteGO();
 	}
-}
-
-
-//プレイヤーの位置,回転の情報を更新する関数
-void StageSelectScene::PlaDataUpdate()
-{
-	//位置をセット
-	m_pla->SetPosition(m_pos);
-	//回転をセット
-	m_pla->SetRotation(m_rot);
 }
 
 
@@ -400,7 +363,6 @@ void StageSelectScene::TouchStage()
 			//全てのステージ説明文字を非表示
 			m_stageDiscription[stageNum]->Deactivate();
 
-
 			if (m_isOperatorFlg[stageNum] == true)
 			{
 				//操作説明文表示
@@ -414,57 +376,47 @@ void StageSelectScene::TouchStage()
 			//音を鳴らせる！っていうフラグ復活！
 			m_canOnStageSoundPlayFlg[stageNum] = true;
 		}
-
 		//ステージの上に乗っていたら
-		if (m_diff[stageNum].Length() < 70.0f)
+		else
 		{
-			if (stageNum == STAGE1)
+			switch (stageNum)
 			{
+			case nsStdafx::STAGE1:
 				//A吹き出しを表示
 				m_Ahukidasi[0]->Activate();
-
 				//ステージ説明文を表示
 				m_stageDiscription[Stage1]->Activate();
-			}
-			if (stageNum == STAGE2)
-			{
+				break;
+			case nsStdafx::STAGE2:
 				//A吹き出しを表示
 				m_Ahukidasi[1]->Activate();
-
 				//ステージ説明文を表示
 				m_stageDiscription[Stage2]->Activate();
-			}
-			if (stageNum == STAGE3)
-			{
+				break;
+			case nsStdafx::STAGE3:
 				//A吹き出しを表示
 				m_Ahukidasi[2]->Activate();
-
 				//ステージ説明文を表示
 				m_stageDiscription[Stage3]->Activate();
-			}
-			if (stageNum == STAGE4)
-			{
+				break;
+			case nsStdafx::STAGE4:
 				//A吹き出しを表示
 				m_Ahukidasi[3]->Activate();
-
 				//ステージ説明文を表示
 				m_stageDiscription[Stage4]->Activate();
-			}
-			if (stageNum == STAGE5)
-			{
+				break;
+			case nsStdafx::STAGE5:
 				//A吹き出しを表示
 				m_Ahukidasi[4]->Activate();
-
 				//ステージ説明文を表示
 				m_stageDiscription[Stage5]->Activate();
-			}
-			if (stageNum == STAGE6)
-			{
+				break;
+			case nsStdafx::STAGE6:
 				//A吹き出しを表示
 				m_Ahukidasi[5]->Activate();
-
 				//ステージ説明文を表示
 				m_stageDiscription[RandomStage]->Activate();
+				break;
 			}
 
 			if (m_canOnStageSoundPlayFlg[stageNum])
@@ -475,14 +427,14 @@ void StageSelectScene::TouchStage()
 				m_canOnStageSoundPlayFlg[stageNum] = false;
 			}
 
-			for (int i = 1; i < 7; i++)
+			for (int i = Stage1; i < TotalStageNum; i++)
 			{
 				//操作説明文非表示
 				m_operatorDiscription[i]->Deactivate();
 			}
 
 			//ステージ名画像を強調拡大
-			m_stageName[stageNum]->SetScale(BIG_STAGE_NAME);
+			m_stageName[stageNum]->SetScale(nsStageSelectScene::BIG_STAGE_NAME);
 
 			m_isOperatorFlg[stageNum] = true;
 
@@ -500,25 +452,13 @@ void StageSelectScene::TouchStage()
 void StageSelectScene::AvoidScreenOutSide()
 {
 	//右側の補正
-	if (m_pos.x > 420.0f)
-	{
-		m_pos.x = 420.0f;
-	}
+	m_pos.x = min(m_pos.x, 420.0f);
 	//左側の補正
-	if (m_pos.x < -420.0f)
-	{
-		m_pos.x = -420.0f;
-	}
+	m_pos.x = max(m_pos.x, -420.0f);
 	//上側の補正
-	if (m_pos.z > 230.0f )
-	{
-		m_pos.z = 230.0f;
-	}
+	m_pos.z = min(m_pos.z, 230.0f);
 	//下側の補正
-	if (m_pos.z < -230.0f)
-	{
-		m_pos.z = -230.0f;
-	}
+	m_pos.z = max(m_pos.z, -230.0f);
 }
 
 
@@ -549,9 +489,32 @@ void StageSelectScene::PlaMooveSpeedDebug()
 void StageSelectScene::CarHorn()
 {
 	//Xボタンが押されたとき再生
-	if (g_pad[0]->IsTrigger(enButtonX))
+	if (!g_pad[nsStageSelectScene::PLAYER1]->IsTrigger(enButtonX))
 	{
-		//クラクションサウンド
-		m_soundPlayBack->StageSelectSceneSoundPlayBack(CarHornSound);
+		return;
 	}
+	//クラクションサウンド
+	m_soundPlayBack->StageSelectSceneSoundPlayBack(CarHornSound);
+}
+
+
+//プレイヤー操作をまとめている関数
+void StageSelectScene::PlayerInformation()
+{
+	//ベクトルを可視化させるデバック関数
+	//PlaMooveSpeedDebug();
+	//クラクションを鳴らす関数
+	CarHorn();
+	//プレイヤーの回転処理
+	PlaTurn();
+	//プレイヤーの通常移動処理
+	PlaMove();
+	//プレイヤーの移動速度に補正を入れる
+	PlaSpeedCorrection();
+	//プレイヤーが画面外に行かないようにする
+	AvoidScreenOutSide();
+	//プレイヤーの位置,回転の情報を更新する
+	PlaDataUpdate();
+	//ステージの上にいるときそのステージを選択できる関数
+	TouchStage();
 }

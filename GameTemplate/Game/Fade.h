@@ -17,7 +17,7 @@ private:
 
 
 	//画像のα値
-	float m_alphaValue = FLOAT_ZERO;
+	float m_alphaValue = nsStdafx::FLOAT_ZERO;
 	int m_nowState = 0;  //現在のステート
 
 	bool Start()override final;

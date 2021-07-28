@@ -6,19 +6,19 @@
 #include "stdafx.h"
 
 
-namespace
+namespace nsLight
 {
 	//ディレクションライト
-	const Vector3 DIRLIG_DIR = { FLOAT_ZERO, -1.0f ,FLOAT_ZERO };	//方向(真上から真下に落ちる)
+	const Vector3 DIRLIG_DIR = { nsStdafx::FLOAT_ZERO, -1.0f ,nsStdafx::FLOAT_ZERO };	//方向(真上から真下に落ちる)
 	//スポットライト
-	const Vector3 SPOLIG_POS = { FLOAT_ZERO, 50.0f ,FLOAT_ZERO };	//位置
+	const Vector3 SPOLIG_POS = { nsStdafx::FLOAT_ZERO, 50.0f ,nsStdafx::FLOAT_ZERO };	//位置
 	const Vector3 SPOLIG_DIR = { 1.0f, -1.0f ,-1.0f };	//方向
 	const float	  SPOLIG_RAN = 100.0f;					//影響範囲
 	const float	  SPOLIG_ANG = 75.0f;					//射出角度
 	//半球ライト
-	const Vector3 HEMISPHERELIG_GROUNDCOLOR = {0.5,0.3,0.1};	//地面色
-	const Vector3 HEMISPHERELIG_SKYCOLOR = {0.15,0.3,0.45};		//天球色
-	const Vector3 HEMISPHERELIG_GROUNDNORMAL = {0.0,1.0,0.0};	//地面の法線
+	const Vector3 HEMISPHERELIG_GROUNDCOLOR = {0.5f,0.3f,0.1f};	//地面色
+	const Vector3 HEMISPHERELIG_SKYCOLOR = {0.15f,0.3f,0.45f};		//天球色
+	const Vector3 HEMISPHERELIG_GROUNDNORMAL = {0.0f,1.0f,0.0f};	//地面の法線
 }
 
 
@@ -47,11 +47,11 @@ void Light::Update()
 void Light::SetDirectionLightData()
 {
 	//ディレクションライトの方向を設定
-	m_ligData.dirLigData.dirDirection = DIRLIG_DIR;
+	m_ligData.dirLigData.dirDirection = nsLight::DIRLIG_DIR;
 	//ディレクションライトを正規化して大きさ1のベクトルにする
 	m_ligData.dirLigData.dirDirection.Normalize();
 	//ディレクションライトの色を設定
-	m_ligData.dirLigData.dirColor = GRAY;
+	m_ligData.dirLigData.dirColor = nsStdafx::GRAY;
 }
 
 
@@ -71,18 +71,18 @@ void Light::SetPointLightData(const Vector3 position, const Vector3 color, const
 void Light::SetSpotLightData()
 {
 	//スポットライトの座標を設定
-	m_ligData.spotLigData.spPosition = SPOLIG_POS;
+	m_ligData.spotLigData.spPosition = nsLight::SPOLIG_POS;
 	//スポットライトの色を設定
-	m_ligData.spotLigData.spColor = WHITE;
+	m_ligData.spotLigData.spColor = nsStdafx::WHITE;
 	//スポットライトの方向を設定
-	m_ligData.spotLigData.spDirection = SPOLIG_DIR;
+	m_ligData.spotLigData.spDirection = nsLight::SPOLIG_DIR;
 	//方向データだから大きさを1にするために正規化をする
 	m_ligData.spotLigData.spDirection.Normalize();
 	//スポットライトの射出範囲を設定
-	m_ligData.spotLigData.spRange = SPOLIG_RAN;
+	m_ligData.spotLigData.spRange = nsLight::SPOLIG_RAN;
 	//スポットライトの射出角度を設定
 	//(デグリー単位(75度)からラジアン単位に変換した値を代入)
-	m_ligData.spotLigData.spAngle = Math::DegToRad(SPOLIG_ANG);
+	m_ligData.spotLigData.spAngle = Math::DegToRad(nsLight::SPOLIG_ANG);
 }
 
 
@@ -90,9 +90,9 @@ void Light::SetSpotLightData()
 void Light::SetHemiSphereLightData()
 {
 	//地面色を設定
-	m_ligData.hemiSphereLigData.hemiGroundColor = HEMISPHERELIG_GROUNDCOLOR;
+	m_ligData.hemiSphereLigData.hemiGroundColor = nsLight::HEMISPHERELIG_GROUNDCOLOR;
 	//天球色を設定
-	m_ligData.hemiSphereLigData.hemiSkyColor = HEMISPHERELIG_SKYCOLOR;
+	m_ligData.hemiSphereLigData.hemiSkyColor = nsLight::HEMISPHERELIG_SKYCOLOR;
 	//地面の法線を設定
-	m_ligData.hemiSphereLigData.hemiGroundNormal = HEMISPHERELIG_GROUNDNORMAL;
+	m_ligData.hemiSphereLigData.hemiGroundNormal = nsLight::HEMISPHERELIG_GROUNDNORMAL;
 }

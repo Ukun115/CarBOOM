@@ -26,6 +26,14 @@ private:
 		Stage5
 	};
 
+	enum enumWind
+	{
+		UpWind,		//下から上への風
+		DownWind,	//上から下への風
+		LeftWind,	//右から左への風
+		RightWind,	//左から右への風
+	};
+
 
 	/// <summary>
 	/// クラスのポインタ
@@ -43,21 +51,25 @@ private:
 
 
 	bool m_isPauseFlg = false;
+	bool m_eneFrictionFlg[6] = { false };
+	bool m_plaFrictionFlg[4];
 
 
 	/// <summary>
 	/// タイマー
 	/// </summary>
-	int m_fallSnowTimer = INT_ZERO;
-	int m_windDirection = INT_ZERO;	//現在の風
+	int m_fallSnowTimer = nsStdafx::INT_ZERO;
+	int m_windDirection = nsStdafx::INT_ZERO;	//現在の風
 
 
 	Vector3 m_plaPos[4];			//プレイヤー4体分のプレイヤーの位置
 	Vector3 m_LengthFromStaPivToPla[4];	//ステージの基点からプレイヤーまでの距離
 
-	int m_stageSelectNum = INT_ZERO;
-	int m_nowTime = INT_ZERO;
-	int m_totalPlaNum = INT_ZERO;
+	int m_stageSelectNum = nsStdafx::INT_ZERO;
+	int m_nowTime = nsStdafx::INT_ZERO;
+	int m_totalPlaNum = nsStdafx::INT_ZERO;
+
+	char m_stageModelFilePath[256];
 
 
 	bool Start() override final;
@@ -68,7 +80,7 @@ private:
 	//雪エフェクト処理関数
 	void SnowFall();
 	//風の影響を与える処理
-	void WindStage();
+	void WindInpact();
 	//傾かせる処理
 	void Tilt();
 

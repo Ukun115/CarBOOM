@@ -14,6 +14,7 @@ private:
 	Vector3    m_sca = Vector3::One;			//拡大率(初期値:1倍)
 	Vector4    m_mulColor = Vector4::White;		//乗算(Multiply)色(白)
 							//↑詳しくはVectorクラスをみてね
+	char m_filePath[256];
 
 
 	bool Start()override final;

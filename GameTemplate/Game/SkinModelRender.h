@@ -20,6 +20,7 @@ private:
 	Vector3    m_pos = { Vector3::Zero };			//ˆÊ’u
 	Quaternion m_rot = { Quaternion::Identity };	//‰ñ“]
 	Vector3    m_sca = { Vector3::One };			//Šg‘å—¦
+	char m_filePath[256];
 
 
 	bool Start()override final;

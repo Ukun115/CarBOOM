@@ -5,9 +5,9 @@
 struct DirLigData {
 
 	Vector3 dirDirection;	//方向
-	float pad1;				//HLSL側の定数バッファのfloat3型(12個分)の変数は16の倍数のアドレスに配置されるため、C++側にはパディングを埋めておき、埋め合わせをしておく。
+	float pad1 = 0.0f;				//HLSL側の定数バッファのfloat3型(12個分)の変数は16の倍数のアドレスに配置されるため、C++側にはパディングを埋めておき、埋め合わせをしておく。
 	Vector3 dirColor;		//色
-	float pad2;				//パディング
+	float pad2 = 0.0f;				//パディング
 };
 
 
@@ -15,9 +15,9 @@ struct DirLigData {
 struct PoiLigData {
 
 	Vector3 ptPosition;		//位置
-	float pad;				//パディング
+	float pad = 0.0f;				//パディング
 	Vector3 ptColor;		//色
-	float ptRange;			//影響範囲
+	float ptRange = 0.0f;			//影響範囲
 };
 
 
@@ -25,11 +25,11 @@ struct PoiLigData {
 struct SpotLigData {
 
 	Vector3 spPosition;		//位置
-	float pad;				//パディング
+	float pad = 0.0f;				//パディング
 	Vector3 spColor;		//色
-	float spRange;			//影響範囲
+	float spRange = 0.0f;			//影響範囲
 	Vector3 spDirection;	//射出方向
-	float spAngle;			//射出角度
+	float spAngle = 0.0f;			//射出角度
 };
 
 
@@ -37,11 +37,11 @@ struct SpotLigData {
 struct HemiSphereLight
 {
 	Vector3 hemiGroundColor;	//地面色（照り返しのライト）
-	float pad1;				//パディング
+	float pad1 = 0.0f;				//パディング
 	Vector3 hemiSkyColor;		//天球色
-	float pad2;				//パディング
+	float pad2 = 0.0f;				//パディング
 	Vector3 hemiGroundNormal;	//地面の法線
-	float pad3;				//パディング
+	float pad3 = 0.0f;				//パディング
 };
 
 

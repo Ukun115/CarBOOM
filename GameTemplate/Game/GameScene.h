@@ -82,26 +82,25 @@ private:
 	bool m_isFinishCountDownFlg = true;
 	bool m_deleteFlg = false;
 	bool m_isPauseFlg = false;
-	bool m_pauseOkFlg = true;
 
 	/// <summary>
 	/// タイマー
 	/// </summary>
-	unsigned int m_resultsenniTimer = INT_ZERO;
-	unsigned int m_countDownTimer = INT_ZERO;
+	unsigned int m_resultsenniTimer = nsStdafx::INT_ZERO;
+	unsigned int m_countDownTimer = nsStdafx::INT_ZERO;
 	int m_timer = 3600;	//3600/60 = 60秒
-	int m_countTime = INT_ZERO;
+	int m_countTime = nsStdafx::INT_ZERO;
 
 
-	int m_plaScore[TotalPlaNum] = { INT_ZERO };
+	int m_plaScore[TotalPlaNum] = { nsStdafx::INT_ZERO };
 	Vector2 m_plaScorePos[TotalPlaNum];
 	unsigned int m_nowNumOnePla = TotalPlaNum;
 	wchar_t text1[64];	//制限時間フォント
 	wchar_t text2[64];	//プレイヤースコアフォント
 
 
-	int m_totalPlaNum = INT_ZERO;
-	int m_stageSelecttNum = INT_ZERO;
+	int m_totalPlaNum = nsStdafx::INT_ZERO;
+	int m_stageSelecttNum = nsStdafx::INT_ZERO;
 
 
 	bool Start()override final;
@@ -142,6 +141,8 @@ public:
 	/*プレイヤーの得点変動処理関数
 	(plaNum1は落としたプレイヤー、plaNum2は自滅したプレイヤー)*/
 	void GetPlayerAddScore(const int plaNum1, const int plaNum2);
+	//敵を落としたときの加点
+	void GetPlayerAddScoreNext(const int plaNum){ m_plaScore[plaNum] += 10; }
 
 	/// <summary>
 	/// セッター

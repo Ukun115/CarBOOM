@@ -70,20 +70,20 @@ private:
 	bool m_enableUpdateFlg = true;
 	bool m_canOnStageSoundPlayFlg[4] = { false };
 	bool m_isOperatorFlg[TotalStageNum] = { false };
-	int m_nextTitleSceneFlg = INT_ZERO;
+	int m_nextTitleSceneFlg = nsStdafx::INT_ZERO;
 
-	int m_stageNum = { INT_ZERO };				//どのステージを選択しているかを格納
+	int m_stageNum = { nsStdafx::INT_ZERO };				//どのステージを選択しているかを格納
 	Vector3 m_stagePos[TotalStageNum];			//ステージの位置
 	Vector3    m_pos;				//プレイヤーの位置
 	Quaternion m_rot;				//プレイヤーの回転
 	Vector3 m_moveSpeed;			//移動速度
-	float m_leftStick_x = { FLOAT_ZERO };			//左スティックのx入力量
-	float m_leftStick_y = { FLOAT_ZERO };			//左スティックのy入力量
-	float m_rotAngle = { FLOAT_ZERO };				//回転角度
+	float m_leftStick_x = { nsStdafx::FLOAT_ZERO };			//左スティックのx入力量
+	float m_leftStick_y = { nsStdafx::FLOAT_ZERO };			//左スティックのy入力量
+	float m_rotAngle = { nsStdafx::FLOAT_ZERO };				//回転角度
 	Vector3 m_friction;				//摩擦
 	Vector3 m_diff[4];		//ステージとプレイヤーとの距離
 	Vector3 m_AhukidasiPos[6];
-	int m_totalPlaNum = INT_ZERO;
+	int m_totalPlaNum = nsStdafx::INT_ZERO;
 
 	Vector3 m_stageDiscriptionLetterPos = { -370.0f,-20.0f,0.0f };
 
@@ -92,6 +92,8 @@ private:
 	Vector3 m_arrowPos;
 	Quaternion m_arrowRot;
 	Vector3 m_arrowSize;
+
+	char m_filePath[256];
 
 
 	bool Start()override final;
@@ -108,7 +110,13 @@ private:
 	//プレイヤーの回転処理関数
 	void PlaTurn();
 	//プレイヤーの位置,回転の情報を更新する関数
-	void PlaDataUpdate();
+	void PlaDataUpdate()
+	{
+		//位置をセット
+		m_pla->SetPosition(m_pos);
+		//回転をセット
+		m_pla->SetRotation(m_rot);
+	}
 	//ステージの上にいるときそのステージを選択できる関数
 	void TouchStage();
 	//プレイヤーが画面外に行かないようにする関数
@@ -117,6 +125,8 @@ private:
 	void PlaMooveSpeedDebug();
 	//クラクションを鳴らす関数
 	void CarHorn();
+	//プレイヤー操作をまとめている関数
+	void PlayerInformation();
 
 
 public:
@@ -126,11 +136,4 @@ public:
 	/// </summary>
 	//タイトルシーンで何人プレイヤーが追加されたかを持ってくる
 	void SetTotalPlaNum(const int totalPlaNum) { m_totalPlaNum = totalPlaNum; }
-
-
-	/// <summary>
-	/// ゲッター
-	/// </summary>
-	//選択されたステージ番号を得る関数
-	 int GetStageNum()const { return m_stageNum; };
 };

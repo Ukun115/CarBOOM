@@ -17,7 +17,7 @@
 
 //色とかはここに名前空間でまとめておく。
 //NewGOの際の名前等も
-namespace
+namespace nsStdafx
 {
 	/// <summary>
 	/// 優先度

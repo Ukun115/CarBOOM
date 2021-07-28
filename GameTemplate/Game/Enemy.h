@@ -55,21 +55,11 @@ private:
 		TotalSoundNum
 	};
 
-	enum enumWind
-	{
-		UpWind,		//下から上への風
-		DownWind,	//上から下への風
-		LeftWind,	//右から左への風
-		RightWind,	//左から右への風
-	};
-
 
 	/// <summary>
 	/// クラスのポインタ
 	/// </summary>
 	Light* m_light = nullptr;
-	TitleScene* m_titleScene = nullptr;
-	StageSelectScene* m_stageSelectScene = nullptr;
 	GameScene* m_gameScene = nullptr;
 	SkinModelRender* m_enemy[TotalEnemyNum] = { nullptr };
 	Stage* m_stage = nullptr;
@@ -92,16 +82,16 @@ private:
 	/// <summary>
 	/// タイマー
 	/// </summary>
-	unsigned int m_startDelayTimer = INT_ZERO;		//スタートを遅らせるタイマー
-	unsigned int m_startDelay[TotalEnemyNum] = { INT_ZERO };			//敵６体分のスタート遅延時間
-	unsigned int m_CTTime[TotalEnemyNum] = { INT_ZERO };					//敵６体分の攻撃CTタイマー
-	unsigned int m_eneCTCount[TotalEnemyNum] = { INT_ZERO };			//敵６体分のCT時間
+	unsigned int m_startDelayTimer = nsStdafx::INT_ZERO;		//スタートを遅らせるタイマー
+	unsigned int m_startDelay[TotalEnemyNum] = { nsStdafx::INT_ZERO };			//敵６体分のスタート遅延時間
+	unsigned int m_CTTime[TotalEnemyNum] = { nsStdafx::INT_ZERO };					//敵６体分の攻撃CTタイマー
+	unsigned int m_eneCTCount[TotalEnemyNum] = { nsStdafx::INT_ZERO };			//敵６体分のCT時間
 
 
 	//敵情報
 	Vector3    m_enePos[TotalEnemyNum];			//敵６体分の敵の位置
 	Quaternion m_rot[TotalEnemyNum];			//敵６体分の敵の回転
-	float m_rotAngle[TotalEnemyNum] = { FLOAT_ZERO };			//敵６体分の回転角度
+	float m_rotAngle[TotalEnemyNum] = { nsStdafx::FLOAT_ZERO };			//敵６体分の回転角度
 	Vector3 m_moveSpeed[TotalEnemyNum];			//敵６体分の移動速度
 	Vector3 m_samDir[TotalEnemyNum];			//敵とプレイヤーの向き
 	Vector3 m_friction[TotalEnemyNum];			//敵６体分の摩擦
@@ -110,11 +100,11 @@ private:
 	//↓特に途中で変更しない値なので、const使いたい。
 	Vector3 m_ranEneResPos[TotalResPos];		//敵のリスポーン位置計10か所
 
-	float m_randEneResAngle[8] = { FLOAT_ZERO };		//敵のリスポーン回転角度4か所
+	float m_randEneResAngle[8] = { nsStdafx::FLOAT_ZERO };		//敵のリスポーン回転角度4か所
 	Vector3 m_eneDir[TotalPlayerNum];			//向き
 	Vector3 m_diff;				//プレイヤーと敵との距離
-	unsigned int m_pushPlayer[TotalEnemyNum] = { INT_ZERO };
-	unsigned int m_randomDashSoundNum = INT_ZERO;
+	unsigned int m_pushPlayer[TotalEnemyNum] = { nsStdafx::INT_ZERO };
+	unsigned int m_randomDashSoundNum = nsStdafx::INT_ZERO;
 	Vector3 m_mostShortDistanceDir[TotalPlayerNum]; //プレイヤー4体分から敵の向き
 	Vector3 m_settenPos1[TotalEnemyNum];		 //敵と円の接点1の座標
 	Vector3 m_settenPos2[TotalEnemyNum];		 //敵と円の接点2の座標
@@ -123,17 +113,17 @@ private:
 	Vector3 m_EneToSetten1Dir[TotalEnemyNum];    //敵から接点1の向き
 	Vector3 m_EneToSetten2Dir[TotalEnemyNum];	 //敵から接点2の向き
 	Vector3 m_centerKyori[TotalEnemyNum];		 //敵から中心の距離
-	float m_CenterToEneAngle[TotalEnemyNum] = { FLOAT_ZERO };		//中心から敵のcos
-	float m_CenterToSettenAngle[TotalEnemyNum] = { FLOAT_ZERO };		//中心から接点のcos
-	float m_PlayerToSetten1Angle[TotalEnemyNum] = { FLOAT_ZERO };	//プレイヤーから接点1のcos
-	float m_PlayerToSetten2Angle[TotalEnemyNum] = { FLOAT_ZERO };	//プレイヤーから接点2のcos
+	float m_CenterToEneAngle[TotalEnemyNum] = { nsStdafx::FLOAT_ZERO };		//中心から敵のcos
+	float m_CenterToSettenAngle[TotalEnemyNum] = { nsStdafx::FLOAT_ZERO };		//中心から接点のcos
+	float m_PlayerToSetten1Angle[TotalEnemyNum] = { nsStdafx::FLOAT_ZERO };	//プレイヤーから接点1のcos
+	float m_PlayerToSetten2Angle[TotalEnemyNum] = { nsStdafx::FLOAT_ZERO };	//プレイヤーから接点2のcos
 	int m_hankei = 3600;       //穴の半径の2乗
 	Vector3 m_center;  //中心の座標
 	Vector3 m_enePoiLigPos;
-	int	m_poiLigNum = INT_ZERO;
-	int m_windDirection = INT_ZERO;	//現在の風
-	int m_totalPlaNum = INT_ZERO;
-	int m_stageSelectNum = INT_ZERO;
+	int	m_poiLigNum = nsStdafx::INT_ZERO;
+	int m_windDirection = nsStdafx::INT_ZERO;	//現在の風
+	int m_totalPlaNum = nsStdafx::INT_ZERO;
+	int m_stageSelectNum = nsStdafx::INT_ZERO;
 
 
 	//デバッグ用矢印
@@ -163,14 +153,16 @@ private:
 	//プレイヤーと敵がぶつかったときの処理関数
 	void PlaAndEneClash(const int eneNum);
 	//敵にかかる重力を設定する関数
-	void Gravity(const int eneNum);
+	void Gravity(const int eneNum)
+	{
+		m_moveSpeed[eneNum].y -= nsStdafx::GRAVITY;
+	}
 	//敵のスピードベクトルを可視化させるデバック関数
 	void EneMooveSpeedDebug(const int eneNum);
 	//プレイヤーと敵との距離を測り一番近いプレイヤーを算出する関数
 	void DistanceOfPlaToEne(const int eneNum);
 	//落下時サウンドを鳴らす関数
 	void FallSoundPlayBack(const int eneNum);
-	void WindPower(const int eneNum);
 	//パトランプをパトカーの上にセットする関数
 	void PointLightSetting(const int eneNum);
 
@@ -189,4 +181,7 @@ public:
 	void SetTotalPlaNum(const int totalPlaNum) { m_totalPlaNum = totalPlaNum; }
 	void SetStageSelectNum(const int stageSelectNum) { m_stageSelectNum = stageSelectNum; }
 	void SetPauseFlg(const bool pauseFlg) { m_isPauseFlg = pauseFlg; }
+
+	void AddWindPowerX(const int eneNum, const float windSpeed) { m_moveSpeed[eneNum].x += windSpeed; }
+	void AddWindPowerZ(const int eneNum, const float windSpeed) { m_moveSpeed[eneNum].z += windSpeed; }
 };
