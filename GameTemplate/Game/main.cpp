@@ -28,8 +28,8 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 
 
 	//サウンド管轄クラス
-	SoundPlayBack* m_soundPlayBack = nullptr;
-	m_soundPlayBack = NewGO<SoundPlayBack>(nsStdafx::PRIORITY_0, nsStdafx::SOUNDPLAYBACK_NAME);
+	nsCARBOOM::SoundPlayBack* m_soundPlayBack = nullptr;
+	m_soundPlayBack = NewGO<nsCARBOOM::SoundPlayBack>(nsStdafx::PRIORITY_0, nsStdafx::SOUNDPLAYBACK_NAME);
 
 
 	//ストップウォッチを生成する
@@ -41,7 +41,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	auto& renderContext = g_graphicsEngine->GetRenderContext();
 
 	//タイトルシーンオブジェクト生成
-	TitleScene* m_titleScene = NewGO<TitleScene>(nsStdafx::PRIORITY_0, nullptr);
+	nsCARBOOM::TitleScene* m_titleScene = NewGO<nsCARBOOM::TitleScene>(nsStdafx::PRIORITY_0, nullptr);
 
 
 	// ここからゲームループ。

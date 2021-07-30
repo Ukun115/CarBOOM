@@ -6,3 +6,8 @@
 ///コピー禁止ポリシーを提供するためのクラス。
 /// このクラスでIGameObjectを継承している。
 ///</summary>
+
+
+namespace nsCARBOOM
+{
+}

@@ -1,4 +1,0 @@
-エラーの翻訳
-
-undeclared　　　　　identifier
-宣言されていない　　識別子

@@ -299,6 +299,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Noncopyable.cpp" />
     <ClCompile Include="Player.cpp" />
+    <ClCompile Include="PlayerMoveSpeedArrow.cpp" />
     <ClCompile Include="ResultScene.cpp" />
     <ClCompile Include="SkinModelRender.cpp" />
     <ClCompile Include="SoundPlayBack.cpp" />
@@ -391,6 +392,7 @@
     <ClInclude Include="Light.h" />
     <ClInclude Include="Noncopyable.h" />
     <ClInclude Include="Player.h" />
+    <ClInclude Include="PlayerMoveSpeedArrow.h" />
     <ClInclude Include="ResultScene.h" />
     <ClInclude Include="SkinModelRender.h" />
     <ClInclude Include="SoundPlayBack.h" />

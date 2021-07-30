@@ -5,31 +5,32 @@
 
 #include "stdafx.h"
 
-
-//フォントの初期化関数
-void FontRender::Init
-(
-	const wchar_t* text,		//テキスト
-	const Vector2 position,		//位置
-	Vector4 color,				//色
-	float rotation,				//回転
-	float scale,				//拡大率
-	Vector2 pivot		)		//基点
+namespace nsCARBOOM
 {
-	/// <summary>
-	/// フォント構造体に初期化で設定したデータを代入
-	/// </summary>
-	swprintf_s(m_fontValue.text, text);	//テキスト
-	m_fontValue.position = position;	//位置
-	m_fontValue.color = color;			//色
-	m_fontValue.rotation = rotation;	//回転
-	m_fontValue.scale = scale;			//拡大率
-	m_fontValue.pivot = pivot;			//基点
-}
+	//フォントの初期化関数
+	void FontRender::Init
+	(
+		const wchar_t* text,		//テキスト
+		const Vector2 position,		//位置
+		Vector4 color,				//色
+		float rotation,				//回転
+		float scale,				//拡大率
+		Vector2 pivot)		//基点
+	{
+		/// <summary>
+		/// フォント構造体に初期化で設定したデータを代入
+		/// </summary>
+		swprintf_s(m_fontValue.text, text);	//テキスト
+		m_fontValue.position = position;	//位置
+		m_fontValue.color = color;			//色
+		m_fontValue.rotation = rotation;	//回転
+		m_fontValue.scale = scale;			//拡大率
+		m_fontValue.pivot = pivot;			//基点
+	}
 
-//描画関数
-void FontRender::Render(RenderContext& rc)
-{
+	//描画関数
+	void FontRender::Render(RenderContext& rc)
+	{
 		m_font.Begin(rc);
 
 		m_font.Draw
@@ -43,4 +44,5 @@ void FontRender::Render(RenderContext& rc)
 		);
 
 		m_font.End(rc);
+	}
 }

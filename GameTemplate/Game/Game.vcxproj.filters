@@ -1,20 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="ソース ファイル">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
-    <Filter Include="ヘッダー ファイル">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
-    </Filter>
-    <Filter Include="ソース ファイル\system">
-      <UniqueIdentifier>{a9bb9230-eaa9-4c07-a610-f43e5384bb9c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ヘッダー ファイル\system">
-      <UniqueIdentifier>{dbc0c16e-80e1-4c7c-8b01-c720c0baa9a8}</UniqueIdentifier>
-    </Filter>
     <Filter Include="MiniEngine">
       <UniqueIdentifier>{cc7395d8-c038-48b6-8449-ccd23e842334}</UniqueIdentifier>
     </Filter>
@@ -51,16 +37,50 @@
     <Filter Include="ExEngine\effect">
       <UniqueIdentifier>{ff948bdd-482b-4d02-919f-9681d7dc43ef}</UniqueIdentifier>
     </Filter>
+    <Filter Include="cpp&amp;h">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="cpp&amp;h\system">
+      <UniqueIdentifier>{a9bb9230-eaa9-4c07-a610-f43e5384bb9c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="cpp&amp;h\Title">
+      <UniqueIdentifier>{64b454e0-f4db-4f89-b911-7ca3aef379dd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="cpp&amp;h\InGame">
+      <UniqueIdentifier>{219d4b9d-b459-4393-92b2-b992b6258f89}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="cpp&amp;h\InGame\Enemy">
+      <UniqueIdentifier>{d616971c-ce71-4239-83c4-2b8580ef4246}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="cpp&amp;h\InGame\Player">
+      <UniqueIdentifier>{928c2a1e-d9ae-435c-ba8b-27117e1515ae}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="cpp&amp;h\Result">
+      <UniqueIdentifier>{3750028d-dbaa-4f2f-a9ce-91cb997b936d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="cpp&amp;h\StageSelect">
+      <UniqueIdentifier>{b69acc10-2d1c-4830-8dcf-2020138ebef7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="cpp&amp;h\Ggraphics">
+      <UniqueIdentifier>{83c10958-5ea3-4c00-b473-891fa9e70f39}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="cpp&amp;h\Sound">
+      <UniqueIdentifier>{313b221f-e05f-456a-a06e-136e80e6f228}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="cpp&amp;h\Util">
+      <UniqueIdentifier>{2157fd63-bf71-45b3-b7d2-dbde25efef28}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>cpp&amp;h</Filter>
     </ClCompile>
     <ClCompile Include="system\system.cpp">
-      <Filter>ソース ファイル\system</Filter>
+      <Filter>cpp&amp;h\system</Filter>
     </ClCompile>
     <ClCompile Include="stdafx.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>cpp&amp;h</Filter>
     </ClCompile>
     <ClCompile Include="..\..\MiniEngine\GraphicsEngine.cpp">
       <Filter>MiniEngine</Filter>
@@ -212,41 +232,8 @@
     <ClCompile Include="..\..\ExEngine\level2D\MapChip2D.cpp">
       <Filter>ExEngine\level2D</Filter>
     </ClCompile>
-    <ClCompile Include="GameScene.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="SkinModelRender.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="TitleScene.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="ResultScene.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="SpriteRender.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Light.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Enemy.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="FontRender.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Player.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\ExEngine\physics\BoxCollider.cpp">
       <Filter>ExEngine\physics</Filter>
-    </ClCompile>
-    <ClCompile Include="Stage.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="StageSelectScene.cpp">
-      <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="..\..\ExEngine\effect\Effect.cpp">
       <Filter>ExEngine\effect</Filter>
@@ -254,35 +241,65 @@
     <ClCompile Include="..\..\ExEngine\effect\EffectEngine.cpp">
       <Filter>ExEngine\effect</Filter>
     </ClCompile>
-    <ClCompile Include="tkWaveFile.cpp">
-      <Filter>ソース ファイル</Filter>
+    <ClCompile Include="Stage.cpp">
+      <Filter>cpp&amp;h\InGame</Filter>
     </ClCompile>
-    <ClCompile Include="tkWaveFileBank.cpp">
-      <Filter>ソース ファイル</Filter>
+    <ClCompile Include="TitleScene.cpp">
+      <Filter>cpp&amp;h\Title</Filter>
     </ClCompile>
-    <ClCompile Include="tkSoundSource.cpp">
-      <Filter>ソース ファイル</Filter>
+    <ClCompile Include="GameScene.cpp">
+      <Filter>cpp&amp;h\InGame</Filter>
     </ClCompile>
-    <ClCompile Include="tkSoundEngine.cpp">
-      <Filter>ソース ファイル</Filter>
+    <ClCompile Include="StageSelectScene.cpp">
+      <Filter>cpp&amp;h\StageSelect</Filter>
     </ClCompile>
-    <ClCompile Include="Noncopyable.cpp">
-      <Filter>ソース ファイル</Filter>
+    <ClCompile Include="ResultScene.cpp">
+      <Filter>cpp&amp;h\Result</Filter>
+    </ClCompile>
+    <ClCompile Include="FontRender.cpp">
+      <Filter>cpp&amp;h\Ggraphics</Filter>
+    </ClCompile>
+    <ClCompile Include="SkinModelRender.cpp">
+      <Filter>cpp&amp;h\Ggraphics</Filter>
+    </ClCompile>
+    <ClCompile Include="SpriteRender.cpp">
+      <Filter>cpp&amp;h\Ggraphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Light.cpp">
+      <Filter>cpp&amp;h\Ggraphics</Filter>
     </ClCompile>
     <ClCompile Include="Fade.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>cpp&amp;h\Ggraphics</Filter>
     </ClCompile>
     <ClCompile Include="SoundPlayBack.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>cpp&amp;h\Sound</Filter>
+    </ClCompile>
+    <ClCompile Include="tkSoundEngine.cpp">
+      <Filter>cpp&amp;h\Sound</Filter>
+    </ClCompile>
+    <ClCompile Include="tkSoundSource.cpp">
+      <Filter>cpp&amp;h\Sound</Filter>
+    </ClCompile>
+    <ClCompile Include="tkWaveFile.cpp">
+      <Filter>cpp&amp;h\Sound</Filter>
+    </ClCompile>
+    <ClCompile Include="tkWaveFileBank.cpp">
+      <Filter>cpp&amp;h\Sound</Filter>
+    </ClCompile>
+    <ClCompile Include="Noncopyable.cpp">
+      <Filter>cpp&amp;h\Util</Filter>
+    </ClCompile>
+    <ClCompile Include="Enemy.cpp">
+      <Filter>cpp&amp;h\InGame\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="Player.cpp">
+      <Filter>cpp&amp;h\InGame\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="PlayerMoveSpeedArrow.cpp">
+      <Filter>cpp&amp;h\InGame\Player</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="system\system.h">
-      <Filter>ヘッダー ファイル\system</Filter>
-    </ClInclude>
-    <ClInclude Include="stdafx.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\MiniEngine\GraphicsEngine.h">
       <Filter>MiniEngine</Filter>
     </ClInclude>
@@ -460,41 +477,8 @@
     <ClInclude Include="..\..\ExEngine\level2D\MapChip2D.h">
       <Filter>ExEngine\level2D</Filter>
     </ClInclude>
-    <ClInclude Include="GameScene.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="SkinModelRender.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="TitleScene.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="ResultScene.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="SpriteRender.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Light.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Enemy.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="FontRender.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Player.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\ExEngine\physics\BoxCollider.h">
       <Filter>ExEngine\physics</Filter>
-    </ClInclude>
-    <ClInclude Include="Stage.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="StageSelectScene.h">
-      <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="..\..\ExEngine\effect\Effect.h">
       <Filter>ExEngine\effect</Filter>
@@ -502,35 +486,77 @@
     <ClInclude Include="..\..\ExEngine\effect\EffectEngine.h">
       <Filter>ExEngine\effect</Filter>
     </ClInclude>
-    <ClInclude Include="tkUtil.h">
-      <Filter>ヘッダー ファイル</Filter>
+    <ClInclude Include="Stage.h">
+      <Filter>cpp&amp;h\InGame</Filter>
     </ClInclude>
-    <ClInclude Include="tkWaveFile.h">
-      <Filter>ヘッダー ファイル</Filter>
+    <ClInclude Include="Enemy.h">
+      <Filter>cpp&amp;h\InGame\Enemy</Filter>
     </ClInclude>
-    <ClInclude Include="tkWaveFileBank.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="GameTime.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="tkSoundEngine.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="tkSoundSource.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="StopWatch.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Noncopyable.h">
-      <Filter>ヘッダー ファイル</Filter>
+    <ClInclude Include="Player.h">
+      <Filter>cpp&amp;h\InGame\Player</Filter>
     </ClInclude>
     <ClInclude Include="Fade.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>cpp&amp;h\Ggraphics</Filter>
+    </ClInclude>
+    <ClInclude Include="FontRender.h">
+      <Filter>cpp&amp;h\Ggraphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Light.h">
+      <Filter>cpp&amp;h\Ggraphics</Filter>
+    </ClInclude>
+    <ClInclude Include="SkinModelRender.h">
+      <Filter>cpp&amp;h\Ggraphics</Filter>
+    </ClInclude>
+    <ClInclude Include="SpriteRender.h">
+      <Filter>cpp&amp;h\Ggraphics</Filter>
+    </ClInclude>
+    <ClInclude Include="GameScene.h">
+      <Filter>cpp&amp;h\InGame</Filter>
+    </ClInclude>
+    <ClInclude Include="ResultScene.h">
+      <Filter>cpp&amp;h\Result</Filter>
+    </ClInclude>
+    <ClInclude Include="TitleScene.h">
+      <Filter>cpp&amp;h\Title</Filter>
+    </ClInclude>
+    <ClInclude Include="tkSoundEngine.h">
+      <Filter>cpp&amp;h\Sound</Filter>
+    </ClInclude>
+    <ClInclude Include="tkSoundSource.h">
+      <Filter>cpp&amp;h\Sound</Filter>
+    </ClInclude>
+    <ClInclude Include="tkWaveFile.h">
+      <Filter>cpp&amp;h\Sound</Filter>
+    </ClInclude>
+    <ClInclude Include="tkWaveFileBank.h">
+      <Filter>cpp&amp;h\Sound</Filter>
     </ClInclude>
     <ClInclude Include="SoundPlayBack.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>cpp&amp;h\Sound</Filter>
+    </ClInclude>
+    <ClInclude Include="Noncopyable.h">
+      <Filter>cpp&amp;h\Util</Filter>
+    </ClInclude>
+    <ClInclude Include="StageSelectScene.h">
+      <Filter>cpp&amp;h\StageSelect</Filter>
+    </ClInclude>
+    <ClInclude Include="system\system.h">
+      <Filter>cpp&amp;h\system</Filter>
+    </ClInclude>
+    <ClInclude Include="GameTime.h">
+      <Filter>cpp&amp;h</Filter>
+    </ClInclude>
+    <ClInclude Include="stdafx.h">
+      <Filter>cpp&amp;h</Filter>
+    </ClInclude>
+    <ClInclude Include="StopWatch.h">
+      <Filter>cpp&amp;h</Filter>
+    </ClInclude>
+    <ClInclude Include="tkUtil.h">
+      <Filter>cpp&amp;h</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayerMoveSpeedArrow.h">
+      <Filter>cpp&amp;h\InGame\Player</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
