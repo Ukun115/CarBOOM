@@ -172,7 +172,7 @@ void ResultScene::SelectScene()
 				m_select = NextStageSelectScene;
 
 				//フェードアウト
-				m_fadeOut = NewGO<Fade>(0, nullptr);
+				m_fadeOut = NewGO<Fade>(nsStdafx::PRIORITY_0, nullptr);
 				m_fadeOut->SetState(StateOut);
 				m_fadeOut->SetAlphaValue(nsStdafx::FLOAT_ZERO);
 			}

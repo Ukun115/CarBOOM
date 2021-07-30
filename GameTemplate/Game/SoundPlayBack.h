@@ -63,6 +63,18 @@ private:
 		TotalResultSceneSoundNum
 	};
 
+	enum enumPlayer
+	{
+		Player1,
+		TotalPlayerNum = 4
+	};
+
+	enum enumEnemy
+	{
+		Enemy1,
+		TotalEnemyNum = 6
+	};
+
 
 	SoundSource* m_enemySound[6][TotalEnemySoundNum] = { nullptr };
 	SoundSource* m_titleSceneSound[TotalTitleSceneSoundNum] = { nullptr };

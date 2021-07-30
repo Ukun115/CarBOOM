@@ -29,7 +29,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 
 	//サウンド管轄クラス
 	SoundPlayBack* m_soundPlayBack = nullptr;
-	m_soundPlayBack = NewGO<SoundPlayBack>(0, nsStdafx::SOUNDPLAYBACK_NAME);
+	m_soundPlayBack = NewGO<SoundPlayBack>(nsStdafx::PRIORITY_0, nsStdafx::SOUNDPLAYBACK_NAME);
 
 
 	//ストップウォッチを生成する

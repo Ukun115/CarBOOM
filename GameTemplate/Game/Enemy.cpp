@@ -48,6 +48,8 @@ namespace nsEnemy
 	const Vector3 SHOOTDOWNEFFECT_SCALE = { 40.0f,40.0f,40.0f };
 
 	const float DELTATIME = 1.0f;
+
+	const float MAX_FALL_POSITION = -1000.0f;
 }
 
 
@@ -387,7 +389,7 @@ void Enemy::EneTurn(const int eneNum)
 void Enemy::EneResporn(const int eneNum)
 {
 	//敵のY座標の位置が最大落下地点まで行ってなかったらreturn以降の処理は行わない
-	if (m_enePos[eneNum].y >= -1000.0f)
+	if (m_enePos[eneNum].y >= nsEnemy::MAX_FALL_POSITION)
 	{
 		return;
 	}

@@ -61,7 +61,7 @@ bool GameScene::Start()
 	m_light->SetHemiSphereLightData();
 
 	//フェードイン
-	m_fade[FadeIn] = NewGO<Fade>(0, nullptr);
+	m_fade[FadeIn] = NewGO<Fade>(nsStdafx::PRIORITY_0, nullptr);
 	m_fade[FadeIn]->SetState(StateIn);
 	m_fade[FadeIn]->SetAlphaValue(1.0f);
 
@@ -198,7 +198,7 @@ void GameScene::Update()
 				//決定サウンド
 				m_soundPlayBack->GameSceneSoundPlayBack(DecideSound);
 				//フェードアウト
-				m_fade[FadeOut] = NewGO<Fade>(0, nullptr);
+				m_fade[FadeOut] = NewGO<Fade>(nsStdafx::PRIORITY_0, nullptr);
 				m_fade[FadeOut]->SetState(StateOut);
 				m_fade[FadeOut]->SetAlphaValue(nsStdafx::FLOAT_ZERO);
 
@@ -604,7 +604,7 @@ void GameScene::InitPlayerFont()
 {
 	for (int plaNum = Player1; plaNum < TotalPlaNum; plaNum++) {
 		//2P～4Pの非アクティブ画像オブジェクト生成
-		m_PlaNameFont[plaNum] = NewGO<FontRender>(1);		//1P
+		m_PlaNameFont[plaNum] = NewGO<FontRender>(nsStdafx::PRIORITY_1,nullptr);		//1P
 		switch (plaNum)
 		{
 		case Player1:

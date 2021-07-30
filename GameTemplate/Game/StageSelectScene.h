@@ -12,7 +12,7 @@ private:
 	/// 列挙型の宣言
 	/// </summary>
 	//ステージ番号
-	enum StageNum
+	enum enStageNum
 	{
 		ehehe,	//Stage1を１番にするためにeheheを入れて調整
 		Stage1,
@@ -24,7 +24,7 @@ private:
 		TotalStageNum
 	};
 
-	enum SoundNum
+	enum enSoundNum
 	{
 		TitleSceneBGM,
 		DecideSound,
@@ -34,13 +34,13 @@ private:
 	};
 
 	//列挙型
-	enum enumState
+	enum enFadeState
 	{
 		StateIn,	//フェードイン
 		StateOut,	//フェードアウト
 		StateWait,	//待機
 	};
-	enum enumFade
+	enum enFadeNum
 	{
 		FadeIn,
 		FadeOutBadk,

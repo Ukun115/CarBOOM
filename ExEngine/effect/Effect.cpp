@@ -23,6 +23,12 @@ void Effect::Init(const char16_t* filePath)
 	sprintf(m_filePath, "Assets/effect/efk/%s.efk", filePath);
 	m_effect = EffectEngine::GetInstance()->LoadEffect(reinterpret_cast<const char16_t*>(m_filePath));
 
+	//読み込めていなかったらエラーメッセージを出す。
+	if (m_effect == nullptr)
+	{
+		MessageBoxA(nullptr, "エフェクトが正しく読み込まれませんでした。", "エラー", MB_OK);
+	}
+
 }
 void Effect::Play()
 {

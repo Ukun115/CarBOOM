@@ -43,7 +43,7 @@ namespace nsTitleScene
 bool TitleScene::Start()
 {
 	//フェードイン
-	m_fade[FadeIn] = NewGO<Fade>(0, nullptr);
+	m_fade[FadeIn] = NewGO<Fade>(nsStdafx::PRIORITY_0, nullptr);
 	m_fade[FadeIn]->SetState(StateIn);
 	m_fade[FadeIn]->SetAlphaValue(1.0f);
 
@@ -403,7 +403,7 @@ void TitleScene::PushStartButton(int plaNum)
 	m_soundPlayBack->TitleSceneSoundPlayBack(DecideSound);
 
 	//フェードアウト
-	m_fade[FadeOut] = NewGO<Fade>(0, nullptr);
+	m_fade[FadeOut] = NewGO<Fade>(nsStdafx::PRIORITY_0, nullptr);
 	m_fade[FadeOut]->SetState(StateOut);
 	m_fade[FadeOut]->SetAlphaValue(nsStdafx::FLOAT_ZERO);
 
@@ -419,7 +419,7 @@ void TitleScene::PushSelectButton(int plaNum)
 		return;
 	}
 	//フェードアウト
-	m_fade[FadeOut] = NewGO<Fade>(0, nullptr);
+	m_fade[FadeOut] = NewGO<Fade>(nsStdafx::PRIORITY_0, nullptr);
 	m_fade[FadeOut]->SetState(StateOut);
 	m_fade[FadeOut]->SetAlphaValue(nsStdafx::FLOAT_ZERO);
 

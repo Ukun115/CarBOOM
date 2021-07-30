@@ -44,7 +44,7 @@ bool StageSelectScene::Start()
 	m_light->SetHemiSphereLightData();
 
 	//フェードイン
-	m_fade[FadeIn] = NewGO<Fade>(0, nullptr);
+	m_fade[FadeIn] = NewGO<Fade>(nsStdafx::PRIORITY_0, nullptr);
 	m_fade[FadeIn]->SetState(StateIn);
 	m_fade[FadeIn]->SetAlphaValue(1.0f);
 
@@ -131,7 +131,7 @@ bool StageSelectScene::Start()
 	//プレイヤーモデルオブジェクト生成
 	//文字画像の上に乗るようにプライオリティーは１つ文字画像よりも高くする
 	m_pla = NewGO<SkinModelRender>(nsStdafx::PRIORITY_2, nullptr);
-	m_pla->Init("LowPoly_PlayerCar_0");	//赤車
+	m_pla->Init("LowPoly_PlayerCar_0");	//プレイヤー１の車モデル
 	//初期位置設定
 	m_pla->SetPosition(Vector3::Zero);
 
@@ -226,7 +226,7 @@ void StageSelectScene::Update()
 	m_soundPlayBack->StageSelectSceneSoundPlayBack(DecideSound);
 
 	//フェードアウト
-	m_fade[FadeOutBadk] = NewGO<Fade>(0, nullptr);
+	m_fade[FadeOutBadk] = NewGO<Fade>(nsStdafx::PRIORITY_0, nullptr);
 	m_fade[FadeOutBadk]->SetState(StateOut);
 	m_fade[FadeOutBadk]->SetAlphaValue(nsStdafx::FLOAT_ZERO);
 
@@ -263,7 +263,7 @@ void StageSelectScene::GameSceneTransition()
 			m_soundPlayBack->StageSelectSceneSoundPlayBack(DecideSound);
 
 			//フェードアウト
-			m_fade[FadeOutNext] = NewGO<Fade>(0, nullptr);
+			m_fade[FadeOutNext] = NewGO<Fade>(nsStdafx::PRIORITY_0, nullptr);
 			m_fade[FadeOutNext]->SetState(StateOut);
 			m_fade[FadeOutNext]->SetAlphaValue(nsStdafx::FLOAT_ZERO);
 		}

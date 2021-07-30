@@ -9,7 +9,7 @@ private:
 	/// <summary>
 	/// 列挙型の宣言
 	/// </summary>
-	enum enumPlayer
+	enum enPlayer
 	{
 		Player1,		//1Pの配列での番号
 		Player2,		//2Pの配列での番号
@@ -18,7 +18,7 @@ private:
 		TotalPlaNum	//プレイヤーの最大数
 	};
 
-	enum soundNum
+	enum enSoundNum
 	{
 		TitleSceneGingle,	//タイトルジングル
 		TitleSceneBGM,		//タイトルシーンのBGM
@@ -27,20 +27,20 @@ private:
 		TotalSoundNum
 	};
 
-	enum enumState
+	enum enFadeState
 	{
 		StateIn,	//フェードイン
 		StateOut,	//フェードアウト
 		StateWait,	//待機
 	};
-	enum enumFade
+	enum enFadeNum
 	{
 		FadeIn,
 		FadeOut,
 		TotalFadeNum
 	};
 
-	enum enumNextScene
+	enum enNextScene
 	{
 		StateSelectScene,
 		GameEnd
@@ -78,7 +78,7 @@ private:
 	unsigned int m_flashingFontTimer = { nsStdafx::INT_ZERO };		//点滅文字の表示非表示の切り替えタイマー
 	int m_sideMoveTimer = nsStdafx::INT_ZERO;
 	int m_waveTimer = nsStdafx::INT_ZERO;
-	int m_verticalMoveTimer[9] = { 0 };
+	int m_verticalMoveTimer[9] = { nsStdafx::INT_ZERO };
 
 
 	float m_scaUpValue = 0.0f;

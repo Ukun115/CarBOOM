@@ -16,7 +16,7 @@
 //TODO: 影を落とせるようにする
 
 
-namespace player
+namespace nsPlayer
 {
 	const Vector3 PLAYER1_RESPOS = { -100.0f,150.0f,100.0f };		//リスポーン座標(左上)
 	const Vector3 PLAYER2_RESPOS = { 100.0f,150.0f, 100.0f };		//リスポーン座標(右上)
@@ -152,7 +152,7 @@ void Player::Update()
 		return;
 	}
 	//制限時間が0秒になったらプレイヤーの処理を全て止める
-	if (m_gameScene->GetNowTime() == player::TIME0)
+	if (m_gameScene->GetNowTime() == nsPlayer::TIME0)
 	{
 		return;
 	}
@@ -380,7 +380,7 @@ void Player::PlaResPos(const int plaNum)
 	{
 		//1P
 	case Player1:
-		m_pos[plaNum] = player::PLAYER1_RESPOS;		//リスポーン座標(左上)
+		m_pos[plaNum] = nsPlayer::PLAYER1_RESPOS;		//リスポーン座標(左上)
 
 		//プレイヤーがリスポーンしたときに全プレイヤー統一でステージ中央を向かせておいたほうが
 		//リスポーン時違和感がないので、ステージ中央を向かせておく。
@@ -388,7 +388,7 @@ void Player::PlaResPos(const int plaNum)
 		break;
 		//2P
 	case Player2:
-		m_pos[plaNum] = player::PLAYER2_RESPOS;		//リスポーン座標(右上)
+		m_pos[plaNum] = nsPlayer::PLAYER2_RESPOS;		//リスポーン座標(右上)
 
 		//プレイヤーがリスポーンしたときに全プレイヤー統一でステージ中央を向かせておいたほうが
 		//リスポーン時違和感がないので、ステージ中央を向かせておく。
@@ -396,7 +396,7 @@ void Player::PlaResPos(const int plaNum)
 		break;
 		//3P
 	case Player3:
-		m_pos[plaNum] = player::PLAYER3_RESPOS;		//リスポーン座標(左下)
+		m_pos[plaNum] = nsPlayer::PLAYER3_RESPOS;		//リスポーン座標(左下)
 
 		//プレイヤーがリスポーンしたときに全プレイヤー統一でステージ中央を向かせておいたほうが
 		//リスポーン時違和感がないので、ステージ中央を向かせておく。
@@ -404,7 +404,7 @@ void Player::PlaResPos(const int plaNum)
 		break;
 		//4P
 	case Player4:
-		m_pos[plaNum] = player::PLAYER4_RESPOS;		//リスポーン座標(右下)
+		m_pos[plaNum] = nsPlayer::PLAYER4_RESPOS;		//リスポーン座標(右下)
 
 		//プレイヤーがリスポーンしたときに全プレイヤー統一でステージ中央を向かせておいたほうが
 		//リスポーン時違和感がないので、ステージ中央を向かせておく。
@@ -693,11 +693,11 @@ void Player::PlaMove(const int plaNum)
 void Player::PlaSpeedCorrection(const int plaNum)
 {
 	//スピードの補正
-	m_moveSpeed[plaNum].x = min(m_moveSpeed[plaNum].x, player::MAX_MOOVESPEED);//右方向の最大速度
-	m_moveSpeed[plaNum].x = max(m_moveSpeed[plaNum].x, -player::MAX_MOOVESPEED);//左方向の最大速度
+	m_moveSpeed[plaNum].x = min(m_moveSpeed[plaNum].x, nsPlayer::MAX_MOOVESPEED);//右方向の最大速度
+	m_moveSpeed[plaNum].x = max(m_moveSpeed[plaNum].x, -nsPlayer::MAX_MOOVESPEED);//左方向の最大速度
 
-	m_moveSpeed[plaNum].z = min(m_moveSpeed[plaNum].z, player::MAX_MOOVESPEED);//上方向の最大速度
-	m_moveSpeed[plaNum].z = max(m_moveSpeed[plaNum].z, -player::MAX_MOOVESPEED);//下方向の最大速度
+	m_moveSpeed[plaNum].z = min(m_moveSpeed[plaNum].z, nsPlayer::MAX_MOOVESPEED);//上方向の最大速度
+	m_moveSpeed[plaNum].z = max(m_moveSpeed[plaNum].z, -nsPlayer::MAX_MOOVESPEED);//下方向の最大速度
 }
 
 

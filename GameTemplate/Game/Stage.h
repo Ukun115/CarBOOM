@@ -16,7 +16,7 @@ private:
 	/// 列挙型の宣言
 	/// </summary>
 	//ステージ番号
-	enum StageNum
+	enum enStageNum
 	{
 		ehehe,	//Stage1を１番にするためにeheheを入れて調整
 		Stage1,
@@ -26,12 +26,12 @@ private:
 		Stage5
 	};
 
-	enum enumWind
+	enum enWindDirection
 	{
-		UpWind,		//下から上への風
-		DownWind,	//上から下への風
-		LeftWind,	//右から左への風
-		RightWind,	//左から右への風
+		UpWind,		//上方向の風
+		DownWind,	//下方向の風
+		LeftWind,	//左方向の風
+		RightWind,	//右方向の風
 	};
 
 
