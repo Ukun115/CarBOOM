@@ -1,3 +1,8 @@
+///<<summary>
+///プレイヤーのメイン処理
+///</summary>
+
+
 #pragma once
 
 namespace nsCARBOOM
@@ -8,6 +13,8 @@ namespace nsCARBOOM
 	class Stage;
 	class Enemy;
 	class PlayerMoveSpeedArrow;
+	class PlayerTurn;
+	class PlayerChargeUI;
 
 
 	class Player : public IGameObject		//TODO:コピー禁止ポリシーを継承する。
@@ -46,16 +53,6 @@ namespace nsCARBOOM
 			TotalSoundNum
 		};
 
-		enum enChargeUI
-		{
-			_1_1,
-			_1_2,
-			_2_1,
-			_2_1_1,
-			_2_2,
-			TotalChargeUINum
-		};
-
 
 		/// <summary>
 		/// クラスのポインタ
@@ -66,10 +63,11 @@ namespace nsCARBOOM
 		Stage* m_stage = nullptr;
 		Enemy* m_enemy = nullptr;
 		SkinModelRender* m_player[TotalPlayerNum] = { nullptr };		//プレイヤー4人分
-		SpriteRender* m_chargeUI[TotalChargeUINum][TotalPlayerNum] = { nullptr };		//チャージ画像
 		SpriteRender* m_crown = nullptr;		//プレイヤーの上に置く王冠画像
 		SoundPlayBack* m_soundPlayBack = nullptr;
 		PlayerMoveSpeedArrow* m_playerMoveSpeedArrow = nullptr;
+		PlayerTurn* m_playerTurn = nullptr;
+		PlayerChargeUI* m_playerChargeUI = nullptr;
 
 		CharacterController m_charaCon[TotalPlayerNum];		//プレイヤー4人分のキャラクタコントローラークラスを作成
 		Effect m_shootDownEffect[TotalPlayerNum];		//プレイヤー4人分の落下したときの撃墜エフェクト
@@ -111,27 +109,17 @@ namespace nsCARBOOM
 
 		Vector3    m_fallSpeed[TotalPlayerNum];	//プレイヤーの落下速度。
 		Vector3    m_pos[TotalPlayerNum];		//プレイヤーの位置
-		Quaternion m_rot[TotalPlayerNum];		//プレイヤーの回転
-		Quaternion m_charge1_1Rot[TotalPlayerNum];		//プレイヤーの回転
-		float m_chargeRotValue1[TotalPlayerNum] = { nsStdafx::FLOAT_ZERO };
-		Quaternion m_charge1_2Rot[TotalPlayerNum];		//プレイヤーの回転
-		float m_chargeRotValue2[TotalPlayerNum] = { nsStdafx::FLOAT_ZERO };
 		Vector3 m_moveSpeed[TotalPlayerNum];		//移動速度
 		Vector3 m_enePushSpeed;		//敵から与えられるプッシュパワー
 		Vector3 m_plaDir[TotalPlayerNum];		//向き
-		float m_leftStick_x[TotalPlayerNum] = { nsStdafx::FLOAT_ZERO };		//左スティックのx入力量
-		float m_leftStick_y[TotalPlayerNum] = { nsStdafx::FLOAT_ZERO };		//左スティックのy入力量
-		float m_rotAngle[TotalPlayerNum] = { nsStdafx::FLOAT_ZERO };		//回転角度
 		Vector3 m_friction[TotalPlayerNum];		//摩擦
 		Vector3 m_diff;				//プレイヤーと敵との距離
 		unsigned int m_pushPlayer[5] = { nsStdafx::INT_ZERO };
 		Quaternion m_shootDownEffectRot;
 		Vector2 plaScreenPos[4];
-		Vector3 m_plaChargeUIPos[4];
 		Vector3 m_crownPos;
 
 		char m_filePath[256];
-		int m_chargeUIPriority = 0;
 
 		int m_totalPlaNum = nsStdafx::INT_ZERO;
 		int m_stageSelectNum = nsStdafx::INT_ZERO;
@@ -152,8 +140,6 @@ namespace nsCARBOOM
 		void PlaMove(const int plaNum);
 		//プレイヤーの移動速度に補正を入れる関数
 		void PlaSpeedCorrection(const int plaNum);
-		//プレイヤーの回転処理関数
-		void PlaTurn(const int plaNum);
 		//プレイヤーのDA(ダッシュアタック)処理関数
 		void PlaAttackBefore(const int plaNum);
 		//プレイヤーの現在の状態を伝える関数
@@ -171,9 +157,6 @@ namespace nsCARBOOM
 		void FallSoundPlayBack(const int plaNum);
 		//プレイヤーの着地エフェクトを再生させる関数
 		void LandingEffectPlay(const int plaNum);
-		//
-		int WhatPlaNum(const int plaNum);
-
 
 	public:
 
@@ -187,6 +170,8 @@ namespace nsCARBOOM
 		/// @param plaNum
 		/// @return
 		const Vector3& GetPlaSpeed(const int plaNum)const { return m_moveSpeed[plaNum]; }
+		const float& GetPlaSpeedX(const int plaNum)const { return m_moveSpeed[plaNum].x; }
+		const float& GetPlaSpeedZ(const int plaNum)const { return m_moveSpeed[plaNum].z; }
 		//プレイヤーの向きを取得する関数
 		Vector3 GetPlaDir(const int plaNum)const { return m_plaDir[plaNum]; }
 		//プレイヤーのチャージを取得する関数

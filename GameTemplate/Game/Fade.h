@@ -1,3 +1,8 @@
+///<<summary>
+///フェードインフェードアウト処理
+///</summary>
+
+
 #pragma once
 
 namespace nsCARBOOM

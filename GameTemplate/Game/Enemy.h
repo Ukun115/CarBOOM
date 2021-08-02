@@ -1,3 +1,8 @@
+///<<summary>
+///敵NPCのメイン処理
+///</summary>
+
+
 #pragma once
 
 namespace nsCARBOOM
@@ -6,6 +11,9 @@ namespace nsCARBOOM
 	class StageSelectScene;
 	class GameScene;
 	class Player;
+	class Stage;
+	class EnemyMoveSpeedArrow;
+	class EnemyTurn;
 
 
 	class Enemy : public IGameObject	//TODO:コピー禁止ポリシーを継承する。
@@ -33,8 +41,8 @@ namespace nsCARBOOM
 			Player4,		//4Pの配列での番号
 			TotalPlayerNum	//プレイヤーの最大数
 		};
-		//敵のランダムリスポーン位置
-		enum enRanEneResPos
+		//敵のリスポーンランダム位置
+		enum enRandomEneRespornPos
 		{
 			ResPos1,	//１つ目
 			ResPos2,	//２つ目
@@ -68,6 +76,8 @@ namespace nsCARBOOM
 		Stage* m_stage = nullptr;
 		Player* m_player = nullptr;
 		SoundPlayBack* m_soundPlayBack = nullptr;
+		EnemyMoveSpeedArrow* m_enemyMoveSpeedArrow = nullptr;
+		EnemyTurn* m_enemyTurn = nullptr;
 
 
 		CharacterController m_charaCon[TotalEnemyNum];		//敵６体分のキャラクタコントローラークラスを作成
@@ -93,8 +103,6 @@ namespace nsCARBOOM
 
 		//敵情報
 		Vector3    m_enePos[TotalEnemyNum];			//敵６体分の敵の位置
-		Quaternion m_rot[TotalEnemyNum];			//敵６体分の敵の回転
-		float m_rotAngle[TotalEnemyNum] = { nsStdafx::FLOAT_ZERO };			//敵６体分の回転角度
 		Vector3 m_moveSpeed[TotalEnemyNum];			//敵６体分の移動速度
 		Vector3 m_samDir[TotalEnemyNum];			//敵とプレイヤーの向き
 		Vector3 m_friction[TotalEnemyNum];			//敵６体分の摩擦
@@ -103,8 +111,6 @@ namespace nsCARBOOM
 		//↓特に途中で変更しない値なので、const使いたい。
 		Vector3 m_ranEneResPos[TotalResPos];		//敵のリスポーン位置計10か所
 
-		float m_randEneResAngle[8] = { nsStdafx::FLOAT_ZERO };		//敵のリスポーン回転角度4か所
-		Vector3 m_eneDir[TotalPlayerNum];			//向き
 		Vector3 m_diff;				//プレイヤーと敵との距離
 		unsigned int m_pushPlayer[TotalEnemyNum] = { nsStdafx::INT_ZERO };
 		unsigned int m_randomDashSoundNum = nsStdafx::INT_ZERO;
@@ -145,8 +151,6 @@ namespace nsCARBOOM
 		void EneDataUpdate(const int eneNum) const;
 		//敵のDA処理関数
 		void EneDA(const int eneNum);
-		//敵の回転処理関数
-		void EneTurn(const int eneNum);
 		//敵から最寄りのプレイヤーを検索する関数
 		void Distance(const int eneNum);
 		//敵のリスポーン処理関数
@@ -160,16 +164,12 @@ namespace nsCARBOOM
 		{
 			m_moveSpeed[eneNum].y -= nsStdafx::GRAVITY;
 		}
-		//敵のスピードベクトルを可視化させるデバック関数
-		void EneMooveSpeedDebug(const int eneNum);
 		//プレイヤーと敵との距離を測り一番近いプレイヤーを算出する関数
 		void DistanceOfPlaToEne(const int eneNum);
 		//落下時サウンドを鳴らす関数
 		void FallSoundPlayBack(const int eneNum);
 		//パトランプをパトカーの上にセットする関数
 		void PointLightSetting(const int eneNum);
-		//
-		int WhatEneRandomResRot(const int eneNum);
 		//
 		Vector3 WhatEneRandomResPos(const int eneNum);
 

@@ -1,3 +1,8 @@
+///<<summary>
+///フォント表示処理
+///</summary>
+
+
 #pragma once
 
 

@@ -1,3 +1,8 @@
+///<<summary>
+///ステージ選択画面のメイン処理
+///</summary>
+
+
 #pragma once
 
 

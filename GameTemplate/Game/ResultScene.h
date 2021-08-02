@@ -1,3 +1,8 @@
+///<<summary>
+///ƒŠƒUƒ‹ƒg‰æ–Ê‚ÌƒƒCƒ“ˆ—
+///</summary>
+
+
 #pragma once
 
 

@@ -1,3 +1,8 @@
+///<<summary>
+///サウンドデータ再生クラス
+///</summary>
+
+
 #pragma once
 
 

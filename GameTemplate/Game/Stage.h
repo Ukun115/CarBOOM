@@ -1,3 +1,8 @@
+///<<summary>
+///ステージ処理
+///</summary>
+
+
 #pragma once
 
 

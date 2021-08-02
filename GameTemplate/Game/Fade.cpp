@@ -1,3 +1,8 @@
+///<<summary>
+///フェードインフェードアウト処理
+///</summary>
+
+
 #include "stdafx.h"
 #include "Fade.h"
 

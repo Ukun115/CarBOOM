@@ -1,3 +1,8 @@
+///<<summary>
+///サウンドデータ再生クラス
+///</summary>
+
+
 #include "stdafx.h"
 #include "SoundPlayBack.h"
 #include<random>

@@ -292,6 +292,8 @@
     <ClCompile Include="..\..\MiniEngine\tkFile\TksFile.cpp" />
     <ClCompile Include="..\..\MiniEngine\VertexBuffer.cpp" />
     <ClCompile Include="Enemy.cpp" />
+    <ClCompile Include="EnemyMoveSpeedArrow.cpp" />
+    <ClCompile Include="EnemyTurn.cpp" />
     <ClCompile Include="Fade.cpp" />
     <ClCompile Include="FontRender.cpp" />
     <ClCompile Include="GameScene.cpp" />
@@ -299,7 +301,9 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Noncopyable.cpp" />
     <ClCompile Include="Player.cpp" />
+    <ClCompile Include="PlayerChargeUI.cpp" />
     <ClCompile Include="PlayerMoveSpeedArrow.cpp" />
+    <ClCompile Include="PlayerTurn.cpp" />
     <ClCompile Include="ResultScene.cpp" />
     <ClCompile Include="SkinModelRender.cpp" />
     <ClCompile Include="SoundPlayBack.cpp" />
@@ -385,6 +389,8 @@
     <ClInclude Include="..\..\MiniEngine\tkFile\TksFile.h" />
     <ClInclude Include="..\..\MiniEngine\VertexBuffer.h" />
     <ClInclude Include="Enemy.h" />
+    <ClInclude Include="EnemyMoveSpeedArrow.h" />
+    <ClInclude Include="EnemyTurn.h" />
     <ClInclude Include="Fade.h" />
     <ClInclude Include="FontRender.h" />
     <ClInclude Include="GameScene.h" />
@@ -392,7 +398,9 @@
     <ClInclude Include="Light.h" />
     <ClInclude Include="Noncopyable.h" />
     <ClInclude Include="Player.h" />
+    <ClInclude Include="PlayerChargeUI.h" />
     <ClInclude Include="PlayerMoveSpeedArrow.h" />
+    <ClInclude Include="PlayerTurn.h" />
     <ClInclude Include="ResultScene.h" />
     <ClInclude Include="SkinModelRender.h" />
     <ClInclude Include="SoundPlayBack.h" />

@@ -1,3 +1,8 @@
+///<<summary>
+///ƒ‚ƒfƒ‹•\¦ˆ—
+///</summary>
+
+
 #pragma once
 
 class Model;

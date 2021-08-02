@@ -1,3 +1,8 @@
+///<<summary>
+///プレイヤーの移動ベクトルを可視化処理(デバック用)
+///</summary>
+
+
 #include "stdafx.h"
 #include "PlayerMoveSpeedArrow.h"
 #include "Player.h"
@@ -9,7 +14,7 @@ namespace nsCARBOOM
 	{
 		m_player = FindGO<Player>(nsStdafx::PLAYER_NAME);
 
-		for (int i = 0; i < m_totalPlaNum; i++)
+		for (int i = Player1; i < m_totalPlaNum; i++)
 		{
 			//デバック用のプレイヤースピードの矢印表示
 			m_skinModelRenderArrow[i] = NewGO<SkinModelRender>(nsStdafx::PRIORITY_0, nullptr);
@@ -21,7 +26,7 @@ namespace nsCARBOOM
 
 	PlayerMoveSpeedArrow::~PlayerMoveSpeedArrow()
 	{
-		for (int i = 0; i < m_totalPlaNum; i++)
+		for (int i = Player1; i < m_totalPlaNum; i++)
 		{
 			//デバック用のプレイヤースピードの矢印削除
 			DeleteGO(m_skinModelRenderArrow[i]);
@@ -31,7 +36,7 @@ namespace nsCARBOOM
 
 	void PlayerMoveSpeedArrow::Update()
 	{
-		for (int i = 0; i < m_totalPlaNum; i++)
+		for (int i = Player1; i < m_totalPlaNum; i++)
 		{
 			Vector3 Dir = m_player->GetPlaSpeed(i);
 			Dir.y = nsStdafx::INT_ZERO;

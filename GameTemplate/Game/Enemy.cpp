@@ -1,5 +1,5 @@
 ///<<summary>
-///敵NPC（パトカー）クラス
+///敵NPCのメイン処理
 ///</summary>
 
 
@@ -12,6 +12,8 @@
 #include "Enemy.h"
 #include "../../ExEngine/physics/CharacterController.h"		//キャラコンを使うためにインクルード
 		//↑2階層上にディレクトリを移動してからフォルダに潜っている。
+#include "EnemyMoveSpeedArrow.h"
+#include "EnemyTurn.h"
 
 
 //TODO: 影を落とせるようにする
@@ -32,15 +34,6 @@ namespace nsCARBOOM
 		const Vector3 ENE_RES_POS_8 = { 0.0f,150.0f,-100.0f };
 		const Vector3 ENE_RES_POS_9 = { 100.0f,150.0f,-100.0f };
 		const Vector3 ENE_RES_POS_10 = { 0.0f,150.0f,0.0f };
-		//敵の各リスポーン回転
-		const float ENE_RES_ROT_1 = 1.0f;
-		const float ENE_RES_ROT_2 = 2.5f;
-		const float ENE_RES_ROT_3 = 3.7f;
-		const float ENE_RES_ROT_4 = 5.5f;
-		const float ENE_RES_ROT_5 = 0.5f;
-		const float ENE_RES_ROT_6 = 1.25f;
-		const float ENE_RES_ROT_7 = 1.85f;
-		const float ENE_RES_ROT_8 = 2.85f;
 
 		const float POILIG_RANGE = 50.0f;	//ポイントライトの影響範囲
 
@@ -68,11 +61,6 @@ namespace nsCARBOOM
 		{
 			m_ranEneResPos[i] = WhatEneRandomResPos(i);
 		}
-		//敵のリスポーン回転
-		for (int i = 0; i < 8; i++)
-		{
-			m_randEneResAngle[i] = WhatEneRandomResRot(i);
-		}
 
 		//敵の最大数繰り返す
 		for (int eneNum = Enemy1; eneNum < TotalEnemyNum; eneNum++)
@@ -81,9 +69,6 @@ namespace nsCARBOOM
 			m_enemy[eneNum] = NewGO<SkinModelRender>(nsStdafx::PRIORITY_0, nullptr);
 			//モデルのファイルパスを設定
 			m_enemy[eneNum]->Init("LowPoly_PoliceCar");	//敵モデル
-
-			//デバック用の敵スピードの矢印表示
-			//m_skinModelRenderArrow[eneNum] = NewGO<SkinModelRender>(PRIORITY_0, nullptr);
 
 			//初期座標(リスポーン座標)の設定。
 			m_enePos[eneNum] = m_ranEneResPos[eneNum];		//敵１の場所
@@ -106,13 +91,13 @@ namespace nsCARBOOM
 			m_shootDownEffectRot.AddRotationX(-1.5708f);	//X軸を基点に、-1.5708rad(-90°)回転
 			m_shootDownEffect[eneNum].SetRotation(m_shootDownEffectRot);
 
-			//ランダム関数のSEED（種）を設定
-			//（これによりランダム値を本当の意味でランダムにしている）
-			srand((int)time(nullptr));
-			m_rotAngle[eneNum] = m_randEneResAngle[rand() % 8]; //敵の向き
-			m_rot[eneNum].SetRotation(Vector3::AxisY, m_rotAngle[eneNum]);
-			m_enemy[eneNum]->SetRotation(m_rot[eneNum]);		//回転情報更新
+			m_enemyTurn = NewGO<EnemyTurn>(nsStdafx::PRIORITY_0, nullptr);
+			m_enemy[eneNum]->SetRotation(m_enemyTurn->GetEneRot(eneNum));		//回転情報更新
 		}
+
+		//デバック用の敵移動ベクトルの矢印の初期化
+		m_enemyMoveSpeedArrow = NewGO<EnemyMoveSpeedArrow>(nsStdafx::PRIORITY_0, nullptr);
+
 		return true;
 	}
 
@@ -127,6 +112,8 @@ namespace nsCARBOOM
 				DeleteGO(m_enemy[eneNum]);
 			}
 		}
+		//敵の移動ベクトル矢印を削除
+		DeleteGO(m_enemyMoveSpeedArrow);
 	}
 
 
@@ -163,7 +150,7 @@ namespace nsCARBOOM
 				else
 				{
 					//回転処理
-					EneTurn(eneNum);
+					m_enemyTurn->EneTurn(eneNum);
 
 					//プレイヤーが敵とぶつかったとき敵に押される処理
 					PlaAndEneClash(eneNum);
@@ -200,13 +187,15 @@ namespace nsCARBOOM
 			//敵の位置と回転情報を更新
 			EneDataUpdate(eneNum);
 		}
+		//敵の移動ベクトル矢印の更新
+		m_enemyMoveSpeedArrow->Update();
 	}
 
 
 	//敵の位置,回転情報を更新する関数
 	void Enemy::EneDataUpdate(const int eneNum)const
 	{
-		m_enemy[eneNum]->SetRotation(m_rot[eneNum]);		//回転情報更新
+		m_enemy[eneNum]->SetRotation(m_enemyTurn->GetEneRot(eneNum));		//回転情報更新
 		m_enemy[eneNum]->SetPosition(m_enePos[eneNum]);	//位置情報更新
 	}
 
@@ -334,24 +323,6 @@ namespace nsCARBOOM
 	}
 
 
-	//敵の回転処理関数
-	void Enemy::EneTurn(const int eneNum)
-	{
-		//fabsf()は浮動小数点の絶対値を返す関数
-		if (fabsf(m_moveSpeed[eneNum].x) < 0.001f && fabsf(m_moveSpeed[eneNum].z) < 0.001f)
-		{
-			return;
-		}
-		//回転角度
-		m_rotAngle[eneNum] = atan2(m_moveSpeed[eneNum].x, m_moveSpeed[eneNum].z);
-
-		m_rot[eneNum].SetRotation(Vector3::AxisY, m_rotAngle[eneNum]);
-
-		m_eneDir[eneNum] = m_moveSpeed[eneNum];
-		m_eneDir[eneNum].Normalize();
-	}
-
-
 	//敵のリスポーン処理関数
 	void Enemy::EneResporn(const int eneNum)
 	{
@@ -384,15 +355,13 @@ namespace nsCARBOOM
 		//ランダム関数のSEED（種）を設定
 		//（これによりランダム値を本当の意味でランダムにしている）
 		srand((int)time(nullptr));
-		//ランダムでリスポーン回転を入れる
-		m_rotAngle[eneNum] = m_randEneResAngle[rand() % 8];
+
+		m_enemyTurn->EneRespornAngleDecide(eneNum);
 
 		//位置をセット
 		m_enemy[eneNum]->SetPosition(m_enePos[eneNum]);
-
 		//回転情報をセットする
-		m_rot[eneNum].SetRotation(Vector3::AxisY, m_rotAngle[eneNum]);
-		m_enemy[eneNum]->SetRotation(m_rot[eneNum]);
+		m_enemy[eneNum]->SetRotation(m_enemyTurn->GetEneRot(eneNum));
 
 		//キャラコンの座標にプレイヤーの座標をいれる
 		m_charaCon[eneNum].SetPosition(m_enePos[eneNum]);
@@ -461,13 +430,13 @@ namespace nsCARBOOM
 			}
 
 			if (m_player->GetPlaisTyazi1HanteiFlg(plaNum)) {
-				m_samDir[eneNum] = m_eneDir[eneNum] * -1.0f + m_player->GetPlaDir(plaNum);
+				m_samDir[eneNum] = m_enemyTurn->GetEneDir(plaNum) * -1.0f + m_player->GetPlaDir(plaNum);
 				m_samDir[eneNum].Normalize();
 				m_moveSpeed[eneNum] = m_samDir[eneNum] * 20.0f;
 			}
 			if (m_player->GetPlaisTyazi2HanteiFlg(plaNum)) {
 
-				m_samDir[eneNum] = m_eneDir[eneNum] * -1.0f + m_player->GetPlaDir(plaNum);
+				m_samDir[eneNum] = m_enemyTurn->GetEneDir(eneNum) * -1.0f + m_player->GetPlaDir(plaNum);
 				m_samDir[eneNum].Normalize();
 				m_moveSpeed[eneNum] = m_samDir[eneNum] * 30.0f;
 
@@ -475,29 +444,6 @@ namespace nsCARBOOM
 			//最後に押してきたプレイヤーを記録
 			m_pushPlayer[eneNum] = plaNum;
 		}
-	}
-
-
-	//ベクトルを可視化させるデバック関数
-	void Enemy::EneMooveSpeedDebug(const int eneNum)
-	{
-		Vector3 Dir = m_moveSpeed[eneNum];
-		Dir.y = nsStdafx::INT_ZERO;
-		Dir.Normalize();//大きさを位置にする
-		float x = Dir.Dot(Vector3::AxisX);//X軸から何度ずれているかを入れる
-		Dir.z *= -1;
-		float angleX = acosf(x);//アークコサイン
-		if (Dir.z < 0) {
-			angleX *= -1;
-		}
-		//angleX -= 0.5 * PAI;
-		m_arrowRot[eneNum].SetRotationY(angleX);//ｘ度だけY軸を回す
-		m_skinModelRenderArrow[eneNum]->SetRotation(m_arrowRot[eneNum]);//角度を設定する
-		m_arrowPos[eneNum] = m_enePos[eneNum];
-		m_arrowPos[eneNum].y += 50.0f;
-		m_skinModelRenderArrow[eneNum]->SetPosition(m_arrowPos[eneNum]);
-		m_arrowSize.x = m_arrowSize.z = m_moveSpeed[eneNum].Length() / 10;
-		m_skinModelRenderArrow[eneNum]->SetScale(m_arrowSize);
 	}
 
 
@@ -557,39 +503,6 @@ namespace nsCARBOOM
 		m_enePoiLigPos.y += 10.0f;
 		m_light->SetPointLightData(m_enePoiLigPos, nsStdafx::BLUE, nsEnemy::POILIG_RANGE, m_poiLigNum);
 		m_poiLigNum++;
-	}
-
-
-	//
-	int Enemy::WhatEneRandomResRot(const int eneResRotNum)
-	{
-		switch (eneResRotNum)
-		{
-		case 0:
-			return nsEnemy::ENE_RES_ROT_1;
-			break;
-		case 1:
-			return nsEnemy::ENE_RES_ROT_2;
-			break;
-		case 2:
-			return nsEnemy::ENE_RES_ROT_3;
-			break;
-		case 3:
-			return nsEnemy::ENE_RES_ROT_4;
-			break;
-		case 4:
-			return nsEnemy::ENE_RES_ROT_5;
-			break;
-		case 5:
-			return nsEnemy::ENE_RES_ROT_6;
-			break;
-		case 6:
-			return nsEnemy::ENE_RES_ROT_7;
-			break;
-		case 7:
-			return nsEnemy::ENE_RES_ROT_8;
-			break;
-		}
 	}
 
 

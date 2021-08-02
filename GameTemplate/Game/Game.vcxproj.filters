@@ -41,9 +41,6 @@
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
-    <Filter Include="cpp&amp;h\system">
-      <UniqueIdentifier>{a9bb9230-eaa9-4c07-a610-f43e5384bb9c}</UniqueIdentifier>
-    </Filter>
     <Filter Include="cpp&amp;h\Title">
       <UniqueIdentifier>{64b454e0-f4db-4f89-b911-7ca3aef379dd}</UniqueIdentifier>
     </Filter>
@@ -71,13 +68,16 @@
     <Filter Include="cpp&amp;h\Util">
       <UniqueIdentifier>{2157fd63-bf71-45b3-b7d2-dbde25efef28}</UniqueIdentifier>
     </Filter>
+    <Filter Include="cpp&amp;h\System">
+      <UniqueIdentifier>{a9bb9230-eaa9-4c07-a610-f43e5384bb9c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>cpp&amp;h</Filter>
     </ClCompile>
     <ClCompile Include="system\system.cpp">
-      <Filter>cpp&amp;h\system</Filter>
+      <Filter>cpp&amp;h\System</Filter>
     </ClCompile>
     <ClCompile Include="stdafx.cpp">
       <Filter>cpp&amp;h</Filter>
@@ -296,6 +296,18 @@
       <Filter>cpp&amp;h\InGame\Player</Filter>
     </ClCompile>
     <ClCompile Include="PlayerMoveSpeedArrow.cpp">
+      <Filter>cpp&amp;h\InGame\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="EnemyMoveSpeedArrow.cpp">
+      <Filter>cpp&amp;h\InGame\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="PlayerTurn.cpp">
+      <Filter>cpp&amp;h\InGame\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="EnemyTurn.cpp">
+      <Filter>cpp&amp;h\InGame\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="PlayerChargeUI.cpp">
       <Filter>cpp&amp;h\InGame\Player</Filter>
     </ClCompile>
   </ItemGroup>
@@ -541,7 +553,7 @@
       <Filter>cpp&amp;h\StageSelect</Filter>
     </ClInclude>
     <ClInclude Include="system\system.h">
-      <Filter>cpp&amp;h\system</Filter>
+      <Filter>cpp&amp;h\System</Filter>
     </ClInclude>
     <ClInclude Include="GameTime.h">
       <Filter>cpp&amp;h</Filter>
@@ -556,6 +568,18 @@
       <Filter>cpp&amp;h</Filter>
     </ClInclude>
     <ClInclude Include="PlayerMoveSpeedArrow.h">
+      <Filter>cpp&amp;h\InGame\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="EnemyMoveSpeedArrow.h">
+      <Filter>cpp&amp;h\InGame\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayerTurn.h">
+      <Filter>cpp&amp;h\InGame\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="EnemyTurn.h">
+      <Filter>cpp&amp;h\InGame\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayerChargeUI.h">
       <Filter>cpp&amp;h\InGame\Player</Filter>
     </ClInclude>
   </ItemGroup>

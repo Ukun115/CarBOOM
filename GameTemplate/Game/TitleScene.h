@@ -1,3 +1,8 @@
+///<<summary>
+///タイトル画面のメイン処理
+///</summary>
+
+
 #pragma once
 
 

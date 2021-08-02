@@ -1,3 +1,8 @@
+///<<summary>
+///ゲームシーンのメイン処理
+///</summary>
+
+
 #pragma once
 
 

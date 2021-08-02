@@ -1,5 +1,5 @@
 ///<<summary>
-///プレイヤーが操作する車の情報をまとめているクラス
+///プレイヤーのメイン処理
 ///</summary>
 
 
@@ -12,6 +12,8 @@
 #include "Player.h"
 #include "../../ExEngine/physics/CharacterController.h"		//キャラコンを使うためにインクルード
 #include "PlayerMoveSpeedArrow.h"
+#include "PlayerTurn.h"
+#include "PlayerChargeUI.h"
 
 
 //TODO: 影を落とせるようにする
@@ -45,37 +47,6 @@ namespace nsCARBOOM
 		m_crown = NewGO<SpriteRender>(nsStdafx::PRIORITY_1, nullptr);
 		m_crown->Init("crowngold", 30.0f, 30.0f);
 		m_crown->Deactivate();
-
-		//各プレイヤーの２段階溜め攻撃のUI
-		for (int plaNum = Player1; plaNum < m_totalPlaNum; plaNum++)
-		{
-			for (int i = 0; i < 5; i++)
-			{
-				switch (i)
-				{
-				case 0:
-					m_chargeUIPriority = 2;
-					break;
-				case 1:
-					m_chargeUIPriority = 3;
-					break;
-				case 2:
-					m_chargeUIPriority = 1;
-					break;
-				case 3:
-					m_chargeUIPriority = 4;
-					break;
-				case 4:
-					m_chargeUIPriority = 2;
-					break;
-				}
-				m_chargeUI[i][plaNum] = NewGO<SpriteRender>(m_chargeUIPriority, nullptr);
-				sprintf(m_filePath, "ChargeUI_%d", i + 1);
-				m_chargeUI[i][plaNum]->Init(m_filePath, 50.0f, 50.0f);
-				m_chargeUI[i][plaNum]->Deactivate();
-				m_chargeUI[i][plaNum]->SetRotation(Quaternion::Identity);
-			}
-		}
 
 		for (int plaNum = Player1; plaNum < m_totalPlaNum; plaNum++)
 		{
@@ -120,12 +91,18 @@ namespace nsCARBOOM
 		{
 			m_pushPlayer[plaNum] = 4;	//初期値は誰にもポイントが入らない4。
 		}
-		//デバック用のプレイヤースピードの矢印の初期化
+		//デバック用のプレイヤー移動ベクトルの矢印の初期化
 		m_playerMoveSpeedArrow = NewGO<PlayerMoveSpeedArrow>(nsStdafx::PRIORITY_0, nullptr);
 		m_playerMoveSpeedArrow->SetTotalPlaNum(m_totalPlaNum);
-		m_playerMoveSpeedArrow->Start();
+		//プレイヤーの回転処理クラス
+		m_playerTurn = NewGO<PlayerTurn>(nsStdafx::PRIORITY_0, nullptr);
+		m_playerTurn->SetTotalPlaNum(m_totalPlaNum);
+
+		//プレイヤーチャージUI処理クラス
+		m_playerChargeUI = NewGO<PlayerChargeUI>(nsStdafx::PRIORITY_0, nullptr);
 
 		return true;
+
 	}
 
 
@@ -140,20 +117,12 @@ namespace nsCARBOOM
 				DeleteGO(m_player[plaNum]);
 
 			}
-			//チャージ攻撃の際の段階文字表示の削除。
-			for (int i = 0; i < 5; i++)
-			{
-				if (m_chargeUI[i][plaNum] != nullptr)
-				{
-					DeleteGO(m_chargeUI[i][plaNum]);
-				}
-			}
 		}
 		if (m_crown != nullptr)
 		{
 			DeleteGO(m_crown);
 		}
-
+		//プレイヤーの移動ベクトルを削除
 		DeleteGO(m_playerMoveSpeedArrow);
 	}
 
@@ -191,7 +160,7 @@ namespace nsCARBOOM
 			if (!m_gameScene->GetCountDownFlg())
 			{
 				//回転処理
-				PlaTurn(plaNum);
+				m_playerTurn->Update();
 
 				//プレイヤーの状態
 				PlaNowState(plaNum);
@@ -306,7 +275,7 @@ namespace nsCARBOOM
 			PlaDataUpdate(plaNum);
 
 		}
-		//プレイヤースピードの矢印を更新
+		//プレイヤー移動ベクトルの矢印を更新
 		m_playerMoveSpeedArrow->Update();
 	}
 
@@ -348,14 +317,9 @@ namespace nsCARBOOM
 		m_isAttack1HanteiFlg[plaNum] = false;
 		m_isAttack2HanteiFlg[plaNum] = false;
 
-		for (int i = 0; i < 5; i++)
-		{
-			m_chargeUI[i][plaNum]->Deactivate();
-			m_chargeUI[i][plaNum]->SetRotation(Quaternion::Identity);
-		}
+		m_playerChargeUI->ChargeUIDeactive(plaNum);
 
-		m_chargeRotValue1[plaNum] = nsStdafx::FLOAT_ZERO;
-		m_chargeRotValue2[plaNum] = nsStdafx::FLOAT_ZERO;
+		m_playerChargeUI->ChargeRotValueInit(plaNum);
 
 		//押したときのタイマー初期化
 		m_chargeTimer[plaNum] = nsStdafx::INT_ZERO;
@@ -391,38 +355,22 @@ namespace nsCARBOOM
 		{
 		case Player1:
 			m_pos[plaNum] = nsPlayer::PLAYER1_RESPOS;		//リスポーン座標(左上)
-
-			//プレイヤーがリスポーンしたときに全プレイヤー統一でステージ中央を向かせておいたほうが
-			//リスポーン時違和感がないので、ステージ中央を向かせておく。
-			m_rotAngle[plaNum] = 2.5f;
 			break;
 		case Player2:
 			m_pos[plaNum] = nsPlayer::PLAYER2_RESPOS;		//リスポーン座標(右上)
-
-			//プレイヤーがリスポーンしたときに全プレイヤー統一でステージ中央を向かせておいたほうが
-			//リスポーン時違和感がないので、ステージ中央を向かせておく。
-			m_rotAngle[plaNum] = 3.7f;
 			break;
 		case Player3:
 			m_pos[plaNum] = nsPlayer::PLAYER3_RESPOS;		//リスポーン座標(左下)
-
-			//プレイヤーがリスポーンしたときに全プレイヤー統一でステージ中央を向かせておいたほうが
-			//リスポーン時違和感がないので、ステージ中央を向かせておく。
-			m_rotAngle[plaNum] = 1.0f;
 			break;
 		case Player4:
 			m_pos[plaNum] = nsPlayer::PLAYER4_RESPOS;		//リスポーン座標(右下)
-
-			//プレイヤーがリスポーンしたときに全プレイヤー統一でステージ中央を向かせておいたほうが
-			//リスポーン時違和感がないので、ステージ中央を向かせておく。
-			m_rotAngle[plaNum] = 5.5f;
 			break;
 		}
 
 		m_isFallSoundFlg[plaNum] = true;
 
-		//回転情報をセットする
-		m_rot[plaNum].SetRotation(Vector3::AxisY, m_rotAngle[plaNum]);
+		//プレイヤーのリスポーン向きを真ん中に向くように調整
+		m_playerTurn->PlaResAngle(plaNum);
 
 		//プレイヤーの位置,回転の情報を更新する
 		PlaDataUpdate(plaNum);
@@ -435,11 +383,11 @@ namespace nsCARBOOM
 		//位置をセット
 		m_player[plaNum]->SetPosition(m_pos[plaNum]);
 		//回転をセット
-		m_player[plaNum]->SetRotation(m_rot[plaNum]);
+		m_player[plaNum]->SetRotation(m_playerTurn->GetPlaRot(plaNum));
 
 		//ブーストエフェクト位置をプレイヤー位置に設定
 		m_jetEffect[plaNum].SetPosition(m_pos[plaNum]);
-		m_jetEffect[plaNum].SetRotation(m_rot[plaNum]);
+		m_jetEffect[plaNum].SetRotation(m_playerTurn->GetPlaRot(plaNum));
 		//更新
 		m_jetEffect[plaNum].Update();
 
@@ -448,44 +396,13 @@ namespace nsCARBOOM
 		g_camera3D->CalcScreenPositionFromWorldPosition(plaScreenPos[plaNum], m_pos[plaNum]);
 
 
-		//(Vector2をVector3に変換)
-		m_plaChargeUIPos[plaNum].x = plaScreenPos[plaNum].x + 50.0f;
-		m_plaChargeUIPos[plaNum].y = plaScreenPos[plaNum].y;
-		//チャージ攻撃のUIにプレイヤーのスクリーン座標を代入
-		for (int i = 0; i < 5; i++)
-		{
-			m_chargeUI[i][plaNum]->SetPosition(m_plaChargeUIPos[plaNum]);
-		}
+		m_playerChargeUI->ChargeUIScreenPos(plaNum,plaScreenPos[plaNum]);
 
 		//１位のプレイヤーの頭上に王冠画像を置く
-		//(Vector2をVector3に変換)
-		switch (m_gameScene->GetNumber1Player())
-		{
-		case Player1:
-			m_crown->Activate();
-			m_crownPos.x = plaScreenPos[Player1].x;
-			m_crownPos.y = plaScreenPos[Player1].y + 40.0f;
-			m_crown->SetPosition(m_crownPos);
-			break;
-		case Player2:
-			m_crown->Activate();
-			m_crownPos.x = plaScreenPos[Player2].x;
-			m_crownPos.y = plaScreenPos[Player2].y + 40.0f;
-			m_crown->SetPosition(m_crownPos);
-			break;
-		case Player3:
-			m_crown->Activate();
-			m_crownPos.x = plaScreenPos[Player3].x;
-			m_crownPos.y = plaScreenPos[Player3].y + 40.0f;
-			m_crown->SetPosition(m_crownPos);
-			break;
-		case Player4:
-			m_crown->Activate();
-			m_crownPos.x = plaScreenPos[Player4].x;
-			m_crownPos.y = plaScreenPos[Player4].y + 40.0f;
-			m_crown->SetPosition(m_crownPos);
-			break;
-		}
+		m_crown->Activate();
+		m_crownPos.x = plaScreenPos[m_gameScene->GetNumber1Player()].x;
+		m_crownPos.y = plaScreenPos[m_gameScene->GetNumber1Player()].y + 40.0f;
+		m_crown->SetPosition(m_crownPos);
 	}
 
 
@@ -500,10 +417,7 @@ namespace nsCARBOOM
 				//チャージ音を鳴らす
 				m_soundPlayBack->PlayerSoundPlayBack(ChargeSound, plaNum);
 
-				m_chargeUI[_2_1_1][plaNum]->Deactivate();
-				m_chargeUI[_1_1][plaNum]->Activate();
-				m_chargeUI[_1_2][plaNum]->Activate();
-				m_chargeUI[_2_1][plaNum]->Activate();
+				m_playerChargeUI->ChargeUIActive(plaNum);
 			}
 
 			m_isBPushFlg[plaNum] = true;
@@ -518,17 +432,13 @@ namespace nsCARBOOM
 
 			if (m_chargeTimer[plaNum] >= nsStdafx::INT_ZERO && m_chargeTimer[plaNum] < 30)
 			{
-				m_chargeRotValue1[plaNum] -= 6.0f;
-				m_charge1_1Rot[plaNum].SetRotationDeg(Vector3::AxisZ, m_chargeRotValue1[plaNum]);
-				m_chargeUI[_1_1][plaNum]->SetRotation(m_charge1_1Rot[plaNum]);
+				m_playerChargeUI->Charge1Move(plaNum);
 
 				m_isAttack0Flg[plaNum] = true;
 			}
 			if (m_chargeTimer[plaNum] >= 30 && m_chargeTimer[plaNum] < 90)
 			{
-				m_chargeRotValue2[plaNum] -= 3.0f;
-				m_charge1_2Rot[plaNum].SetRotationDeg(Vector3::AxisZ, m_chargeRotValue2[plaNum]);
-				m_chargeUI[_1_2][plaNum]->SetRotation(m_charge1_2Rot[plaNum]);
+				m_playerChargeUI->Charge2Move(plaNum);
 
 				m_isAttack0Flg[plaNum] = false;
 				m_isAttack1Flg[plaNum] = true;
@@ -536,10 +446,8 @@ namespace nsCARBOOM
 
 				//「1」表示
 				if (m_chargeTimer[plaNum] == 30) {
-					m_chargeUI[_1_1][plaNum]->Deactivate();
-					m_chargeUI[_2_1][plaNum]->Deactivate();
-					m_chargeUI[_2_1_1][plaNum]->Activate();
-					m_chargeUI[_2_2][plaNum]->Activate();
+
+					m_playerChargeUI->SetChargeUI1(plaNum);
 				}
 			}
 			if (m_chargeTimer[plaNum] >= 90)
@@ -551,7 +459,8 @@ namespace nsCARBOOM
 
 				//「2」表示
 				if (m_chargeTimer[plaNum] == 90) {
-					m_chargeUI[_1_2][plaNum]->Deactivate();
+
+					m_playerChargeUI->SetChargeUI2(plaNum);
 
 					//チャージ完了サウンド再生
 					m_soundPlayBack->PlayerSoundPlayBack(ChargeEnd, plaNum);
@@ -565,14 +474,9 @@ namespace nsCARBOOM
 			//押したときのタイマー初期化
 			m_chargeTimer[plaNum] = nsStdafx::INT_ZERO;
 
-			for (int i = 0; i < 5; i++)
-			{
-				m_chargeUI[i][plaNum]->Deactivate();
-				m_chargeUI[i][plaNum]->SetRotation(Quaternion::Identity);
-			}
+			m_playerChargeUI->ChargeUIDeactive(plaNum);
 
-			m_chargeRotValue1[plaNum] = nsStdafx::FLOAT_ZERO;
-			m_chargeRotValue2[plaNum] = nsStdafx::FLOAT_ZERO;
+			m_playerChargeUI->ChargeRotValueInit(plaNum);
 
 			//攻撃フラグによって攻撃処理を変える
 
@@ -657,14 +561,9 @@ namespace nsCARBOOM
 					m_isCharge2HanteiFlg[plaNum] = false;
 					m_isAttack2HanteiFlg[plaNum] = false;
 
-					for (int i = 0; i < 5; i++)
-					{
-						m_chargeUI[i][plaNum]->Deactivate();
-						m_chargeUI[i][plaNum]->SetRotation(Quaternion::Identity);
-					}
+					m_playerChargeUI->ChargeUIDeactive(plaNum);
 
-					m_chargeRotValue1[plaNum] = nsStdafx::FLOAT_ZERO;
-					m_chargeRotValue2[plaNum] = nsStdafx::FLOAT_ZERO;
+					m_playerChargeUI->ChargeRotValueInit(plaNum);
 				}
 			}
 		}
@@ -675,8 +574,8 @@ namespace nsCARBOOM
 	void Player::PlaMove(const int plaNum)
 	{
 		//左スティックの入力量を加算する
-		m_moveSpeed[plaNum].x += m_leftStick_x[plaNum] * 10.0f * g_gameTime->GetFrameDeltaTime();
-		m_moveSpeed[plaNum].z += m_leftStick_y[plaNum] * 10.0f * g_gameTime->GetFrameDeltaTime();
+		m_moveSpeed[plaNum].x += m_playerTurn->GetPlaLeftStickX(plaNum) * 10.0f * g_gameTime->GetFrameDeltaTime();
+		m_moveSpeed[plaNum].z += m_playerTurn->GetPlaLeftStickY(plaNum) * 10.0f * g_gameTime->GetFrameDeltaTime();
 
 		//摩擦力を設定する
 		m_friction[plaNum] = m_moveSpeed[plaNum];
@@ -708,29 +607,11 @@ namespace nsCARBOOM
 	}
 
 
-	//プレイヤーの回転処理関数
-	void Player::PlaTurn(const int plaNum)
-	{
-		//左スティックの入力量を受け取る
-		m_leftStick_x[plaNum] = g_pad[plaNum]->GetLStickXF();
-		m_leftStick_y[plaNum] = g_pad[plaNum]->GetLStickYF();
-
-		//移動してないときは回転しない
-		if (fabsf(m_moveSpeed[plaNum].x) < 0.001f && fabsf(m_moveSpeed[plaNum].z) < 0.001f) {
-			return;
-		}
-		//回転角度
-		m_rotAngle[plaNum] = atan2(m_moveSpeed[plaNum].x, m_moveSpeed[plaNum].z);
-
-		m_rot[plaNum].SetRotation(Vector3::AxisY, m_rotAngle[plaNum]);
-	}
-
-
 	//プレイヤーのDA(ダッシュアタック)処理関数
 	void Player::PlaAttackBefore(const int plaNum)
 	{
-		m_moveSpeed[plaNum].x += m_leftStick_x[plaNum] * 1.5f * g_gameTime->GetFrameDeltaTime();
-		m_moveSpeed[plaNum].z += m_leftStick_y[plaNum] * 1.5f * g_gameTime->GetFrameDeltaTime();
+		m_moveSpeed[plaNum].x += m_playerTurn->GetPlaLeftStickX(plaNum) * 1.5f * g_gameTime->GetFrameDeltaTime();
+		m_moveSpeed[plaNum].z += m_playerTurn->GetPlaLeftStickY(plaNum) * 1.5f * g_gameTime->GetFrameDeltaTime();
 
 		//摩擦力を設定する
 		m_friction[plaNum] = m_moveSpeed[plaNum];
@@ -781,14 +662,9 @@ namespace nsCARBOOM
 				m_soundPlayBack->m_playerSound[plaNum][ChargeSound]->Stop();
 			}
 
-			for (int i = 0; i < 5; i++)
-			{
-				m_chargeUI[i][plaNum]->Deactivate();
-				m_chargeUI[i][plaNum]->SetRotation(Quaternion::Identity);
-			}
+			m_playerChargeUI->ChargeUIDeactive(plaNum);
 
-			m_chargeRotValue1[plaNum] = nsStdafx::FLOAT_ZERO;
-			m_chargeRotValue2[plaNum] = nsStdafx::FLOAT_ZERO;
+			m_playerChargeUI->ChargeRotValueInit(plaNum);
 
 			//押したときのタイマー初期化
 			m_chargeTimer[plaNum] = nsStdafx::INT_ZERO;
@@ -803,7 +679,7 @@ namespace nsCARBOOM
 	void Player::PlaAndPlaClash(const int plaNum)
 	{
 		//ほかプレイヤー(u)と自分(i)がぶつかったとき、ほかプレイヤーに押される処理
-		for (unsigned int otherPlaNum = Player1; otherPlaNum < m_totalPlaNum; otherPlaNum++) {
+		for (int otherPlaNum = Player1; otherPlaNum < m_totalPlaNum; otherPlaNum++) {
 			if (otherPlaNum == plaNum)
 			{
 				//uとiの値が同じのときは下の処理は行わずスキップする
@@ -909,26 +785,5 @@ namespace nsCARBOOM
 		m_isLandingOKFlg[plaNum] = false;
 
 		m_landingEffectDelayTimer[plaNum] = nsStdafx::INT_ZERO;
-	}
-
-
-	//
-	int Player::WhatPlaNum(const int plaNum)
-	{
-		switch (plaNum)
-		{
-		case Player1:
-			return Player1;
-			break;
-		case Player2:
-			return Player2;
-			break;
-		case Player3:
-			return Player3;
-			break;
-		case Player4:
-			return Player4;
-			break;
-		}
 	}
 }
