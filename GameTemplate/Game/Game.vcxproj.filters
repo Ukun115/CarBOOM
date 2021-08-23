@@ -340,6 +340,9 @@
     <ClCompile Include="EnemyMoveSpeed.cpp">
       <Filter>cpp&amp;h\InGame\Enemy</Filter>
     </ClCompile>
+    <ClCompile Include="EnemyPatoLump.cpp">
+      <Filter>cpp&amp;h\InGame\Enemy</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\MiniEngine\GraphicsEngine.h">
@@ -640,6 +643,9 @@
       <Filter>cpp&amp;h\Result</Filter>
     </ClInclude>
     <ClInclude Include="EnemyMoveSpeed.h">
+      <Filter>cpp&amp;h\InGame\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="EnemyPatoLump.h">
       <Filter>cpp&amp;h\InGame\Enemy</Filter>
     </ClInclude>
   </ItemGroup>

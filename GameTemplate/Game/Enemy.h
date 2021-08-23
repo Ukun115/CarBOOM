@@ -15,6 +15,7 @@ namespace nsCARBOOM
 	class EnemyTurn;
 	class EnemyEffect;
 	class EnemyMoveSpeed;
+	class EnemyPatoLump;
 
 	class Enemy : public IGameObject	//TODO:コピー禁止ポリシーを継承する。
 	{
@@ -68,7 +69,6 @@ namespace nsCARBOOM
 		/// <summary>
 		/// クラスのポインタ
 		/// </summary>
-		Light* m_light = nullptr;
 		GameScene* m_gameScene = nullptr;
 		SkinModelRender* m_enemy[TotalEnemyNum] = { nullptr };
 		Stage* m_stage = nullptr;
@@ -78,6 +78,7 @@ namespace nsCARBOOM
 		EnemyTurn* m_enemyTurn = nullptr;
 		EnemyEffect* m_enemyEffect = nullptr;
 		EnemyMoveSpeed* m_enemyMoveSpeed = nullptr;
+		EnemyPatoLump* m_enemyPatoLump = nullptr;
 
 		CharacterController m_charaCon[TotalEnemyNum];		//敵６体分のキャラクタコントローラークラスを作成
 
@@ -124,8 +125,6 @@ namespace nsCARBOOM
 		float m_PlayerToSetten2Angle[TotalEnemyNum] = { nsStdafx::FLOAT_ZERO };	//プレイヤーから接点2のcos
 		int m_hankei = 3600;       //穴の半径の2乗
 		Vector3 m_center;  //中心の座標
-		Vector3 m_enePoiLigPos;
-		int	m_poiLigNum = nsStdafx::INT_ZERO;
 		int m_windDirection = nsStdafx::INT_ZERO;	//現在の風
 		int m_totalPlaNum = nsStdafx::INT_ZERO;
 		int m_stageSelectNum = nsStdafx::INT_ZERO;
@@ -148,8 +147,6 @@ namespace nsCARBOOM
 		void DistanceOfPlaToEne(const int eneNum);
 		//落下時サウンドを鳴らす関数
 		void FallSoundPlayBack(const int eneNum);
-		//パトランプをパトカーの上にセットする関数
-		void PointLightSetting(const int eneNum);
 		//
 		Vector3 WhatEneRandomResPos(const int eneNum);
 

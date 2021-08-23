@@ -295,6 +295,7 @@
     <ClCompile Include="EnemyEffect.cpp" />
     <ClCompile Include="EnemyMoveSpeed.cpp" />
     <ClCompile Include="EnemyMoveSpeedArrow.cpp" />
+    <ClCompile Include="EnemyPatoLump.cpp" />
     <ClCompile Include="EnemyTurn.cpp" />
     <ClCompile Include="Fade.cpp" />
     <ClCompile Include="FontRender.cpp" />
@@ -402,6 +403,7 @@
     <ClInclude Include="EnemyEffect.h" />
     <ClInclude Include="EnemyMoveSpeed.h" />
     <ClInclude Include="EnemyMoveSpeedArrow.h" />
+    <ClInclude Include="EnemyPatoLump.h" />
     <ClInclude Include="EnemyTurn.h" />
     <ClInclude Include="Fade.h" />
     <ClInclude Include="FontRender.h" />

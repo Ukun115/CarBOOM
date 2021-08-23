@@ -15,6 +15,7 @@
 #include "EnemyTurn.h"
 #include "EnemyEffect.h"
 #include "EnemyMoveSpeed.h"
+#include "EnemyPatoLump.h"
 
 //TODO: 影を落とせるようにする
 
@@ -34,7 +35,6 @@ namespace nsCARBOOM
 		const Vector3 ENE_RES_POS_8 = { 0.0f,150.0f,-100.0f };
 		const Vector3 ENE_RES_POS_9 = { 100.0f,150.0f,-100.0f };
 		const Vector3 ENE_RES_POS_10 = { 0.0f,150.0f,0.0f };
-		const float POILIG_RANGE = 50.0f;	//ポイントライトの影響範囲
 		const int TIME0 = 0;
 		const float DELTATIME = 1.0f;
 		const float MAX_FALL_POSITION = -1000.0f;
@@ -44,7 +44,6 @@ namespace nsCARBOOM
 		const float REDUCE_FRICTION_POWER = 2.0f;
 		const int MOST_SHORT_DIR_NUM = 0;
 		const float FALLSOUND_PLAYBACK_HEIGHT = -10.0f;
-		const float PATORAMPU_POS_SHIFT = 10.0f;
 	}
 
 	bool Enemy::Start()
@@ -52,11 +51,12 @@ namespace nsCARBOOM
 		//インスタンスを探す。
 		m_gameScene = FindGO<GameScene>(nsStdafx::GAMESCENE_NAME);
 		m_player = FindGO<Player>(nsStdafx::PLAYER_NAME);
-		m_light = FindGO<Light>(nsStdafx::LIGHT_NAME);
 		m_stage = FindGO<Stage>(nsStdafx::STAGE_NAME);
 		m_soundPlayBack = FindGO<SoundPlayBack>(nsStdafx::SOUNDPLAYBACK_NAME);
 
 		m_enemyEffect = NewGO<EnemyEffect>(nsStdafx::PRIORITY_0, nullptr);
+
+		m_enemyPatoLump = NewGO<EnemyPatoLump>(nsStdafx::PRIORITY_0, nullptr);
 
 		//敵のリスポーン位置
 		for (int resPosNum = ResPos1; resPosNum < TotalResPos; resPosNum++)
@@ -125,7 +125,7 @@ namespace nsCARBOOM
 			return;
 		}
 
-		m_poiLigNum = nsStdafx::INT_ZERO;
+		m_enemyPatoLump->PoiLigNumInit();
 
 		//全敵分ループ
 		for (int eneNum = Enemy1; eneNum < TotalEnemyNum; eneNum++)
@@ -156,15 +156,9 @@ namespace nsCARBOOM
 					//プレイヤーの座標をリスポーン座標に移動
 					EneResporn(eneNum);
 
-					//パトランプを敵の上にセットする関数
-					PointLightSetting(eneNum);
-
 					m_enePos[eneNum] += m_enemyMoveSpeed->GetEneMoveSpeed(eneNum);
 				}
 			}
-
-			//ベクトルを可視化させるデバック関数
-			//EneMooveSpeedDebug(eneNum);
 
 			//重力の影響を与える
 			m_enemyMoveSpeed->Gravity(eneNum);
@@ -221,7 +215,6 @@ namespace nsCARBOOM
 			m_settenPos1[eneNum].z = (m_hankei - m_enePos[eneNum].x * m_settenPos1[eneNum].x) / m_enePos[eneNum].z;
 			m_settenPos2[eneNum].x = (m_hankei * m_enePos[eneNum].x - m_enePos[eneNum].z * powf(m_hankei * ((powf(m_enePos[eneNum].x, 2.0f) + powf(m_enePos[eneNum].z, 2.0f) - m_hankei)), 1.0f / 2.0f)) / (powf(m_enePos[eneNum].x, 2.0f) + powf(m_enePos[eneNum].z, 2.0f));
 			m_settenPos2[eneNum].z = (m_hankei - m_enePos[eneNum].x * m_settenPos2[eneNum].x) / m_enePos[eneNum].z;
-
 		}
 		else if (m_enePos[eneNum].x == nsStdafx::INT_ZERO) {
 			m_settenPos1[eneNum].x = (powf(m_hankei * (powf(m_enePos[eneNum].z, 2.0f) - m_hankei), 1.0f / 2.0f) / m_enePos[eneNum].z);
@@ -255,7 +248,6 @@ namespace nsCARBOOM
 			Distance(eneNum);
 
 			if (m_charaCon[eneNum].IsOnGround()) {
-
 				//ドーナツステージが選択されたとき
 				if (m_stageSelectNum == nsStdafx::STAGE2)
 				{
@@ -441,23 +433,6 @@ namespace nsCARBOOM
 		//落ちる時に落下音を鳴らせる処理
 		m_soundPlayBack->EnemySoundPlayBack(FallSound, eneNum);
 		m_canFallSoundPlayFlg[eneNum] = false;
-	}
-
-	//パトランプをパトカーの上にセットする関数
-	void Enemy::PointLightSetting(const int eneNum)
-	{
-		//赤ポイントライトを設定
-		m_enePoiLigPos = m_enePos[eneNum];
-		m_enePoiLigPos.x -= nsEnemy::PATORAMPU_POS_SHIFT;
-		m_enePoiLigPos.y += nsEnemy::PATORAMPU_POS_SHIFT;
-		m_light->SetPointLightData(m_enePoiLigPos, nsStdafx::RED, nsEnemy::POILIG_RANGE, m_poiLigNum);
-		m_poiLigNum++;
-		//青ポイントライトを設定
-		m_enePoiLigPos = m_enePos[eneNum];
-		m_enePoiLigPos.x += nsEnemy::PATORAMPU_POS_SHIFT;
-		m_enePoiLigPos.y += nsEnemy::PATORAMPU_POS_SHIFT;
-		m_light->SetPointLightData(m_enePoiLigPos, nsStdafx::BLUE, nsEnemy::POILIG_RANGE, m_poiLigNum);
-		m_poiLigNum++;
 	}
 
 	//
