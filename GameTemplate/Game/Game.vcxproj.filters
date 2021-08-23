@@ -310,6 +310,36 @@
     <ClCompile Include="PlayerChargeUI.cpp">
       <Filter>cpp&amp;h\InGame\Player</Filter>
     </ClCompile>
+    <ClCompile Include="EnemyEffect.cpp">
+      <Filter>cpp&amp;h\InGame\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="TitleName.cpp">
+      <Filter>cpp&amp;h\Title</Filter>
+    </ClCompile>
+    <ClCompile Include="PlayerEffect.cpp">
+      <Filter>cpp&amp;h\InGame\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="StageSelectScenePlayer.cpp">
+      <Filter>cpp&amp;h\StageSelect</Filter>
+    </ClCompile>
+    <ClCompile Include="PressStartButton.cpp">
+      <Filter>cpp&amp;h\Title</Filter>
+    </ClCompile>
+    <ClCompile Include="PressASpeechBalloon.cpp">
+      <Filter>cpp&amp;h\Title</Filter>
+    </ClCompile>
+    <ClCompile Include="PlayerName.cpp">
+      <Filter>cpp&amp;h</Filter>
+    </ClCompile>
+    <ClCompile Include="Pause.cpp">
+      <Filter>cpp&amp;h\InGame</Filter>
+    </ClCompile>
+    <ClCompile Include="Ranking.cpp">
+      <Filter>cpp&amp;h\Result</Filter>
+    </ClCompile>
+    <ClCompile Include="EnemyMoveSpeed.cpp">
+      <Filter>cpp&amp;h\InGame\Enemy</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\MiniEngine\GraphicsEngine.h">
@@ -581,6 +611,36 @@
     </ClInclude>
     <ClInclude Include="PlayerChargeUI.h">
       <Filter>cpp&amp;h\InGame\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="EnemyEffect.h">
+      <Filter>cpp&amp;h\InGame\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="TitleName.h">
+      <Filter>cpp&amp;h\Title</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayerEffect.h">
+      <Filter>cpp&amp;h\InGame\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="StageSelectScenePlayer.h">
+      <Filter>cpp&amp;h\StageSelect</Filter>
+    </ClInclude>
+    <ClInclude Include="PressStartButton.h">
+      <Filter>cpp&amp;h\Title</Filter>
+    </ClInclude>
+    <ClInclude Include="PressASpeechBalloon.h">
+      <Filter>cpp&amp;h\Title</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayerName.h">
+      <Filter>cpp&amp;h</Filter>
+    </ClInclude>
+    <ClInclude Include="Pause.h">
+      <Filter>cpp&amp;h\InGame</Filter>
+    </ClInclude>
+    <ClInclude Include="Ranking.h">
+      <Filter>cpp&amp;h\Result</Filter>
+    </ClInclude>
+    <ClInclude Include="EnemyMoveSpeed.h">
+      <Filter>cpp&amp;h\InGame\Enemy</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

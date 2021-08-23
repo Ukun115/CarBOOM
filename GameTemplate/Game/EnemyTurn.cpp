@@ -2,11 +2,9 @@
 ///敵の回転処理
 ///</summary>
 
-
 #include "stdafx.h"
 #include "EnemyTurn.h"
 #include "Enemy.h"
-
 
 namespace nsCARBOOM
 {
@@ -30,9 +28,9 @@ namespace nsCARBOOM
 		for (int eneNum = Enemy1; eneNum < TotalEneNum; eneNum++)
 		{
 			//敵のリスポーン回転
-			for (int i = ResRot1; i < TotalResRot; i++)
+			for (int respornRotNum = ResRot1; respornRotNum < TotalResRot; respornRotNum++)
 			{
-				m_randEneResAngle[i] = WhatEneRandomResRot(i);
+				m_randEneResAngle[respornRotNum] = WhatEneRandomResRot(respornRotNum);
 			}
 
 			//ランダム関数のSEED（種）を設定
@@ -45,18 +43,15 @@ namespace nsCARBOOM
 		return true;
 	}
 
-
 	EnemyTurn::~EnemyTurn()
 	{
 
 	}
 
-
 	void EnemyTurn::Update()
 	{
 
 	}
-
 
 	//敵の回転処理関数
 	void EnemyTurn::EneTurn(const int eneNum)
@@ -74,7 +69,6 @@ namespace nsCARBOOM
 		m_eneDir[eneNum] = m_enemy->GetEnemySpeed(eneNum);
 		m_eneDir[eneNum].Normalize();
 	}
-
 
 	//
 	float EnemyTurn::WhatEneRandomResRot(const int eneResRotNum)
@@ -108,12 +102,11 @@ namespace nsCARBOOM
 		}
 	}
 
-
 	//リスポーン時の向きをランダムにする処理
 	void EnemyTurn::EneRespornAngleDecide(const int eneNum)
 	{
 		//ランダムでリスポーン回転を入れる
-		m_rotAngle[eneNum] = m_randEneResAngle[rand() % 8];
+		m_rotAngle[eneNum] = m_randEneResAngle[rand() % TotalResRot];
 		m_rot[eneNum].SetRotation(Vector3::AxisY, m_rotAngle[eneNum]);
 	}
 }

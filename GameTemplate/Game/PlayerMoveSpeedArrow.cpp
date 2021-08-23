@@ -2,11 +2,9 @@
 ///プレイヤーの移動ベクトルを可視化処理(デバック用)
 ///</summary>
 
-
 #include "stdafx.h"
 #include "PlayerMoveSpeedArrow.h"
 #include "Player.h"
-
 
 namespace nsCARBOOM
 {
@@ -23,7 +21,6 @@ namespace nsCARBOOM
 		return true;
 	}
 
-
 	PlayerMoveSpeedArrow::~PlayerMoveSpeedArrow()
 	{
 		for (int i = Player1; i < m_totalPlaNum; i++)
@@ -32,7 +29,6 @@ namespace nsCARBOOM
 			DeleteGO(m_skinModelRenderArrow[i]);
 		}
 	}
-
 
 	void PlayerMoveSpeedArrow::Update()
 	{

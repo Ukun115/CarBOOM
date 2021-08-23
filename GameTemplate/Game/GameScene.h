@@ -2,9 +2,7 @@
 ///ゲームシーンのメイン処理
 ///</summary>
 
-
 #pragma once
-
 
 namespace nsCARBOOM
 {
@@ -15,12 +13,12 @@ namespace nsCARBOOM
 	class Enemy;
 	class Fade;
 	class ResultScene;
-
+	class PlayerName;
+	class Pause;
 
 	class GameScene :public IGameObject		//TODO:コピー禁止ポリシーを継承する。
 	{
 	private:
-
 		/// <summary>
 		/// 列挙型の宣言
 		/// </summary>
@@ -44,7 +42,6 @@ namespace nsCARBOOM
 			TotalSoundNum
 		};
 
-
 		//列挙型
 		enum enState
 		{
@@ -59,7 +56,6 @@ namespace nsCARBOOM
 			TotalFade
 		};
 
-
 		/// <summary>
 		/// クラスのポインタ
 		/// </summary>
@@ -67,21 +63,19 @@ namespace nsCARBOOM
 		Fade* m_fade[TotalFade] = { nullptr };
 		TitleScene* m_titleScene = { nullptr };
 		StageSelectScene* m_stageSelectScene = { nullptr };
-		ResultScene* m_resultScene = { nullptr };
+		ResultScene* m_resultScene = nullptr;
 		Stage* m_stage = { nullptr };
 		Player* m_player = nullptr;
 		Enemy* m_enemy = nullptr;
 		FontRender* m_ScoreFontRender[TotalPlaNum] = { nullptr };
 		FontRender* m_TextScoreFontRender[TotalPlaNum] = { nullptr };
 		FontRender* m_timeLimit = nullptr;
-		FontRender* m_PlaNameFont[TotalPlaNum] = { nullptr };
 		SpriteRender* m_sprite[TotalPlaNum] = { nullptr };
 		SpriteRender* m_crownSprite = nullptr;
-		SpriteRender* m_grayBack = nullptr;
 		SpriteRender* m_gameBackScreen = nullptr;
-		SpriteRender* m_pauseSprite = nullptr;
 		SoundPlayBack* m_soundPlayBack = nullptr;
-
+		PlayerName* m_playerName = nullptr;
+		Pause* m_pause = nullptr;
 
 		/// <summary>
 		/// フラグ
@@ -93,27 +87,23 @@ namespace nsCARBOOM
 		/// <summary>
 		/// タイマー
 		/// </summary>
-		unsigned int m_resultsenniTimer = nsStdafx::INT_ZERO;
-		unsigned int m_countDownTimer = nsStdafx::INT_ZERO;
+		unsigned int m_resultsenniTimer = 0;
+		unsigned int m_countDownTimer = 0;
 		int m_timer = 3600;	//3600/60 = 60秒
-		int m_countTime = nsStdafx::INT_ZERO;
+		int m_countTime = 0;
 
-
-		int m_plaScore[TotalPlaNum] = { nsStdafx::INT_ZERO };
+		int m_plaScore[TotalPlaNum] = { 0 };
 		Vector2 m_plaScorePos[TotalPlaNum];
 		unsigned int m_nowNumOnePla = TotalPlaNum;
-		wchar_t text1[64];	//制限時間フォント
-		wchar_t text2[64];	//プレイヤースコアフォント
+		wchar_t text1[256];	//制限時間フォント
+		wchar_t text2[256];	//プレイヤースコアフォント
 
-
-		int m_totalPlaNum = nsStdafx::INT_ZERO;
-		int m_stageSelecttNum = nsStdafx::INT_ZERO;
-
+		int m_totalPlaNum = 0;
+		int m_stageSelecttNum = 0;
 
 		bool Start()override final;
 		~GameScene()override final;
 		void Update()override final;
-
 
 		//制限時間処理関数
 		void TimeLimit();
@@ -131,20 +121,12 @@ namespace nsCARBOOM
 		void NowCrown();
 		//リザルト画面に遷移する関数
 		void ResultSceneTransition();
-		//PLAYERフォントの初期化をまとめている関数
-		void InitPlayerFont();
 		//プレイヤーのポイントフォントの初期化をまとめている関数
 		void InitPlayerPtFont();
 		//制限時間フォントの初期化をまとめている関数
 		void InitTimeLimitFont();
-		//ポーズ画面の画像の初期化をまとめている関数
-		void InitPauseSceneImage();
-		//ポーズ機能
-		void PauseMenue();
-
 
 	public:
-
 		/*プレイヤーの得点変動処理関数
 		(plaNum1は落としたプレイヤー、plaNum2は自滅したプレイヤー)*/
 		void GetPlayerAddScore(const int plaNum1, const int plaNum2);
@@ -159,7 +141,7 @@ namespace nsCARBOOM
 		//ステージなんぼが選ばれているかをゲームクラスに渡す
 		void SetSelectStageNum(const int stageNum) { m_stageSelecttNum = stageNum; }
 		void SetDeleteFlg(const bool deleteFlg) { m_deleteFlg = deleteFlg; }
-
+		void SetPauseFlg(const bool pauseFlg) { m_isPauseFlg = pauseFlg; }
 		/// <summary>
 		/// ゲッター
 		/// </summary>
@@ -171,5 +153,7 @@ namespace nsCARBOOM
 		int GetPlaScore(const int x)const { return m_plaScore[x]; };
 		//現在の１位のプレイヤーが誰かを取得
 		int GetNumber1Player()const { return m_nowNumOnePla; }
+
+		int GetTotalPlaNum()const { return m_totalPlaNum; }
 	};
 }

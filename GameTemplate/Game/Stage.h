@@ -2,9 +2,7 @@
 ///ステージ処理
 ///</summary>
 
-
 #pragma once
-
 
 namespace nsCARBOOM
 {
@@ -14,23 +12,31 @@ namespace nsCARBOOM
 	class Player;
 	class Enemy;
 
-
 	class Stage : public IGameObject		//TODO:コピー禁止ポリシーを継承する。
 	{
 	private:
-
 		/// <summary>
 		/// 列挙型の宣言
 		/// </summary>
 		//ステージ番号
 		enum enStageNum
 		{
-			ehehe,	//Stage1を１番にするためにeheheを入れて調整
-			Stage1,
+			Stage1 = 1,
 			Stage2,
 			Stage3,
 			Stage4,
 			Stage5
+		};
+
+		enum enPlayer
+		{
+			Player1,
+			TotalPlaNum = 4
+		};
+		enum enEnemy
+		{
+			Enemy1,
+			TotalEneNum = 6
 		};
 
 		enum enWindDirection
@@ -41,6 +47,12 @@ namespace nsCARBOOM
 			RightWind,	//右方向の風
 		};
 
+		enum enSnowNum
+		{
+			Snow1,
+			Snow2,
+			TotalSnowNum
+		};
 
 		/// <summary>
 		/// クラスのポインタ
@@ -52,15 +64,12 @@ namespace nsCARBOOM
 		Enemy* m_enemy = nullptr;
 		SkinModelRender* m_stage = nullptr;
 
-
 		PhysicsStaticObject m_physicsStaticObject;		//静的物理オブジェクトクラスを作成
-		Effect m_fallSnowEffect[2];		//アイスステージの降ってくる雪エフェクト
-
+		Effect m_fallSnowEffect[TotalSnowNum];		//アイスステージの降ってくる雪エフェクト
 
 		bool m_isPauseFlg = false;
-		bool m_eneFrictionFlg[6] = { false };
-		bool m_plaFrictionFlg[4];
-
+		bool m_eneFrictionFlg[TotalEneNum] = { false };
+		bool m_plaFrictionFlg[TotalPlaNum];
 
 		/// <summary>
 		/// タイマー
@@ -68,9 +77,8 @@ namespace nsCARBOOM
 		int m_fallSnowTimer = nsStdafx::INT_ZERO;
 		int m_windDirection = nsStdafx::INT_ZERO;	//現在の風
 
-
-		Vector3 m_plaPos[4];			//プレイヤー4体分のプレイヤーの位置
-		Vector3 m_LengthFromStaPivToPla[4];	//ステージの基点からプレイヤーまでの距離
+		Vector3 m_plaPos[TotalPlaNum];			//プレイヤー4体分のプレイヤーの位置
+		Vector3 m_LengthFromStaPivToPla[TotalPlaNum];	//ステージの基点からプレイヤーまでの距離
 
 		int m_stageSelectNum = nsStdafx::INT_ZERO;
 		int m_nowTime = nsStdafx::INT_ZERO;
@@ -78,11 +86,9 @@ namespace nsCARBOOM
 
 		char m_stageModelFilePath[256];
 
-
 		bool Start() override final;
 		~Stage()override final;
 		void Update() override final;
-
 
 		//雪エフェクト処理関数
 		void SnowFall();

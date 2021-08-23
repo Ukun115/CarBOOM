@@ -2,9 +2,7 @@
 ///プレイヤーの回転処理
 ///</summary>
 
-
 #pragma once
-
 
 namespace nsCARBOOM
 {
@@ -32,7 +30,7 @@ namespace nsCARBOOM
 		float m_leftStick_y[TotalPlaNum] = { nsStdafx::FLOAT_ZERO };		//左スティックのy入力量
 		float m_rotAngle[TotalPlaNum] = { nsStdafx::FLOAT_ZERO };		//回転角度
 		Quaternion m_rot[TotalPlaNum];		//プレイヤーの回転
-		int m_totalPlaNum = 0;
+		int m_totalPlaNum = nsStdafx::INT_ZERO;
 
 	public:
 		bool Start()override final;

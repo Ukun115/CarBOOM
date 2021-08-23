@@ -292,6 +292,8 @@
     <ClCompile Include="..\..\MiniEngine\tkFile\TksFile.cpp" />
     <ClCompile Include="..\..\MiniEngine\VertexBuffer.cpp" />
     <ClCompile Include="Enemy.cpp" />
+    <ClCompile Include="EnemyEffect.cpp" />
+    <ClCompile Include="EnemyMoveSpeed.cpp" />
     <ClCompile Include="EnemyMoveSpeedArrow.cpp" />
     <ClCompile Include="EnemyTurn.cpp" />
     <ClCompile Include="Fade.cpp" />
@@ -300,15 +302,22 @@
     <ClCompile Include="Light.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Noncopyable.cpp" />
+    <ClCompile Include="Pause.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="PlayerChargeUI.cpp" />
+    <ClCompile Include="PlayerEffect.cpp" />
     <ClCompile Include="PlayerMoveSpeedArrow.cpp" />
+    <ClCompile Include="PlayerName.cpp" />
     <ClCompile Include="PlayerTurn.cpp" />
+    <ClCompile Include="PressASpeechBalloon.cpp" />
+    <ClCompile Include="PressStartButton.cpp" />
+    <ClCompile Include="Ranking.cpp" />
     <ClCompile Include="ResultScene.cpp" />
     <ClCompile Include="SkinModelRender.cpp" />
     <ClCompile Include="SoundPlayBack.cpp" />
     <ClCompile Include="SpriteRender.cpp" />
     <ClCompile Include="Stage.cpp" />
+    <ClCompile Include="StageSelectScenePlayer.cpp" />
     <ClCompile Include="StageSelectScene.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -319,6 +328,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Preview|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="system\system.cpp" />
+    <ClCompile Include="TitleName.cpp" />
     <ClCompile Include="TitleScene.cpp" />
     <ClCompile Include="tkSoundEngine.cpp" />
     <ClCompile Include="tkSoundSource.cpp" />
@@ -389,6 +399,8 @@
     <ClInclude Include="..\..\MiniEngine\tkFile\TksFile.h" />
     <ClInclude Include="..\..\MiniEngine\VertexBuffer.h" />
     <ClInclude Include="Enemy.h" />
+    <ClInclude Include="EnemyEffect.h" />
+    <ClInclude Include="EnemyMoveSpeed.h" />
     <ClInclude Include="EnemyMoveSpeedArrow.h" />
     <ClInclude Include="EnemyTurn.h" />
     <ClInclude Include="Fade.h" />
@@ -397,19 +409,27 @@
     <ClInclude Include="GameTime.h" />
     <ClInclude Include="Light.h" />
     <ClInclude Include="Noncopyable.h" />
+    <ClInclude Include="Pause.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="PlayerChargeUI.h" />
+    <ClInclude Include="PlayerEffect.h" />
     <ClInclude Include="PlayerMoveSpeedArrow.h" />
+    <ClInclude Include="PlayerName.h" />
     <ClInclude Include="PlayerTurn.h" />
+    <ClInclude Include="PressASpeechBalloon.h" />
+    <ClInclude Include="PressStartButton.h" />
+    <ClInclude Include="Ranking.h" />
     <ClInclude Include="ResultScene.h" />
     <ClInclude Include="SkinModelRender.h" />
     <ClInclude Include="SoundPlayBack.h" />
     <ClInclude Include="SpriteRender.h" />
     <ClInclude Include="Stage.h" />
+    <ClInclude Include="StageSelectScenePlayer.h" />
     <ClInclude Include="StageSelectScene.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="StopWatch.h" />
     <ClInclude Include="system\system.h" />
+    <ClInclude Include="TitleName.h" />
     <ClInclude Include="TitleScene.h" />
     <ClInclude Include="tkSoundEngine.h" />
     <ClInclude Include="tkSoundSource.h" />

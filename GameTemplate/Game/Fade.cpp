@@ -2,7 +2,6 @@
 ///フェードインフェードアウト処理
 ///</summary>
 
-
 #include "stdafx.h"
 #include "Fade.h"
 
@@ -11,12 +10,12 @@ namespace nsCARBOOM
 	namespace nsFade
 	{
 		const float FADE_IMAGE_SIZE = 1500.0f;
-
 		const float FADE_SPEED = 0.03f;
-
 		const float ALL_WHITE = 1.0f;
+		const float INIT_R = 1.0f;
+		const float INIT_G = 1.0f;
+		const float INIT_B = 1.0f;
 	}
-
 
 	//フェードイン用かフェードアウト用かのステートはNewGOしたときに自分で設定しましょう
 	bool Fade::Start()
@@ -28,12 +27,10 @@ namespace nsCARBOOM
 		return true;
 	}
 
-
 	Fade::~Fade()
 	{
 		DeleteGO(m_fadeSprite);
 	}
-
 
 	void Fade::Update()
 	{
@@ -55,6 +52,6 @@ namespace nsCARBOOM
 			break;
 		}
 
-		m_fadeSprite->SetMulColor(1.0f, 1.0f, 1.0f, m_alphaValue);
+		m_fadeSprite->SetMulColor(nsFade::INIT_R, nsFade::INIT_G, nsFade::INIT_B, m_alphaValue);
 	}
 }

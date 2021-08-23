@@ -2,14 +2,17 @@
 ///敵の移動ベクトルを可視化処理(デバック用)
 ///</summary>
 
-
 #include "stdafx.h"
 #include "EnemyMoveSpeedArrow.h"
 #include "Enemy.h"
 
-
 namespace nsCARBOOM
 {
+	namespace nsEnemyMoveSpeedArrow
+	{
+
+	}
+
 	bool EnemyMoveSpeedArrow::Start()
 	{
 		m_enemy = FindGO<Enemy>(nsStdafx::ENEMY_NAME);
@@ -23,7 +26,6 @@ namespace nsCARBOOM
 		return true;
 	}
 
-
 	EnemyMoveSpeedArrow::~EnemyMoveSpeedArrow()
 	{
 		for (int eneNum = Enemy1; eneNum < TotalEneNum; eneNum++)
@@ -32,7 +34,6 @@ namespace nsCARBOOM
 			DeleteGO(m_skinModelRenderArrow[eneNum]);
 		}
 	}
-
 
 	void EnemyMoveSpeedArrow::Update()
 	{
@@ -47,7 +48,6 @@ namespace nsCARBOOM
 			if (Dir.z < 0) {
 				angleX *= -1;
 			}
-			//angleX -= 0.5 * PAI;
 			m_arrowRot[eneNum].SetRotationY(angleX);//ｘ度だけY軸を回す
 			m_skinModelRenderArrow[eneNum]->SetRotation(m_arrowRot[eneNum]);//角度を設定する
 			m_arrowPos[eneNum] = m_enemy->GetEnemyPos(eneNum);

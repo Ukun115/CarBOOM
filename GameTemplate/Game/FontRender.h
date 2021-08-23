@@ -2,33 +2,27 @@
 ///フォント表示処理
 ///</summary>
 
-
 #pragma once
-
 
 namespace nsCARBOOM
 {
 	//フォントの構造体の定義
 	struct FontValue {
-
 		wchar_t text[256];	//テキスト
 		Vector2 position;	//位置
 		Vector4 color;		//色
-		float rotation = 0;		//回転
-		float scale = 0;		//拡大率
+		float rotation = 0.0f;		//回転
+		float scale = 0.0f;		//拡大率
 		Vector2 pivot;		//基点
 	};
-
 
 	class FontRender : public IGameObject	// コピー禁止ポリシーを継承する。
 	{
 	private:
-
 		Font m_font;				//フォントクラスを作成
 		FontValue m_fontValue;		//フォント構造体のデータを作成
 
 	public:
-
 		//フォントの初期化関数
 		void Init(
 			const wchar_t* text,						//テキスト
@@ -40,7 +34,6 @@ namespace nsCARBOOM
 		);
 		//描画関数
 		void Render(RenderContext& rc)override	final;
-
 
 		/// <summary>
 		/// セッター

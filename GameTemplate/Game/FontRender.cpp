@@ -2,11 +2,15 @@
 ///フォント表示処理
 ///</summary>
 
-
 #include "stdafx.h"
 
 namespace nsCARBOOM
 {
+	namespace nsFontRender
+	{
+
+	}
+
 	//フォントの初期化関数
 	void FontRender::Init
 	(

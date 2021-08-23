@@ -2,7 +2,6 @@
 ///プレイヤーのメイン処理
 ///</summary>
 
-
 #include "stdafx.h"
 #include "TitleScene.h"
 #include "StageSelectScene.h"
@@ -14,7 +13,7 @@
 #include "PlayerMoveSpeedArrow.h"
 #include "PlayerTurn.h"
 #include "PlayerChargeUI.h"
-
+#include "PlayerEffect.h"
 
 //TODO: 影を落とせるようにする
 
@@ -26,14 +25,10 @@ namespace nsCARBOOM
 		const Vector3 PLAYER2_RESPOS = { 100.0f,150.0f, 100.0f };		//リスポーン座標(右上)
 		const Vector3 PLAYER3_RESPOS = { -100.0f,150.0f,-100.0f };		//リスポーン座標(左下)
 		const Vector3 PLAYER4_RESPOS = { 100.0f,150.0f,-100.0f };		//リスポーン座標(右下)
-
 		const int TIME0 = 0;	//制限時間が0秒
-
 		const float MAX_MOOVESPEED = 5.0f;
-
 		const float MAX_FALL_POSITION = -1000.0f;
 	}
-
 
 	bool Player::Start()
 	{
@@ -43,10 +38,17 @@ namespace nsCARBOOM
 		m_soundPlayBack = FindGO<SoundPlayBack>(nsStdafx::SOUNDPLAYBACK_NAME);
 		m_stage = FindGO<Stage>(nsStdafx::STAGE_NAME);
 
+		m_playerEffect = NewGO<PlayerEffect>(nsStdafx::PRIORITY_0,nullptr);
+		m_playerEffect->SetTotalPlaNum(m_totalPlaNum);
+
 		//１位のプレイヤーの上に置く王冠画像
 		m_crown = NewGO<SpriteRender>(nsStdafx::PRIORITY_1, nullptr);
 		m_crown->Init("crowngold", 30.0f, 30.0f);
 		m_crown->Deactivate();
+
+		//プレイヤーの回転処理クラス
+		m_playerTurn = NewGO<PlayerTurn>(nsStdafx::PRIORITY_0, nsStdafx::PLAYERTURN_NAME);
+		m_playerTurn->SetTotalPlaNum(m_totalPlaNum);
 
 		for (int plaNum = Player1; plaNum < m_totalPlaNum; plaNum++)
 		{
@@ -55,37 +57,11 @@ namespace nsCARBOOM
 
 			sprintf(m_filePath, "LowPoly_PlayerCar_%d", plaNum);
 			m_player[plaNum]->Init(m_filePath);
-			sprintf(m_filePath, "ShootDown%d", plaNum);
-			m_shootDownEffect[plaNum].Init(reinterpret_cast<const char16_t*>(m_filePath));	//型変換
-			sprintf(m_filePath, "Jet%d", plaNum);
-			m_jetEffect[plaNum].Init(reinterpret_cast<const char16_t*>(m_filePath));	//型変換
-			sprintf(m_filePath, "Landing%d", plaNum);
-			m_landingEffect[plaNum].Init(reinterpret_cast<const char16_t*>(m_filePath));	//型変換
 
 			//プレイヤーを初期位置に持っていく。
 			PlaResPos(plaNum);
 
 			m_charaCon[plaNum].Init(15.0f, 85.0f, m_pos[plaNum]);
-
-			//エフェクトの大きさ調整
-			m_shootDownEffect[plaNum].SetScale({ 70.0f,70.0f,70.0f });
-			//通常だと画面の上がエフェクトの上になっているので、ゲーム中のカメラ方向が上になるように調整
-			Quaternion m_shootDownEffectRot = m_shootDownEffect[plaNum].GetRotation();
-			//↓【注意】関数内に入れるのはデグリー単位ではなくラジアン単位です。
-			m_shootDownEffectRot.AddRotationX(-1.5708f);	//X軸を基点に、-1.5708rad(-90°)回転
-			m_shootDownEffect[plaNum].SetRotation(m_shootDownEffectRot);
-
-			//エフェクトの大きさ調整
-			m_jetEffect[plaNum].SetScale({ 3.0f,3.0f,3.0f });
-			//通常だと画面の上がエフェクトの上になっているので、ゲーム中のカメラ方向が上になるように調整
-			m_shootDownEffectRot = m_jetEffect[plaNum].GetRotation();
-			//↓【注意】関数内に入れるのはデグリー単位ではなくラジアン単位です。
-			m_shootDownEffectRot.AddRotationX(-1.5708f);	//X軸を基点に、-1.5708rad(-90°)回転
-			m_jetEffect[plaNum].SetRotation(m_shootDownEffectRot);
-
-			//着地エフェクトの大きさ調整
-			m_landingEffect[plaNum].SetScale({ 20.0f,20.0f,20.0f });
-
 		}
 		for (int plaNum = Player1; plaNum < 5; plaNum++)
 		{
@@ -94,17 +70,14 @@ namespace nsCARBOOM
 		//デバック用のプレイヤー移動ベクトルの矢印の初期化
 		m_playerMoveSpeedArrow = NewGO<PlayerMoveSpeedArrow>(nsStdafx::PRIORITY_0, nullptr);
 		m_playerMoveSpeedArrow->SetTotalPlaNum(m_totalPlaNum);
-		//プレイヤーの回転処理クラス
-		m_playerTurn = NewGO<PlayerTurn>(nsStdafx::PRIORITY_0, nullptr);
-		m_playerTurn->SetTotalPlaNum(m_totalPlaNum);
 
 		//プレイヤーチャージUI処理クラス
 		m_playerChargeUI = NewGO<PlayerChargeUI>(nsStdafx::PRIORITY_0, nullptr);
+		m_playerChargeUI->SetTotalPlaNum(m_totalPlaNum);
 
 		return true;
 
 	}
-
 
 	Player::~Player()
 	{
@@ -125,7 +98,6 @@ namespace nsCARBOOM
 		//プレイヤーの移動ベクトルを削除
 		DeleteGO(m_playerMoveSpeedArrow);
 	}
-
 
 	void Player::Update()
 	{
@@ -161,7 +133,6 @@ namespace nsCARBOOM
 			{
 				//回転処理
 				m_playerTurn->Update();
-
 				//プレイヤーの状態
 				PlaNowState(plaNum);
 
@@ -190,7 +161,7 @@ namespace nsCARBOOM
 							m_soundPlayBack->PlayerSoundPlayBack(Dash1Sound, plaNum);
 
 							//ジェットエフェクト再生
-							m_jetEffect[plaNum].Play();
+							m_playerEffect->JetEffectPlay(plaNum);
 
 							//チャージ攻撃2処理
 							m_moveSpeed[plaNum] = m_plaDir[plaNum] * 20.0f;
@@ -228,7 +199,6 @@ namespace nsCARBOOM
 					isHitGround,
 					hitGroundNormal
 				);
-
 
 				//if (isHitGround) {
 				//	//ぶつかった地面の法線が傾いていくほど落下速度を上げる。
@@ -279,11 +249,10 @@ namespace nsCARBOOM
 		m_playerMoveSpeedArrow->Update();
 	}
 
-
 	//プレイヤーのリスポーン処理関数
 	void Player::PlaResporn(const int plaNum)
 	{
-		if (m_pos[plaNum].y >= -nsPlayer::MAX_FALL_POSITION)
+		if (m_pos[plaNum].y >= nsPlayer::MAX_FALL_POSITION)
 		{
 			return;
 		}
@@ -291,11 +260,7 @@ namespace nsCARBOOM
 		m_soundPlayBack->PlayerSoundPlayBack(ShootDownSound, plaNum);
 
 		//撃墜エフェクト再生開始。
-		m_shootDownEffect[plaNum].Play();
-		//撃墜エフェクトの位置をプレイヤーが落ちた位置に設定
-		m_shootDownEffect[plaNum].SetPosition(m_pos[plaNum]);
-		//更新
-		m_shootDownEffect[plaNum].Update();
+		m_playerEffect->ShootDownEffectPlay(plaNum);
 
 		//プレイヤーの座標をリスポーン座標にセット
 		PlaResPos(plaNum);
@@ -303,7 +268,7 @@ namespace nsCARBOOM
 		//キャラコンの座標にプレイヤーの座標をいれる
 		m_charaCon[plaNum].SetPosition(m_pos[plaNum]);
 		//着地エフェクトを出せるかどうかのフラグを立てる
-		m_isLandingOKFlg[plaNum] = true;
+		m_playerEffect->LandingEffectFlgOn(plaNum);
 
 		//スピードを初期化
 		m_moveSpeed[plaNum] = { Vector3::Zero };
@@ -344,9 +309,8 @@ namespace nsCARBOOM
 			m_pushPlayer[plaNum] = 4;	//誰にもポイントが入らない4にする。
 		}
 		//プレイヤーの着地エフェクトを再生させる関数
-		LandingEffectPlay(plaNum);
+		m_playerEffect->LandingEffectPlay(plaNum);
 	}
-
 
 	//落ちたプレイヤーの初期位置をセットさせる関数
 	void Player::PlaResPos(const int plaNum)
@@ -376,7 +340,6 @@ namespace nsCARBOOM
 		PlaDataUpdate(plaNum);
 	}
 
-
 	//プレイヤーの位置,回転の情報を更新する関数
 	void Player::PlaDataUpdate(const int plaNum)
 	{
@@ -385,26 +348,15 @@ namespace nsCARBOOM
 		//回転をセット
 		m_player[plaNum]->SetRotation(m_playerTurn->GetPlaRot(plaNum));
 
-		//ブーストエフェクト位置をプレイヤー位置に設定
-		m_jetEffect[plaNum].SetPosition(m_pos[plaNum]);
-		m_jetEffect[plaNum].SetRotation(m_playerTurn->GetPlaRot(plaNum));
-		//更新
-		m_jetEffect[plaNum].Update();
-
-
 		//プレイヤーのワールド座標をスクリーン座標に変換
-		g_camera3D->CalcScreenPositionFromWorldPosition(plaScreenPos[plaNum], m_pos[plaNum]);
-
-
-		m_playerChargeUI->ChargeUIScreenPos(plaNum,plaScreenPos[plaNum]);
+		g_camera3D->CalcScreenPositionFromWorldPosition(m_plaScreenPos[plaNum], m_pos[plaNum]);
 
 		//１位のプレイヤーの頭上に王冠画像を置く
 		m_crown->Activate();
-		m_crownPos.x = plaScreenPos[m_gameScene->GetNumber1Player()].x;
-		m_crownPos.y = plaScreenPos[m_gameScene->GetNumber1Player()].y + 40.0f;
+		m_crownPos.x = m_plaScreenPos[m_gameScene->GetNumber1Player()].x;
+		m_crownPos.y = m_plaScreenPos[m_gameScene->GetNumber1Player()].y + 40.0f;
 		m_crown->SetPosition(m_crownPos);
 	}
-
 
 	//プレイヤーの現在の状態を伝える関数
 	void Player::PlaNowState(const int plaNum)
@@ -492,7 +444,6 @@ namespace nsCARBOOM
 			{
 				m_attackTimer[plaNum]++;
 
-
 				if (m_attackTimer[plaNum] > 0 && m_attackTimer[plaNum] < 20)
 				{
 					m_isCharge1Flg[plaNum] = true;
@@ -503,7 +454,6 @@ namespace nsCARBOOM
 					m_isCharge1Flg[plaNum] = false;
 					m_isAttack1Flg[plaNum] = false;
 				}
-
 			}
 
 			//チャージ1
@@ -539,10 +489,7 @@ namespace nsCARBOOM
 					m_attackTimer[plaNum] = nsStdafx::INT_ZERO;
 					m_isCharge2Flg[plaNum] = false;
 					m_isAttack2Flg[plaNum] = false;
-
 				}
-
-
 			}
 
 			//チャージ2
@@ -569,7 +516,6 @@ namespace nsCARBOOM
 		}
 	}
 
-
 	//プレイヤーの通常移動処理関数
 	void Player::PlaMove(const int plaNum)
 	{
@@ -577,23 +523,8 @@ namespace nsCARBOOM
 		m_moveSpeed[plaNum].x += m_playerTurn->GetPlaLeftStickX(plaNum) * 10.0f * g_gameTime->GetFrameDeltaTime();
 		m_moveSpeed[plaNum].z += m_playerTurn->GetPlaLeftStickY(plaNum) * 10.0f * g_gameTime->GetFrameDeltaTime();
 
-		//摩擦力を設定する
-		m_friction[plaNum] = m_moveSpeed[plaNum];
-		m_friction[plaNum] *= -2.0f;
-
-		///下のifはステージの処理なのでステージクラスに書く。
-		//アイスステージが選択されているとき、
-		if (m_stageSelectNum == nsStdafx::STAGE3)
-		{
-			//摩擦を減らす
-			m_friction[plaNum] /= 3.0f;
-		}
-
-		//摩擦力を加算する
-		m_moveSpeed[plaNum].x += m_friction[plaNum].x * g_gameTime->GetFrameDeltaTime();
-		m_moveSpeed[plaNum].z += m_friction[plaNum].z * g_gameTime->GetFrameDeltaTime();
+		Friction(plaNum);
 	}
-
 
 	//プレイヤーの移動速度に補正を入れる関数
 	void Player::PlaSpeedCorrection(const int plaNum)
@@ -606,25 +537,17 @@ namespace nsCARBOOM
 		m_moveSpeed[plaNum].z = max(m_moveSpeed[plaNum].z, -nsPlayer::MAX_MOOVESPEED);//下方向の最大速度
 	}
 
-
 	//プレイヤーのDA(ダッシュアタック)処理関数
 	void Player::PlaAttackBefore(const int plaNum)
 	{
 		m_moveSpeed[plaNum].x += m_playerTurn->GetPlaLeftStickX(plaNum) * 1.5f * g_gameTime->GetFrameDeltaTime();
 		m_moveSpeed[plaNum].z += m_playerTurn->GetPlaLeftStickY(plaNum) * 1.5f * g_gameTime->GetFrameDeltaTime();
 
-		//摩擦力を設定する
-		m_friction[plaNum] = m_moveSpeed[plaNum];
-		m_friction[plaNum] *= -2.0f;
-
-		//摩擦力を加算する
-		m_moveSpeed[plaNum].x += m_friction[plaNum].x * g_gameTime->GetFrameDeltaTime();
-		m_moveSpeed[plaNum].z += m_friction[plaNum].z * g_gameTime->GetFrameDeltaTime();
+		Friction(plaNum);
 
 		m_plaDir[plaNum] = m_moveSpeed[plaNum];
 		m_plaDir->Normalize();
 	}
-
 
 	//プレイヤーと敵がぶつかったときの処理関数
 	void Player::PlaAndEneClash(const int plaNum)
@@ -673,7 +596,6 @@ namespace nsCARBOOM
 			m_moveSpeed[plaNum] += m_enePushSpeed;
 		}
 	}
-
 
 	//プレイヤーとプレイヤーがぶつかったときの処理関数
 	void Player::PlaAndPlaClash(const int plaNum)
@@ -743,7 +665,6 @@ namespace nsCARBOOM
 		}
 	}
 
-
 	//落下時サウンドを鳴らす関数
 	void Player::FallSoundPlayBack(const int plaNum)
 	{
@@ -761,29 +682,23 @@ namespace nsCARBOOM
 		m_isFallSoundFlg[plaNum] = false;
 	}
 
-
-	//プレイヤーの着地エフェクトを再生させる関数
-	void Player::LandingEffectPlay(const int plaNum)
+	//摩擦
+	void Player::Friction(const int plaNum)
 	{
-		if (!m_isLandingOKFlg[plaNum])
-		{
-			return;
-		}
-		m_landingEffectDelayTimer[plaNum]++;
+		//摩擦力を設定する
+		m_friction[plaNum] = m_moveSpeed[plaNum];
+		m_friction[plaNum] *= -2.0f;
 
-		if (m_landingEffectDelayTimer[plaNum] != 40)
+		///下のifはステージの処理なのでステージクラスに書く。
+		//アイスステージが選択されているとき、
+		if (m_stageSelectNum == nsStdafx::STAGE3)
 		{
-			return;
+			//摩擦を減らす
+			m_friction[plaNum] /= 3.0f;
 		}
-		//着地エフェクト再生
-		m_landingEffect[plaNum].Play();
-		//着地エフェクトの位置をプレイヤーが着地した位置に設定
-		m_landingEffect[plaNum].SetPosition(m_pos[plaNum]);
-		//更新
-		m_landingEffect[plaNum].Update();
-		//フラグをおる
-		m_isLandingOKFlg[plaNum] = false;
 
-		m_landingEffectDelayTimer[plaNum] = nsStdafx::INT_ZERO;
+		//摩擦力を加算する
+		m_moveSpeed[plaNum].x += m_friction[plaNum].x * g_gameTime->GetFrameDeltaTime();
+		m_moveSpeed[plaNum].z += m_friction[plaNum].z * g_gameTime->GetFrameDeltaTime();
 	}
 }

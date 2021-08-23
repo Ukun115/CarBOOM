@@ -3,7 +3,6 @@
 #include "TitleScene.h"
 #include "StopWatch.h"
 
-
 ///////////////////////////////////////////////////////////////////
 // ウィンドウプログラムのメイン関数。
 ///////////////////////////////////////////////////////////////////
@@ -26,11 +25,9 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	SoundEngine::CreateInstance();
 	SoundEngine::GetInstance()->Init();
 
-
 	//サウンド管轄クラス
 	nsCARBOOM::SoundPlayBack* m_soundPlayBack = nullptr;
 	m_soundPlayBack = NewGO<nsCARBOOM::SoundPlayBack>(nsStdafx::PRIORITY_0, nsStdafx::SOUNDPLAYBACK_NAME);
-
 
 	//ストップウォッチを生成する
 	StopWatch stopWatch;
@@ -42,7 +39,6 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 
 	//タイトルシーンオブジェクト生成
 	nsCARBOOM::TitleScene* m_titleScene = NewGO<nsCARBOOM::TitleScene>(nsStdafx::PRIORITY_0, nullptr);
-
 
 	// ここからゲームループ。
 	while (DispatchWindowMessage())
@@ -56,7 +52,6 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 		//////////////////////////////////////
 		//ここから絵を描くコードを記述する。
 		//////////////////////////////////////
-
 
 		//ゲームオブジェクトマネージャーの更新。
 		GameObjectManager::GetInstance()->ExecuteUpdate();

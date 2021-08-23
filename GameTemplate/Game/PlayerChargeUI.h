@@ -2,19 +2,15 @@
 ///プレイヤーのチャージ攻撃UI処理
 ///</summary>
 
-
 #pragma once
-
 
 namespace nsCARBOOM
 {
 	class Player;
 
-
-	class PlayerChargeUI :public	IGameObject		//TODO:コピー禁止ポリシーを継承する。
+	class PlayerChargeUI : public	IGameObject		//TODO:コピー禁止ポリシーを継承する。
 	{
 	private:
-
 		enum enChargeUI
 		{
 			ChargeUI_1_1,
@@ -34,57 +30,49 @@ namespace nsCARBOOM
 			TotalPlayerNum	//プレイヤーの最大数
 		};
 
-
 		bool Start()override final;
 		~PlayerChargeUI()override final;
 		void Update()override final;
 
+		Player* m_player = nullptr;
 		SpriteRender* m_chargeUI[TotalChargeUINum][TotalPlayerNum] = { nullptr };		//チャージ画像
 		SoundPlayBack* m_soundPlayBack = nullptr;
 
 		//チャージUI画像のそれぞれの優先度決め
 		int ChargeUIPriorityDecide(const int chargeUINum);
 
+		bool m_chargeUINoNullFlg = false;
 
 		char m_filePath[256];
-		int m_totalPlaNum = nsStdafx::INT_ZERO;
+		int m_totalPlaNum = 0;
 
 		Vector2 plaScreenPos[TotalPlayerNum];
 		Vector3 m_plaChargeUIPos[TotalPlayerNum];
 		Quaternion m_charge1_1Rot[TotalPlayerNum];		//プレイヤーの回転
-		float m_chargeRotValue1[TotalPlayerNum] = { nsStdafx::FLOAT_ZERO };
+		float m_chargeRotValue1[TotalPlayerNum] = { 0.0f };
 		Quaternion m_charge1_2Rot[TotalPlayerNum];		//プレイヤーの回転
-		float m_chargeRotValue2[TotalPlayerNum] = { nsStdafx::FLOAT_ZERO };
+		float m_chargeRotValue2[TotalPlayerNum] = { 0.0f };
 
 	public:
-
 		void SetTotalPlaNum(const int totalPlaNum) { m_totalPlaNum = totalPlaNum; }
-
 
 		void ChargeUIDeactive(const int plaNum);
 
-
 		void ChargeUIScreenPos(const int plaNum, const Vector2 plaScreenPos);
 
-
 		void ChargeRotValueInit(const int plaNum);
-
 
 		//
 		void Charge1Move(const int plaNum);
 
-
 		//
 		void Charge2Move(const int plaNum);
-
 
 		//
 		void ChargeUIActive(const int plaNum);
 
-
 		//
 		void SetChargeUI1(const int plaNum);
-
 
 		//
 		void SetChargeUI2(const int plaNum);

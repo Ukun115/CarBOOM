@@ -49,6 +49,8 @@ namespace nsStdafx
 	const char* const PLAYER_NAME = { "player" };
 	const char* const ENEMY_NAME = { "enemy" };
 	const char* const SOUNDPLAYBACK_NAME = { "soundplayback" };
+	const char* const PLAYERTURN_NAME = { "playerturn" };
+	const char* const ENEMYTURN_NAME = { "enemyturn" };
 	/// <summary>
 	/// ステージ番号
 	/// </summary>
@@ -58,6 +60,7 @@ namespace nsStdafx
 	const int STAGE4 = 4;
 	const int STAGE5 = 5;
 	const int STAGE6 = 6;
+
 
 	const int INT_ZERO = 0;
 	const float FLOAT_ZERO = 0.0f;

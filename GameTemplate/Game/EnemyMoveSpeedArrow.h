@@ -2,9 +2,7 @@
 ///敵の移動ベクトルを可視化処理(デバック用)
 ///</summary>
 
-
 #pragma once
-
 
 namespace nsCARBOOM
 {
@@ -13,7 +11,6 @@ namespace nsCARBOOM
 	class EnemyMoveSpeedArrow : public IGameObject		//TODO:コピー禁止ポリシーを継承する。
 	{
 	private:
-
 		enum enEneNum
 		{
 			Enemy1,
@@ -23,16 +20,15 @@ namespace nsCARBOOM
 		Enemy* m_enemy = nullptr;
 		SkinModelRender* m_skinModelRenderArrow[TotalEneNum] = { nullptr };
 
-
 		Vector3 m_arrowPos[TotalEneNum];
 		Quaternion m_arrowRot[TotalEneNum];
 		Vector3 m_arrowSize[TotalEneNum];
 
+		bool Start()override final;
+		void Update()override final;
 		~EnemyMoveSpeedArrow()override final;
 
 	public:
-		bool Start()override final;
-		void Update()override final;
+
 	};
 }
-

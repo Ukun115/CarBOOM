@@ -2,11 +2,9 @@
 ///プレイヤーのチャージ攻撃UI処理
 ///</summary>
 
-
 #include "stdafx.h"
 #include "PlayerChargeUI.h"
 #include "Player.h"
-
 
 namespace nsCARBOOM
 {
@@ -16,10 +14,10 @@ namespace nsCARBOOM
 		const float CHARGE2_MOVESPEED = 3.0f;
 	}
 
-
 	bool PlayerChargeUI::Start()
 	{
 		m_soundPlayBack = FindGO<SoundPlayBack>(nsStdafx::SOUNDPLAYBACK_NAME);
+		m_player = FindGO<Player>(nsStdafx::PLAYER_NAME);
 
 		//各プレイヤーの２段階溜め攻撃のUI
 		for (int plaNum = Player1; plaNum < m_totalPlaNum; plaNum++)
@@ -34,9 +32,10 @@ namespace nsCARBOOM
 			}
 		}
 
+		m_chargeUINoNullFlg = true;
+
 		return true;
 	}
-
 
 	PlayerChargeUI::~PlayerChargeUI()
 	{
@@ -54,12 +53,13 @@ namespace nsCARBOOM
 		}
 	}
 
-
 	void PlayerChargeUI::Update()
 	{
-
+		for (int plaNum = Player1; plaNum < m_totalPlaNum; plaNum++)
+		{
+			ChargeUIScreenPos(plaNum, m_player->GetPlaScreenPos(plaNum));
+		}
 	}
-
 
 	//チャージUI画像のそれぞれの優先度決め
 	int PlayerChargeUI::ChargeUIPriorityDecide(const int chargeUINum)
@@ -84,17 +84,20 @@ namespace nsCARBOOM
 		}
 	}
 
-
 	//チャージUI画像を非表示にする関数
 	void PlayerChargeUI::ChargeUIDeactive(const int plaNum)
 	{
 		for (int chargeUINum = ChargeUI_1_1; chargeUINum < TotalChargeUINum; chargeUINum++)
 		{
+			if (m_chargeUI[chargeUINum][plaNum] == nullptr)
+			{
+				return;
+			}
+
 			m_chargeUI[chargeUINum][plaNum]->Deactivate();
 			m_chargeUI[chargeUINum][plaNum]->SetRotation(Quaternion::Identity);
 		}
 	}
-
 
 	void PlayerChargeUI::ChargeUIScreenPos(const int plaNum,const Vector2 plaScreenPos)
 	{
@@ -102,12 +105,11 @@ namespace nsCARBOOM
 		m_plaChargeUIPos[plaNum].x = plaScreenPos.x + 50.0f;
 		m_plaChargeUIPos[plaNum].y = plaScreenPos.y;
 		//チャージ攻撃のUIにプレイヤーのスクリーン座標を代入
-		for (int i = ChargeUI_1_1; i < TotalChargeUINum; i++)
+		for (int chargeUINum = ChargeUI_1_1; chargeUINum < TotalChargeUINum; chargeUINum++)
 		{
-			m_chargeUI[i][plaNum]->SetPosition(m_plaChargeUIPos[plaNum]);
+			m_chargeUI[chargeUINum][plaNum]->SetPosition(m_plaChargeUIPos[plaNum]);
 		}
 	}
-
 
 	//
 	void PlayerChargeUI::ChargeRotValueInit(const int plaNum)
@@ -116,48 +118,63 @@ namespace nsCARBOOM
 		m_chargeRotValue2[plaNum] = nsStdafx::FLOAT_ZERO;
 	}
 
-
 	//
 	void PlayerChargeUI::Charge1Move(const int plaNum)
 	{
 		m_chargeRotValue1[plaNum] -= nsPlayerChargeUI::CHARGE1_MOVESPEED;
 		m_charge1_1Rot[plaNum].SetRotationDeg(Vector3::AxisZ, m_chargeRotValue1[plaNum]);
+		if (m_chargeUI[ChargeUI_1_1][plaNum] == nullptr)
+		{
+			return;
+		}
 		m_chargeUI[ChargeUI_1_1][plaNum]->SetRotation(m_charge1_1Rot[plaNum]);
 	}
-
 
 	//
 	void PlayerChargeUI::Charge2Move(const int plaNum)
 	{
 		m_chargeRotValue2[plaNum] -= nsPlayerChargeUI::CHARGE2_MOVESPEED;
 		m_charge1_2Rot[plaNum].SetRotationDeg(Vector3::AxisZ, m_chargeRotValue2[plaNum]);
+		if (m_chargeUI[ChargeUI_1_2][plaNum] == nullptr)
+		{
+			return;
+		}
 		m_chargeUI[ChargeUI_1_2][plaNum]->SetRotation(m_charge1_2Rot[plaNum]);
 	}
-
 
 	//
 	void PlayerChargeUI::ChargeUIActive(const int plaNum)
 	{
+		if (m_chargeUI[ChargeUI_2_1_1][plaNum] == nullptr)
+		{
+			return;
+		}
 		m_chargeUI[ChargeUI_2_1_1][plaNum]->Deactivate();
 		m_chargeUI[ChargeUI_1_1][plaNum]->Activate();
 		m_chargeUI[ChargeUI_1_2][plaNum]->Activate();
 		m_chargeUI[ChargeUI_2_1][plaNum]->Activate();
 	}
 
-
 	//
 	void PlayerChargeUI::SetChargeUI1(const int plaNum)
 	{
+		if (m_chargeUI[ChargeUI_1_1][plaNum] == nullptr)
+		{
+			return;
+		}
 		m_chargeUI[ChargeUI_1_1][plaNum]->Deactivate();
 		m_chargeUI[ChargeUI_2_1][plaNum]->Deactivate();
 		m_chargeUI[ChargeUI_2_1_1][plaNum]->Activate();
 		m_chargeUI[ChargeUI_2_2][plaNum]->Activate();
 	}
 
-
 	//
 	void PlayerChargeUI::SetChargeUI2(const int plaNum)
 	{
+		if (m_chargeUI[ChargeUI_1_2][plaNum] == nullptr)
+		{
+			return;
+		}
 		m_chargeUI[ChargeUI_1_2][plaNum]->Deactivate();
 	}
 }

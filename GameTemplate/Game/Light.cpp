@@ -2,18 +2,16 @@
 ///ライト処理
 ///</summary>
 
-
 #include "stdafx.h"
-
 
 namespace nsCARBOOM
 {
 	namespace nsLight
 	{
 		//ディレクションライト
-		const Vector3 DIRLIG_DIR = { nsStdafx::FLOAT_ZERO, -1.0f ,nsStdafx::FLOAT_ZERO };	//方向(真上から真下に落ちる)
+		const Vector3 DIRLIG_DIR = { 0.0f, -1.0f ,0.0f };	//方向(真上から真下に落ちる)
 		//スポットライト
-		const Vector3 SPOLIG_POS = { nsStdafx::FLOAT_ZERO, 50.0f ,nsStdafx::FLOAT_ZERO };	//位置
+		const Vector3 SPOLIG_POS = { 0.0f, 50.0f ,0.0f };	//位置
 		const Vector3 SPOLIG_DIR = { 1.0f, -1.0f ,-1.0f };	//方向
 		const float	  SPOLIG_RAN = 100.0f;					//影響範囲
 		const float	  SPOLIG_ANG = 75.0f;					//射出角度
@@ -23,7 +21,6 @@ namespace nsCARBOOM
 		const Vector3 HEMISPHERELIG_GROUNDNORMAL = { 0.0f,1.0f,0.0f };	//地面の法線
 	}
 
-
 	bool Light::Start()
 	{
 		//視点の位置を設定する
@@ -32,18 +29,15 @@ namespace nsCARBOOM
 		return true;
 	}
 
-
 	Light::~Light()
 	{
 
 	}
 
-
 	void Light::Update()
 	{
 
 	}
-
 
 	//ディレクションライトの方向,色を設定する関数
 	void Light::SetDirectionLightData()
@@ -56,7 +50,6 @@ namespace nsCARBOOM
 		m_ligData.dirLigData.dirColor = nsStdafx::GRAY;
 	}
 
-
 	//ポイントライトの座標,色,影響範囲を設定する関数
 	void Light::SetPointLightData(const Vector3 position, const Vector3 color, const float range, const int lignum)
 	{
@@ -67,7 +60,6 @@ namespace nsCARBOOM
 		//ポイントライトの影響範囲を設定
 		m_ligData.poiLigData[lignum].ptRange = range;
 	}
-
 
 	//スポットライトの座標,色,方向,射出範囲,射出角度を設定する関数
 	void Light::SetSpotLightData()
@@ -86,7 +78,6 @@ namespace nsCARBOOM
 		//(デグリー単位(75度)からラジアン単位に変換した値を代入)
 		m_ligData.spotLigData.spAngle = Math::DegToRad(nsLight::SPOLIG_ANG);
 	}
-
 
 	//半球ライトの地面色（照り返しのライト）,天球色,地面の法線を設定する関数
 	void Light::SetHemiSphereLightData()

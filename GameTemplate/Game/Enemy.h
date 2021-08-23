@@ -2,7 +2,6 @@
 ///敵NPCのメイン処理
 ///</summary>
 
-
 #pragma once
 
 namespace nsCARBOOM
@@ -14,12 +13,12 @@ namespace nsCARBOOM
 	class Stage;
 	class EnemyMoveSpeedArrow;
 	class EnemyTurn;
-
+	class EnemyEffect;
+	class EnemyMoveSpeed;
 
 	class Enemy : public IGameObject	//TODO:コピー禁止ポリシーを継承する。
 	{
 	private:
-
 		/// <summary>
 		/// 列挙型の宣言
 		/// </summary>
@@ -66,7 +65,6 @@ namespace nsCARBOOM
 			TotalSoundNum
 		};
 
-
 		/// <summary>
 		/// クラスのポインタ
 		/// </summary>
@@ -78,11 +76,10 @@ namespace nsCARBOOM
 		SoundPlayBack* m_soundPlayBack = nullptr;
 		EnemyMoveSpeedArrow* m_enemyMoveSpeedArrow = nullptr;
 		EnemyTurn* m_enemyTurn = nullptr;
-
+		EnemyEffect* m_enemyEffect = nullptr;
+		EnemyMoveSpeed* m_enemyMoveSpeed = nullptr;
 
 		CharacterController m_charaCon[TotalEnemyNum];		//敵６体分のキャラクタコントローラークラスを作成
-		Effect m_shootDownEffect[TotalEnemyNum];		//落下したときの撃墜エフェクト
-
 
 		/// <summary>
 		/// フラグ
@@ -99,7 +96,6 @@ namespace nsCARBOOM
 		unsigned int m_startDelay[TotalEnemyNum] = { nsStdafx::INT_ZERO };			//敵６体分のスタート遅延時間
 		unsigned int m_CTTime[TotalEnemyNum] = { nsStdafx::INT_ZERO };					//敵６体分の攻撃CTタイマー
 		unsigned int m_eneCTCount[TotalEnemyNum] = { nsStdafx::INT_ZERO };			//敵６体分のCT時間
-
 
 		//敵情報
 		Vector3    m_enePos[TotalEnemyNum];			//敵６体分の敵の位置
@@ -134,18 +130,9 @@ namespace nsCARBOOM
 		int m_totalPlaNum = nsStdafx::INT_ZERO;
 		int m_stageSelectNum = nsStdafx::INT_ZERO;
 
-
-		//デバッグ用矢印
-		SkinModelRender* m_skinModelRenderArrow[TotalEnemyNum] = { nullptr };
-		Vector3 m_arrowPos[TotalEnemyNum];
-		Quaternion m_arrowRot[TotalEnemyNum];
-		Vector3 m_arrowSize;
-
-
 		bool Start()override final;
 		~Enemy()override final;
 		void Update()override final;
-
 
 		//敵の位置,回転を更新する関数
 		void EneDataUpdate(const int eneNum) const;
@@ -155,15 +142,8 @@ namespace nsCARBOOM
 		void Distance(const int eneNum);
 		//敵のリスポーン処理関数
 		void EneResporn(const int eneNum);
-		//敵の摩擦処理関数
-		void EneFriction(const int eneNum);
 		//プレイヤーと敵がぶつかったときの処理関数
 		void PlaAndEneClash(const int eneNum);
-		//敵にかかる重力を設定する関数
-		void Gravity(const int eneNum)
-		{
-			m_moveSpeed[eneNum].y -= nsStdafx::GRAVITY;
-		}
 		//プレイヤーと敵との距離を測り一番近いプレイヤーを算出する関数
 		void DistanceOfPlaToEne(const int eneNum);
 		//落下時サウンドを鳴らす関数
@@ -174,7 +154,6 @@ namespace nsCARBOOM
 		Vector3 WhatEneRandomResPos(const int eneNum);
 
 	public:
-
 		/// <summary>
 		/// ゲッター
 		/// </summary>
@@ -182,6 +161,16 @@ namespace nsCARBOOM
 		Vector3 GetEnemyPos(const int eneNum)const { return m_enePos[eneNum]; }
 		//敵の速度を取得する関数
 		Vector3 GetEnemySpeed(const int eneNum)const { return m_moveSpeed[eneNum]; }
+		//一番近いプレイヤーを取得する関数
+		Vector3 GetMostShortDistanceDir(const int eneNum)const { return m_mostShortDistanceDir[0]; }
+		//
+		float GetPlayerToSetten1Angle(const int eneNum)const { return m_PlayerToSetten1Angle[eneNum]; }
+		//
+		float GetPlayerToSetten2Angle(const int eneNum)const { return m_PlayerToSetten2Angle[eneNum]; }
+		//
+		Vector3 GetEneToSetten1Dir(const int eneNum)const { return  m_EneToSetten1Dir[eneNum]; }
+		//
+		Vector3 GetEneToSetten2Dir(const int eneNum)const { return m_EneToSetten2Dir[eneNum]; }
 		/// <summary>
 		/// セッター
 		/// </summary>

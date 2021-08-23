@@ -2,16 +2,13 @@
 ///サウンドデータ再生クラス
 ///</summary>
 
-
 #pragma once
-
 
 namespace nsCARBOOM
 {
 	class SoundPlayBack :public IGameObject	//TODO:コピー禁止ポリシーを継承する。
 	{
 	private:
-
 		enum enTitleSceneSoundNum
 		{
 			TitleSceneGingle,	//タイトルジングル
@@ -84,24 +81,34 @@ namespace nsCARBOOM
 			TotalEnemyNum = 6
 		};
 
+		enum enEnemyDashSound
+		{
+			EnemyDash1,
+			EnemyDash2,
+			EnemyDash3,
+			EnemyDash4,
+			EnemyDash5,
+			EnemyDash6,
+			EnemyDash7,
+			EnemyDash8,
+			EnemyDash9,
+			TotalEnemyDashNum
+		};
 
-		SoundSource* m_enemySound[6][TotalEnemySoundNum] = { nullptr };
+		SoundSource* m_enemySound[TotalEnemyNum][TotalEnemySoundNum] = { nullptr };
 		SoundSource* m_titleSceneSound[TotalTitleSceneSoundNum] = { nullptr };
 		SoundSource* m_stageSelectSceneSound[TotalStageSelectSceneSoundNum] = { nullptr };
 		SoundSource* m_resultSceneSceneSound[TotalResultSceneSoundNum] = { nullptr };
-
 
 		bool Start()override final;
 		~SoundPlayBack()override final;
 		void Update()override final;
 
-
 		unsigned int m_randomDashSoundNum = 0;
-
 
 	public:
 		SoundSource* m_gameSceneSound[TotalGameSceneSoundNum] = { nullptr };
-		SoundSource* m_playerSound[4][TotalPlayerSoundNum] = { nullptr };
+		SoundSource* m_playerSound[TotalPlayerNum][TotalPlayerSoundNum] = { nullptr };
 
 		//音再生関数
 		void TitleSceneSoundPlayBack(const int soundNum);

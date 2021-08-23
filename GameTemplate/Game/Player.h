@@ -2,7 +2,6 @@
 ///プレイヤーのメイン処理
 ///</summary>
 
-
 #pragma once
 
 namespace nsCARBOOM
@@ -15,12 +14,11 @@ namespace nsCARBOOM
 	class PlayerMoveSpeedArrow;
 	class PlayerTurn;
 	class PlayerChargeUI;
-
+	class PlayerEffect;
 
 	class Player : public IGameObject		//TODO:コピー禁止ポリシーを継承する。
 	{
 	private:
-
 		/// <summary>
 		/// 列挙型の宣言
 		/// </summary>
@@ -53,7 +51,6 @@ namespace nsCARBOOM
 			TotalSoundNum
 		};
 
-
 		/// <summary>
 		/// クラスのポインタ
 		/// </summary>
@@ -68,12 +65,9 @@ namespace nsCARBOOM
 		PlayerMoveSpeedArrow* m_playerMoveSpeedArrow = nullptr;
 		PlayerTurn* m_playerTurn = nullptr;
 		PlayerChargeUI* m_playerChargeUI = nullptr;
+		PlayerEffect* m_playerEffect = nullptr;
 
 		CharacterController m_charaCon[TotalPlayerNum];		//プレイヤー4人分のキャラクタコントローラークラスを作成
-		Effect m_shootDownEffect[TotalPlayerNum];		//プレイヤー4人分の落下したときの撃墜エフェクト
-		Effect m_jetEffect[TotalPlayerNum];		//プレイヤー4人分のジェットエフェクト
-		Effect m_landingEffect[TotalPlayerNum];		//プレイヤー4人分の着地エフェクト
-
 
 		/// <summary>
 		/// フラグ
@@ -91,21 +85,17 @@ namespace nsCARBOOM
 		bool m_isCharge1EffectSoundFlg[TotalPlayerNum] = { false };
 		bool m_isCharge2EffectSoundFlg[TotalPlayerNum] = { false };
 		bool m_isFallSoundFlg[TotalPlayerNum] = { false };			//落下音を落下中何回もならないようにするフラグ
-		bool m_isLandingOKFlg[TotalPlayerNum] = { false };
 
 		bool m_plaTourokuFlg[TotalPlayerNum] = { false };
 		bool m_isPauseFlg = false;
 
-
 		/// <summary>
 		/// タイマー
 		/// </summary>
-		unsigned int m_chargeTimer[TotalPlayerNum] = { nsStdafx::INT_ZERO };		//押したときのタイマー
-		unsigned int m_releaseTimer[TotalPlayerNum] = { nsStdafx::INT_ZERO };		//離したときのタイマー
-		unsigned int m_attackTimer[TotalPlayerNum] = { nsStdafx::INT_ZERO };			//攻撃のタイマー
-		unsigned int m_attackHanteiTimer[TotalPlayerNum] = { nsStdafx::INT_ZERO };			//攻撃判定のタイマー
-		unsigned int m_landingEffectDelayTimer[TotalPlayerNum] = { nsStdafx::INT_ZERO };			//着地エフェクトをプレイヤーが着地したときに再生させるためのタイマー
-
+		unsigned int m_chargeTimer[TotalPlayerNum] = { 0 };		//押したときのタイマー
+		unsigned int m_releaseTimer[TotalPlayerNum] = { 0 };		//離したときのタイマー
+		unsigned int m_attackTimer[TotalPlayerNum] = { 0 };			//攻撃のタイマー
+		unsigned int m_attackHanteiTimer[TotalPlayerNum] = { 0 };			//攻撃判定のタイマー
 
 		Vector3    m_fallSpeed[TotalPlayerNum];	//プレイヤーの落下速度。
 		Vector3    m_pos[TotalPlayerNum];		//プレイヤーの位置
@@ -114,21 +104,19 @@ namespace nsCARBOOM
 		Vector3 m_plaDir[TotalPlayerNum];		//向き
 		Vector3 m_friction[TotalPlayerNum];		//摩擦
 		Vector3 m_diff;				//プレイヤーと敵との距離
-		unsigned int m_pushPlayer[5] = { nsStdafx::INT_ZERO };
+		unsigned int m_pushPlayer[5] = { 0 };
 		Quaternion m_shootDownEffectRot;
-		Vector2 plaScreenPos[4];
+		Vector2 m_plaScreenPos[TotalPlayerNum];
 		Vector3 m_crownPos;
 
 		char m_filePath[256];
 
-		int m_totalPlaNum = nsStdafx::INT_ZERO;
-		int m_stageSelectNum = nsStdafx::INT_ZERO;
-
+		int m_totalPlaNum = 0;
+		int m_stageSelectNum = 0;
 
 		bool Start() override final;
 		~Player() override final;
 		void Update() override final;
-
 
 		//プレイヤーのリスポーン処理関数
 		void PlaResporn(const int plaNum);
@@ -155,14 +143,16 @@ namespace nsCARBOOM
 		}
 		//落下時サウンドを鳴らす関数
 		void FallSoundPlayBack(const int plaNum);
-		//プレイヤーの着地エフェクトを再生させる関数
-		void LandingEffectPlay(const int plaNum);
+
+		//摩擦
+		void Friction(const int plaNum);
 
 	public:
-
-
 		//プレイヤーの人数を取得する関数
 		int GetPlaNum()const { return m_totalPlaNum; }
+
+		Vector2 GetPlaScreenPos(const int plaNum)const { return m_plaScreenPos[plaNum]; }
+
 		//プレイヤーの位置を取得する関数
 		const Vector3& GetPlaPos(const int plaNum)const { return  m_pos[plaNum]; }
 

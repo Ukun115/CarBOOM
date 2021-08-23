@@ -2,7 +2,6 @@
 ///ステージ処理
 ///</summary>
 
-
 #include "stdafx.h"
 #include "TitleScene.h"
 #include "StageSelectScene.h"
@@ -16,13 +15,14 @@ namespace nsCARBOOM
 {
 	namespace nsStage
 	{
-		const int SNOW1 = 0;
-		const int SNOW2 = 1;
-
 		const float ENEMY_WIND_POWER = 0.02f;
 		const float PLAYER_WIND_POWER = 0.05f;
+		const Vector3 FALL_SNOW_EFFECT_SCALE = { 10.0f,10.0f,10.0f };
+		const Vector3 FALL_SNOW_EFFECT_POS = { 0.0f,500.0f,0.0f };
+		const int SNOW_FALL_TIMING1 = 0;
+		const int SNOW_FALL_TIMING2 = 200;
+		const int SNOW_FALL_TIMING3 = 2400;
 	}
-
 
 	bool Stage::Start()
 	{
@@ -41,26 +41,21 @@ namespace nsCARBOOM
 		//選択されたのがアイスステージのとき、
 		if (m_stageSelectNum == Stage3)
 		{
-			for (int snowEffectNum = 0; snowEffectNum < 2; snowEffectNum++)
+			for (int snowEffectNum = Snow1; snowEffectNum < TotalSnowNum; snowEffectNum++)
 			{
 				//降る雪エフェクトの初期化。
-				m_fallSnowEffect[snowEffectNum].Init(u"Snow");
+				m_fallSnowEffect[snowEffectNum].Init(u"Assets/effect/efk/Snow.efk");
 				//エフェクトの大きさ調整
-				m_fallSnowEffect[snowEffectNum].SetScale({ 10.0f,10.0f,10.0f });
-				//通常だと画面の上がエフェクトの上になっているので、ゲーム中のカメラ方向が上になるように調整
-				Quaternion m_shootDownEffectRot = m_fallSnowEffect[snowEffectNum].GetRotation();
-				//↓【注意】関数内に入れるのはデグリー単位ではなくラジアン単位です。
-				m_shootDownEffectRot.AddRotationX(-0);	//X軸を基点に、-1.5708rad(-90°)回転
-				m_fallSnowEffect[snowEffectNum].SetRotation(m_shootDownEffectRot);
-				//降る雪エフェクトの位置をプカメラの上位の位置に設定
-				m_fallSnowEffect[snowEffectNum].SetPosition({ 0,500,0 });
+				m_fallSnowEffect[snowEffectNum].SetScale({ nsStage::FALL_SNOW_EFFECT_SCALE });
+				//降る雪エフェクトの位置をカメラの上位の位置に設定
+				m_fallSnowEffect[snowEffectNum].SetPosition(nsStage::FALL_SNOW_EFFECT_POS);
 			}
 		}
 		//選択されたのが風ステージの時
 		if (m_stageSelectNum == Stage4)
 		{
 			std::mt19937 mt{ std::random_device{}() };
-			std::uniform_int_distribution<int> windNum(0, 3);		//最初の風の向きもランダムにする
+			std::uniform_int_distribution<int> windNum(UpWind, RightWind);		//最初の風の向きもランダムにする
 
 			m_windDirection = windNum(mt);
 		}
@@ -80,13 +75,11 @@ namespace nsCARBOOM
 		return true;
 	}
 
-
 	Stage::~Stage()
 	{
 		//ステージを削除
 		DeleteGO(m_stage);
 	}
-
 
 	void Stage::Update()
 	{
@@ -115,34 +108,32 @@ namespace nsCARBOOM
 		//m_physicsStaticObject.Update(m_stage->GetPosition(), m_stage->GetRotation());
 	}
 
-
 	//雪エフェクト処理関数
 	void Stage::SnowFall()
 	{
 		switch (m_fallSnowTimer)
 		{
-		case 0:
+		case nsStage::SNOW_FALL_TIMING1:
 			//1つ目の降る雪エフェクト再生開始。
-			m_fallSnowEffect[nsStage::SNOW1].Play();
+			m_fallSnowEffect[Snow1].Play();
 			//更新
-			m_fallSnowEffect[nsStage::SNOW1].Update();
+			m_fallSnowEffect[Snow1].Update();
 			break;
-		case 200:
+		case nsStage::SNOW_FALL_TIMING2:
 			//2つ目の降る雪エフェクト再生開始。
-			m_fallSnowEffect[nsStage::SNOW2].Play();
+			m_fallSnowEffect[Snow2].Play();
 			//更新
-			m_fallSnowEffect[nsStage::SNOW2].Update();
+			m_fallSnowEffect[Snow2].Update();
 			break;
-		case 400:
+		case nsStage::SNOW_FALL_TIMING3:
 			//タイマーを戻す
-			m_fallSnowTimer = 0;
+			m_fallSnowTimer = nsStdafx::INT_ZERO;
 			break;
 		}
 
 		//タイマー加算
 		m_fallSnowTimer++;
 	}
-
 
 	void Stage::WindInpact()
 	{
@@ -158,8 +149,7 @@ namespace nsCARBOOM
 				//ここで、乱数を使用して、ランダムに風の向きを決める。
 				//いいかんじに、前の風の向きと変わるようにする。
 				std::mt19937 mt{ std::random_device{}() };
-				std::uniform_int_distribution<int> windNum(0, 3);
-
+				std::uniform_int_distribution<int> windNum(UpWind, RightWind);
 
 				int w = windNum(mt);	//新しい風
 
@@ -171,7 +161,6 @@ namespace nsCARBOOM
 					}
 					else
 					{
-
 						m_windDirection += 1; //被らないように
 					}
 				}
@@ -181,7 +170,7 @@ namespace nsCARBOOM
 				}
 			}
 		}
-		for (int eneNum = 0; eneNum < 6; eneNum++)
+		for (int eneNum = Enemy1; eneNum < TotalEneNum; eneNum++)
 		{
 			//現在の風の向きに応じた処理
 			switch (m_windDirection) {
@@ -192,14 +181,14 @@ namespace nsCARBOOM
 				m_enemy->AddWindPowerZ(eneNum, -nsStage::ENEMY_WIND_POWER);
 				break;
 			case LeftWind:
-				m_enemy->AddWindPowerZ(eneNum, -nsStage::ENEMY_WIND_POWER);
+				m_enemy->AddWindPowerX(eneNum, -nsStage::ENEMY_WIND_POWER);
 				break;
 			case RightWind:
-				m_enemy->AddWindPowerZ(eneNum, nsStage::ENEMY_WIND_POWER);
+				m_enemy->AddWindPowerX(eneNum, nsStage::ENEMY_WIND_POWER);
 				break;
 			}
 		}
-		for (int plaNum = 0; plaNum < m_totalPlaNum; plaNum++)
+		for (int plaNum = Player1; plaNum < m_totalPlaNum; plaNum++)
 		{
 			//現在の風の向きに応じた処理
 			switch (m_windDirection) {
@@ -210,22 +199,21 @@ namespace nsCARBOOM
 				m_player->AddWindPowerZ(plaNum, -nsStage::PLAYER_WIND_POWER);
 				break;
 			case LeftWind:
-				m_player->AddWindPowerZ(plaNum, -nsStage::PLAYER_WIND_POWER);
+				m_player->AddWindPowerX(plaNum, -nsStage::PLAYER_WIND_POWER);
 				break;
 			case RightWind:
-				m_player->AddWindPowerZ(plaNum, nsStage::PLAYER_WIND_POWER);
+				m_player->AddWindPowerX(plaNum, nsStage::PLAYER_WIND_POWER);
 				break;
 			}
 		}
 	}
 
-
 	void Stage::Tilt()
 	{
 		//ステージを傾けるためにステージの中心からプレイヤーまでの距離を測る
-		for (int i = 0; i < m_totalPlaNum; i++)
+		for (int plaNum = Player1; plaNum < m_totalPlaNum; plaNum++)
 		{
-			m_plaPos[i] = m_player->GetPlaPos(i);
+			m_plaPos[plaNum] = m_player->GetPlaPos(plaNum);
 		}
 	}
 }

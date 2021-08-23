@@ -2,49 +2,38 @@
 ///ステージ選択画面のメイン処理
 ///</summary>
 
-
 #include "stdafx.h"
 #include "TitleScene.h"
 #include "StageSelectScene.h"
 #include "GameScene.h"
 #include "Fade.h"
-
+#include "StageSelectScenePlayer.h"
 
 namespace nsCARBOOM
 {
 	namespace nsStageSelectScene
 	{
 		const int PLAYER1 = 0;		//プレイヤー１
-
 		const Vector3 FLATSTAGE_MODEL_POS = { 0, 0, 90 };
 		const Vector3 DONUTSTAGE_MODEL_POS = { 170, 0, 90 };
 		const Vector3 ICESTAGE_MODEL_POS = { 0, 0, -90 };
 		const Vector3 WINDSTAGE_MODEL_POS = { 350, 0, 90 };
 		const Vector3 TILTSTAGE_MODEL_POS = { 170, 0, -90 };
 		const Vector3 RANDOMSTAGE_MODEL_POS = { 350, 0, -90 };
-
 		const Vector3 FLATSTAGE_NAME_POS = { 0, 0, 0 };
 		const Vector3 DONUTSTAGE_NAME_POS = { 240, 0, 0 };
 		const Vector3 ICESTAGE_NAME_POS = { 0, -250, 0 };
 		const Vector3 WINDSTAGE_NAME_POS = { 490, 0, 0 };
 		const Vector3 TILTSTAGE_NAME_POS = { 240, -250, 0 };
 		const Vector3 RANDOMSTAGE_NAME_POS = { 490, -250, 0 };
-
 		const Vector3 FLATSTAGE_FUKIDASI_POS = { 0, 200, 0 };
 		const Vector3 DONUTSTAGE_FUKIDASI_POS = { 235, 200, 0 };
 		const Vector3 ICESTAGE_FUKIDASI_POS = { 0, -50, 0 };
 		const Vector3 WINDSTAGE_FUKIDASI_POS = { 490, 200, 0 };
 		const Vector3 TILTSTAGE_FUKIDASI_POS = { 235, -50, 0 };
 		const Vector3 RANDOMSTAGE_FUKIDASI_POS = { 490, -50, 0 };
-
 		const Vector3 STAGE_NAME_SCALEUP = { 1.5f,1.5f,1.5f };	//ステージ名を拡大したときのサイズ
-
-		const float MAX_MOOVESPEED = 5.0f;
-
-		const float VERTICAL_WIDTH = 230.0f;
-		const float BESIDE_WIDTH = 420.0f;
 	}
-
 
 	bool StageSelectScene::Start()
 	{
@@ -61,6 +50,8 @@ namespace nsCARBOOM
 		m_fade[FadeIn] = NewGO<Fade>(nsStdafx::PRIORITY_0, nullptr);
 		m_fade[FadeIn]->SetState(StateIn);
 		m_fade[FadeIn]->SetAlphaValue(1.0f);
+
+		m_stageSelectScenePlayer = NewGO<StageSelectScenePlayer>(nsStdafx::PRIORITY_0, nullptr);
 
 		//ステージ説明の背景画像オブジェクト生成
 		m_stageDiscription[0] = NewGO<SpriteRender>(nsStdafx::PRIORITY_1, nullptr);
@@ -94,7 +85,6 @@ namespace nsCARBOOM
 			m_stageName[stageNum] = NewGO<SpriteRender>(nsStdafx::PRIORITY_1, nullptr);
 		}
 
-
 		m_stageSelectSprite->Init("STAGESELECT", 750, 375);
 		Vector3 m_stageSelectSpritePos = { nsStdafx::FLOAT_ZERO,310.0f,nsStdafx::FLOAT_ZERO };
 		m_stageSelectSprite->SetPosition(m_stageSelectSpritePos);
@@ -110,19 +100,7 @@ namespace nsCARBOOM
 			m_stageName[stageNum]->SetPosition(WhatStageNamePos(stageNum));
 		}
 
-		//プレイヤーモデルオブジェクト生成
-		//文字画像の上に乗るようにプライオリティーは１つ文字画像よりも高くする
-		m_pla = NewGO<SkinModelRender>(nsStdafx::PRIORITY_2, nullptr);
-		m_pla->Init("LowPoly_PlayerCar_0");	//プレイヤー１の車モデル
-		//初期位置設定
-		m_pla->SetPosition(Vector3::Zero);
-
-		//デバック用のプレイヤースピードの矢印表示
-		//m_skinModelRenderArrow = NewGO<SkinModelRender>(PRIORITY_2, nullptr);
-		//m_skinModelRenderArrow->Init("Arrow");	//矢印
-
-
-		//プレイヤーの上に表示されるA吹き出し
+		//ステージの上に表示されるA吹き出し
 		for (int stageNum = FlatStage; stageNum < TotalStageNum; stageNum++)
 		{
 			m_Ahukidasi[stageNum] = NewGO<SpriteRender>(nsStdafx::PRIORITY_2, nullptr);
@@ -141,7 +119,6 @@ namespace nsCARBOOM
 		return true;
 	}
 
-
 	StageSelectScene::~StageSelectScene()
 	{
 		DeleteGO(m_light);
@@ -152,8 +129,6 @@ namespace nsCARBOOM
 			DeleteGO(m_stage[stageNum]);
 			DeleteGO(m_stageName[stageNum]);
 		}
-		//プレイヤーを削除。
-		DeleteGO(m_pla);
 		//プレイヤーのスピード可視化矢印を削除。
 		//DeleteGO(m_skinModelRenderArrow);
 		//背景画像を削除
@@ -167,16 +142,16 @@ namespace nsCARBOOM
 		//ステージ選択文字画像
 		DeleteGO(m_stageSelectSprite);
 
-		for (int i = 0; i < 7; i++)
+		for (int stageDiscriptionNum = 0; stageDiscriptionNum < 7; stageDiscriptionNum++)
 		{
 			//ステージ説明の画像を削除
-			DeleteGO(m_stageDiscription[i]);
-			if (i == 0)
+			DeleteGO(m_stageDiscription[stageDiscriptionNum]);
+			if (stageDiscriptionNum == 0)
 			{
 				continue;
 			}
-			//操作説明がぞうを削除
-			DeleteGO(m_operatorDiscription[i]);
+			//操作説明画像を削除
+			DeleteGO(m_operatorDiscription[stageDiscriptionNum]);
 		}
 
 		if (m_fade[FadeIn] != nullptr)
@@ -185,13 +160,13 @@ namespace nsCARBOOM
 			DeleteGO(m_fade[FadeOutBadk]);
 		if (m_fade[FadeOutNext] != nullptr)
 			DeleteGO(m_fade[FadeOutNext]);
-	}
 
+		DeleteGO(m_stageSelectScenePlayer);
+	}
 
 	void StageSelectScene::Update()
 	{
-		//プレイヤー操作をまとめている関数
-		PlayerInformation();
+		TouchStage();
 
 		//セレクトボタンが押されたら、
 		if (!g_pad[nsStageSelectScene::PLAYER1]->IsTrigger(enButtonSelect))
@@ -219,7 +194,6 @@ namespace nsCARBOOM
 		m_titleScene = NewGO<TitleScene>(nsStdafx::PRIORITY_0, nullptr);
 		DeleteGO(this);
 	}
-
 
 	//ゲーム画面遷移処理関数
 	void StageSelectScene::GameSceneTransition()
@@ -273,55 +247,83 @@ namespace nsCARBOOM
 		}
 	}
 
-
-	//プレイヤーの通常移動処理関数
-	void StageSelectScene::PlaMove()
+	//
+	Vector3 StageSelectScene::WhatStageModelPos(const int stageNum)
 	{
-		//左スティックの入力量を加算する
-		m_moveSpeed.x += m_leftStick_x * 10.0f * g_gameTime->GetFrameDeltaTime();
-		m_moveSpeed.z += m_leftStick_y * 10.0f * g_gameTime->GetFrameDeltaTime();
-
-		//摩擦力を設定する
-		m_friction = m_moveSpeed;
-		m_friction *= -2.0f;
-
-		//摩擦力を加算する
-		m_moveSpeed.x += m_friction.x * g_gameTime->GetFrameDeltaTime();
-		m_moveSpeed.z += m_friction.z * g_gameTime->GetFrameDeltaTime();
-
-		m_pos += m_moveSpeed;
-	}
-
-
-	//プレイヤーの移動速度に補正を入れる関数
-	void StageSelectScene::PlaSpeedCorrection()
-	{
-		//スピードの補正
-		m_moveSpeed.x = min(m_moveSpeed.x, nsStageSelectScene::MAX_MOOVESPEED);//右方向の最大速度
-		m_moveSpeed.x = max(m_moveSpeed.x, -nsStageSelectScene::MAX_MOOVESPEED);//左方向の最大速度
-
-		m_moveSpeed.z = min(m_moveSpeed.z, nsStageSelectScene::MAX_MOOVESPEED);//上方向の最大速度
-		m_moveSpeed.z = max(m_moveSpeed.z, -nsStageSelectScene::MAX_MOOVESPEED);//下方向の最大速度
-	}
-
-
-	//プレイヤーの回転処理関数
-	void StageSelectScene::PlaTurn()
-	{
-		//左スティックの入力量を受け取る
-		m_leftStick_x = g_pad[nsStageSelectScene::PLAYER1]->GetLStickXF();
-		m_leftStick_y = g_pad[nsStageSelectScene::PLAYER1]->GetLStickYF();
-
-		//移動してないときは回転しない
-		if (fabsf(m_moveSpeed.x) < 0.001f && fabsf(m_moveSpeed.z) < 0.001f) {
-			return;
+		switch (stageNum)
+		{
+		case FlatStage:
+			return nsStageSelectScene::FLATSTAGE_MODEL_POS;
+			break;
+		case DonutStage:
+			return nsStageSelectScene::DONUTSTAGE_MODEL_POS;
+			break;
+		case IceStage:
+			return nsStageSelectScene::ICESTAGE_MODEL_POS;
+			break;
+		case WindStage:
+			return nsStageSelectScene::WINDSTAGE_MODEL_POS;
+			break;
+		case TiltStage:
+			return nsStageSelectScene::TILTSTAGE_MODEL_POS;
+			break;
+		case RandomStage:
+			return nsStageSelectScene::RANDOMSTAGE_MODEL_POS;
+			break;
 		}
-		//回転角度
-		m_rotAngle = atan2(m_moveSpeed.x, m_moveSpeed.z);
-
-		m_rot.SetRotation(Vector3::AxisY, m_rotAngle);
 	}
 
+	//
+	Vector3 StageSelectScene::WhatStageNamePos(int stageNum)
+	{
+		switch (stageNum)
+		{
+		case FlatStage:
+			return nsStageSelectScene::FLATSTAGE_NAME_POS;
+			break;
+		case DonutStage:
+			return nsStageSelectScene::DONUTSTAGE_NAME_POS;
+			break;
+		case IceStage:
+			return nsStageSelectScene::ICESTAGE_NAME_POS;
+			break;
+		case WindStage:
+			return nsStageSelectScene::WINDSTAGE_NAME_POS;
+			break;
+		case TiltStage:
+			return nsStageSelectScene::TILTSTAGE_NAME_POS;
+			break;
+		case RandomStage:
+			return nsStageSelectScene::RANDOMSTAGE_NAME_POS;
+			break;
+		}
+	}
+
+	//
+	Vector3 StageSelectScene::WhatFukidasiPos(int stageNum)
+	{
+		switch (stageNum)
+		{
+		case FlatStage:
+			return nsStageSelectScene::FLATSTAGE_FUKIDASI_POS;
+			break;
+		case DonutStage:
+			return nsStageSelectScene::DONUTSTAGE_FUKIDASI_POS;
+			break;
+		case IceStage:
+			return nsStageSelectScene::ICESTAGE_FUKIDASI_POS;
+			break;
+		case WindStage:
+			return nsStageSelectScene::WINDSTAGE_FUKIDASI_POS;
+			break;
+		case TiltStage:
+			return nsStageSelectScene::TILTSTAGE_FUKIDASI_POS;
+			break;
+		case RandomStage:
+			return nsStageSelectScene::RANDOMSTAGE_FUKIDASI_POS;
+			break;
+		}
+	}
 
 	//ステージの上にいるときそのステージを選択できる関数
 	void StageSelectScene::TouchStage()
@@ -329,7 +331,7 @@ namespace nsCARBOOM
 		for (int stageNum = FlatStage; stageNum < TotalStageNum; stageNum++)
 		{
 			//プレイヤーと各ステージとの距離を求める
-			m_diff[stageNum] = WhatStageNamePos(stageNum) - m_pos;
+			m_diff[stageNum] = WhatStageModelPos(stageNum) - m_stageSelectScenePlayer->GetPlayerPos();
 
 			//ステージの上に乗っていなかったら
 			if (m_diff[stageNum].Length() >= 70.0f)
@@ -368,10 +370,10 @@ namespace nsCARBOOM
 					m_canOnStageSoundPlayFlg[stageNum] = false;
 				}
 
-				for (int i = FlatStage; i < TotalStageNum; i++)
+				for (int stageNum = FlatStage; stageNum < TotalStageNum; stageNum++)
 				{
 					//操作説明文非表示
-					m_operatorDiscription[i]->Deactivate();
+					m_operatorDiscription[stageNum]->Deactivate();
 				}
 
 				//ステージ名画像を強調拡大
@@ -385,159 +387,6 @@ namespace nsCARBOOM
 				//ゲーム画面遷移処理関数
 				GameSceneTransition();
 			}
-		}
-	}
-
-
-	//プレイヤーが画面外に行かないようにする関数
-	void StageSelectScene::AvoidScreenOutSide()
-	{
-		//右側の補正
-		m_pos.x = min(m_pos.x, nsStageSelectScene::BESIDE_WIDTH);
-		//左側の補正
-		m_pos.x = max(m_pos.x, -nsStageSelectScene::BESIDE_WIDTH);
-		//上側の補正
-		m_pos.z = min(m_pos.z, nsStageSelectScene::VERTICAL_WIDTH);
-		//下側の補正
-		m_pos.z = max(m_pos.z, -nsStageSelectScene::VERTICAL_WIDTH);
-	}
-
-
-	//ベクトルを可視化させるデバック関数
-	void StageSelectScene::PlaMooveSpeedDebug()
-	{
-		Vector3 Dir = m_moveSpeed;
-		Dir.y = 0;
-		Dir.Normalize();//大きさを位置にする
-		float x = Dir.Dot(Vector3::AxisX);//X軸から何度ずれているかを入れる
-		Dir.z *= -1;
-		float angleX = acosf(x);//アークコサイン
-		if (Dir.z < 0) {
-			angleX *= -1;
-		}
-		//angleX -= 0.5 * PAI;
-		m_arrowRot.SetRotationY(angleX);//ｘ度だけY軸を回す
-		m_skinModelRenderArrow->SetRotation(m_arrowRot);//角度を設定する
-		m_arrowPos = m_pos;
-		m_arrowPos.y += 30.0f;
-		m_skinModelRenderArrow->SetPosition(m_arrowPos);
-		m_arrowSize.x = m_arrowSize.z = m_moveSpeed.Length() / 5;
-		m_skinModelRenderArrow->SetScale(m_arrowSize);
-	}
-
-
-	//クラクションを鳴らす関数
-	void StageSelectScene::CarHorn()
-	{
-		//Xボタンが押されたとき再生
-		if (!g_pad[nsStageSelectScene::PLAYER1]->IsTrigger(enButtonX))
-		{
-			return;
-		}
-		//クラクションサウンド
-		m_soundPlayBack->StageSelectSceneSoundPlayBack(CarHornSound);
-	}
-
-
-	//プレイヤー操作をまとめている関数
-	void StageSelectScene::PlayerInformation()
-	{
-		//ベクトルを可視化させるデバック関数
-		//PlaMooveSpeedDebug();
-		//クラクションを鳴らす関数
-		CarHorn();
-		//プレイヤーの回転処理
-		PlaTurn();
-		//プレイヤーの通常移動処理
-		PlaMove();
-		//プレイヤーの移動速度に補正を入れる
-		PlaSpeedCorrection();
-		//プレイヤーが画面外に行かないようにする
-		AvoidScreenOutSide();
-		//プレイヤーの位置,回転の情報を更新する
-		PlaDataUpdate();
-		//ステージの上にいるときそのステージを選択できる関数
-		TouchStage();
-	}
-
-
-	//
-	Vector3 StageSelectScene::WhatStageModelPos(const int stageNum)
-	{
-		switch (stageNum)
-		{
-		case FlatStage:
-			return nsStageSelectScene::FLATSTAGE_MODEL_POS;
-			break;
-		case DonutStage:
-			return nsStageSelectScene::DONUTSTAGE_MODEL_POS;
-			break;
-		case IceStage:
-			return nsStageSelectScene::ICESTAGE_MODEL_POS;
-			break;
-		case WindStage:
-			return nsStageSelectScene::WINDSTAGE_MODEL_POS;
-			break;
-		case TiltStage:
-			return nsStageSelectScene::TILTSTAGE_MODEL_POS;
-			break;
-		case RandomStage:
-			return nsStageSelectScene::RANDOMSTAGE_MODEL_POS;
-			break;
-		}
-	}
-
-
-	//
-	Vector3 StageSelectScene::WhatStageNamePos(int stageNum)
-	{
-		switch (stageNum)
-		{
-		case FlatStage:
-			return nsStageSelectScene::FLATSTAGE_NAME_POS;
-			break;
-		case DonutStage:
-			return nsStageSelectScene::DONUTSTAGE_NAME_POS;
-			break;
-		case IceStage:
-			return nsStageSelectScene::ICESTAGE_NAME_POS;
-			break;
-		case WindStage:
-			return nsStageSelectScene::WINDSTAGE_NAME_POS;
-			break;
-		case TiltStage:
-			return nsStageSelectScene::TILTSTAGE_NAME_POS;
-			break;
-		case RandomStage:
-			return nsStageSelectScene::RANDOMSTAGE_NAME_POS;
-			break;
-		}
-	}
-
-
-	//
-	Vector3 StageSelectScene::WhatFukidasiPos(int stageNum)
-	{
-		switch (stageNum)
-		{
-		case FlatStage:
-			return nsStageSelectScene::FLATSTAGE_FUKIDASI_POS;
-			break;
-		case DonutStage:
-			return nsStageSelectScene::DONUTSTAGE_FUKIDASI_POS;
-			break;
-		case IceStage:
-			return nsStageSelectScene::ICESTAGE_FUKIDASI_POS;
-			break;
-		case WindStage:
-			return nsStageSelectScene::WINDSTAGE_FUKIDASI_POS;
-			break;
-		case TiltStage:
-			return nsStageSelectScene::TILTSTAGE_FUKIDASI_POS;
-			break;
-		case RandomStage:
-			return nsStageSelectScene::RANDOMSTAGE_FUKIDASI_POS;
-			break;
 		}
 	}
 }

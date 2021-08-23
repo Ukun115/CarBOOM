@@ -2,40 +2,31 @@
 ///画像表示処理
 ///</summary>
 
-
 #pragma once
-
 
 namespace nsCARBOOM
 {
 	class SpriteRender : public IGameObject		// コピー禁止ポリシーを継承する。
 	{
 	private:
-
 		SpriteInitData m_spriteInitData;	//スプライトイニットデータ構造体のデータを作成
 		Sprite m_sprite;					//スプライトクラスを作成
 
-
-		Vector3    m_pos = Vector3::Zero;			//位置(初期値:原点)
-		Quaternion m_rot = Quaternion::Identity;	//回転(初期値:0,0,0,1)
-		Vector3    m_sca = Vector3::One;			//拡大率(初期値:1倍)
-		Vector4    m_mulColor = Vector4::White;		//乗算(Multiply)色(白)
-								//↑詳しくはVectorクラスをみてね
+		Vector3    m_pos = Vector3::Zero;
+		Quaternion m_rot = Quaternion::Identity;
+		Vector3    m_sca = Vector3::One;
+		Vector4    m_mulColor = Vector4::White;
 		char m_filePath[256];
-
 
 		bool Start()override final;
 		~SpriteRender()override final;
 		void Update()override final;
 
-
 	public:
-
 		//画像を初期化する関数
 		void Init(const char* filepath, const float width, const float height, AlphaBlendMode mode = AlphaBlendMode::AlphaBlendMode_Trans);
 		//描画関数
 		void Render(RenderContext& renderContext);
-
 
 		/// <summary>
 		/// セッター

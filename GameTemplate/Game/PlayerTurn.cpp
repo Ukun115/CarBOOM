@@ -2,11 +2,9 @@
 ///プレイヤーの回転処理
 ///</summary>
 
-
 #include "stdafx.h"
 #include "PlayerTurn.h"
 #include "Player.h"
-
 
 namespace nsCARBOOM
 {
@@ -18,7 +16,6 @@ namespace nsCARBOOM
 		const float PLAYER4_RES_ANGLE = 5.5f;
 	}
 
-
 	bool PlayerTurn::Start()
 	{
 		m_player = FindGO<Player>(nsStdafx::PLAYER_NAME);
@@ -26,12 +23,10 @@ namespace nsCARBOOM
 		return true;
 	}
 
-
 	PlayerTurn::~PlayerTurn()
 	{
 
 	}
-
 
 	void PlayerTurn::Update()
 	{
@@ -40,7 +35,6 @@ namespace nsCARBOOM
 			PlaTurn(plaNum);
 		}
 	}
-
 
 	//プレイヤーの回転処理関数
 	void PlayerTurn::PlaTurn(const int plaNum)
@@ -58,7 +52,6 @@ namespace nsCARBOOM
 
 		m_rot[plaNum].SetRotation(Vector3::AxisY, m_rotAngle[plaNum]);
 	}
-
 
 	//
 	void PlayerTurn::PlaResAngle(const int plaNum)

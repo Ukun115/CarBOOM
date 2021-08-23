@@ -2,31 +2,25 @@
 ///モデル表示処理
 ///</summary>
 
-
 #include "stdafx.h"
-
 
 namespace nsCARBOOM
 {
 	bool SkinModelRender::Start()
 	{
-
 		return true;
 	}
-
 
 	SkinModelRender::~SkinModelRender()
 	{
 
 	}
 
-
 	void SkinModelRender::Update()
 	{
 		//モデルの位置、回転、拡大を更新
 		m_model.UpdateWorldMatrix(m_pos, m_rot, m_sca);
 	}
-
 
 	//モデルを初期化する関数
 	void SkinModelRender::Init(const char* tkmFilePath)
@@ -46,7 +40,6 @@ namespace nsCARBOOM
 		//初期化情報を使ってモデル表示処理を初期化する
 		m_model.Init(m_modelInitData);
 	}
-
 
 	//描画関数
 	void SkinModelRender::Render(RenderContext& rc)

@@ -2,33 +2,29 @@
 ///サウンドデータ再生クラス
 ///</summary>
 
-
 #include "stdafx.h"
 #include "SoundPlayBack.h"
 #include<random>
-
 
 namespace nsCARBOOM
 {
 	namespace nsSoundPlayBack
 	{
-		const float MAX_VOLUME = 1.0f;
+		const float VERYSMOLE_VOLUME = 0.01f;
+		const float SMOLE_VOLUME = 0.1f;
 		const float HALF_VOLUME = 0.5f;
+		const float NORMAL_VOLUME = 1.0f;
 	}
-
 
 	bool SoundPlayBack::Start()
 	{
-
 		return true;
 	}
-
 
 	SoundPlayBack::~SoundPlayBack()
 	{
 
 	}
-
 
 	//削除関数
 
@@ -198,12 +194,10 @@ namespace nsCARBOOM
 		}
 	}
 
-
 	void SoundPlayBack::Update()
 	{
 
 	}
-
 
 	void SoundPlayBack::TitleSceneSoundPlayBack(const int soundNum)
 	{
@@ -215,16 +209,14 @@ namespace nsCARBOOM
 			m_titleSceneSound[soundNum]->Init(L"Assets/sound/TitleSceneGingle.wav");
 			m_titleSceneSound[soundNum]->SetVolume(nsSoundPlayBack::HALF_VOLUME);
 			m_titleSceneSound[soundNum]->Play(false);	//偽でワンショット再生
-
 			break;
 
 		case TitleSceneBGM:
 			//タイトルBGMサウンドの初期化
 			m_titleSceneSound[soundNum] = NewGO<SoundSource>(nsStdafx::PRIORITY_0, nullptr);
 			m_titleSceneSound[soundNum]->Init(L"Assets/sound/TitleSceneBGM.wav");
-			m_titleSceneSound[soundNum]->SetVolume(0.01f);
+			m_titleSceneSound[soundNum]->SetVolume(nsSoundPlayBack::VERYSMOLE_VOLUME);
 			m_titleSceneSound[soundNum]->Play(true);	//真でループ再生
-
 			break;
 
 		case TitleSceneDecideSound:
@@ -233,17 +225,14 @@ namespace nsCARBOOM
 			m_titleSceneSound[soundNum]->Init(L"Assets/sound/Decide.wav");
 			m_titleSceneSound[soundNum]->SetVolume(nsSoundPlayBack::HALF_VOLUME);
 			m_titleSceneSound[soundNum]->Play(false);	//偽でワンショット再生
-
 			break;
 
 		case EngineSound:
-
 			//エンジンサウンド
 			m_titleSceneSound[soundNum] = NewGO<SoundSource>(nsStdafx::PRIORITY_0, nullptr);
 			m_titleSceneSound[soundNum]->Init(L"Assets/sound/AddPlayer.wav");
 			m_titleSceneSound[soundNum]->SetVolume(nsSoundPlayBack::HALF_VOLUME);
 			m_titleSceneSound[soundNum]->Play(false);	//偽でワンショット再生
-
 			break;
 		}
 	}
@@ -256,9 +245,8 @@ namespace nsCARBOOM
 			//タイトルBGMサウンドの初期化
 			m_stageSelectSceneSound[soundNum] = NewGO<SoundSource>(nsStdafx::PRIORITY_0, nullptr);
 			m_stageSelectSceneSound[soundNum]->Init(L"Assets/sound/TitleSceneBGM.wav");
-			m_stageSelectSceneSound[soundNum]->SetVolume(0.1f);
+			m_stageSelectSceneSound[soundNum]->SetVolume(nsSoundPlayBack::SMOLE_VOLUME);
 			m_stageSelectSceneSound[soundNum]->Play(true);	//真でループ再生
-
 			break;
 
 		case StageSelectSceneDecideSound:
@@ -267,7 +255,6 @@ namespace nsCARBOOM
 			m_stageSelectSceneSound[soundNum]->Init(L"Assets/sound/Decide.wav");
 			m_stageSelectSceneSound[soundNum]->SetVolume(nsSoundPlayBack::HALF_VOLUME);
 			m_stageSelectSceneSound[soundNum]->Play(false);	//偽でワンショット再生
-
 			break;
 
 		case OnStageSound:
@@ -276,7 +263,6 @@ namespace nsCARBOOM
 			m_stageSelectSceneSound[soundNum]->Init(L"Assets/sound/OnStage.wav");
 			m_stageSelectSceneSound[soundNum]->SetVolume(nsSoundPlayBack::HALF_VOLUME);
 			m_stageSelectSceneSound[soundNum]->Play(false);	//偽でワンショット再生
-
 			break;
 
 		case StageSelectSceneCarHornSound:
@@ -285,7 +271,6 @@ namespace nsCARBOOM
 			m_stageSelectSceneSound[soundNum]->Init(L"Assets/sound/CarHorn.wav");
 			m_stageSelectSceneSound[soundNum]->SetVolume(nsSoundPlayBack::HALF_VOLUME);
 			m_stageSelectSceneSound[soundNum]->Play(false);	//偽でワンショット再生
-
 			break;
 		}
 	}
@@ -298,18 +283,16 @@ namespace nsCARBOOM
 			//ゲームスタートジングルサウンドの初期化
 			m_gameSceneSound[soundNum] = NewGO<SoundSource>(nsStdafx::PRIORITY_0, nullptr);
 			m_gameSceneSound[soundNum]->Init(L"Assets/sound/GameStartGingle.wav");
-			m_gameSceneSound[soundNum]->SetVolume(nsSoundPlayBack::MAX_VOLUME);
+			m_gameSceneSound[soundNum]->SetVolume(nsSoundPlayBack::NORMAL_VOLUME);
 			m_gameSceneSound[soundNum]->Play(false);	//偽でワンショット再生
-
 			break;
 
 		case CountDownSound:
 			//カウントダウンサウンドの初期化
 			m_gameSceneSound[soundNum] = NewGO<SoundSource>(nsStdafx::PRIORITY_0, nullptr);
 			m_gameSceneSound[soundNum]->Init(L"Assets/sound/CountDown.wav");
-			m_gameSceneSound[soundNum]->SetVolume(1.0f);
+			m_gameSceneSound[soundNum]->SetVolume(nsSoundPlayBack::NORMAL_VOLUME);
 			m_gameSceneSound[soundNum]->Play(false);	//真でワンショット再生
-
 			break;
 
 		case GameSceneGameBGM:
@@ -318,7 +301,6 @@ namespace nsCARBOOM
 			m_gameSceneSound[soundNum]->Init(L"Assets/sound/GameBGM.wav");
 			m_gameSceneSound[soundNum]->SetVolume(nsSoundPlayBack::HALF_VOLUME);
 			m_gameSceneSound[soundNum]->Play(true);	//真でループ再生
-
 			break;
 
 		case WhistleSound:
@@ -327,7 +309,6 @@ namespace nsCARBOOM
 			m_gameSceneSound[soundNum]->Init(L"Assets/sound/Whistle.wav");
 			m_gameSceneSound[soundNum]->SetVolume(nsSoundPlayBack::HALF_VOLUME);
 			m_gameSceneSound[soundNum]->Play(false);	//偽でワンショット再生
-
 			break;
 
 		case PauseSound:
@@ -336,7 +317,6 @@ namespace nsCARBOOM
 			m_gameSceneSound[soundNum]->Init(L"Assets/sound/PauseSound.wav");
 			m_gameSceneSound[soundNum]->SetVolume(nsSoundPlayBack::HALF_VOLUME);
 			m_gameSceneSound[soundNum]->Play(false);	//偽でワンショット再生
-
 			break;
 
 		case GameSceneDecideSound:
@@ -345,7 +325,6 @@ namespace nsCARBOOM
 			m_gameSceneSound[soundNum]->Init(L"Assets/sound/Decide.wav");
 			m_gameSceneSound[soundNum]->SetVolume(nsSoundPlayBack::HALF_VOLUME);
 			m_gameSceneSound[soundNum]->Play(false);	//偽でワンショット再生
-
 			break;
 		}
 	}
@@ -358,9 +337,8 @@ namespace nsCARBOOM
 			//撃墜サウンドの初期化
 			m_playerSound[plaNum][soundNum] = NewGO<SoundSource>(nsStdafx::PRIORITY_0, nullptr);
 			m_playerSound[plaNum][soundNum]->Init(L"Assets/sound/ShootDown.wav");
-			m_playerSound[plaNum][soundNum]->SetVolume(nsSoundPlayBack::MAX_VOLUME);
+			m_playerSound[plaNum][soundNum]->SetVolume(nsSoundPlayBack::NORMAL_VOLUME);
 			m_playerSound[plaNum][soundNum]->Play(false);	//偽でワンショット再生
-
 			break;
 
 		case CarHornSound:
@@ -369,25 +347,22 @@ namespace nsCARBOOM
 			m_playerSound[plaNum][soundNum]->Init(L"Assets/sound/CarHorn.wav");
 			m_playerSound[plaNum][soundNum]->SetVolume(nsSoundPlayBack::HALF_VOLUME);
 			m_playerSound[plaNum][soundNum]->Play(false);	//偽でワンショット再生
-
 			break;
 
 		case PlaFallSound:
 			//落下サウンドの初期化
 			m_playerSound[plaNum][soundNum] = NewGO<SoundSource>(nsStdafx::PRIORITY_0, nullptr);
 			m_playerSound[plaNum][soundNum]->Init(L"Assets/sound/Fall.wav");
-			m_playerSound[plaNum][soundNum]->SetVolume(0.1f);
+			m_playerSound[plaNum][soundNum]->SetVolume(nsSoundPlayBack::SMOLE_VOLUME);
 			m_playerSound[plaNum][soundNum]->Play(false);	//偽でワンショット再生
-
 			break;
 
 		case ChargeSound:
 			//チャージサウンドの初期化
 			m_playerSound[plaNum][soundNum] = NewGO<SoundSource>(nsStdafx::PRIORITY_0, nullptr);
 			m_playerSound[plaNum][soundNum]->Init(L"Assets/sound/Charge.wav");
-			m_playerSound[plaNum][soundNum]->SetVolume(0.1f);
+			m_playerSound[plaNum][soundNum]->SetVolume(nsSoundPlayBack::SMOLE_VOLUME);
 			m_playerSound[plaNum][soundNum]->Play(false);	//偽でワンショット再生
-
 			break;
 
 		case Dash1Sound:
@@ -396,7 +371,6 @@ namespace nsCARBOOM
 			m_playerSound[plaNum][soundNum]->Init(L"Assets/sound/PlaDash1.wav");
 			m_playerSound[plaNum][soundNum]->SetVolume(nsSoundPlayBack::HALF_VOLUME);
 			m_playerSound[plaNum][soundNum]->Play(false);	//偽でワンショット再生
-
 			break;
 
 		case Dash2Sound:
@@ -405,22 +379,23 @@ namespace nsCARBOOM
 			m_playerSound[plaNum][soundNum]->Init(L"Assets/sound/PlaDash2.wav");
 			m_playerSound[plaNum][soundNum]->SetVolume(nsSoundPlayBack::HALF_VOLUME);
 			m_playerSound[plaNum][soundNum]->Play(false);	//偽でワンショット再生
-
 			break;
+
 		case PlaAndPlaClashSound:
 			//プレイヤーとプレイヤーがぶつかったときのサウンドの初期化
 			m_playerSound[plaNum][soundNum] = NewGO<SoundSource>(nsStdafx::PRIORITY_0, nullptr);
 			m_playerSound[plaNum][soundNum]->Init(L"Assets/sound/Clash1.wav");
-			m_playerSound[plaNum][soundNum]->SetVolume(nsSoundPlayBack::MAX_VOLUME);
+			m_playerSound[plaNum][soundNum]->SetVolume(nsSoundPlayBack::NORMAL_VOLUME);
 			m_playerSound[plaNum][soundNum]->Play(false);	//偽でワンショット再生
-
 			break;
+
 		case ChargeEnd:
 			//チャージ完了サウンドの初期化
 			m_playerSound[plaNum][soundNum] = NewGO<SoundSource>(nsStdafx::PRIORITY_0, nullptr);
 			m_playerSound[plaNum][soundNum]->Init(L"Assets/sound/ChargeEnd.wav");
-			m_playerSound[plaNum][soundNum]->SetVolume(0.1f);
+			m_playerSound[plaNum][soundNum]->SetVolume(nsSoundPlayBack::SMOLE_VOLUME);
 			m_playerSound[plaNum][soundNum]->Play(false);	//偽でワンショット再生
+			break;
 		}
 	}
 
@@ -432,18 +407,16 @@ namespace nsCARBOOM
 			//撃墜サウンドの初期化
 			m_enemySound[eneNum][soundNum] = NewGO<SoundSource>(nsStdafx::PRIORITY_0, nullptr);
 			m_enemySound[eneNum][soundNum]->Init(L"Assets/sound/ShootDown.wav");
-			m_enemySound[eneNum][soundNum]->SetVolume(0.2f);
+			m_enemySound[eneNum][soundNum]->SetVolume(nsSoundPlayBack::SMOLE_VOLUME);
 			m_enemySound[eneNum][soundNum]->Play(false);	//偽でワンショット再生
-
 			break;
 
 		case EneFallSound:
 			//落下サウンドの初期化
 			m_enemySound[eneNum][soundNum] = NewGO<SoundSource>(nsStdafx::PRIORITY_0, nullptr);
 			m_enemySound[eneNum][soundNum]->Init(L"Assets/sound/Fall.wav");
-			m_enemySound[eneNum][soundNum]->SetVolume(0.1f);
+			m_enemySound[eneNum][soundNum]->SetVolume(nsSoundPlayBack::SMOLE_VOLUME);
 			m_enemySound[eneNum][soundNum]->Play(false);	//偽でワンショット再生
-
 			break;
 
 		case DashSound:
@@ -452,43 +425,42 @@ namespace nsCARBOOM
 			//ランダム関数のSEED（種）を設定
 			//（これによりランダム値を本当の意味でランダムにしている）
 			srand((int)time(nullptr));
-			m_randomDashSoundNum = rand() % 9;
+			m_randomDashSoundNum = rand() % TotalEnemyDashNum;
 
 			//TODO: サウンドのファイルパスを読み込むのもモデルデータのファイルパス読み込み方法のようにする。
 
 			switch (m_randomDashSoundNum)
 			{
-			case 0:
+			case EnemyDash1:
 				m_enemySound[eneNum][soundNum]->Init(L"Assets/sound/EneDash1.wav");
 				break;
-			case 1:
+			case EnemyDash2:
 				m_enemySound[eneNum][soundNum]->Init(L"Assets/sound/EneDash2.wav");
 				break;
-			case 2:
+			case EnemyDash3:
 				m_enemySound[eneNum][soundNum]->Init(L"Assets/sound/EneDash3.wav");
 				break;
-			case 3:
+			case EnemyDash4:
 				m_enemySound[eneNum][soundNum]->Init(L"Assets/sound/EneDash4.wav");
 				break;
-			case 4:
+			case EnemyDash5:
 				m_enemySound[eneNum][soundNum]->Init(L"Assets/sound/EneDash5.wav");
 				break;
-			case 5:
+			case EnemyDash6:
 				m_enemySound[eneNum][soundNum]->Init(L"Assets/sound/EneDash6.wav");
 				break;
-			case 6:
+			case EnemyDash7:
 				m_enemySound[eneNum][soundNum]->Init(L"Assets/sound/EneDash7.wav");
 				break;
-			case 7:
+			case EnemyDash8:
 				m_enemySound[eneNum][soundNum]->Init(L"Assets/sound/EneDash8.wav");
 				break;
-			case 8:
+			case EnemyDash9:
 				m_enemySound[eneNum][soundNum]->Init(L"Assets/sound/EneDash9.wav");
 				break;
 			}
-			m_enemySound[eneNum][soundNum]->SetVolume(0.3f);
+			m_enemySound[eneNum][soundNum]->SetVolume(nsSoundPlayBack::HALF_VOLUME);
 			m_enemySound[eneNum][soundNum]->Play(false);	//偽でワンショット再生
-
 			break;
 
 		case EnePlaAndEneClashSound:
@@ -497,7 +469,6 @@ namespace nsCARBOOM
 			m_enemySound[eneNum][soundNum]->Init(L"Assets/sound/Clash2.wav");
 			m_enemySound[eneNum][soundNum]->SetVolume(nsSoundPlayBack::HALF_VOLUME);
 			m_enemySound[eneNum][soundNum]->Play(false);	//偽でワンショット再生
-
 			break;
 		}
 	}
@@ -512,16 +483,14 @@ namespace nsCARBOOM
 			m_resultSceneSceneSound[soundNum]->Init(L"Assets/sound/ResultGingle.wav");
 			m_resultSceneSceneSound[soundNum]->SetVolume(nsSoundPlayBack::HALF_VOLUME);
 			m_resultSceneSceneSound[soundNum]->Play(false);	//偽でワンショット再生
-
 			break;
 
 		case ResultSceneGameBGM:
 			//ゲーム中のBGMサウンドの初期化
 			m_resultSceneSceneSound[soundNum] = NewGO<SoundSource>(nsStdafx::PRIORITY_0, nullptr);
 			m_resultSceneSceneSound[soundNum]->Init(L"Assets/sound/GameBGM.wav");
-			m_resultSceneSceneSound[soundNum]->SetVolume(0.01f);
+			m_resultSceneSceneSound[soundNum]->SetVolume(nsSoundPlayBack::VERYSMOLE_VOLUME);
 			m_resultSceneSceneSound[soundNum]->Play(true);	//真でループ再生
-
 			break;
 
 		case ResultSceneDecideSound:
@@ -530,7 +499,6 @@ namespace nsCARBOOM
 			m_resultSceneSceneSound[soundNum]->Init(L"Assets/sound/Decide.wav");
 			m_resultSceneSceneSound[soundNum]->SetVolume(nsSoundPlayBack::HALF_VOLUME);
 			m_resultSceneSceneSound[soundNum]->Play(false);	//偽でワンショット再生
-
 			break;
 		}
 	}

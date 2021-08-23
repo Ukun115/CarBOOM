@@ -19,9 +19,9 @@ Effect::~Effect()
 
 void Effect::Init(const char16_t* filePath)
 {
-	char m_filePath[256];
-	sprintf(m_filePath, "Assets/effect/efk/%s.efk", filePath);
-	m_effect = EffectEngine::GetInstance()->LoadEffect(reinterpret_cast<const char16_t*>(m_filePath));
+	/*char m_filePath[256];
+	sprintf(m_filePath, "Assets/effect/efk/%s.efk", filePath);*/
+	m_effect = EffectEngine::GetInstance()->LoadEffect(filePath);
 
 	//読み込めていなかったらエラーメッセージを出す。
 	if (m_effect == nullptr)

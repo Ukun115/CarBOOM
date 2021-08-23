@@ -2,7 +2,6 @@
 ///ゲームシーンのメイン処理
 ///</summary>
 
-
 #include "stdafx.h"
 #include "TitleScene.h"
 #include "StageSelectScene.h"
@@ -12,6 +11,8 @@
 #include "Enemy.h"
 #include "Player.h"
 #include "Fade.h"
+#include "PlayerName.h"
+#include "Pause.h"
 
 namespace nsCARBOOM
 {
@@ -21,34 +22,28 @@ namespace nsCARBOOM
 		const Vector2 PLANAME2POS = { 400.0f, 310.0f };				//プレイヤー2の名前表示位置
 		const Vector2 PLANAME3POS = { -600.0f,-290.0f };			//プレイヤー3の名前表示位置
 		const Vector2 PLANAME4POS = { 400.0f,-290.0f, };			//プレイヤー4の名前表示位置
-
 		const Vector2   TIMELIMIT_POS = { -40.0f,300.0f };			//制限時間フォントの位置
 		const Vector4   TIMELIMIT_COL = { 1.0f,1.0f,1.0f,1.0f };	//制限時間フォントの色
 		const Vector4   TIMELIMIT_LAST_COL = { 1.0f,0.0f,0.0f,1.0f };	//制限時間フォントの残り5秒の色
-
 		const float     FONT_ROT = 0.0f;			//フォントの傾き
 		const Vector2   FONT_PIV = { 1.0f,1.0f };	//フォントの基点
 		const float     FONT_SCA = 1.5f;			//フォントの拡大率
-
 		const Vector2 PLAYER1_PT_POS = { -420.0f,235.0f };	//プレイヤー1のpt文字表示
 		const Vector2 PLAYER2_PT_POS = { 550.0f,235.0f };	//プレイヤー2のpt文字表示
 		const Vector2 PLAYER3_PT_POS = { -420.0f,-230.0f };	//プレイヤー3のpt文字表示
 		const Vector2 PLAYER4_PT_POS = { 550.0f,-230.0f };	//プレイヤー4のpt文字表示
 		const float PT_SCA = 0.85f;		//pt文字の大きさ
-
 		const Vector3 PLAYER1_CROWN_POS = { -320.0f, 310.0f,0.0f };		//プレイヤー1の王冠画像表示位置
 		const Vector3 PLAYER2_CROWN_POS = { 300.0f, 310.0f,0.0f };		//プレイヤー2の王冠画像表示位置
 		const Vector3 PLAYER3_CROWN_POS = { -300.0f, -310.0f,0.0f };	//プレイヤー3の王冠画像表示位置
 		const Vector3 PLAYER4_CROWN_POS = { 300.0f, -310.0f,0.0f };		//プレイヤー4の王冠画像表示位置
 		const Vector3 CROWN_SCA = { 0.2f, 0.2f,0.2f };					//王冠画像の拡大率
-
 		//配列番号
 		const int ARRAY_NUM_0 = 0;
 		const int ARRAY_NUM_1 = 1;
 		const int ARRAY_NUM_2 = 2;
 		const int ARRAY_NUM_3 = 3;
 	}
-
 
 	bool GameScene::Start()
 	{
@@ -65,6 +60,13 @@ namespace nsCARBOOM
 		m_fade[FadeIn] = NewGO<Fade>(nsStdafx::PRIORITY_0, nullptr);
 		m_fade[FadeIn]->SetState(StateIn);
 		m_fade[FadeIn]->SetAlphaValue(1.0f);
+
+		//ポーズ機能
+		m_pause = NewGO<Pause>(nsStdafx::PRIORITY_0, nullptr);
+
+		//画面隅のプレイヤー名フォント
+		m_playerName = NewGO<PlayerName>(nsStdafx::PRIORITY_0, nullptr);
+		m_playerName->SetTotalPlaNum(m_totalPlaNum);
 
 		//敵オブジェクト生成
 		m_enemy = NewGO<Enemy>(nsStdafx::PRIORITY_0, nsStdafx::ENEMY_NAME);
@@ -89,22 +91,16 @@ namespace nsCARBOOM
 		m_crownSprite->SetScale({ nsGameScene::CROWN_SCA });									//拡大率を設定
 		m_crownSprite->Deactivate();					//はじめは誰も一位じゃないので隠しておく。
 
-		//ポーズ画面の画像の初期化をまとめている関数
-		InitPauseSceneImage();
-
 		m_gameBackScreen = NewGO<SpriteRender>(nsStdafx::PRIORITY_0, nullptr);
 		m_gameBackScreen->Init("BackScreenImage", 1600.0f, 800.0f);
 
 		//制限時間フォントの初期化をまとめている関数
 		InitTimeLimitFont();
-		//PLAYERフォントの初期化をまとめている関数
-		InitPlayerFont();
 		//プレイヤーのポイントフォントの初期化をまとめている関数
 		InitPlayerPtFont();
 
 		return true;
 	}
-
 
 	GameScene::~GameScene()
 	{
@@ -134,9 +130,8 @@ namespace nsCARBOOM
 			DeleteGO(m_ScoreFontRender[i]);
 			//
 			DeleteGO(m_TextScoreFontRender[i]);
-
-			DeleteGO(m_PlaNameFont[i]);
 		}
+		DeleteGO(m_playerName);
 		//プレイヤークラスを削除。
 		DeleteGO(m_player);
 		//敵クラスを削除。
@@ -150,16 +145,11 @@ namespace nsCARBOOM
 
 		DeleteGO(m_resultScene);
 
-		DeleteGO(m_pauseSprite);
-		DeleteGO(m_grayBack);
+		DeleteGO(m_pause);
 	}
-
 
 	void GameScene::Update()
 	{
-		//ポーズ機能
-		PauseMenue();
-
 		//ポーズ中のときは、return以降の処理をしない。
 		if (m_isPauseFlg)
 		{
@@ -223,7 +213,6 @@ namespace nsCARBOOM
 			DeleteGO(this);
 		}
 	}
-
 
 	//カウントダウン処理関数
 	void GameScene::CountDown()
@@ -308,7 +297,6 @@ namespace nsCARBOOM
 		m_countDownTimer++;
 	}
 
-
 	//制限時間処理関数
 	void GameScene::TimeLimit()
 	{
@@ -336,7 +324,6 @@ namespace nsCARBOOM
 		m_timeLimit->SetText(text1);
 	}
 
-
 	//プレイヤーのスコア描画関数
 	void GameScene::PlaScoreDraw()
 	{
@@ -350,7 +337,6 @@ namespace nsCARBOOM
 			m_TextScoreFontRender[plaNum]->SetText(text2);
 		}
 	}
-
 
 	//プレイヤーごとの「pt」文字の位置を指定する関数
 	Vector2 GameScene::GetScorePos(const int plaNum)
@@ -372,7 +358,6 @@ namespace nsCARBOOM
 		}
 	}
 
-
 	//プレイヤーごとのスコアの位置を指定する関数
 	void GameScene::SetScoreTextPos(const int plaNum)
 	{
@@ -389,16 +374,16 @@ namespace nsCARBOOM
 			switch (plaNum)
 			{
 			case Player1:
-				m_plaScorePos[0].x = -560.0f;
+				m_plaScorePos[Player1].x = -560.0f;
 				break;
 			case Player2:
-				m_plaScorePos[1].x = 410.0f;
+				m_plaScorePos[Player2].x = 410.0f;
 				break;
 			case Player3:
-				m_plaScorePos[2].x = -560.0f;
+				m_plaScorePos[Player3].x = -560.0f;
 				break;
 			case Player4:
-				m_plaScorePos[3].x = 410.0f;
+				m_plaScorePos[Player4].x = 410.0f;
 				break;
 			}
 		}
@@ -409,16 +394,16 @@ namespace nsCARBOOM
 			switch (plaNum)
 			{
 			case Player1:
-				m_plaScorePos[0].x = -580.0f;
+				m_plaScorePos[Player1].x = -580.0f;
 				break;
 			case Player2:
-				m_plaScorePos[1].x = 390.0f;
+				m_plaScorePos[Player2].x = 390.0f;
 				break;
 			case Player3:
-				m_plaScorePos[2].x = -580.0f;
+				m_plaScorePos[Player3].x = -580.0f;
 				break;
 			case Player4:
-				m_plaScorePos[3].x = 390.0f;
+				m_plaScorePos[Player4].x = 390.0f;
 				break;
 			}
 		}
@@ -429,16 +414,16 @@ namespace nsCARBOOM
 			switch (plaNum)
 			{
 			case Player1:
-				m_plaScorePos[0].x = -600.0f;
+				m_plaScorePos[Player1].x = -600.0f;
 				break;
 			case Player2:
-				m_plaScorePos[1].x = 370.0f;
+				m_plaScorePos[Player2].x = 370.0f;
 				break;
 			case Player3:
-				m_plaScorePos[2].x = -600.0f;
+				m_plaScorePos[Player3].x = -600.0f;
 				break;
 			case Player4:
-				m_plaScorePos[3].x = 370.0f;
+				m_plaScorePos[Player4].x = 370.0f;
 				break;
 			}
 		}
@@ -446,7 +431,6 @@ namespace nsCARBOOM
 		//位置をセット
 		m_TextScoreFontRender[plaNum]->SetPosition(m_plaScorePos[plaNum]);
 	}
-
 
 	//プレイヤーごとのスコアの色を指定する関数
 	Vector4 GameScene::ScoreColor(const int plaNum)
@@ -467,7 +451,6 @@ namespace nsCARBOOM
 			break;
 		}
 	}
-
 
 	/*プレイヤーの得点変動処理関数
 	  (plaNum1は落としたプレイヤー、plaNum2は落とされたプレイヤー)*/
@@ -493,7 +476,6 @@ namespace nsCARBOOM
 		//点数が0以下にならないように補正
 		m_plaScore[plaNum2] = max(m_plaScore[plaNum2], nsStdafx::INT_ZERO);
 	}
-
 
 	//１位に王冠画像と王冠モデルを渡す関数
 	void GameScene::NowCrown()
@@ -532,7 +514,6 @@ namespace nsCARBOOM
 		}
 	}
 
-
 	//リザルト画面に遷移する関数
 	void GameScene::ResultSceneTransition()
 	{
@@ -552,135 +533,8 @@ namespace nsCARBOOM
 		//リザルト画面オブジェクト生成
 		m_resultScene = NewGO<ResultScene>(nsStdafx::PRIORITY_0, nullptr);
 		m_resultScene->SetTotalPlayerNum(m_totalPlaNum);
-		m_grayBack->Activate();
-		//ゲームBGMをけす
-		m_soundPlayBack->m_gameSceneSound[GameBGM]->SetVolume(nsStdafx::FLOAT_ZERO);
-		//ゲームシーンに使われているサウンドを破棄
-		m_soundPlayBack->GameSceneDeleteGO();
+		m_pause->GrayBackActive();
 	}
-
-
-	//ポーズ機能
-	void GameScene::PauseMenue()
-	{
-		//ポーズ機能
-		for (int i = nsStdafx::INT_ZERO; i < m_totalPlaNum; i++)
-		{
-			//セレクトボタンが押されたときのみreturn以降を処理する
-			if (!g_pad[i]->IsTrigger(enButtonSelect))
-			{
-				return;
-			}
-			//ポーズ画面を開く音
-			m_soundPlayBack->GameSceneSoundPlayBack(PauseSound);
-
-			//ポーズ中じゃないとき、
-			if (!m_isPauseFlg)
-			{
-				//ポーズにする
-				m_pauseSprite->Activate();
-				m_grayBack->Activate();
-				if (m_soundPlayBack->m_gameSceneSound[GameBGM] != nullptr)
-				{
-					m_soundPlayBack->m_gameSceneSound[GameBGM]->SetVolume(nsStdafx::FLOAT_ZERO);
-				}
-
-				m_isPauseFlg = true;
-			}
-			//ポーズ中の時、
-			else
-			{
-				m_pauseSprite->Deactivate();
-				m_grayBack->Deactivate();
-				if (m_soundPlayBack->m_gameSceneSound[GameBGM] != nullptr)
-				{
-					m_soundPlayBack->m_gameSceneSound[GameBGM]->SetVolume(0.5f);
-				}
-
-				//ポーズを外す
-				m_isPauseFlg = false;
-			}
-			m_player->SetPauseFlg(m_isPauseFlg);
-			m_enemy->SetPauseFlg(m_isPauseFlg);
-			m_stage->SetPauseFlg(m_isPauseFlg);
-		}
-	}
-
-
-	//PLAYERフォントの初期化をまとめている関数
-	void GameScene::InitPlayerFont()
-	{
-		for (int plaNum = Player1; plaNum < TotalPlaNum; plaNum++) {
-			//2P～4Pの非アクティブ画像オブジェクト生成
-			m_PlaNameFont[plaNum] = NewGO<FontRender>(nsStdafx::PRIORITY_1, nullptr);		//1P
-			switch (plaNum)
-			{
-			case Player1:
-				m_PlaNameFont[plaNum]->Init(
-					L"PLAYER1",					//テキスト
-					nsGameScene::PLANAME1POS,				//位置
-					nsStdafx::GRAY,						//色
-					nsGameScene::FONT_ROT,					//傾き
-					1.0f,						//拡大率
-					nsGameScene::FONT_PIV					//基点
-				);
-				break;
-			case Player2:
-				m_PlaNameFont[plaNum]->Init(
-					L"PLAYER2",					//テキスト
-					nsGameScene::PLANAME2POS,				//位置
-					nsStdafx::GRAY,						//色
-					nsGameScene::FONT_ROT,					//傾き
-					1.0f,						//拡大率
-					nsGameScene::FONT_PIV					//基点
-				);
-				break;
-			case Player3:
-				m_PlaNameFont[plaNum]->Init(
-					L"PLAYER3",					//テキスト
-					nsGameScene::PLANAME3POS,				//位置
-					nsStdafx::GRAY,						//色
-					nsGameScene::FONT_ROT,					//傾き
-					1.0f,						//拡大率
-					nsGameScene::FONT_PIV					//基点
-				);
-				break;
-			case Player4:
-				m_PlaNameFont[plaNum]->Init(
-					L"PLAYER4",					//テキスト
-					nsGameScene::PLANAME4POS,				//位置
-					nsStdafx::GRAY,						//色
-					nsGameScene::FONT_ROT,					//傾き
-					1.0f,						//拡大率
-					nsGameScene::FONT_PIV					//基点
-				);
-				break;
-			}
-			//文字の境界線表示
-			m_PlaNameFont[plaNum]->SetShadowParam(true, 3.0f, Vector4::Black);
-
-			if (m_totalPlaNum <= plaNum)
-			{
-				return;
-			}
-			switch (plaNum)
-			{
-			case Player1:
-				m_PlaNameFont[plaNum]->SetColor(nsStdafx::RED);
-				break;
-			case Player2:
-				m_PlaNameFont[plaNum]->SetColor(nsStdafx::BLUE);
-				break;
-			case Player3:
-				m_PlaNameFont[plaNum]->SetColor(nsStdafx::YELLOW);
-				break;
-			case Player4:
-				m_PlaNameFont[plaNum]->SetColor(nsStdafx::GREEN);
-				break;
-			}
-		}
-	}
-
 
 	//プレイヤーのポイントフォントの初期化をまとめている関数
 	void GameScene::InitPlayerPtFont()
@@ -731,7 +585,6 @@ namespace nsCARBOOM
 		}
 	}
 
-
 	//制限時間フォントの初期化をまとめている関数
 	void GameScene::InitTimeLimitFont()
 	{
@@ -750,20 +603,5 @@ namespace nsCARBOOM
 		);
 		//文字の境界線表示
 		m_timeLimit->SetShadowParam(true, 3.0f, Vector4::Black);
-	}
-
-
-	//ポーズ画面の画像の初期化をまとめている関数
-	void GameScene::InitPauseSceneImage()
-	{
-		m_pauseSprite = NewGO<SpriteRender>(nsStdafx::PRIORITY_6, nullptr);
-		//ポーズ画像を初期化
-		m_pauseSprite->Init("Pause", 600.0f, 300.0f);
-		m_pauseSprite->Deactivate();
-
-		m_grayBack = NewGO<SpriteRender>(nsStdafx::PRIORITY_5, nullptr);
-		//ポーズ中灰色にする画像を初期化
-		m_grayBack->Init("GrayBack", 1500.0f, 1500.0f);
-		m_grayBack->Deactivate();
 	}
 }
