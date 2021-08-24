@@ -169,30 +169,27 @@ namespace nsCARBOOM
 		TouchStage();
 
 		//セレクトボタンが押されたら、
-		if (!g_pad[nsStageSelectScene::PLAYER1]->IsTrigger(enButtonSelect))
+		if (g_pad[nsStageSelectScene::PLAYER1]->IsTrigger(enButtonSelect))
 		{
-			return;
+			//決定サウンド
+			m_soundPlayBack->StageSelectSceneSoundPlayBack(DecideSound);
+
+			//フェードアウト
+			m_fade[FadeOutBadk] = NewGO<Fade>(nsStdafx::PRIORITY_0, nullptr);
+			m_fade[FadeOutBadk]->SetState(StateOut);
+			m_fade[FadeOutBadk]->SetAlphaValue(nsStdafx::FLOAT_ZERO);
+
+			m_nextTitleSceneFlg = 1;
 		}
-		//決定サウンド
-		m_soundPlayBack->StageSelectSceneSoundPlayBack(DecideSound);
-
-		//フェードアウト
-		m_fade[FadeOutBadk] = NewGO<Fade>(nsStdafx::PRIORITY_0, nullptr);
-		m_fade[FadeOutBadk]->SetState(StateOut);
-		m_fade[FadeOutBadk]->SetAlphaValue(nsStdafx::FLOAT_ZERO);
-
-		m_nextTitleSceneFlg = 1;
-
 		if (!m_nextTitleSceneFlg)
 		{
 			return;
 		}
-		if (m_fade[FadeOutBadk]->GetNowState() != StateWait)
+		if (m_fade[FadeOutBadk]->GetNowState() == StateWait)
 		{
-			return;
+			m_titleScene = NewGO<TitleScene>(nsStdafx::PRIORITY_0, nullptr);
+			DeleteGO(this);
 		}
-		m_titleScene = NewGO<TitleScene>(nsStdafx::PRIORITY_0, nullptr);
-		DeleteGO(this);
 	}
 
 	//ゲーム画面遷移処理関数

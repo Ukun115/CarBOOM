@@ -51,6 +51,7 @@ namespace nsStdafx
 	const char* const SOUNDPLAYBACK_NAME = { "soundplayback" };
 	const char* const PLAYERTURN_NAME = { "playerturn" };
 	const char* const ENEMYTURN_NAME = { "enemyturn" };
+	const char* const ENEMYMOVESPEED_NAME = { "enemymovespeed" };
 	/// <summary>
 	/// ステージ番号
 	/// </summary>

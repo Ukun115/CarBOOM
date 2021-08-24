@@ -4,7 +4,7 @@
 
 #include "stdafx.h"
 #include "EnemyTurn.h"
-#include "Enemy.h"
+#include "EnemyMoveSpeed.h"
 
 namespace nsCARBOOM
 {
@@ -23,7 +23,7 @@ namespace nsCARBOOM
 
 	bool EnemyTurn::Start()
 	{
-		m_enemy = FindGO<Enemy>(nsStdafx::ENEMY_NAME);
+		m_enemyMoveSpeed = FindGO<EnemyMoveSpeed>(nsStdafx::ENEMYMOVESPEED_NAME);
 
 		for (int eneNum = Enemy1; eneNum < TotalEneNum; eneNum++)
 		{
@@ -57,16 +57,16 @@ namespace nsCARBOOM
 	void EnemyTurn::EneTurn(const int eneNum)
 	{
 		//fabsf()‚Í•‚“®¬”“_‚Ìâ‘Î’l‚ð•Ô‚·ŠÖ”
-		if (fabsf(m_enemy->GetEnemySpeed(eneNum).x) < 0.001f && fabsf(m_enemy->GetEnemySpeed(eneNum).z) < 0.001f)
+		if (fabsf(m_enemyMoveSpeed->GetEneMoveSpeed(eneNum).x) < 0.001f && fabsf(m_enemyMoveSpeed->GetEneMoveSpeed(eneNum).z) < 0.001f)
 		{
 			return;
 		}
 		//‰ñ“]Šp“x
-		m_rotAngle[eneNum] = atan2(m_enemy->GetEnemySpeed(eneNum).x, m_enemy->GetEnemySpeed(eneNum).z);
+		m_rotAngle[eneNum] = atan2(m_enemyMoveSpeed->GetEneMoveSpeed(eneNum).x, m_enemyMoveSpeed->GetEneMoveSpeed(eneNum).z);
 
 		m_rot[eneNum].SetRotation(Vector3::AxisY, m_rotAngle[eneNum]);
 
-		m_eneDir[eneNum] = m_enemy->GetEnemySpeed(eneNum);
+		m_eneDir[eneNum] = m_enemyMoveSpeed->GetEneMoveSpeed(eneNum);
 		m_eneDir[eneNum].Normalize();
 	}
 

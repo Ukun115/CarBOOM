@@ -11,6 +11,7 @@ namespace nsCARBOOM
 	class GameScene;
 	class Stage;
 	class Enemy;
+	class EnemyMoveSpeed;
 	class PlayerMoveSpeedArrow;
 	class PlayerTurn;
 	class PlayerChargeUI;
@@ -59,6 +60,7 @@ namespace nsCARBOOM
 		GameScene* m_gameScene = nullptr;
 		Stage* m_stage = nullptr;
 		Enemy* m_enemy = nullptr;
+		EnemyMoveSpeed* m_enemyMoveSpeed = nullptr;
 		SkinModelRender* m_player[TotalPlayerNum] = { nullptr };		//プレイヤー4人分
 		SpriteRender* m_crown = nullptr;		//プレイヤーの上に置く王冠画像
 		SoundPlayBack* m_soundPlayBack = nullptr;

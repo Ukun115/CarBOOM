@@ -39,7 +39,7 @@ namespace nsCARBOOM
 
 		///下のif文はステージの処理なのでステージクラスに移したい。
 		//アイスステージが選択されているとき、
-		if (m_stageSelectNum == nsStdafx::STAGE3)
+		if (m_enemy->GetStageNum() == nsStdafx::STAGE3)
 		{
 			//摩擦を減らす
 			m_friction[eneNum] /= 2.0f;

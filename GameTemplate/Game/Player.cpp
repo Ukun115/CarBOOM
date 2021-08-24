@@ -14,6 +14,7 @@
 #include "PlayerTurn.h"
 #include "PlayerChargeUI.h"
 #include "PlayerEffect.h"
+#include "EnemyMoveSpeed.h"
 
 //TODO: 影を落とせるようにする
 
@@ -35,6 +36,7 @@ namespace nsCARBOOM
 		//インスタンスを探す。
 		m_gameScene = FindGO<GameScene>(nsStdafx::GAMESCENE_NAME);
 		m_enemy = FindGO<Enemy>(nsStdafx::ENEMY_NAME);
+		m_enemyMoveSpeed = FindGO<EnemyMoveSpeed>(nsStdafx::ENEMYMOVESPEED_NAME);
 		m_soundPlayBack = FindGO<SoundPlayBack>(nsStdafx::SOUNDPLAYBACK_NAME);
 		m_stage = FindGO<Stage>(nsStdafx::STAGE_NAME);
 
@@ -571,7 +573,7 @@ namespace nsCARBOOM
 				return;
 			}
 
-			m_enePushSpeed = m_enemy->GetEnemySpeed(eneNum);
+			m_enePushSpeed = m_enemyMoveSpeed->GetEneMoveSpeed(eneNum);
 			//これだとプッシュパワーが強すぎるため、威力を弱める
 			m_enePushSpeed /= 5;
 

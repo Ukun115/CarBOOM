@@ -5,6 +5,7 @@
 #include "stdafx.h"
 #include "EnemyMoveSpeedArrow.h"
 #include "Enemy.h"
+#include "EnemyMoveSpeed.h"
 
 namespace nsCARBOOM
 {
@@ -16,6 +17,7 @@ namespace nsCARBOOM
 	bool EnemyMoveSpeedArrow::Start()
 	{
 		m_enemy = FindGO<Enemy>(nsStdafx::ENEMY_NAME);
+		m_enemyMoveSpeed = FindGO<EnemyMoveSpeed>(nsStdafx::ENEMYMOVESPEED_NAME);
 
 		for (int eneNum = Enemy1; eneNum < TotalEneNum; eneNum++)
 		{
@@ -39,7 +41,7 @@ namespace nsCARBOOM
 	{
 		for (int eneNum = Enemy1; eneNum < TotalEneNum; eneNum++)
 		{
-			Vector3 Dir = m_enemy->GetEnemySpeed(eneNum);
+			Vector3 Dir = m_enemyMoveSpeed->GetEneMoveSpeed(eneNum);
 			Dir.y = nsStdafx::INT_ZERO;
 			Dir.Normalize();//‘å‚«‚³‚ðˆÊ’u‚É‚·‚é
 			float x = Dir.Dot(Vector3::AxisX);//XŽ²‚©‚ç‰½“x‚¸‚ê‚Ä‚¢‚é‚©‚ð“ü‚ê‚é
@@ -53,7 +55,7 @@ namespace nsCARBOOM
 			m_arrowPos[eneNum] = m_enemy->GetEnemyPos(eneNum);
 			m_arrowPos[eneNum].y += 30.0f;
 			m_skinModelRenderArrow[eneNum]->SetPosition(m_arrowPos[eneNum]);
-			m_arrowSize[eneNum].x = m_arrowSize[eneNum].z = m_enemy->GetEnemySpeed(eneNum).Length() / 5;
+			m_arrowSize[eneNum].x = m_arrowSize[eneNum].z = m_enemyMoveSpeed->GetEneMoveSpeed(eneNum).Length() / 5;
 			m_skinModelRenderArrow[eneNum]->SetScale(m_arrowSize[eneNum]);
 		}
 	}

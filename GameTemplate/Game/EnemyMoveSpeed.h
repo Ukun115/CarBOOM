@@ -31,8 +31,6 @@ namespace nsCARBOOM
 		Vector3 m_samDir[TotalEneNum];			//“G‚ÆƒvƒŒƒCƒ„[‚ÌŒü‚«
 		Vector3 m_friction[TotalEneNum];			//“G‚U‘Ì•ª‚Ì–€C
 
-		int m_stageSelectNum = nsStdafx::INT_ZERO;
-
 	public:
 		//“G‚É‚©‚©‚éd—Í‚ğİ’è‚·‚éŠÖ”
 		void Gravity(const int eneNum)

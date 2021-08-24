@@ -6,7 +6,7 @@
 
 namespace nsCARBOOM
 {
-	class Enemy;
+	class EnemyMoveSpeed;
 
 	class EnemyTurn : public IGameObject		//TODO:コピー禁止ポリシーを継承する。
 	{
@@ -31,7 +31,7 @@ namespace nsCARBOOM
 			TotalResRot
 		};
 
-		Enemy* m_enemy = nullptr;
+		EnemyMoveSpeed* m_enemyMoveSpeed = nullptr;
 
 		bool Start()override final;
 		void Update()override final;

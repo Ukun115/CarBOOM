@@ -102,7 +102,6 @@ namespace nsCARBOOM
 		Vector3    m_enePos[TotalEnemyNum];			//敵６体分の敵の位置
 		Vector3 m_moveSpeed[TotalEnemyNum];			//敵６体分の移動速度
 		Vector3 m_samDir[TotalEnemyNum];			//敵とプレイヤーの向き
-		Vector3 m_friction[TotalEnemyNum];			//敵６体分の摩擦
 		Vector3    m_plaPos[TotalPlayerNum];			//プレイヤー4体分のプレイヤーの位置
 		Vector3    m_mostShortDistance[TotalPlayerNum];	//プレイヤー4体分と敵の距離
 		//↓特に途中で変更しない値なので、const使いたい。
@@ -156,8 +155,6 @@ namespace nsCARBOOM
 		/// </summary>
 		//敵の位置を取得する関数
 		Vector3 GetEnemyPos(const int eneNum)const { return m_enePos[eneNum]; }
-		//敵の速度を取得する関数
-		Vector3 GetEnemySpeed(const int eneNum)const { return m_moveSpeed[eneNum]; }
 		//一番近いプレイヤーを取得する関数
 		Vector3 GetMostShortDistanceDir(const int eneNum)const { return m_mostShortDistanceDir[0]; }
 		//
@@ -168,6 +165,8 @@ namespace nsCARBOOM
 		Vector3 GetEneToSetten1Dir(const int eneNum)const { return  m_EneToSetten1Dir[eneNum]; }
 		//
 		Vector3 GetEneToSetten2Dir(const int eneNum)const { return m_EneToSetten2Dir[eneNum]; }
+
+		int GetStageNum()const { return m_stageSelectNum; }
 		/// <summary>
 		/// セッター
 		/// </summary>

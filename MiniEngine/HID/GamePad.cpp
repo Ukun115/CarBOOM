@@ -183,72 +183,72 @@ void GamePad::Update()
 			}
 		}
 	}
-	else {
-		//接続されていない場合はキーボードの入力でエミュレートする。
-		if (m_state.bConnected) {
-			//未接続になった。
-			memset(&m_state, 0, sizeof(m_state));
-			memset(m_trigger, 0, sizeof(m_trigger));
-			memset(m_press, 0, sizeof(m_press));
-		}
-		m_lStickX = 0.0f;
-		m_lStickY = 0.0f;
-		m_rStickX = 0.0f;
-		m_rStickY = 0.0f;
+	//else {
+	//	//接続されていない場合はキーボードの入力でエミュレートする。
+	//	if (m_state.bConnected) {
+	//		//未接続になった。
+	//		memset(&m_state, 0, sizeof(m_state));
+	//		memset(m_trigger, 0, sizeof(m_trigger));
+	//		memset(m_press, 0, sizeof(m_press));
+	//	}
+	//	m_lStickX = 0.0f;
+	//	m_lStickY = 0.0f;
+	//	m_rStickX = 0.0f;
+	//	m_rStickY = 0.0f;
 
-		if (GetAsyncKeyState(VK_LEFT)) {
-			m_rStickX = -1.0f;
-		}else if (GetAsyncKeyState(VK_RIGHT)) {
-			m_rStickX = 1.0f;
-		}
-		if (GetAsyncKeyState(VK_UP)) {
-			m_rStickY = 1.0f;
-		}else if (GetAsyncKeyState(VK_DOWN)) {
-			m_rStickY = -1.0f;
-		}
-		//スティックの入力量を正規化。
-		float t = fabsf(m_rStickX) + fabsf(m_rStickY);
-		if (t > 0.0f) {
-			m_rStickX /= t;
-			m_rStickY /= t;
-		}
+	//	if (GetAsyncKeyState(VK_LEFT)) {
+	//		m_rStickX = -1.0f;
+	//	}else if (GetAsyncKeyState(VK_RIGHT)) {
+	//		m_rStickX = 1.0f;
+	//	}
+	//	if (GetAsyncKeyState(VK_UP)) {
+	//		m_rStickY = 1.0f;
+	//	}else if (GetAsyncKeyState(VK_DOWN)) {
+	//		m_rStickY = -1.0f;
+	//	}
+	//	//スティックの入力量を正規化。
+	//	float t = fabsf(m_rStickX) + fabsf(m_rStickY);
+	//	if (t > 0.0f) {
+	//		m_rStickX /= t;
+	//		m_rStickY /= t;
+	//	}
 
-		if (GetAsyncKeyState('A')) {
-			m_lStickX = -1.0f;
-		}
-		else if (GetAsyncKeyState('D')) {
-			m_lStickX = 1.0f;
-		}
-		if (GetAsyncKeyState('W')) {
-			m_lStickY = 1.0f;
-		}
-		else if (GetAsyncKeyState('S')) {
-			m_lStickY = -1.0f;
-		}
-		//スティックの入力量を正規化。
-		t = fabsf(m_lStickX) + fabsf(m_lStickY);
-		if (t > 0.0f) {
-			m_lStickX /= t;
-			m_lStickY /= t;
-		}
+	//	if (GetAsyncKeyState('A')) {
+	//		m_lStickX = -1.0f;
+	//	}
+	//	else if (GetAsyncKeyState('D')) {
+	//		m_lStickX = 1.0f;
+	//	}
+	//	if (GetAsyncKeyState('W')) {
+	//		m_lStickY = 1.0f;
+	//	}
+	//	else if (GetAsyncKeyState('S')) {
+	//		m_lStickY = -1.0f;
+	//	}
+	//	//スティックの入力量を正規化。
+	//	t = fabsf(m_lStickX) + fabsf(m_lStickY);
+	//	if (t > 0.0f) {
+	//		m_lStickX /= t;
+	//		m_lStickY /= t;
+	//	}
 
-		for (const VirtualPadToKeyboard& vPadToKeyboard : vPadToKeyboardTable) {
-			if (GetAsyncKeyState(vPadToKeyboard.keyCoord1)) {
-				//優先順位１番目のキー。
-				m_trigger[vPadToKeyboard.vButton] = 1 ^ m_press[vPadToKeyboard.vButton];
-				m_press[vPadToKeyboard.vButton] = 1;
-			}
-			else if (vPadToKeyboard.keyCoord2 != 0xFFFFFFFF
-				&& GetAsyncKeyState(vPadToKeyboard.keyCoord2)) {
-				//優先順位２番目のキー。
-				m_trigger[vPadToKeyboard.vButton] = 1 ^ m_press[vPadToKeyboard.vButton];
-				m_press[vPadToKeyboard.vButton] = 1;
-			}
-			else {
-				m_trigger[vPadToKeyboard.vButton] = 0;
-				m_press[vPadToKeyboard.vButton] = 0;
-			}
-		}
-	}
+	//	for (const VirtualPadToKeyboard& vPadToKeyboard : vPadToKeyboardTable) {
+	//		if (GetAsyncKeyState(vPadToKeyboard.keyCoord1)) {
+	//			//優先順位１番目のキー。
+	//			m_trigger[vPadToKeyboard.vButton] = 1 ^ m_press[vPadToKeyboard.vButton];
+	//			m_press[vPadToKeyboard.vButton] = 1;
+	//		}
+	//		else if (vPadToKeyboard.keyCoord2 != 0xFFFFFFFF
+	//			&& GetAsyncKeyState(vPadToKeyboard.keyCoord2)) {
+	//			//優先順位２番目のキー。
+	//			m_trigger[vPadToKeyboard.vButton] = 1 ^ m_press[vPadToKeyboard.vButton];
+	//			m_press[vPadToKeyboard.vButton] = 1;
+	//		}
+	//		else {
+	//			m_trigger[vPadToKeyboard.vButton] = 0;
+	//			m_press[vPadToKeyboard.vButton] = 0;
+	//		}
+	//	}
+	//}
 }
 

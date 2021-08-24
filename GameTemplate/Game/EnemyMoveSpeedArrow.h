@@ -7,6 +7,7 @@
 namespace nsCARBOOM
 {
 	class Enemy;
+	class EnemyMoveSpeed;
 
 	class EnemyMoveSpeedArrow : public IGameObject		//TODO:コピー禁止ポリシーを継承する。
 	{
@@ -18,6 +19,7 @@ namespace nsCARBOOM
 		};
 
 		Enemy* m_enemy = nullptr;
+		EnemyMoveSpeed* m_enemyMoveSpeed = nullptr;
 		SkinModelRender* m_skinModelRenderArrow[TotalEneNum] = { nullptr };
 
 		Vector3 m_arrowPos[TotalEneNum];

@@ -88,7 +88,7 @@ namespace nsCARBOOM
 			m_enemy[eneNum]->SetRotation(m_enemyTurn->GetEneRot(eneNum));		//回転情報更新
 		}
 
-		m_enemyMoveSpeed = NewGO<EnemyMoveSpeed>(nsStdafx::PRIORITY_0, nullptr);
+		m_enemyMoveSpeed = NewGO<EnemyMoveSpeed>(nsStdafx::PRIORITY_0, nsStdafx::ENEMYMOVESPEED_NAME);
 
 		//デバック用の敵移動ベクトルの矢印の初期化
 		m_enemyMoveSpeedArrow = NewGO<EnemyMoveSpeedArrow>(nsStdafx::PRIORITY_0, nullptr);
