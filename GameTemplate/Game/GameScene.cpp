@@ -206,7 +206,7 @@ namespace nsCARBOOM
 
 		if (m_fade[FadeOut] != nullptr && m_fade[FadeOut]->GetNowState() == StateWait)
 		{
-			//ステージ選択画面に戻るs
+			//ステージ選択画面に戻る
 			m_stageSelectScene = NewGO<StageSelectScene>(0, nullptr);
 			m_stageSelectScene->SetTotalPlaNum(m_totalPlaNum);
 
@@ -526,14 +526,14 @@ namespace nsCARBOOM
 			m_soundPlayBack->GameSceneSoundPlayBack(WhistleSound);
 		}
 		//タイマーが180を超えてからリザルト画面に遷移
-		if (m_resultsenniTimer < 180)
+		if (m_resultsenniTimer == 180)
 		{
-			return;
+			m_soundPlayBack->GameSceneDeleteGO();
+			//リザルト画面オブジェクト生成
+			m_resultScene = NewGO<ResultScene>(nsStdafx::PRIORITY_0, nullptr);
+			m_resultScene->SetTotalPlayerNum(m_totalPlaNum);
+			m_pause->GrayBackActive();
 		}
-		//リザルト画面オブジェクト生成
-		m_resultScene = NewGO<ResultScene>(nsStdafx::PRIORITY_0, nullptr);
-		m_resultScene->SetTotalPlayerNum(m_totalPlaNum);
-		m_pause->GrayBackActive();
 	}
 
 	//プレイヤーのポイントフォントの初期化をまとめている関数

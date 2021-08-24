@@ -10,6 +10,7 @@
 #include "Player.h"
 #include "Enemy.h"
 #include <random>
+#include "EnemyMoveSpeed.h"
 
 namespace nsCARBOOM
 {
@@ -29,7 +30,7 @@ namespace nsCARBOOM
 		//インスタンスを探す
 		m_gameScene = FindGO<GameScene>(nsStdafx::GAMESCENE_NAME);
 		m_player = FindGO<Player>(nsStdafx::PLAYER_NAME);
-		m_enemy = FindGO<Enemy>(nsStdafx::ENEMY_NAME);
+		m_enemyMoveSpeed = FindGO<EnemyMoveSpeed>(nsStdafx::ENEMYMOVESPEED_NAME);
 		//ステージモデルオブジェクト生成
 		m_stage = NewGO<SkinModelRender>(nsStdafx::PRIORITY_0, nullptr);
 
@@ -175,16 +176,16 @@ namespace nsCARBOOM
 			//現在の風の向きに応じた処理
 			switch (m_windDirection) {
 			case UpWind://下から上への風
-				m_enemy->AddWindPowerZ(eneNum, nsStage::ENEMY_WIND_POWER);
+				m_enemyMoveSpeed->AddWindPowerZ(eneNum, nsStage::ENEMY_WIND_POWER);
 				break;
 			case DownWind:
-				m_enemy->AddWindPowerZ(eneNum, -nsStage::ENEMY_WIND_POWER);
+				m_enemyMoveSpeed->AddWindPowerZ(eneNum, -nsStage::ENEMY_WIND_POWER);
 				break;
 			case LeftWind:
-				m_enemy->AddWindPowerX(eneNum, -nsStage::ENEMY_WIND_POWER);
+				m_enemyMoveSpeed->AddWindPowerX(eneNum, -nsStage::ENEMY_WIND_POWER);
 				break;
 			case RightWind:
-				m_enemy->AddWindPowerX(eneNum, nsStage::ENEMY_WIND_POWER);
+				m_enemyMoveSpeed->AddWindPowerX(eneNum, nsStage::ENEMY_WIND_POWER);
 				break;
 			}
 		}

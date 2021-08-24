@@ -45,6 +45,9 @@ namespace nsCARBOOM
 		void EneCharge1Move(const int eneNum);
 		void EneCharge2Move(const int eneNum);
 
-		Vector3 GetEneMoveSpeed(const int eneNum) { return m_moveSpeed[eneNum]; }
+		Vector3& GetEneMoveSpeed(const int eneNum) { return m_moveSpeed[eneNum]; }
+
+		void AddWindPowerX(const int eneNum, const float windSpeed) { m_moveSpeed[eneNum].x += windSpeed; }
+		void AddWindPowerZ(const int eneNum, const float windSpeed) { m_moveSpeed[eneNum].z += windSpeed; }
 	};
 }

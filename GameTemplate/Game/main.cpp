@@ -83,12 +83,10 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 		//デルタタイムをストップウォッチの計測時間から、計算する
 		GameTime().PushFrameDeltaTime((float)stopWatch.GetElapsed());
 	}
-	//ゲームオブジェクトマネージャーを削除。
-	GameObjectManager::DeleteInstance();
 
+	/*GameObjectManager::DeleteInstance();
 	PhysicsWorld::DeleteInstance();
-
-	EffectEngine::DeleteInstance();
+	EffectEngine::DeleteInstance();*/
 
 	return 0;
 }

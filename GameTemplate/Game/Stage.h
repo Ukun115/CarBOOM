@@ -10,7 +10,7 @@ namespace nsCARBOOM
 	class TitleScene;
 	class StageSelectScene;
 	class Player;
-	class Enemy;
+	class EnemyMoveSpeed;
 
 	class Stage : public IGameObject		//TODO:コピー禁止ポリシーを継承する。
 	{
@@ -61,7 +61,7 @@ namespace nsCARBOOM
 		StageSelectScene* m_stageSelectScene = nullptr;
 		GameScene* m_gameScene = nullptr;
 		Player* m_player = nullptr;
-		Enemy* m_enemy = nullptr;
+		EnemyMoveSpeed* m_enemyMoveSpeed = nullptr;
 		SkinModelRender* m_stage = nullptr;
 
 		PhysicsStaticObject m_physicsStaticObject;		//静的物理オブジェクトクラスを作成

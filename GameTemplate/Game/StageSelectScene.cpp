@@ -134,7 +134,7 @@ namespace nsCARBOOM
 		//”wŒi‰æ‘œ‚ğíœ
 		DeleteGO(m_titleSprite);
 		//A‚«o‚µ‰æ‘œ‚ğíœ
-		for (int plaNum = 0; plaNum < 6; plaNum++)
+		for (int plaNum = FlatStage; plaNum < TotalStageNum; plaNum++)
 		{
 			DeleteGO(m_Ahukidasi[plaNum]);
 		}

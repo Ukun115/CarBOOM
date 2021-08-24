@@ -25,16 +25,16 @@ namespace nsCARBOOM
 	{
 		const int RES_POS_NUM = 10;	//リスポーン位置の総数
 		//敵の各リスポーン位置
-		const Vector3 ENE_RES_POS_1 = { -150.0f,150.0f,150.0f };
+		const Vector3 ENE_RES_POS_10 = { -150.0f,150.0f,150.0f };
 		const Vector3 ENE_RES_POS_2 = { 0.0f,150.0f,100.0f };
-		const Vector3 ENE_RES_POS_3 = { 100.0f,150.0f,100.0f };
-		const Vector3 ENE_RES_POS_4 = { -100.0f,150.0f,00.0f };
-		const Vector3 ENE_RES_POS_5 = { 150.0f,150.0f,150.0f };
+		const Vector3 ENE_RES_POS_9 = { 100.0f,150.0f,100.0f };
+		const Vector3 ENE_RES_POS_7 = { -100.0f,150.0f,00.0f };
+		const Vector3 ENE_RES_POS_1 = { 150.0f,150.0f,150.0f };
 		const Vector3 ENE_RES_POS_6 = { 100.0f,150.0f,0.0f };
-		const Vector3 ENE_RES_POS_7 = { -100.0f,150.0f,-100.0f };
-		const Vector3 ENE_RES_POS_8 = { 0.0f,150.0f,-100.0f };
-		const Vector3 ENE_RES_POS_9 = { 100.0f,150.0f,-100.0f };
-		const Vector3 ENE_RES_POS_10 = { 0.0f,150.0f,0.0f };
+		const Vector3 ENE_RES_POS_5 = { -100.0f,150.0f,-100.0f };
+		const Vector3 ENE_RES_POS_4 = { 0.0f,150.0f,-100.0f };
+		const Vector3 ENE_RES_POS_3 = { 100.0f,150.0f,-100.0f };
+		const Vector3 ENE_RES_POS_8 = { 0.0f,150.0f,0.0f };
 		const int TIME0 = 0;
 		const float DELTATIME = 1.0f;
 		const float MAX_FALL_POSITION = -1000.0f;
@@ -85,6 +85,7 @@ namespace nsCARBOOM
 			//120～140の範囲のランダム値でDA後のCTタイマーの値に代入
 			m_eneCTCount[eneNum] = (120 + (int)(rand() * (140 - 120 + 1.0) / (1.0 + RAND_MAX)));
 
+			m_enemy[eneNum]->SetPosition(m_enePos[eneNum]);
 			m_enemy[eneNum]->SetRotation(m_enemyTurn->GetEneRot(eneNum));		//回転情報更新
 		}
 
@@ -155,7 +156,6 @@ namespace nsCARBOOM
 
 					//プレイヤーの座標をリスポーン座標に移動
 					EneResporn(eneNum);
-
 					m_enePos[eneNum] += m_enemyMoveSpeed->GetEneMoveSpeed(eneNum);
 				}
 			}
@@ -163,12 +163,9 @@ namespace nsCARBOOM
 			//重力の影響を与える
 			m_enemyMoveSpeed->Gravity(eneNum);
 
-			bool isHitGround;
-			Vector3 hitGroundNormal;
-			m_moveSpeed[eneNum] = m_enemyMoveSpeed->GetEneMoveSpeed(eneNum);
 			//キャラクターコントローラーを使った移動処理に変更。
 			m_enePos[eneNum] = m_charaCon[eneNum].Execute(
-				m_moveSpeed[eneNum],
+				m_enemyMoveSpeed->GetEneMoveSpeed(eneNum),
 				nsEnemy::DELTATIME,
 				isHitGround,
 				hitGroundNormal
@@ -180,9 +177,13 @@ namespace nsCARBOOM
 	}
 
 	//敵の位置,回転情報を更新する関数
-	void Enemy::EneDataUpdate(const int eneNum)const
+	void Enemy::EneDataUpdate(const int eneNum)
 	{
 		m_enemy[eneNum]->SetRotation(m_enemyTurn->GetEneRot(eneNum));		//回転情報更新
+		if (m_enePos[eneNum].y > 0.0f)
+		{
+			m_enePos[eneNum].y = 0.0f;
+		}
 		m_enemy[eneNum]->SetPosition(m_enePos[eneNum]);	//位置情報更新
 	}
 
@@ -334,22 +335,27 @@ namespace nsCARBOOM
 		m_enemyTurn->EneRespornAngleDecide(eneNum);
 
 		//位置をセット
+		if (m_enePos[eneNum].y > 0.0f)
+		{
+			m_enePos[eneNum].y = 0.0f;
+		}
 		m_enemy[eneNum]->SetPosition(m_enePos[eneNum]);
 		//回転情報をセットする
 		m_enemy[eneNum]->SetRotation(m_enemyTurn->GetEneRot(eneNum));
 
 		//キャラコンの座標にプレイヤーの座標をいれる
+		if (m_enePos[eneNum].y > 0.0f)
+		{
+			m_enePos[eneNum].y = 0.0f;
+		}
 		m_charaCon[eneNum].SetPosition(m_enePos[eneNum]);
 
 		//スピードを0にする
 		m_enemyMoveSpeed->EneMoveSpeedZero(eneNum);
 
-		bool isHitGround;
-		Vector3 hitGroundNormal;
-		m_moveSpeed[eneNum] = m_enemyMoveSpeed->GetEneMoveSpeed(eneNum);
 		//キャラクターコントローラーを使った移動処理に変更。
 		m_enePos[eneNum] = m_charaCon[eneNum].Execute(
-			m_moveSpeed[eneNum],
+			m_enemyMoveSpeed->GetEneMoveSpeed(eneNum),
 			nsEnemy::DELTATIME,
 			isHitGround,
 			hitGroundNormal

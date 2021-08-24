@@ -100,7 +100,6 @@ namespace nsCARBOOM
 
 		//敵情報
 		Vector3    m_enePos[TotalEnemyNum];			//敵６体分の敵の位置
-		Vector3 m_moveSpeed[TotalEnemyNum];			//敵６体分の移動速度
 		Vector3 m_samDir[TotalEnemyNum];			//敵とプレイヤーの向き
 		Vector3    m_plaPos[TotalPlayerNum];			//プレイヤー4体分のプレイヤーの位置
 		Vector3    m_mostShortDistance[TotalPlayerNum];	//プレイヤー4体分と敵の距離
@@ -128,12 +127,15 @@ namespace nsCARBOOM
 		int m_totalPlaNum = nsStdafx::INT_ZERO;
 		int m_stageSelectNum = nsStdafx::INT_ZERO;
 
+		bool isHitGround;
+		Vector3 hitGroundNormal;
+
 		bool Start()override final;
 		~Enemy()override final;
 		void Update()override final;
 
 		//敵の位置,回転を更新する関数
-		void EneDataUpdate(const int eneNum) const;
+		void EneDataUpdate(const int eneNum);
 		//敵のDA処理関数
 		void EneDA(const int eneNum);
 		//敵から最寄りのプレイヤーを検索する関数
@@ -173,8 +175,5 @@ namespace nsCARBOOM
 		void SetTotalPlaNum(const int totalPlaNum) { m_totalPlaNum = totalPlaNum; }
 		void SetStageSelectNum(const int stageSelectNum) { m_stageSelectNum = stageSelectNum; }
 		void SetPauseFlg(const bool pauseFlg) { m_isPauseFlg = pauseFlg; }
-
-		void AddWindPowerX(const int eneNum, const float windSpeed) { m_moveSpeed[eneNum].x += windSpeed; }
-		void AddWindPowerZ(const int eneNum, const float windSpeed) { m_moveSpeed[eneNum].z += windSpeed; }
 	};
 }

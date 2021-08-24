@@ -46,7 +46,7 @@ namespace nsCARBOOM
 	Ranking::~Ranking()
 	{
 		//プレイヤー名画像の削除。
-		for (int plaNum = Player1; plaNum < m_totalPlaNum; plaNum++)
+		for (int plaNum = Player1; plaNum < TotalPlaNum; plaNum++)
 		{
 			DeleteGO(m_plaNum[plaNum]);
 
@@ -145,7 +145,7 @@ namespace nsCARBOOM
 		//順位文字を初期化し、表示
 		//順位画像オブジェクト生成
 		m_rankingSprite[plaNum] = NewGO<SpriteRender>(nsStdafx::PRIORITY_6, nullptr);
-		sprintf(m_filePath, "%dst", plaNum + nsRanking::PLUS_ONE);
+		sprintf(m_filePath, "%dst", (plaNum + nsRanking::PLUS_ONE));
 		m_rankingSprite[plaNum]->Init(m_filePath, nsRanking::RANKING_FONT_SCALE, nsRanking::RANKING_FONT_SCALE);
 		m_rankingSprite[plaNum]->SetPosition(WhatRankingNumPos(plaNum));
 	}
@@ -155,7 +155,7 @@ namespace nsCARBOOM
 	{
 		//プレイヤー文字画像オブジェクト生成
 		m_plaNum[plaNum] = NewGO<SpriteRender>(nsStdafx::PRIORITY_6, nullptr);
-		sprintf(m_filePath, "Player%d_ActiveName", plaNum + nsRanking::PLUS_ONE);
+		sprintf(m_filePath, "Player%d_ActiveName", (plaNum + nsRanking::PLUS_ONE));
 		m_plaNum[plaNum]->Init(m_filePath, nsRanking::PLAYERNAME_SPRITE_WIDTH, nsRanking::PLAYERNAME_SPRITE_HEIGHT);
 	}
 
