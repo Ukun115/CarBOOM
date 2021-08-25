@@ -23,11 +23,13 @@ namespace nsCARBOOM
 
 		Vector3 m_enePoiLigPos;
 		int	m_poiLigNum = nsStdafx::INT_ZERO;
+		bool m_isPauseFlg = false;
 
 		bool Start()override final;
 		~EnemyPatoLump()override final;
 		void Update()override final;
 	public:
 		void PoiLigNumInit();
+		void SetPauseFlg(const bool pauseFlg) { m_isPauseFlg = pauseFlg; }
 	};
 }

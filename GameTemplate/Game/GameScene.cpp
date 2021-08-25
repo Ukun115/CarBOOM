@@ -62,7 +62,7 @@ namespace nsCARBOOM
 		m_fade[FadeIn]->SetAlphaValue(1.0f);
 
 		//ポーズ機能
-		m_pause = NewGO<Pause>(nsStdafx::PRIORITY_0, nullptr);
+		m_pause = NewGO<Pause>(nsStdafx::PRIORITY_0, nsStdafx::PAUSE_NAME);
 
 		//画面隅のプレイヤー名フォント
 		m_playerName = NewGO<PlayerName>(nsStdafx::PRIORITY_0, nullptr);
@@ -144,17 +144,45 @@ namespace nsCARBOOM
 		DeleteGO(m_gameBackScreen);
 
 		DeleteGO(m_resultScene);
-
+		if(m_pause != nullptr)
 		DeleteGO(m_pause);
 	}
 
 	void GameScene::Update()
 	{
+		if (m_fade[FadeOut] == nullptr && m_isPauseFlg)
+		{
+			//ステージ選択画面に戻る
+			for (int plaNum = Player1; plaNum < m_totalPlaNum; plaNum++)
+			{
+				//スタートボタンが押されたら、
+				if (g_pad[plaNum]->IsTrigger(enButtonStart))
+				{
+					//決定サウンド
+					m_soundPlayBack->GameSceneSoundPlayBack(DecideSound);
+					//フェードアウト
+					m_fade[FadeOut] = NewGO<Fade>(nsStdafx::PRIORITY_0, nullptr);
+					m_fade[FadeOut]->SetState(StateOut);
+					m_fade[FadeOut]->SetAlphaValue(nsStdafx::FLOAT_ZERO);
+
+				}
+			}
+		}
+		if (m_fade[FadeOut] != nullptr && m_fade[FadeOut]->GetNowState() == StateWait)
+		{
+			//ステージ選択画面に戻る
+			m_stageSelectScene = NewGO<StageSelectScene>(0, nullptr);
+			m_stageSelectScene->SetTotalPlaNum(m_totalPlaNum);
+			m_soundPlayBack->GameSceneDeleteGO();
+			DeleteGO(this);
+		}
+
 		//ポーズ中のときは、return以降の処理をしない。
 		if (m_isPauseFlg)
 		{
 			return;
 		}
+
 		//制限時間のカウント&描画処理
 		TimeLimit();
 		m_stage->SetNowTime(m_countTime);
@@ -185,33 +213,6 @@ namespace nsCARBOOM
 			DeleteGO(this);
 		}
 
-		if (m_fade[FadeOut] == nullptr && m_isPauseFlg)
-		{
-			//ステージ選択画面に戻る
-			for (int plaNum = Player1; plaNum < m_totalPlaNum; plaNum++)
-			{
-				//スタートボタンが押されたら、
-				if (g_pad[plaNum]->IsTrigger(enButtonStart))
-				{
-					//決定サウンド
-					m_soundPlayBack->GameSceneSoundPlayBack(DecideSound);
-					//フェードアウト
-					m_fade[FadeOut] = NewGO<Fade>(nsStdafx::PRIORITY_0, nullptr);
-					m_fade[FadeOut]->SetState(StateOut);
-					m_fade[FadeOut]->SetAlphaValue(nsStdafx::FLOAT_ZERO);
-
-				}
-			}
-		}
-
-		if (m_fade[FadeOut] != nullptr && m_fade[FadeOut]->GetNowState() == StateWait)
-		{
-			//ステージ選択画面に戻る
-			m_stageSelectScene = NewGO<StageSelectScene>(0, nullptr);
-			m_stageSelectScene->SetTotalPlaNum(m_totalPlaNum);
-
-			DeleteGO(this);
-		}
 	}
 
 	//カウントダウン処理関数
@@ -529,10 +530,11 @@ namespace nsCARBOOM
 		if (m_resultsenniTimer == 180)
 		{
 			m_soundPlayBack->GameSceneDeleteGO();
+			//ポーズ機能を停止
+			DeleteGO(m_pause);
 			//リザルト画面オブジェクト生成
-			m_resultScene = NewGO<ResultScene>(nsStdafx::PRIORITY_0, nullptr);
+			m_resultScene = NewGO<ResultScene>(nsStdafx::PRIORITY_1, nullptr);
 			m_resultScene->SetTotalPlayerNum(m_totalPlaNum);
-			m_pause->GrayBackActive();
 		}
 	}
 

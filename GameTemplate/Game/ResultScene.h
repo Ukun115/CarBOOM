@@ -56,6 +56,7 @@ namespace nsCARBOOM
 		TitleScene* m_titleScene = nullptr;
 		StageSelectScene* m_stageSelectScene = nullptr;
 		GameScene* m_gameScene = nullptr;
+		SpriteRender* m_grayBack = nullptr;
 		SpriteRender* m_resultSprite = nullptr;
 		SoundPlayBack* m_soundPlayBack = nullptr;
 		Ranking* m_ranking = nullptr;
@@ -83,12 +84,11 @@ namespace nsCARBOOM
 		Vector3 m_number3Pos = { 900.0f,-150.0f,0.0f };	//３位プレイヤーの表示位置
 		Vector3 m_number4Pos = { 900.0f,-250.0f,0.0f };	//４位プレイヤーの表示位置
 
+		Vector3 m_resSprPos;
+
 		bool Start()override final;
 		~ResultScene()override final;
 		void Update()override final;
-
-		//次どのシーンに行くか切り替える関数
-		void SelectScene();
 
 	public:
 		void SetTotalPlayerNum(const int totalPlaNum) { m_totalPlaNum = totalPlaNum; }

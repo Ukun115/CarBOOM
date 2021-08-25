@@ -188,6 +188,7 @@ namespace nsCARBOOM
 		if (m_fade[FadeOutBadk]->GetNowState() == StateWait)
 		{
 			m_titleScene = NewGO<TitleScene>(nsStdafx::PRIORITY_0, nullptr);
+			m_soundPlayBack->StageSelectSceneDeleteGO();
 			DeleteGO(this);
 		}
 	}

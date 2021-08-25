@@ -11,6 +11,7 @@ namespace nsCARBOOM
 	class Enemy;
 	class Stage;
 	class SoundPlayBack;
+	class EnemyPatoLump;
 
 	class Pause : public IGameObject		//TODO:コピー禁止ポリシーを継承する。
 	{
@@ -37,6 +38,7 @@ namespace nsCARBOOM
 		SpriteRender* m_pauseSprite = nullptr;
 		SpriteRender* m_grayBack = nullptr;
 		SoundPlayBack* m_soundPlayBack = nullptr;
+		EnemyPatoLump* m_enemyPatoLump = nullptr;
 
 		GameScene* m_gameScene = nullptr;
 		Player* m_player = nullptr;

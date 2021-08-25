@@ -17,6 +17,8 @@ namespace nsCARBOOM
 		const float RESULT_SPRITE_WIDTH = 600.0f;
 		const float RESULT_SPRITE_HEIGHT = 300.0f;
 		const float RESULT_SPRITE_POS_Y = 160.0f;
+
+		const float GRAYBACK_SCA = 1500.0f;
 	}
 
 	bool ResultScene::Start()
@@ -30,14 +32,18 @@ namespace nsCARBOOM
 		//ゲーム中のBGMサウンド
 		m_soundPlayBack->ResultSceneSoundPlayBack(GameBGM);
 
-		m_ranking = NewGO<Ranking>(nsStdafx::PRIORITY_0, nullptr);
-		m_ranking->SetTotalPlaNum(m_totalPlaNum);
+		m_grayBack = NewGO<SpriteRender>(nsStdafx::PRIORITY_5, nullptr);
+		//灰色にする画像を初期化
+		m_grayBack->Init("GrayBack", nsResultScene::GRAYBACK_SCA, nsResultScene::GRAYBACK_SCA);
 
 		//リザルト文字画像オブジェクト生成
 		m_resultSprite = NewGO<SpriteRender>(nsStdafx::PRIORITY_6, nullptr);
 		m_resultSprite->Init("Result", nsResultScene:: RESULT_SPRITE_WIDTH, nsResultScene::RESULT_SPRITE_HEIGHT);
-		Vector3 m_resSprPos = { nsStdafx::FLOAT_ZERO,nsResultScene::RESULT_SPRITE_POS_Y,nsStdafx::FLOAT_ZERO };
+		m_resSprPos = { nsStdafx::FLOAT_ZERO,nsResultScene::RESULT_SPRITE_POS_Y,nsStdafx::FLOAT_ZERO };
 		m_resultSprite->SetPosition(m_resSprPos);
+
+		m_ranking = NewGO<Ranking>(nsStdafx::PRIORITY_0, nullptr);
+		m_ranking->SetTotalPlaNum(m_totalPlaNum);
 
 		return true;
 	}
@@ -49,17 +55,11 @@ namespace nsCARBOOM
 
 		DeleteGO(m_fadeOut);
 
+		DeleteGO(m_grayBack);
 		DeleteGO(m_ranking);
 	}
 
 	void ResultScene::Update()
-	{
-		//ゲーム終了処理
-		SelectScene();
-	}
-
-	//次どのシーンに行くか切り替える関数
-	void ResultScene::SelectScene()
 	{
 		if (m_fadeOut == nullptr)
 		{
@@ -137,7 +137,8 @@ namespace nsCARBOOM
 				//ステージ選択画面に戻る
 				m_stageSelectScene = NewGO<StageSelectScene>(nsStdafx::PRIORITY_0, nullptr);
 				m_stageSelectScene->SetTotalPlaNum(m_totalPlaNum);
-
+				//リザルト画面で使われるサウンドを破棄
+				m_soundPlayBack->ResultSceneDeleteGO();
 				//ゲームシーンクラスを削除するようにフラグをオン
 				m_gameScene->SetDeleteFlg(true);
 

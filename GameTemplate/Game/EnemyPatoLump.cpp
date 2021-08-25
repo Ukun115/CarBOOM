@@ -31,6 +31,12 @@ namespace nsCARBOOM
 	//パトランプをパトカーの上にセットする関数
 	void EnemyPatoLump::Update()
 	{
+		//ポーズ中のときアップデート処理を全て止める
+		if (m_isPauseFlg)
+		{
+			return;
+		}
+
 		for (int eneNum = Enemy1; eneNum < TotalEneNum; eneNum++)
 		{
 			//赤ポイントライトを設定

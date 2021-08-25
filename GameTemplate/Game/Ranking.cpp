@@ -10,10 +10,10 @@ namespace nsCARBOOM
 {
 	namespace nsRanking
 	{
-		const Vector3 RANKING1_POS = { -150.0f,50.0f,nsStdafx::FLOAT_ZERO };	//１位画像の位置
-		const Vector3 RANKING2_POS = { -150.0f,-50.0f,nsStdafx::FLOAT_ZERO };	//２位画像の位置
-		const Vector3 RANKING3_POS = { -150.0f,-150.0f,nsStdafx::FLOAT_ZERO };	//３位画像の位置
-		const Vector3 RANKING4_POS = { -150.0f,-250.0f,nsStdafx::FLOAT_ZERO };	//４位画像の位置
+		const Vector3 RANKING1_POS = { -150.0f,50.0f,0.0f };	//１位画像の位置
+		const Vector3 RANKING2_POS = { -150.0f,-50.0f,0.0f };	//２位画像の位置
+		const Vector3 RANKING3_POS = { -150.0f,-150.0f,0.0f };	//３位画像の位置
+		const Vector3 RANKING4_POS = { -150.0f,-250.0f,0.0f };	//４位画像の位置
 		const int JUMP_WIDTH = 10;
 		const float JUMP_SPEED = 1.0f;
 		const int DELAYTIMER = 100;
@@ -100,7 +100,7 @@ namespace nsCARBOOM
 		}
 
 		//プレイヤーの人数に応じて横からプレイヤー名が出てくる速度が変化
-		for (int plaNum = Player2; plaNum <= TotalPlaNum; plaNum)
+		for (int plaNum = Player1; plaNum <= m_totalPlaNum; plaNum)
 		{
 			MoveSpeedChange(plaNum);
 			PlaRankingPosSet(plaNum);
@@ -144,7 +144,7 @@ namespace nsCARBOOM
 	{
 		//順位文字を初期化し、表示
 		//順位画像オブジェクト生成
-		m_rankingSprite[plaNum] = NewGO<SpriteRender>(nsStdafx::PRIORITY_6, nullptr);
+		m_rankingSprite[plaNum] = NewGO<SpriteRender>(nsStdafx::PRIORITY_7, nullptr);
 		sprintf(m_filePath, "%dst", (plaNum + nsRanking::PLUS_ONE));
 		m_rankingSprite[plaNum]->Init(m_filePath, nsRanking::RANKING_FONT_SCALE, nsRanking::RANKING_FONT_SCALE);
 		m_rankingSprite[plaNum]->SetPosition(WhatRankingNumPos(plaNum));
@@ -154,8 +154,8 @@ namespace nsCARBOOM
 	void Ranking::InitPlayerImage(const int plaNum)
 	{
 		//プレイヤー文字画像オブジェクト生成
-		m_plaNum[plaNum] = NewGO<SpriteRender>(nsStdafx::PRIORITY_6, nullptr);
-		sprintf(m_filePath, "Player%d_ActiveName", (plaNum + nsRanking::PLUS_ONE));
+		m_plaNum[plaNum] = NewGO<SpriteRender>(nsStdafx::PRIORITY_7, nullptr);
+		sprintf(m_filePath, "Player%d_ActiveName",plaNum);
 		m_plaNum[plaNum]->Init(m_filePath, nsRanking::PLAYERNAME_SPRITE_WIDTH, nsRanking::PLAYERNAME_SPRITE_HEIGHT);
 	}
 
@@ -163,7 +163,7 @@ namespace nsCARBOOM
 	{
 		for (int plaNum = Player4; plaNum >= Player1; plaNum--)
 		{
-			if (!m_plaMoveFlg[plaNum])
+			if (!m_plaMoveFlg[Player4])
 			{
 				return;
 			}
@@ -206,7 +206,7 @@ namespace nsCARBOOM
 
 	void Ranking::MoveSpeedChange(const int plaNum)
 	{
-		if (m_totalPlaNum >= plaNum)
+		if (m_totalPlaNum > plaNum)
 		{
 			m_moveSpeed = WhatMoveSpeed(plaNum);
 		}
@@ -214,9 +214,9 @@ namespace nsCARBOOM
 
 	void Ranking::PlaRankingPosSet(const int plaNum)
 	{
-		if (m_totalPlaNum >= plaNum)
+		if (m_totalPlaNum > plaNum)
 		{
-			m_plaNum[plaNum - nsRanking::PLUS_ONE]->SetPosition(WhatNumberPos(plaNum));
+			m_plaNum[plaNum]->SetPosition(WhatNumberPos(plaNum));
 		}
 	}
 

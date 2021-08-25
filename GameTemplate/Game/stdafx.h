@@ -29,6 +29,7 @@ namespace nsStdafx
 	const int PRIORITY_4 = 4;
 	const int PRIORITY_5 = 5;
 	const int PRIORITY_6 = 6;
+	const int PRIORITY_7 = 7;
 	const int PRIORITY_10 = 10;
 	/// <summary>
 	/// 色
@@ -52,6 +53,8 @@ namespace nsStdafx
 	const char* const PLAYERTURN_NAME = { "playerturn" };
 	const char* const ENEMYTURN_NAME = { "enemyturn" };
 	const char* const ENEMYMOVESPEED_NAME = { "enemymovespeed" };
+	const char* const ENEMYPATOLUMP_NAME = { "enemypatolump" };
+	const char* const PAUSE_NAME = { "pause" };
 	/// <summary>
 	/// ステージ番号
 	/// </summary>
@@ -61,7 +64,6 @@ namespace nsStdafx
 	const int STAGE4 = 4;
 	const int STAGE5 = 5;
 	const int STAGE6 = 6;
-
 
 	const int INT_ZERO = 0;
 	const float FLOAT_ZERO = 0.0f;

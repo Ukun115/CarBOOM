@@ -9,6 +9,7 @@
 #include "Enemy.h"
 #include "Stage.h"
 #include "SoundPlayBack.h"
+#include "EnemyPatoLump.h"
 
 namespace nsCARBOOM
 {
@@ -27,6 +28,7 @@ namespace nsCARBOOM
 		m_enemy = FindGO<Enemy>(nsStdafx::ENEMY_NAME);
 		m_stage = FindGO<Stage>(nsStdafx::STAGE_NAME);
 		m_soundPlayBack = FindGO<SoundPlayBack>(nsStdafx::SOUNDPLAYBACK_NAME);
+		m_enemyPatoLump = FindGO<EnemyPatoLump>(nsStdafx::ENEMYPATOLUMP_NAME);
 
 		m_pauseSprite = NewGO<SpriteRender>(nsStdafx::PRIORITY_6, nullptr);
 		//ƒ|[ƒY‰æ‘œ‚ð‰Šú‰»
@@ -91,6 +93,8 @@ namespace nsCARBOOM
 			m_player->SetPauseFlg(m_isPauseFlg);
 			m_enemy->SetPauseFlg(m_isPauseFlg);
 			m_stage->SetPauseFlg(m_isPauseFlg);
+			if(m_enemyPatoLump != nullptr)
+			m_enemyPatoLump->SetPauseFlg(m_isPauseFlg);
 		}
 	}
 

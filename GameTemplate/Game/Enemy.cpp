@@ -56,7 +56,7 @@ namespace nsCARBOOM
 
 		m_enemyEffect = NewGO<EnemyEffect>(nsStdafx::PRIORITY_0, nullptr);
 
-		m_enemyPatoLump = NewGO<EnemyPatoLump>(nsStdafx::PRIORITY_0, nullptr);
+		m_enemyPatoLump = NewGO<EnemyPatoLump>(nsStdafx::PRIORITY_0, nsStdafx::ENEMYPATOLUMP_NAME);
 
 		//敵のリスポーン位置
 		for (int resPosNum = ResPos1; resPosNum < TotalResPos; resPosNum++)
@@ -99,6 +99,10 @@ namespace nsCARBOOM
 
 	Enemy::~Enemy()
 	{
+		DeleteGO(m_enemyMoveSpeed);
+		DeleteGO(m_enemyTurn);
+		DeleteGO(m_enemyPatoLump);
+
 		//全ての敵を削除。
 		for (int eneNum = Enemy1; eneNum < TotalEnemyNum; eneNum++)
 		{
@@ -115,18 +119,20 @@ namespace nsCARBOOM
 
 	void Enemy::Update()
 	{
-		//ポーズ中のときアップデート処理を全て止める
-		if (m_isPauseFlg)
-		{
-			return;
-		}
+
+		m_enemyPatoLump->PoiLigNumInit();
+
 		//制限時間が０秒になったらアップデート処理を全て止める
 		if (m_gameScene->GetNowTime() == nsEnemy::TIME0)
 		{
 			return;
 		}
+		//ポーズ中のときアップデート処理を全て止める
+		if (m_isPauseFlg)
+		{
+			return;
+		}
 
-		m_enemyPatoLump->PoiLigNumInit();
 
 		//全敵分ループ
 		for (int eneNum = Enemy1; eneNum < TotalEnemyNum; eneNum++)
