@@ -312,7 +312,6 @@
     <ClCompile Include="PlayerTurn.cpp" />
     <ClCompile Include="PressASpeechBalloon.cpp" />
     <ClCompile Include="PressStartButton.cpp" />
-    <ClCompile Include="Ranking.cpp" />
     <ClCompile Include="ResultScene.cpp" />
     <ClCompile Include="SkinModelRender.cpp" />
     <ClCompile Include="SoundPlayBack.cpp" />
@@ -420,7 +419,6 @@
     <ClInclude Include="PlayerTurn.h" />
     <ClInclude Include="PressASpeechBalloon.h" />
     <ClInclude Include="PressStartButton.h" />
-    <ClInclude Include="Ranking.h" />
     <ClInclude Include="ResultScene.h" />
     <ClInclude Include="SkinModelRender.h" />
     <ClInclude Include="SoundPlayBack.h" />

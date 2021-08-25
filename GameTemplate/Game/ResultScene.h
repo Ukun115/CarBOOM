@@ -10,7 +10,6 @@ namespace nsCARBOOM
 	class StageSelectScene;
 	class GameScene;
 	class Fade;
-	class Ranking;
 
 	class ResultScene : public IGameObject		//TODO:コピー禁止ポリシーを継承する。
 	{
@@ -59,7 +58,6 @@ namespace nsCARBOOM
 		SpriteRender* m_grayBack = nullptr;
 		SpriteRender* m_resultSprite = nullptr;
 		SoundPlayBack* m_soundPlayBack = nullptr;
-		Ranking* m_ranking = nullptr;
 
 		/// <summary>
 		/// フラグ
@@ -86,9 +84,38 @@ namespace nsCARBOOM
 
 		Vector3 m_resSprPos;
 
+		SpriteRender* m_plaNum[TotalPlaNum] = { nullptr };			//プレイヤー4人分用意
+		SpriteRender* m_rankingSprite[TotalPlaNum] = { nullptr };	//プレイヤー4人分用意
+
+		float m_moveSpeed;
+
+		int m_plaMoveDelayTimer = nsStdafx::INT_ZERO;
+		int m_verticalMoveTimer = nsStdafx::INT_ZERO;
+
+		bool m_delayTimerOnFlg = true;
+		bool m_plaJumpFlg = false;
+		bool m_plaMoveFlg[TotalPlaNum] = { false };
+
 		bool Start()override final;
 		~ResultScene()override final;
 		void Update()override final;
+
+		//順位によってソートしプレイヤー名の画像を並び替える関数
+		void RankingSort();
+		//画像が縦移動する関数
+		void VerticalMove(const int width, const float speed);
+		//順位の画像の初期化をまとめている関数
+		void InitRankingImage(const int plaNum);
+		//PLAYER画像の初期化をまとめている関数
+		void InitPlayerImage(const int plaNum);
+
+		void PlayerNameMove();
+		void PlaRankingPosSet(const int plaNum);
+		void MoveSpeedChange(const int plaNum);
+		void PlaNameJumpState(const int plaNum, const float speed);
+		Vector3 WhatNumberPos(const int plaNum);
+		Vector3 WhatRankingNumPos(const int plaNum);
+		float WhatMoveSpeed(const int plaNum);
 
 	public:
 		void SetTotalPlayerNum(const int totalPlaNum) { m_totalPlaNum = totalPlaNum; }
