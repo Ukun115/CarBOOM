@@ -576,8 +576,8 @@ namespace nsCARBOOM
 			}
 
 			m_enePushSpeed = m_enemyMoveSpeed->GetEneMoveSpeed(eneNum);
-			//これだとプッシュパワーが強すぎるため、威力を弱める
-			m_enePushSpeed /= 5;
+			////これだとプッシュパワーが強すぎるため、威力を弱める
+			//m_enePushSpeed /= 2;
 
 			//チャージ中に敵と衝突したらチャージがキャンセルされる
 			m_isAttack0Flg[plaNum] = false;
