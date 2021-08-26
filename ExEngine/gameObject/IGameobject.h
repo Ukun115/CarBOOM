@@ -21,11 +21,11 @@ public:
 	}
 public:
 
-	
+
 	/*!
 	*@brief	Updateの直前で呼ばれる開始処理。
 	*@details
-	* 
+	*
 	* 本関数がtrueを返すとゲームオブジェクトの準備が完了したと判断されて</br>
 	* Update関数が呼ばれ出します。trueを返して以降はStart関数は呼ばれなくなります。</br>
 	* ゲームオブジェクトの初期化に複数フレームかかる場合などはfalseを返して、初期化ステップなどを使って</br>
@@ -43,7 +43,7 @@ public:
 	{
 		(void)renderContext;
 	}
-	
+
 public:
 	/*!
 	*@brief Start関数が完了した？
@@ -73,7 +73,7 @@ public:
 	{
 		m_isActive = false;
 	}
-	
+
 	/// <summary>
 	/// 死亡させる。
 	/// </summary>
@@ -119,7 +119,7 @@ public:
 			Render(renderContext);
 		}
 	}
-	
+
 	void UpdateWrapper()
 	{
 		if (m_isActive && m_isStart && !m_isDead ) {
@@ -136,7 +136,7 @@ public:
 		}
 	}
 
-		
+
 	friend class CGameObjectManager;
 protected:
 	std::string m_name;								//ゲームオブジェクトの名前
@@ -146,5 +146,5 @@ protected:
 	bool m_isNewFromGameObjectManager;	//GameObjectManagerでnewされた。
 	bool m_isRegist = false;							//GameObjectManagerに登録されている？
 	bool m_isActive = true;							//Activeフラグ。
-	
+
 };

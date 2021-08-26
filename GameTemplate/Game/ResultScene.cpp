@@ -87,26 +87,7 @@ namespace nsCARBOOM
 
 	void ResultScene::Update()
 	{
-		//ディレイをかける
-		if (m_delayTimerOnFlg)
-		{
-			m_plaMoveDelayTimer++;
-			if (m_plaMoveDelayTimer > nsResultScene::DELAYTIMER)
-			{
-				m_plaMoveFlg[Player4] = true;
-				m_delayTimerOnFlg = false;
-			}
-		}
-		//プレイヤーが画面外（右側）からスライドしてくる処理
-		PlayerNameMove();
-
-		if (!m_plaJumpFlg)
-		{
-			return;
-		}
-		//画像がジャンプする
-		VerticalMove(nsResultScene::JUMP_WIDTH, nsResultScene::JUMP_SPEED);
-
+		//遷移
 		if (m_fadeOut == nullptr)
 		{
 			//プレイヤーの内、誰かのセレクトボタンが押されたら、
@@ -192,6 +173,26 @@ namespace nsCARBOOM
 				break;
 			}
 		}
+
+		m_plaMoveDelayTimer++;
+		if (m_plaMoveDelayTimer > nsResultScene::DELAYTIMER && m_delayTimerOnFlg)
+		{
+			m_plaMoveFlg[m_totalPlaNum-1] = true;
+			m_delayTimerOnFlg = false;
+		}
+		if (m_delayTimerOnFlg)
+		{
+			return;
+		}
+		//プレイヤーが画面外（右側）からスライドしてくる処理
+		PlayerNameMove();
+
+		if (!m_plaJumpFlg)
+		{
+			return;
+		}
+		//画像がジャンプする
+		VerticalMove(nsResultScene::JUMP_WIDTH, nsResultScene::JUMP_SPEED);
 	}
 
 	//順位によってソートしプレイヤー名の画像を並び替える関数
@@ -217,7 +218,7 @@ namespace nsCARBOOM
 		}
 
 		//プレイヤーの人数に応じて横からプレイヤー名が出てくる速度が変化
-		for (int plaNum = Player1; plaNum <= m_totalPlaNum; plaNum)
+		for (int plaNum = Player1; plaNum < m_totalPlaNum; plaNum++)
 		{
 			MoveSpeedChange(plaNum);
 			PlaRankingPosSet(plaNum);
@@ -250,9 +251,14 @@ namespace nsCARBOOM
 
 		m_verticalMoveTimer++;
 
-		for (int plaNum = Player2; plaNum <= TotalPlaNum; plaNum)
+		for (int plaNum = Player2; plaNum <= TotalPlaNum; plaNum++)
 		{
+			if(plaNum < m_totalPlaNum)
 			PlaRankingPosSet(plaNum);
+		}
+		for (int plaNum = Player1; plaNum < m_totalPlaNum; plaNum++)
+		{
+			m_plaNum[plaNum]->SetPosition(WhatNumberPos(plaNum));
 		}
 	}
 
@@ -274,85 +280,87 @@ namespace nsCARBOOM
 		m_plaNum[plaNum] = NewGO<SpriteRender>(nsStdafx::PRIORITY_7, nullptr);
 		sprintf(m_filePath, "Player%d_ActiveName", plaNum);
 		m_plaNum[plaNum]->Init(m_filePath, nsResultScene::PLAYERNAME_SPRITE_WIDTH, nsResultScene::PLAYERNAME_SPRITE_HEIGHT);
+		m_plaNum[plaNum]->SetPosition(WhatNumberPos(plaNum));
 	}
 
 	void ResultScene::PlayerNameMove()
 	{
-		for (int plaNum = Player4; plaNum >= Player1; plaNum--)
+		if (m_plaJumpFlg)
 		{
-			if (!m_plaMoveFlg[Player4])
+			return;
+		}
+
+		for (int plaNum = Player1; plaNum < m_totalPlaNum; plaNum++)
+		{
+			if (WhatNumberPosX(plaNum) > 150.0f)
 			{
-				return;
-			}
-			if (m_totalPlaNum >= (plaNum + nsResultScene::PLUS_ONE))
-			{
-				if (m_number4Pos.x > 150.0f)
+				if (m_plaMoveFlg[plaNum])
 				{
-					m_number4Pos.x -= m_moveSpeed;
+					switch (plaNum)
+					{
+					case Player1:
+						m_number1Pos.x -= m_moveSpeed;
+						break;
+					case Player2:
+						m_number2Pos.x -= m_moveSpeed;
+						break;
+					case Player3:
+						m_number3Pos.x -= m_moveSpeed;
+						break;
+					case Player4:
+						m_number4Pos.x -= m_moveSpeed;
+						break;
+					}
 				}
-				else
+			}
+			else
+			{
+				if (m_plaMoveFlg[plaNum])
 				{
-					m_plaMoveFlg[plaNum - nsResultScene::PLUS_ONE] = true;
 					if (plaNum != Player1)
 					{
 						m_plaMoveFlg[plaNum] = false;
+						m_plaMoveFlg[plaNum -1] = true;
 					}
 					else
 					{
+						m_plaMoveFlg[plaNum] = false;
 						m_plaJumpFlg = true;
 					}
 					//次登場する画像のスピードを変化させる
 					m_moveSpeed /= nsResultScene::NEXT_JUNNI_CHANGE_SPEED;
 				}
-				m_plaNum[plaNum]->SetPosition(m_number4Pos);
 			}
-			else
-			{
-				m_plaMoveFlg[plaNum] = false;
-				if (plaNum != Player1)
-				{
-					m_plaMoveFlg[plaNum - nsResultScene::PLUS_ONE] = true;
-				}
-				else
-				{
-					m_plaJumpFlg = true;
-				}
-			}
+			m_plaNum[plaNum]->SetPosition(WhatNumberPos(plaNum));
 		}
 	}
 
 	void ResultScene::MoveSpeedChange(const int plaNum)
 	{
-		if (m_totalPlaNum > plaNum)
-		{
-			m_moveSpeed = WhatMoveSpeed(plaNum);
-		}
+		m_moveSpeed = WhatMoveSpeed(plaNum);
 	}
 
 	void ResultScene::PlaRankingPosSet(const int plaNum)
 	{
-		if (m_totalPlaNum > plaNum)
-		{
-			m_plaNum[plaNum]->SetPosition(WhatNumberPos(plaNum));
-		}
+		m_plaNum[plaNum]->SetPosition(WhatNumberPos(plaNum));
 	}
 
 	void ResultScene::PlaNameJumpState(const int plaNum, const float speed)
 	{
-		if (m_totalPlaNum >= plaNum)
+		if (m_totalPlaNum > plaNum)
 		{
 			switch (plaNum)
 			{
-			case Player2:
+			case Player1:
 				m_number1Pos.y += speed;
 				break;
-			case Player3:
+			case Player2:
 				m_number2Pos.y += speed;
 				break;
-			case Player4:
+			case Player3:
 				m_number3Pos.y += speed;
 				break;
-			case TotalPlaNum:
+			case Player4:
 				m_number4Pos.y += speed;
 				break;
 			}
@@ -372,7 +380,7 @@ namespace nsCARBOOM
 		case Player3:
 			return nsResultScene::RANKING3_POS;
 			break;
-		case TotalPlaNum:
+		case Player4:
 			return nsResultScene::RANKING4_POS;
 			break;
 		}
@@ -382,16 +390,16 @@ namespace nsCARBOOM
 	{
 		switch (plaNum)
 		{
-		case Player2:
+		case Player1:
 			return 20.0f;
 			break;
-		case Player3:
+		case Player2:
 			return 5.0f;
 			break;
-		case Player4:
+		case Player3:
 			return 10.0f;
 			break;
-		case TotalPlaNum:
+		case Player4:
 			return 20.0f;
 			break;
 		}
@@ -412,6 +420,25 @@ namespace nsCARBOOM
 			break;
 		case Player4:
 			return m_number4Pos;
+			break;
+		}
+	}
+
+	float ResultScene::WhatNumberPosX(const int plaNum)
+	{
+		switch (plaNum)
+		{
+		case Player1:
+			return m_number1Pos.x;
+			break;
+		case Player2:
+			return m_number2Pos.x;
+			break;
+		case Player3:
+			return m_number3Pos.x;
+			break;
+		case Player4:
+			return m_number4Pos.x;
 			break;
 		}
 	}

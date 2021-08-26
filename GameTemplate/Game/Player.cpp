@@ -99,6 +99,8 @@ namespace nsCARBOOM
 		}
 		//プレイヤーの移動ベクトルを削除
 		DeleteGO(m_playerMoveSpeedArrow);
+
+		DeleteGO(m_playerChargeUI);
 	}
 
 	void Player::Update()

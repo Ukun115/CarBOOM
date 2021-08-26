@@ -533,7 +533,7 @@ namespace nsCARBOOM
 			//ポーズ機能を停止
 			DeleteGO(m_pause);
 			//リザルト画面オブジェクト生成
-			m_resultScene = NewGO<ResultScene>(nsStdafx::PRIORITY_0, nullptr);
+			m_resultScene = NewGO<ResultScene>(nsStdafx::PRIORITY_1, nullptr);
 			m_resultScene->SetTotalPlayerNum(m_totalPlaNum);
 		}
 	}

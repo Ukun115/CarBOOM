@@ -116,6 +116,7 @@ namespace nsCARBOOM
 		Vector3 WhatNumberPos(const int plaNum);
 		Vector3 WhatRankingNumPos(const int plaNum);
 		float WhatMoveSpeed(const int plaNum);
+		float WhatNumberPosX(const int plaNum);
 
 	public:
 		void SetTotalPlayerNum(const int totalPlaNum) { m_totalPlaNum = totalPlaNum; }
